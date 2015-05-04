@@ -106,7 +106,7 @@ class BookmarkRestController {
                 .stream()
                 .map(BookmarkResource::new)
                 .collect(Collectors.toList());
-        return new Resources<BookmarkResource>(bookmarkResourceList);
+        return new Resources<>(bookmarkResourceList);
     }
 
     private void validateUser(String userId) {
@@ -128,7 +128,6 @@ class BookmarkControllerAdvice {
     }
 }
 
-@ResponseStatus(HttpStatus.NOT_FOUND)
 class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(String userId) {
         super("could not find user '" + userId + "'.");
