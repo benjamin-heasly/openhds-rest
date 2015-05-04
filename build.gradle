@@ -41,7 +41,8 @@ dependencies {
     runtime("com.h2database:h2")
     runtime("mysql:mysql-connector-java")
     runtime("org.springframework.boot:spring-boot-starter-tomcat")
-    testCompile("org.springframework.boot:spring-boot-starter-test") 
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+    testRuntime("com.jayway.jsonpath:json-path")
 }
 
 

@@ -75,7 +75,8 @@ class BookmarkRestController {
     @RequestMapping(method = RequestMethod.GET)
     Collection<Bookmark> readBookmarks(@PathVariable String userId) {
         this.validateUser(userId);
-        return this.bookmarkRepository.findByAccountUsername(userId);
+        Collection<Bookmark> bookmarks = this.bookmarkRepository.findByAccountUsername(userId);
+        return bookmarks;
     }
 
     private void validateUser(String userId) {
