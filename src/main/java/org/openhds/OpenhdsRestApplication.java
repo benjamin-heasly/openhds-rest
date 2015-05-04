@@ -116,7 +116,6 @@ class BookmarkRestController {
     }
 }
 
-
 @ControllerAdvice
 class BookmarkControllerAdvice {
 
