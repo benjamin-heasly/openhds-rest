@@ -42,7 +42,7 @@ dependencies {
     runtime("mysql:mysql-connector-java")
     runtime("org.springframework.boot:spring-boot-starter-tomcat")
     runtime("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
-    runtime("org.codehaus.woodstox:artifactId>woodstox-core-asl")
+    runtime("org.codehaus.woodstox:woodstox-core-asl:4.2.0")
     testCompile("org.springframework.boot:spring-boot-starter-test")
     testRuntime("com.jayway.jsonpath:json-path")
 }
