@@ -10,6 +10,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.ResourceSupport;
 import org.springframework.hateoas.Resources;
@@ -17,6 +18,12 @@ import org.springframework.hateoas.VndErrors;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -24,6 +31,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -89,24 +97,6 @@ public class OpenhdsRestApplication {
     }
 }
 
-class BookmarkResource extends ResourceSupport {
-
-    private final Bookmark bookmark;
-
-    public BookmarkResource(Bookmark bookmark) {
-        String username = bookmark.getAccount().getUsername();
-        this.bookmark = bookmark;
-        this.add(new Link(bookmark.getUri(), "bookmark-uri"));
-        this.add(linkTo(BookmarkRestController.class, username).withRel("bookmarks"));
-        this.add(linkTo(methodOn(BookmarkRestController.class, username).readBookmark(username, bookmark.getId())).withSelfRel());
-    }
-
-    public Bookmark getBookmark() {
-        return bookmark;
-    }
-}
-
-
 @RestController
 @RequestMapping("/{userId}/bookmarks")
 class BookmarkRestController {
@@ -138,25 +128,26 @@ class BookmarkRestController {
     }
 
     @RequestMapping(value = "/{bookmarkId}", method = RequestMethod.GET)
-    BookmarkResource readBookmark(@PathVariable String userId, @PathVariable Long bookmarkId) {
+    BookmarkResource readBookmark(Principal principal, @PathVariable Long bookmarkId) {
+        String userId = principal.getName();
         this.validateUser(userId);
-        return new BookmarkResource(this.bookmarkRepository.findOne(bookmarkId));
+        return new BookmarkResource(this.bookmarkRepository.findOne(bookmarkId), principal);
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    Resources<BookmarkResource> readBookmarks(@PathVariable String userId) {
+    Resources<BookmarkResource> readBookmarks(Principal principal) {
+        String userId = principal.getName();
         this.validateUser(userId);
         List<BookmarkResource> bookmarkResourceList = bookmarkRepository.findByAccountUsername(userId)
                 .stream()
-                .map(BookmarkResource::new)
+                .map(b -> new BookmarkResource(b, principal))
                 .collect(Collectors.toList());
         return new Resources<>(bookmarkResourceList);
     }
 
     private void validateUser(String userId) {
-        this.accountRepository
-                .findByUsername(userId)
-                .orElseThrow( () -> new UserNotFoundException(userId));
+        this.accountRepository.findByUsername(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
     }
 }
 
@@ -171,8 +162,45 @@ class BookmarkControllerAdvice {
     }
 }
 
+class BookmarkResource extends ResourceSupport {
+
+    private final Bookmark bookmark;
+
+    public BookmarkResource(Bookmark bookmark, Principal principal) {
+        String username = bookmark.getAccount().getUsername();
+        this.bookmark = bookmark;
+        this.add(new Link(bookmark.getUri(), "bookmark-uri"));
+        this.add(linkTo(BookmarkRestController.class, username).withRel("bookmarks"));
+        this.add(linkTo(methodOn(BookmarkRestController.class, username).readBookmark(principal, bookmark.getId())).withSelfRel());
+    }
+
+    public Bookmark getBookmark() {
+        return bookmark;
+    }
+}
+
 class UserNotFoundException extends RuntimeException {
     public UserNotFoundException(String userId) {
         super("could not find user '" + userId + "'.");
+    }
+}
+
+@Configuration
+class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
+
+    @Autowired
+    AccountRepository accountRepository;
+
+    @Override
+    public void init(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService());
+    }
+
+    @Bean
+    UserDetailsService userDetailsService() {
+        return (username) -> accountRepository.findByUsername(username)
+                .map((Account a) -> new User(a.username, a.password, true, true, true, true,
+                        AuthorityUtils.createAuthorityList("ROLE_USER", "write")))
+                .orElseThrow(() -> new UsernameNotFoundException("could not find the user '" + username + "'"));
     }
 }

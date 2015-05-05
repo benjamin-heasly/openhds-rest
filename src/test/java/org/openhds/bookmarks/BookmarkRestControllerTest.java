@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.mock.http.MockHttpOutputMessage;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,6 +25,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -44,7 +46,7 @@ public class BookmarkRestControllerTest {
 
     private MockMvc mockMvc;
 
-    private String userName = "bdussault";
+    private final String userName = "bdussault";
 
     private HttpMessageConverter mappingJackson2HttpMessageConverter;
 
@@ -76,7 +78,9 @@ public class BookmarkRestControllerTest {
 
     @Before
     public void setup() throws Exception {
-        this.mockMvc = webAppContextSetup(webApplicationContext).build();
+        this.mockMvc = webAppContextSetup(webApplicationContext)
+                .apply(springSecurity())
+                .build();
 
         this.bookmarkRepository.deleteAllInBatch();
         this.accountRepository.deleteAllInBatch();
@@ -89,6 +93,7 @@ public class BookmarkRestControllerTest {
     }
 
     @Test
+    @WithMockUser(username=userName, password = "password")
     public void userNotFound() throws Exception {
         mockMvc.perform(post("/george/bookmarks/")
                 .content(this.json(new Bookmark()))
@@ -97,6 +102,7 @@ public class BookmarkRestControllerTest {
     }
 
     @Test
+    @WithMockUser(username=userName, password = "password")
     public void readSingleBookmark() throws Exception {
         final String bookmarkPath = "$bookmark";
 
@@ -109,6 +115,7 @@ public class BookmarkRestControllerTest {
     }
 
     @Test
+    @WithMockUser(username=userName, password = "password")
     public void readBookmarks() throws Exception {
         final String bookmarksPath = "$_embedded.bookmarkResourceList";
 
@@ -125,6 +132,7 @@ public class BookmarkRestControllerTest {
     }
 
     @Test
+    @WithMockUser(username=userName, password = "password")
     public void createBookmark() throws Exception {
         String bookmarkJson = json(new Bookmark(
                 this.account, "http://spring.io", "a bookmark to the best resource for Spring news and information"));
