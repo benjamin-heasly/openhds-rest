@@ -39,6 +39,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-hateoas")
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-security")
+    compile("org.springframework.boot:spring-boot-starter-aop")
     runtime("com.h2database:h2")
     runtime("mysql:mysql-connector-java")
     runtime("org.springframework.boot:spring-boot-starter-tomcat")

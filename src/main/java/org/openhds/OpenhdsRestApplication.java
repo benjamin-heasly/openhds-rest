@@ -30,6 +30,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Arrays;
@@ -98,7 +99,7 @@ public class OpenhdsRestApplication {
 }
 
 @RestController
-@RequestMapping("/{userId}/bookmarks")
+@RequestMapping("/bookmarks")
 class BookmarkRestController {
 
     private final BookmarkRepository bookmarkRepository;
@@ -112,42 +113,31 @@ class BookmarkRestController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    ResponseEntity<?> add(@PathVariable String userId, @RequestBody Bookmark input) {
-        this.validateUser(userId);
+    ResponseEntity<?> add(@NotNull Principal principal, @RequestBody Bookmark input) {
         return this.accountRepository
-                .findByUsername(userId)
+                .findByUsername(principal.getName())
                 .map(account -> {
                     Bookmark result = bookmarkRepository.save(new Bookmark(account, input.uri, input.description));
-
                     HttpHeaders httpHeaders = new HttpHeaders();
-                    httpHeaders.setLocation(ServletUriComponentsBuilder
-                            .fromCurrentRequest().path("/{id}")
+                    httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                             .buildAndExpand(result.getId()).toUri());
-                    return new ResponseEntity<>(null, httpHeaders, HttpStatus.CREATED);
-                }).get();
+                    return new ResponseEntity<>(null, httpHeaders, HttpStatus.CREATED);})
+                .get();
     }
 
     @RequestMapping(value = "/{bookmarkId}", method = RequestMethod.GET)
-    BookmarkResource readBookmark(Principal principal, @PathVariable Long bookmarkId) {
-        String userId = principal.getName();
-        this.validateUser(userId);
+    BookmarkResource readBookmark(@NotNull Principal principal, @PathVariable Long bookmarkId) {
         return new BookmarkResource(this.bookmarkRepository.findOne(bookmarkId), principal);
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    Resources<BookmarkResource> readBookmarks(Principal principal) {
+    Resources<BookmarkResource> readBookmarks(@NotNull Principal principal) {
         String userId = principal.getName();
-        this.validateUser(userId);
         List<BookmarkResource> bookmarkResourceList = bookmarkRepository.findByAccountUsername(userId)
                 .stream()
                 .map(b -> new BookmarkResource(b, principal))
                 .collect(Collectors.toList());
         return new Resources<>(bookmarkResourceList);
-    }
-
-    private void validateUser(String userId) {
-        this.accountRepository.findByUsername(userId)
-                .orElseThrow(() -> new UserNotFoundException(userId));
     }
 }
 
@@ -155,10 +145,17 @@ class BookmarkRestController {
 class BookmarkControllerAdvice {
 
     @ResponseBody
-    @ExceptionHandler(UserNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    VndErrors userNotFoundExceptionHandler(UserNotFoundException ex) {
-        return new VndErrors("error", ex.getMessage());
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    VndErrors generalException(Exception ex) {
+        return new VndErrors("general error: ", ex.getMessage());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(UsernameNotFoundException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    VndErrors userNotFoundExceptionHandler(UsernameNotFoundException ex) {
+        return new VndErrors("user not found: ", ex.getMessage());
     }
 }
 
@@ -176,12 +173,6 @@ class BookmarkResource extends ResourceSupport {
 
     public Bookmark getBookmark() {
         return bookmark;
-    }
-}
-
-class UserNotFoundException extends RuntimeException {
-    public UserNotFoundException(String userId) {
-        super("could not find user '" + userId + "'.");
     }
 }
 

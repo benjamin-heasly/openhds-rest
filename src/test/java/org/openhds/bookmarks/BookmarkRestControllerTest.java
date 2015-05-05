@@ -25,11 +25,13 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+
+
 
 /**
  * Created by Ben on 5/4/15.
@@ -48,7 +50,7 @@ public class BookmarkRestControllerTest {
 
     private final String userName = "bdussault";
 
-    private HttpMessageConverter mappingJackson2HttpMessageConverter;
+    private HttpMessageConverter messageConverter;
 
     private Account account;
 
@@ -66,14 +68,13 @@ public class BookmarkRestControllerTest {
     @Autowired
     void setConverters(HttpMessageConverter<?>[] converters) {
 
-        this.mappingJackson2HttpMessageConverter = Arrays.asList(converters)
+        this.messageConverter = Arrays.asList(converters)
                 .stream()
                 .filter(hmc -> hmc instanceof MappingJackson2HttpMessageConverter)
                 .findAny()
                 .get();
 
-        Assert.assertNotNull("the JSON message converter must not be null",
-                this.mappingJackson2HttpMessageConverter);
+        Assert.assertNotNull("the JSON message converter must not be null", this.messageConverter);
     }
 
     @Before
@@ -93,12 +94,20 @@ public class BookmarkRestControllerTest {
     }
 
     @Test
-    @WithMockUser(username=userName, password = "password")
-    public void userNotFound() throws Exception {
-        mockMvc.perform(post("/george/bookmarks/")
+    @WithMockUser(username="invalid", password = "invalid", roles = {""})
+    public void forbiddenUser() throws Exception {
+        mockMvc.perform(post("/bookmarks/")
                 .content(this.json(new Bookmark()))
                 .contentType(contentType))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void noUser() throws Exception {
+        mockMvc.perform(post("/bookmarks/")
+                .content(this.json(new Bookmark()))
+                .contentType(contentType))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -106,7 +115,7 @@ public class BookmarkRestControllerTest {
     public void readSingleBookmark() throws Exception {
         final String bookmarkPath = "$bookmark";
 
-        mockMvc.perform(get("/" + userName + "/bookmarks/" + this.bookmarkList.get(0).getId()))
+        mockMvc.perform(get("/bookmarks/" + this.bookmarkList.get(0).getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath(bookmarkPath + ".id", is(this.bookmarkList.get(0).getId().intValue())))
@@ -119,7 +128,7 @@ public class BookmarkRestControllerTest {
     public void readBookmarks() throws Exception {
         final String bookmarksPath = "$_embedded.bookmarkResourceList";
 
-        mockMvc.perform(get("/" + userName + "/bookmarks"))
+        mockMvc.perform(get("/bookmarks"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath(bookmarksPath, hasSize(2)))
@@ -136,7 +145,7 @@ public class BookmarkRestControllerTest {
     public void createBookmark() throws Exception {
         String bookmarkJson = json(new Bookmark(
                 this.account, "http://spring.io", "a bookmark to the best resource for Spring news and information"));
-        this.mockMvc.perform(post("/" + userName + "/bookmarks")
+        this.mockMvc.perform(post("/bookmarks")
                 .contentType(contentType)
                 .content(bookmarkJson))
                 .andExpect(status().isCreated());
@@ -144,10 +153,7 @@ public class BookmarkRestControllerTest {
 
     protected String json(Object o) throws IOException {
         MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
-        this.mappingJackson2HttpMessageConverter.write(
-                o,
-                MediaType.APPLICATION_JSON,
-                mockHttpOutputMessage);
+        this.messageConverter.write(o, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
         return mockHttpOutputMessage.getBodyAsString();
     }
 }
