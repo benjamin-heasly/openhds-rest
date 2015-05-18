@@ -1,10 +1,14 @@
-package org.openhds.bookmarks;
+package org.openhds.resource;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openhds.OpenhdsRestApplication;
+import org.openhds.domain.Account;
+import org.openhds.repository.AccountRepository;
+import org.openhds.domain.Bookmark;
+import org.openhds.repository.BookmarkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.hateoas.MediaTypes;
@@ -96,7 +100,7 @@ public class BookmarkRestControllerTest {
     @Test
     @WithMockUser(username="invalid", password = "invalid", roles = {""})
     public void forbiddenUser() throws Exception {
-        mockMvc.perform(post("/bookmarks/")
+        mockMvc.perform(post("/resource/")
                 .content(this.json(new Bookmark()))
                 .contentType(contentType))
                 .andExpect(status().isForbidden());
@@ -126,7 +130,7 @@ public class BookmarkRestControllerTest {
     @Test
     @WithMockUser(username=userName, password = "password")
     public void readBookmarks() throws Exception {
-        final String bookmarksPath = "$_embedded.bookmarkResourceList";
+        final String bookmarksPath = "$_embedded.bookmarkHateoasSupportList";
 
         mockMvc.perform(get("/bookmarks"))
                 .andExpect(status().isOk())

@@ -1,4 +1,4 @@
-package org.openhds.bookmarks;
+package org.openhds.domain;
 
 /**
  * Created by Ben on 5/4/15.
@@ -21,7 +21,7 @@ public class Bookmark {
     @GeneratedValue
     private Long id;
 
-    Bookmark() { // jpa only
+    public Bookmark() { // jpa only
     }
 
     public Bookmark(Account account, String uri, String description) {

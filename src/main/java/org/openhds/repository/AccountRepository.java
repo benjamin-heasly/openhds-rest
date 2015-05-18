@@ -1,8 +1,9 @@
-package org.openhds.bookmarks;
+package org.openhds.repository;
 
 /**
  * Created by Ben on 5/4/15.
  */
+import org.openhds.domain.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package org.openhds.bookmarks;
+package org.openhds.domain;
 
 /**
  * Created by Ben on 5/4/15.
@@ -48,6 +48,6 @@ public class Account {
         this.password = password;
     }
 
-    Account() { // jpa only
+    public Account() { // jpa only
     }
 }
