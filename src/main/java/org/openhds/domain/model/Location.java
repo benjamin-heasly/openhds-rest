@@ -30,13 +30,13 @@ public class Location extends AuditableCollectedEntity implements Serializable {
     @NotNull
     @Size(min = 1)
     @Description(description = "Name of the location.")
-    private String locationName;
+    private String name;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     private LocationHierarchy locationHierarchy = new LocationHierarchy();
 
     @Description(description = "The type of Location.")
-    private String locationType;
+    private String type;
 
     @Description(description = "The longitude for the Location")
     private String longitude;
@@ -107,12 +107,12 @@ public class Location extends AuditableCollectedEntity implements Serializable {
         extId = id;
     }
 
-    public String getLocationName() {
-        return locationName;
+    public String getName() {
+        return name;
     }
 
-    public void setLocationName(String name) {
-        locationName = name;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public LocationHierarchy getLocationHierarchy() {
@@ -123,12 +123,12 @@ public class Location extends AuditableCollectedEntity implements Serializable {
         locationHierarchy = hierarchy;
     }
 
-    public String getLocationType() {
-        return locationType;
+    public String getType() {
+        return type;
     }
 
-    public void setLocationType(String type) {
-        locationType = type;
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getLongitude() {
