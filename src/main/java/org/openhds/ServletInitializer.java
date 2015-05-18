@@ -10,7 +10,7 @@ public class ServletInitializer extends SpringBootServletInitializer {
 
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(OpenhdsRestApplication.class);
+		return application.sources(OpenHdsRestApplication.class);
 	}
 
 }

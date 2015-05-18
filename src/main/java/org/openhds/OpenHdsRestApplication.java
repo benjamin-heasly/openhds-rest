@@ -23,7 +23,7 @@ import java.util.Arrays;
  */
 @SpringBootApplication
 @EnableJpaRepositories
-public class OpenhdsRestApplication {
+public class OpenHdsRestApplication {
 
     @Bean
     public CommandLineRunner init(AccountRepository accountRepository, BookmarkRepository bookmarkRepository) {
@@ -75,7 +75,7 @@ public class OpenhdsRestApplication {
     }
 
     public static void main(String[] args) {
-        SpringApplication.run(OpenhdsRestApplication.class, args);
+        SpringApplication.run(OpenHdsRestApplication.class, args);
     }
 }
 

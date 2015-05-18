@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openhds.OpenhdsRestApplication;
+import org.openhds.OpenHdsRestApplication;
 import org.openhds.domain.Account;
 import org.openhds.repository.AccountRepository;
 import org.openhds.domain.Bookmark;
@@ -41,7 +41,7 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
  * Created by Ben on 5/4/15.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = OpenhdsRestApplication.class)
+@SpringApplicationConfiguration(classes = OpenHdsRestApplication.class)
 @WebAppConfiguration
 public class BookmarkRestControllerTest {
 
