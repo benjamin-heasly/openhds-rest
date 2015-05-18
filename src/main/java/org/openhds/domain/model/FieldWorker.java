@@ -29,10 +29,6 @@ public class FieldWorker extends AuditableEntity implements Serializable {
     @Transient
     String password;
 
-    @Description(description = "Password re-entered for a new field worker.")
-    @Transient
-    String confirmPassword;
-
     @NotNull
     @Description(description = "Hashed version of a field worker's password.")
     String passwordHash;
@@ -79,14 +75,6 @@ public class FieldWorker extends AuditableEntity implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getConfirmPassword() {
-        return confirmPassword;
-    }
-
-    public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
     }
 
     public String getPasswordHash() {
