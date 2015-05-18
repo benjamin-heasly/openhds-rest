@@ -12,11 +12,11 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 /**
  * Created by Ben on 5/18/15.
  */
-class BookmarkHateoasSupport extends ResourceSupport {
+class BookmarkInfo extends ResourceSupport {
 
     private final Bookmark bookmark;
 
-    public BookmarkHateoasSupport(Bookmark bookmark, Principal principal) {
+    public BookmarkInfo(Bookmark bookmark, Principal principal) {
         String username = bookmark.getAccount().getUsername();
         this.bookmark = bookmark;
         this.add(new Link(bookmark.getUri(), "bookmark-uri"));

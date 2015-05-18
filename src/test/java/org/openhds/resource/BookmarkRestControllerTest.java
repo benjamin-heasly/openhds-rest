@@ -130,7 +130,7 @@ public class BookmarkRestControllerTest {
     @Test
     @WithMockUser(username=userName, password = "password")
     public void readBookmarks() throws Exception {
-        final String bookmarksPath = "$_embedded.bookmarkHateoasSupportList";
+        final String bookmarksPath = "$_embedded.bookmarkInfoList";
 
         mockMvc.perform(get("/bookmarks"))
                 .andExpect(status().isOk())
