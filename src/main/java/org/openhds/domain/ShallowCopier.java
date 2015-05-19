@@ -32,6 +32,11 @@ import java.util.Set;
  * no-argument constructors that produce "default" or "blank" objects.  It also assumes
  * that Collection fields will be initialized statically or in the constructor.
  *
+ * If provided, populates a Collection of Fields indicating which objects were converted
+ * to stubs.  The Fields in the Collection will belong to the original object, not the
+ * new shallow copy.  That way, if needed, the caller can dereference the Feilds and
+ * supplement the stubs.
+ *
  * This ShallowCopier had an unfortunate dependency on Hibernate.  This is necessary
  * in order to avoid instantiating Hibernate proxy objects.  Instead we always want to
  * instantiate "real" objects using the classes as written.  This avoids issues with
@@ -47,15 +52,15 @@ public class ShallowCopier {
 
     private static final Logger logger = LoggerFactory.getLogger(ShallowCopier.class);
 
-    // Make a shallow copy of the given object.
-    public static <T extends UuidIdentifiable> T makeShallowCopy(T original) {
+    // Make a shallow copy of the given object.  Populate given Collection with Fields that get stubbed.
+    public static <T extends UuidIdentifiable> T makeShallowCopy(T original, Collection<Field> stubReport) {
         if (null == original) {
             return null;
         }
 
         T copy = newDefaultBlank(original);
         Set<Field> allFields = getAllFields(original);
-        assignAllFields(original, copy, allFields);
+        assignAllFields(original, copy, allFields, stubReport);
         return copy;
     }
 
@@ -145,8 +150,8 @@ public class ShallowCopier {
         return stub;
     }
 
-    // Copy multiple fields from an original object to a target of a compatible class.  Make stubs as necessary.
-    private static void assignAllFields(UuidIdentifiable original, UuidIdentifiable target, Set<Field> fields) {
+    // Copy multiple fields from an original object to a target of a compatible class.  Make and report stubs as necessary.
+    private static void assignAllFields(UuidIdentifiable original, UuidIdentifiable target, Set<Field> fields, Collection<Field> stubReport) {
         if (null == original || null == target || null == fields) {
             return;
         }
@@ -155,18 +160,28 @@ public class ShallowCopier {
             // direct reference to UuidIdentifiable
             if (UuidIdentifiable.class.isAssignableFrom(field.getType())) {
                 assignStub(original, target, field);
+                reportStub(stubReport, field);
                 continue;
             }
 
             // Collection may contain UuidIdentifiables
             if (Collection.class.isAssignableFrom(field.getType())) {
                 addStubsToCollection(original, target, field);
+                reportStub(stubReport, field);
                 continue;
             }
 
             // default simple assignment
             assignField(original, target, field);
         }
+    }
+
+    // Add a Field to the ongoing Collection of Fields that git Stubbed.
+    private static void reportStub(Collection<Field> stubReport, Field field) {
+        if (null == stubReport) {
+            return;
+        }
+        stubReport.add(field);
     }
 
     // Copy the given field verbatim from an original object to a target of a compatible class.
