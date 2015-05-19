@@ -1,9 +1,5 @@
 package org.openhds;
 
-import org.openhds.domain.Account;
-import org.openhds.domain.Bookmark;
-import org.openhds.repository.AccountRepository;
-import org.openhds.repository.BookmarkRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,7 +12,6 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * Created by Ben on 5/4/15.
@@ -24,16 +19,6 @@ import java.util.Arrays;
 @SpringBootApplication
 @EnableJpaRepositories
 public class OpenHdsRestApplication {
-
-    @Bean
-    public CommandLineRunner initBookmarks(AccountRepository accountRepository, BookmarkRepository bookmarkRepository) {
-        return (evt) -> Arrays.asList("jhoeller,dsyer,pwebb,ogierke,rwinch,mfisher,mpollack,jlong".split(","))
-                .forEach(a -> {
-                    Account account = accountRepository.save(new Account(a, "password"));
-                    bookmarkRepository.save(new Bookmark(account, "http://bookmark.com/1/" + a, "A description"));
-                    bookmarkRepository.save(new Bookmark(account, "http://bookmark.com/2/" + a, "A description"));
-                });
-    }
 
     @Bean
     public CommandLineRunner initOpenHDS() {
