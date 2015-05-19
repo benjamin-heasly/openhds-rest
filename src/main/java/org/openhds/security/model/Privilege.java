@@ -17,14 +17,13 @@ public class Privilege implements Serializable {
     private static final long serialVersionUID = -5969044695942713833L;
 
     public enum Grant {
-        CREATE_ENTITY,
-        VIEW_ENTITY,
-        EDIT_ENTITY,
-        DELETE_ENTITY,
-        ACCESS_CENSUS,
-        ACCESS_UPDATE,
-        CREATE_USER,
-        DELETE_USER
+        ROLE_USER,
+        ROLE_CREATE_ENTITY,
+        ROLE_VIEW_ENTITY,
+        ROLE_EDIT_ENTITY,
+        ROLE_DELETE_ENTITY,
+        ROLE_CREATE_USER,
+        ROLE_DELETE_USER
     }
 
     public Privilege() {

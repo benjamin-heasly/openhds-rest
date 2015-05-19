@@ -45,8 +45,13 @@ public class ProofOfConceptInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         addPrivileges(Privilege.Grant.values());
-        addRole("role", Privilege.Grant.values());
-        addUser("user", "password", "role");
+
+        addRole("user-role", Privilege.Grant.values());
+        addUser("user", "password", "user-role");
+
+        addRole("empty-role");
+        addUser("non-user", "password", "empty-role");
+
         addFieldWorker("fieldworker", "password");
 
         addLocationHierarchyLevel(0, "root-level");

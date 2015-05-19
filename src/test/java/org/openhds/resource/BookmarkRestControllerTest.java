@@ -52,7 +52,7 @@ public class BookmarkRestControllerTest {
 
     private MockMvc mockMvc;
 
-    private final String userName = "bdussault";
+    private final String userName = "user";
 
     private HttpMessageConverter messageConverter;
 
@@ -147,8 +147,8 @@ public class BookmarkRestControllerTest {
     @Test
     @WithMockUser(username=userName, password = "password")
     public void createBookmark() throws Exception {
-        String bookmarkJson = json(new Bookmark(
-                this.account, "http://spring.io", "a bookmark to the best resource for Spring news and information"));
+        String bookmarkJson = json(new Bookmark(this.account,
+                "http://spring.io", "a bookmark to the best resource for Spring news and information"));
         this.mockMvc.perform(post("/bookmarks")
                 .contentType(contentType)
                 .content(bookmarkJson))

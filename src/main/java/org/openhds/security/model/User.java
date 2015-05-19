@@ -1,5 +1,8 @@
 package org.openhds.security.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.annotations.GenericGenerator;
 import org.openhds.Description;
 import org.openhds.domain.model.UuidIdentifiable;
@@ -13,6 +16,8 @@ import static java.util.stream.Collectors.toSet;
 
 @Entity
 @Table(name = "user")
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonSerialize()
 public class User implements Serializable, UuidIdentifiable {
 
     static final long serialVersionUID = 23L;
@@ -47,6 +52,7 @@ public class User implements Serializable, UuidIdentifiable {
     private String username;
 
     @Description(description = "Password associated with the username.")
+    @JsonIgnore
     private String password;
 
     @Description(description = "Set of roles applied to the user.")
@@ -131,6 +137,7 @@ public class User implements Serializable, UuidIdentifiable {
         this.deleted = deleted;
     }
 
+    @JsonIgnore
     public Set<String> getPrivilegeNames() {
         return roles.stream()
                 .map(r -> r.getPrivileges())
