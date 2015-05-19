@@ -2,20 +2,30 @@ package org.openhds;
 
 import org.openhds.domain.model.*;
 import org.openhds.repository.*;
+import org.openhds.security.model.Privilege;
+import org.openhds.security.model.Role;
 import org.openhds.security.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.UUID;
 
+import static java.util.stream.Collectors.toSet;
+
 /**
  * Created by Ben on 5/18/15.
- *
+ * <p>
  * This is just for proof of concept.  Initialize the db with some OpenHDS test objects.
- *
  */
 public class ProofOfConceptInitializer implements CommandLineRunner {
+
+    @Autowired
+    private PrivilegeRepository privilegeRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -34,7 +44,9 @@ public class ProofOfConceptInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        addUser("user", "password");
+        addPrivileges(Privilege.Grant.values());
+        addRole("role", Privilege.Grant.values());
+        addUser("user", "password", "role");
         addFieldWorker("fieldworker", "password");
 
         addLocationHierarchyLevel(0, "root-level");
@@ -51,12 +63,29 @@ public class ProofOfConceptInitializer implements CommandLineRunner {
         addLocation("location-d", "bottom-two");
     }
 
-    private void addUser(String name, String password) {
+    private void addPrivileges(Privilege.Grant... grants) {
+        Arrays.stream(grants)
+                .map((Privilege.Grant g) -> new Privilege(g))
+                .forEach(p -> privilegeRepository.save(p));
+    }
+
+    private void addRole(String name, Privilege.Grant... grants) {
+        Role role = new Role();
+        role.setName(name);
+        role.setDescription(name);
+        role.setPrivileges(Arrays.stream(grants)
+                .map((Privilege.Grant g) -> new Privilege(g))
+                .collect(toSet()));
+        roleRepository.save(role);
+    }
+
+    private void addUser(String name, String password, String roleName) {
         User user = new User();
         user.setFirstName(name);
         user.setLastName(name);
         user.setUsername(name);
         user.setPassword(password);
+        user.getRoles().add(roleRepository.findByName(roleName).get());
         userRepository.save(user);
     }
 
@@ -117,5 +146,7 @@ public class ProofOfConceptInitializer implements CommandLineRunner {
         location.setName(name);
         location.setExtId(name);
         location.setLocationHierarchy(locationHierarchyRepository.findByExtId(hierarchyName).get());
+
+        locationRepository.save(location);
     }
 }

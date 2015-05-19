@@ -47,17 +47,17 @@ class BookmarkRestController {
     }
 
     @RequestMapping(value = "/{bookmarkId}", method = RequestMethod.GET)
-    public BookmarkInfo readBookmark(@NotNull Principal principal, @PathVariable Long bookmarkId) {
-        return new BookmarkInfo(this.bookmarkRepository.findOne(bookmarkId), principal);
+    public BookmarkLinkInfo readBookmark(@NotNull Principal principal, @PathVariable Long bookmarkId) {
+        return new BookmarkLinkInfo(this.bookmarkRepository.findOne(bookmarkId), principal);
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public Resources<BookmarkInfo> readBookmarks(@NotNull Principal principal) {
+    public Resources<BookmarkLinkInfo> readBookmarks(@NotNull Principal principal) {
         String userId = principal.getName();
-        List<BookmarkInfo> bookmarkInfoList = bookmarkRepository.findByAccountUsername(userId)
+        List<BookmarkLinkInfo> bookmarkLinkInfoList = bookmarkRepository.findByAccountUsername(userId)
                 .stream()
-                .map(b -> new BookmarkInfo(b, principal))
+                .map(b -> new BookmarkLinkInfo(b, principal))
                 .collect(Collectors.toList());
-        return new Resources<>(bookmarkInfoList);
+        return new Resources<>(bookmarkLinkInfoList);
     }
 }

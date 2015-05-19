@@ -9,7 +9,8 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-@Description(description = "An OpenHDS user with credentials and Roles and associated Permissions.")
+import static java.util.stream.Collectors.toSet;
+
 @Entity
 @Table(name = "user")
 public class User implements Serializable, UuidIdentifiable {
@@ -50,7 +51,7 @@ public class User implements Serializable, UuidIdentifiable {
 
     @Description(description = "Set of roles applied to the user.")
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_roles", joinColumns = {@JoinColumn(name = "user_uuid")}, inverseJoinColumns = @JoinColumn(name = "role_uuid"))
+    @JoinTable(name = "user_roles", joinColumns = {@JoinColumn(name = "user_uuid")}, inverseJoinColumns = @JoinColumn(name = "role_name"))
     private Set<Role> roles = new HashSet<Role>();
 
     @Description(description = "Indicator for signaling some data to be deleted.")
@@ -128,5 +129,13 @@ public class User implements Serializable, UuidIdentifiable {
 
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public Set<String> getPrivilegeNames() {
+        return roles.stream()
+                .map(r -> r.getPrivileges())
+                .flatMap(p -> p.stream())
+                .map(Privilege::toString)
+                .collect(toSet());
     }
 }

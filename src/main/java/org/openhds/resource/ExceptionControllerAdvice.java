@@ -10,19 +10,22 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * Created by Ben on 5/18/15.
+ *
+ * Catch and handle exceptions thrown by REST resource controllers.
+ *
  */
 @ControllerAdvice
 class ExceptionControllerAdvice {
 
-    @ResponseBody
     @ExceptionHandler(Exception.class)
+    @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public VndErrors generalException(Exception ex) {
         return new VndErrors("general error: ", ex.getMessage());
     }
 
-    @ResponseBody
     @ExceptionHandler(UsernameNotFoundException.class)
+    @ResponseBody
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public VndErrors userNotFoundExceptionHandler(UsernameNotFoundException ex) {
         return new VndErrors("user not found: ", ex.getMessage());

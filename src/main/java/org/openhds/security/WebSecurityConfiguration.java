@@ -1,7 +1,6 @@
 package org.openhds.security;
 
-import org.openhds.domain.Account;
-import org.openhds.repository.AccountRepository;
+import org.openhds.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,7 +18,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 
     @Autowired
-    private AccountRepository accountRepository;
+    private UserRepository userRepository;
 
     @Override
     public void init(AuthenticationManagerBuilder auth) throws Exception {
@@ -28,9 +27,12 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return (username) -> accountRepository.findByUsername(username)
-                .map((Account a) -> new User(a.username, a.password, true, true, true, true,
-                        AuthorityUtils.createAuthorityList("ROLE_USER", "write")))
-                .orElseThrow(() -> new UsernameNotFoundException("could not find the user '" + username + "'"));
+        return (username) -> userRepository.findByUsername(username)
+                .map((org.openhds.security.model.User u) -> new User(
+                        u.getUsername(),
+                        u.getPassword(),
+                        true, true, true, true,
+                        AuthorityUtils.createAuthorityList(u.getPrivilegeNames().toArray(new String[0]))))
+                .orElseThrow(() -> new UsernameNotFoundException("No such user: " + username));
     }
 }

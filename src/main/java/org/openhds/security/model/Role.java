@@ -1,6 +1,5 @@
 package org.openhds.security.model;
 
-import org.openhds.domain.model.AuditableEntity;
 import org.openhds.Description;
 
 import javax.persistence.*;
@@ -11,15 +10,16 @@ import java.util.Set;
 /**
  * @author Dave Roberge
  */
-@Description(description = "A Role contains a group of Privileges." +
-        "Roles are assigned to Users who may then act in OpenHDS with all of the associated Privileges")
+@Description(description = "A Role contains a group of Grant." +
+        "Roles are assigned to Users who may then act in OpenHDS with all of the associated Grant")
 @Entity
 @Table(name = "role")
-public class Role extends AuditableEntity implements Serializable {
+public class Role implements Serializable {
 
     static final long serialVersionUID = 21L;
 
     @Description(description = "Name of the role.")
+    @Id
     String name;
 
     @Description(description = "Description of the role.")
@@ -63,7 +63,7 @@ public class Role extends AuditableEntity implements Serializable {
             return false;
         }
         final Role other = (Role) obj;
-        if ((this.uuid == null) ? (other.uuid != null) : !this.uuid.equals(other.uuid)) {
+        if ((this.name == null) ? (other.name!= null) : !this.name.equals(other.name)) {
             return false;
         }
         return true;
@@ -72,7 +72,7 @@ public class Role extends AuditableEntity implements Serializable {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 37 * hash + (this.uuid != null ? this.uuid.hashCode() : 0);
+        hash = 37 * hash + (this.name != null ? this.name.hashCode() : 0);
         return hash;
     }
 
