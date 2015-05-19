@@ -1,30 +1,20 @@
 package org.openhds.resource;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openhds.OpenHdsRestApplication;
 import org.openhds.domain.Account;
-import org.openhds.repository.AccountRepository;
 import org.openhds.domain.Bookmark;
+import org.openhds.repository.AccountRepository;
 import org.openhds.repository.BookmarkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.hateoas.MediaTypes;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.mock.http.MockHttpOutputMessage;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.context.WebApplicationContext;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -32,8 +22,6 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
 
 
@@ -43,18 +31,7 @@ import static org.springframework.security.test.web.servlet.setup.SecurityMockMv
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = OpenHdsRestApplication.class)
 @WebAppConfiguration
-public class BookmarkRestControllerTest {
-
-
-    private MediaType contentType = new MediaType(
-            MediaTypes.HAL_JSON.getType(),
-            MediaTypes.HAL_JSON.getSubtype());
-
-    private MockMvc mockMvc;
-
-    private final String userName = "user";
-
-    private HttpMessageConverter messageConverter;
+public class BookmarkRestControllerTest extends AbstractRestControllerTest {
 
     private Account account;
 
@@ -64,37 +41,21 @@ public class BookmarkRestControllerTest {
     private BookmarkRepository bookmarkRepository;
 
     @Autowired
-    private WebApplicationContext webApplicationContext;
-
-    @Autowired
     private AccountRepository accountRepository;
 
-    @Autowired
-    void setConverters(HttpMessageConverter<?>[] converters) {
-
-        this.messageConverter = Arrays.asList(converters)
-                .stream()
-                .filter(hmc -> hmc instanceof MappingJackson2HttpMessageConverter)
-                .findAny()
-                .get();
-
-        Assert.assertNotNull("the JSON message converter must not be null", this.messageConverter);
-    }
 
     @Before
     public void setup() throws Exception {
-        this.mockMvc = webAppContextSetup(webApplicationContext)
-                .apply(springSecurity())
-                .build();
+        super.setup();
 
         this.bookmarkRepository.deleteAllInBatch();
         this.accountRepository.deleteAllInBatch();
 
-        this.account = accountRepository.save(new Account(userName, "password"));
+        this.account = accountRepository.save(new Account(username, "password"));
         this.bookmarkList.add(
-                bookmarkRepository.save(new Bookmark(account, "http://bookmark.com/1/" + userName, "A description")));
+                bookmarkRepository.save(new Bookmark(account, "http://bookmark.com/1/" + username, "A description")));
         this.bookmarkList.add(
-                bookmarkRepository.save(new Bookmark(account, "http://bookmark.com/2/" + userName, "A description")));
+                bookmarkRepository.save(new Bookmark(account, "http://bookmark.com/2/" + username, "A description")));
     }
 
     @Test
@@ -102,7 +63,7 @@ public class BookmarkRestControllerTest {
     public void forbiddenUser() throws Exception {
         mockMvc.perform(post("/resource/")
                 .content(this.json(new Bookmark()))
-                .contentType(contentType))
+                .contentType(halJson))
                 .andExpect(status().isForbidden());
     }
 
@@ -110,54 +71,48 @@ public class BookmarkRestControllerTest {
     public void noUser() throws Exception {
         mockMvc.perform(post("/bookmarks/")
                 .content(this.json(new Bookmark()))
-                .contentType(contentType))
+                .contentType(halJson))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    @WithMockUser(username=userName, password = "password")
+    @WithMockUser(username= username, password = "password")
     public void readSingleBookmark() throws Exception {
         final String bookmarkPath = "$bookmark";
 
         mockMvc.perform(get("/bookmarks/" + this.bookmarkList.get(0).getId()))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(contentType))
+                .andExpect(content().contentType(halJson))
                 .andExpect(jsonPath(bookmarkPath + ".id", is(this.bookmarkList.get(0).getId().intValue())))
-                .andExpect(jsonPath(bookmarkPath + ".uri", is("http://bookmark.com/1/" + userName)))
+                .andExpect(jsonPath(bookmarkPath + ".uri", is("http://bookmark.com/1/" + username)))
                 .andExpect(jsonPath(bookmarkPath + ".description", is("A description")));
     }
 
     @Test
-    @WithMockUser(username=userName, password = "password")
+    @WithMockUser(username= username, password = "password")
     public void readBookmarks() throws Exception {
         final String bookmarksPath = "$_embedded.bookmarkLinkInfoList";
 
         mockMvc.perform(get("/bookmarks"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(contentType))
+                .andExpect(content().contentType(halJson))
                 .andExpect(jsonPath(bookmarksPath, hasSize(2)))
                 .andExpect(jsonPath(bookmarksPath + "[0].bookmark.id", is(this.bookmarkList.get(0).getId().intValue())))
-                .andExpect(jsonPath(bookmarksPath + "[0].bookmark.uri", is("http://bookmark.com/1/" + userName)))
+                .andExpect(jsonPath(bookmarksPath + "[0].bookmark.uri", is("http://bookmark.com/1/" + username)))
                 .andExpect(jsonPath(bookmarksPath + "[0].bookmark.description", is("A description")))
                 .andExpect(jsonPath(bookmarksPath + "[1].bookmark.id", is(this.bookmarkList.get(1).getId().intValue())))
-                .andExpect(jsonPath(bookmarksPath + "[1].bookmark.uri", is("http://bookmark.com/2/" + userName)))
+                .andExpect(jsonPath(bookmarksPath + "[1].bookmark.uri", is("http://bookmark.com/2/" + username)))
                 .andExpect(jsonPath(bookmarksPath + "[1].bookmark.description", is("A description")));
     }
 
     @Test
-    @WithMockUser(username=userName, password = "password")
+    @WithMockUser(username= username, password = "password")
     public void createBookmark() throws Exception {
         String bookmarkJson = json(new Bookmark(this.account,
                 "http://spring.io", "a bookmark to the best resource for Spring news and information"));
         this.mockMvc.perform(post("/bookmarks")
-                .contentType(contentType)
+                .contentType(halJson)
                 .content(bookmarkJson))
                 .andExpect(status().isCreated());
-    }
-
-    protected String json(Object o) throws IOException {
-        MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
-        this.messageConverter.write(o, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
-        return mockHttpOutputMessage.getBodyAsString();
     }
 }
