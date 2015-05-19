@@ -17,43 +17,60 @@ import java.util.Set;
 
 /**
  * Use reflection to make a shallow copy of a UuidIdentifiable object.
- *
+ * <p>
  * This ShallowCopier uses reflection to build a field-by-field copy of a given
  * UuidIdentifiable.  Where any field refers to another UuidIdentifiable object
  * (directly or through a Collection), the copy will point to a "stub" object instead
  * of the original object.  The "stub" is a default instance of the same class with
  * only its uuid and no other fields set.
- *
+ * <p>
  * Stubs give external clients enough information to rebuild object references.  Since
  * the stubs don't refer to any other objects, they prevent runaway recursion by tools
  * like automatic XML Marshallers.
- *
+ * <p>
  * This ShallowCopier assumes that all objects being copied or converted to stubs have
  * no-argument constructors that produce "default" or "blank" objects.  It also assumes
  * that Collection fields will be initialized statically or in the constructor.
- *
- * If provided, populates a Collection of Fields indicating which objects were converted
- * to stubs.  The Fields in the Collection will belong to the original object, not the
- * new shallow copy.  That way, if needed, the caller can dereference the Feilds and
- * supplement the stubs.
- *
+ * <p>
+ * If provided, populates a Collection of StubReferences indicating which objects were
+ * converted to stubs.  The StubReferences will point to the original objects, that were
+ * converted to stubs.  That way, the caller has the option to supplement the stubs.
+ * <p>
  * This ShallowCopier had an unfortunate dependency on Hibernate.  This is necessary
  * in order to avoid instantiating Hibernate proxy objects.  Instead we always want to
  * instantiate "real" objects using the classes as written.  This avoids issues with
  * tools like automatic JSON Marshallers, which may not know how to Marshall proxies.
- *
+ * <p>
  * "Shallow copy" has special meaning for OpenHDS because shallow copies are what we
  * send over the wire to external clients, like the OpenHDS tablet.  This is different
  * from the meaning of "shallow copy" in the context of the Java Cloneable interface.
- *
+ * <p>
  * BSH
  */
 public class ShallowCopier {
 
     private static final Logger logger = LoggerFactory.getLogger(ShallowCopier.class);
 
-    // Make a shallow copy of the given object.  Populate given Collection with Fields that get stubbed.
-    public static <T extends UuidIdentifiable> T makeShallowCopy(T original, Collection<Field> stubReport) {
+    public static class StubReference<T extends UuidIdentifiable> {
+        private final String fieldName;
+        private final T original;
+
+        public StubReference(String fieldName, T original) {
+            this.fieldName = fieldName;
+            this.original = original;
+        }
+
+        public String getFieldName() {
+            return fieldName;
+        }
+
+        public T getOriginal() {
+            return original;
+        }
+    }
+
+    // Make a shallow copy of the given object.  Report which objects got converted to stubs.
+    public static <T extends UuidIdentifiable> T makeShallowCopy(T original, Collection<StubReference> stubReport) {
         if (null == original) {
             return null;
         }
@@ -151,7 +168,7 @@ public class ShallowCopier {
     }
 
     // Copy multiple fields from an original object to a target of a compatible class.  Make and report stubs as necessary.
-    private static void assignAllFields(UuidIdentifiable original, UuidIdentifiable target, Set<Field> fields, Collection<Field> stubReport) {
+    private static void assignAllFields(UuidIdentifiable original, UuidIdentifiable target, Set<Field> fields, Collection<StubReference> stubReport) {
         if (null == original || null == target || null == fields) {
             return;
         }
@@ -159,15 +176,13 @@ public class ShallowCopier {
         for (Field field : fields) {
             // direct reference to UuidIdentifiable
             if (UuidIdentifiable.class.isAssignableFrom(field.getType())) {
-                assignStub(original, target, field);
-                reportStub(stubReport, field);
+                assignStub(original, target, field, stubReport);
                 continue;
             }
 
             // Collection may contain UuidIdentifiables
             if (Collection.class.isAssignableFrom(field.getType())) {
-                addStubsToCollection(original, target, field);
-                reportStub(stubReport, field);
+                addStubsToCollection(original, target, field, stubReport);
                 continue;
             }
 
@@ -177,11 +192,11 @@ public class ShallowCopier {
     }
 
     // Add a Field to the ongoing Collection of Fields that git Stubbed.
-    private static void reportStub(Collection<Field> stubReport, Field field) {
+    private static void reportStub(Collection<StubReference> stubReport, Field field, UuidIdentifiable original) {
         if (null == stubReport) {
             return;
         }
-        stubReport.add(field);
+        stubReport.add(new StubReference(field.getName(), original));
     }
 
     // Copy the given field verbatim from an original object to a target of a compatible class.
@@ -203,7 +218,7 @@ public class ShallowCopier {
     }
 
     // Make a stub based on original an object's UuidIdentifiable field and assign it to a target of a compatible class.
-    private static void assignStub(UuidIdentifiable original, UuidIdentifiable target, Field field) {
+    private static void assignStub(UuidIdentifiable original, UuidIdentifiable target, Field field, Collection<StubReference> stubReport) {
         if (null == original || null == target || null == field) {
             return;
         }
@@ -222,6 +237,7 @@ public class ShallowCopier {
             UuidIdentifiable originalEntity = (UuidIdentifiable) field.get(original);
             UuidIdentifiable stub = makeStub(originalEntity);
             field.set(target, stub);
+            reportStub(stubReport, field, originalEntity);
         } catch (IllegalAccessException e) {
             logger.error("Can't assign UuidIdentifiable stub to field <"
                     + field.getName()
@@ -231,7 +247,7 @@ public class ShallowCopier {
     }
 
     // Copy elements from an original object's Collection to a compatible target's Collection.  Make stubs as necessary.
-    private static void addStubsToCollection(UuidIdentifiable original, UuidIdentifiable target, Field field) {
+    private static void addStubsToCollection(UuidIdentifiable original, UuidIdentifiable target, Field field, Collection<StubReference> stubReport) {
         if (null == original || null == target || null == field) {
             return;
         }
@@ -265,6 +281,7 @@ public class ShallowCopier {
                 if (UuidIdentifiable.class.isAssignableFrom(object.getClass())) {
                     UuidIdentifiable stub = makeStub((UuidIdentifiable) object);
                     stubCollection.add(stub);
+                    reportStub(stubReport, field, (UuidIdentifiable) object);
                 } else {
                     stubCollection.add(object);
                 }

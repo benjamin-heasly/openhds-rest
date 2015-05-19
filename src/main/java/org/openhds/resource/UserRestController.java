@@ -3,6 +3,7 @@ package org.openhds.resource;
 import org.openhds.repository.UserRepository;
 import org.openhds.security.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/users")
-class UserRestController {
+class UserRestController extends AbstractRestController<User> {
 
     private final UserRepository userRepository;
 
@@ -29,20 +30,19 @@ class UserRestController {
     public ResponseEntity<?> add(@RequestBody User input) {
         User result = userRepository.save(input);
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setLocation(ServletUriComponentsBuilder
-                .fromCurrentRequest()
+        httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{username}")
                 .buildAndExpand(result.getUsername()).toUri());
-        return new ResponseEntity<>(null, httpHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(result, httpHeaders, HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/{username}", method = RequestMethod.GET)
-    public User readBookmark(@PathVariable String username) {
-        return userRepository.findByUsername(username).get();
+    @Override
+    public Resource<User> readOne(@PathVariable String id) {
+        return ResourceLinkHelper.shallowResourceWithUuidLinks(userRepository.findByUsername(id).get());
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public List<User> readBookmarks() {
+    @Override
+    public List<User> readAll() {
         return userRepository.findAll();
     }
 }

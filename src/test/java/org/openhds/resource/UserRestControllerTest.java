@@ -42,7 +42,7 @@ public class UserRestControllerTest extends AbstractRestControllerTest {
     public void readSingleUser() throws Exception {
         mockMvc.perform(get("/users/user"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(regularJson))
+                .andExpect(content().contentType(halJson))
                 .andExpect(jsonPath("$.username", is(username)));
     }
 
