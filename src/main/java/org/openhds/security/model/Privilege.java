@@ -16,13 +16,24 @@ import java.io.Serializable;
 @Table(name = "privilege")
 public class Privilege implements Serializable, UuidIdentifiable {
 
+    public enum Privileges {
+        CREATE_ENTITY,
+        EDIT_ENTITY,
+        DELETE_ENTITY,
+        VIEW_ENTITY,
+        ACCESS_CENSUS,
+        ACCESS_UPDATE,
+        CREATE_USER,
+        DELETE_USER
+    }
+
     private static final long serialVersionUID = -5969044695942713833L;
 
     public Privilege() {
     }
 
     public Privilege(String privilege) {
-        this.privilege = privilege;
+        setPrivilege(privilege);
     }
 
     @Id
@@ -31,8 +42,8 @@ public class Privilege implements Serializable, UuidIdentifiable {
     @Column(length = 32)
     private String uuid;
 
-    @Description(description = "Name of the privilege.")
-    private String privilege;
+    @Description(description = "The privilege.")
+    private Privileges privilege;
 
     @Override
     public String getUuid() {
@@ -45,11 +56,11 @@ public class Privilege implements Serializable, UuidIdentifiable {
     }
 
     public String getPrivilege() {
-        return privilege;
+        return privilege.toString();
     }
 
     public void setPrivilege(String privilege) {
-        this.privilege = privilege;
+        this.privilege = Privileges.valueOf(privilege);
     }
 
     @Override
@@ -72,6 +83,6 @@ public class Privilege implements Serializable, UuidIdentifiable {
 
     @Override
     public String toString() {
-        return privilege;
+        return privilege.toString();
     }
 }

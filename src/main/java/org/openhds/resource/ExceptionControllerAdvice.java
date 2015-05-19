@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * Created by Ben on 5/18/15.
  */
 @ControllerAdvice
-class BookmarkControllerAdvice {
+class ExceptionControllerAdvice {
 
     @ResponseBody
     @ExceptionHandler(Exception.class)
