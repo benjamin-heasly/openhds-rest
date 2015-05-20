@@ -2,7 +2,6 @@ package org.openhds.security.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.hibernate.annotations.GenericGenerator;
 import org.openhds.Description;
 import org.openhds.domain.model.UuidIdentifiable;
@@ -16,8 +15,7 @@ import static java.util.stream.Collectors.toSet;
 
 @Entity
 @Table(name = "user")
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonSerialize()
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class User implements Serializable, UuidIdentifiable {
 
     static final long serialVersionUID = 23L;
@@ -31,9 +29,9 @@ public class User implements Serializable, UuidIdentifiable {
     }
 
     @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "uuid")
-    @Column(length = 32)
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(length = 36)
     private String uuid;
 
     @Description(description = "User's first name")

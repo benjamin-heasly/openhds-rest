@@ -1,5 +1,6 @@
 package org.openhds.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.annotations.GenericGenerator;
 import org.openhds.Description;
 import org.openhds.security.model.User;
@@ -14,14 +15,15 @@ import java.util.Calendar;
  */
 @Description(description = "An AuditableEntity can be any entity stored in the database that needs to be audited.")
 @MappedSuperclass
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public abstract class AuditableEntity implements UuidIdentifiable, Serializable {
 
     private static final long serialVersionUID = -4703049354466276068L;
 
     @Id
-    @GeneratedValue(generator = "system-uuid")
-    @GenericGenerator(name = "system-uuid", strategy = "uuid")
-    @Column(length = 32)
+    @GeneratedValue(generator = "uuid2")
+    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @Column(length = 36)
     protected String uuid;
 
     @ManyToOne(fetch = FetchType.LAZY)
