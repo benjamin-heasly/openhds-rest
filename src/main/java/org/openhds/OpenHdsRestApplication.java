@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.http.HttpStatus;
 
 import javax.servlet.*;
@@ -18,6 +19,7 @@ import java.io.IOException;
  */
 @SpringBootApplication
 @EnableJpaRepositories
+@EnableSpringDataWebSupport
 public class OpenHdsRestApplication {
 
     @Bean

@@ -3,14 +3,16 @@ package org.openhds.resource;
 import org.openhds.repository.UserRepository;
 import org.openhds.security.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Resource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.util.List;
 
 /**
  * Created by Ben on 5/18/15.
@@ -22,8 +24,19 @@ class UserRestController extends AbstractRestController<User> {
     private final UserRepository userRepository;
 
     @Autowired
-    public UserRestController(UserRepository userRepository) {
+    public UserRestController(EntityControllerRegistry entityControllerRegistry, UserRepository userRepository) {
+        super(User.class, entityControllerRegistry);
         this.userRepository = userRepository;
+    }
+
+    @Override
+    protected User getOne(String id) {
+        return userRepository.findByUsername(id).get();
+    }
+
+    @Override
+    protected Page<User> getPaged(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -34,15 +47,5 @@ class UserRestController extends AbstractRestController<User> {
                 .path("/{username}")
                 .buildAndExpand(result.getUsername()).toUri());
         return new ResponseEntity<>(result, httpHeaders, HttpStatus.CREATED);
-    }
-
-    @Override
-    public Resource<User> readOne(@PathVariable String id) {
-        return ResourceLinkHelper.shallowResourceWithUuidLinks(userRepository.findByUsername(id).get());
-    }
-
-    @Override
-    public List<User> readAll() {
-        return userRepository.findAll();
     }
 }

@@ -51,10 +51,12 @@ public class ShallowCopier {
     public static class StubReference<T extends UuidIdentifiable> {
         private final String fieldName;
         private final T original;
+        private final T stub;
 
-        public StubReference(String fieldName, T original) {
+        public StubReference(String fieldName, T original, T stub) {
             this.fieldName = fieldName;
             this.original = original;
+            this.stub = stub;
         }
 
         public String getFieldName() {
@@ -63,6 +65,10 @@ public class ShallowCopier {
 
         public T getOriginal() {
             return original;
+        }
+
+        public T getStub() {
+            return stub;
         }
     }
 
@@ -189,11 +195,11 @@ public class ShallowCopier {
     }
 
     // Add a Field to the ongoing Collection of Fields that git Stubbed.
-    private static void reportStub(Collection<StubReference> stubReport, Field field, UuidIdentifiable original) {
-        if (null == stubReport) {
+    private static void reportStub(Collection<StubReference> stubReport, Field field, UuidIdentifiable original, UuidIdentifiable stub) {
+        if (null == stubReport || null == field || null == original || null == stub) {
             return;
         }
-        stubReport.add(new StubReference(field.getName(), original));
+        stubReport.add(new StubReference(field.getName(), original, stub));
     }
 
     // Copy the given field verbatim from an original object to a target of a compatible class.
@@ -234,7 +240,7 @@ public class ShallowCopier {
             UuidIdentifiable originalEntity = (UuidIdentifiable) field.get(original);
             UuidIdentifiable stub = makeStub(originalEntity);
             field.set(target, stub);
-            reportStub(stubReport, field, originalEntity);
+            reportStub(stubReport, field, originalEntity, stub);
         } catch (IllegalAccessException e) {
             logger.error("Can't assign UuidIdentifiable stub to field <"
                     + field.getName()
@@ -278,7 +284,7 @@ public class ShallowCopier {
                 if (UuidIdentifiable.class.isAssignableFrom(object.getClass())) {
                     UuidIdentifiable stub = makeStub((UuidIdentifiable) object);
                     stubCollection.add(stub);
-                    reportStub(stubReport, field, (UuidIdentifiable) object);
+                    reportStub(stubReport, field, (UuidIdentifiable) object, stub);
                 } else {
                     stubCollection.add(object);
                 }

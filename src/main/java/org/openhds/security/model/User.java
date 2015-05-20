@@ -42,9 +42,6 @@ public class User implements Serializable, UuidIdentifiable {
     @Description(description = "User's last name")
     private String lastName;
 
-    @Description(description = "User's full name")
-    private String fullName;
-
     @Description(description = "Description of the user.")
     private String description;
 
@@ -89,12 +86,9 @@ public class User implements Serializable, UuidIdentifiable {
         this.lastName = lastName;
     }
 
+    @JsonIgnore
     public String getFullName() {
         return firstName + " " + lastName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
     }
 
     public String getDescription() {

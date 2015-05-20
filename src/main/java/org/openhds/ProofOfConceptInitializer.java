@@ -58,9 +58,9 @@ public class ProofOfConceptInitializer implements CommandLineRunner {
         addLocationHierarchyLevel(1, "top-level");
         addLocationHierarchyLevel(2, "bottom-level");
 
-        addLocationHierarchy("top", null, "top-level", "fieldworker");
-        addLocationHierarchy("bottom-one", "top", "bottom-level", "fieldworker");
-        addLocationHierarchy("bottom-two", "top", "bottom-level", "fieldworker");
+        addLocationHierarchy("top", null, "top-level");
+        addLocationHierarchy("bottom-one", "top", "bottom-level");
+        addLocationHierarchy("bottom-two", "top", "bottom-level");
 
         addLocation("location-a", "bottom-one");
         addLocation("location-b", "bottom-one");
@@ -70,8 +70,8 @@ public class ProofOfConceptInitializer implements CommandLineRunner {
 
     private void addPrivileges(Privilege.Grant... grants) {
         Arrays.stream(grants)
-                .map((Privilege.Grant g) -> new Privilege(g))
-                .forEach(p -> privilegeRepository.save(p));
+                .map(Privilege::new)
+                .forEach(privilegeRepository::save);
     }
 
     private void addRole(String name, Privilege.Grant... grants) {
@@ -79,7 +79,7 @@ public class ProofOfConceptInitializer implements CommandLineRunner {
         role.setName(name);
         role.setDescription(name);
         role.setPrivileges(Arrays.stream(grants)
-                .map((Privilege.Grant g) -> new Privilege(g))
+                .map(Privilege::new)
                 .collect(toSet()));
         roleRepository.save(role);
     }
@@ -127,7 +127,7 @@ public class ProofOfConceptInitializer implements CommandLineRunner {
         locationHierarchyLevelRepository.save(locationHierarchyLevel);
     }
 
-    private void addLocationHierarchy(String name, String parentName, String levelName, String fieldWorkerName) {
+    private void addLocationHierarchy(String name, String parentName, String levelName) {
         LocationHierarchy locationHierarchy = new LocationHierarchy();
         initAuditableFields(locationHierarchy);
         initCollectedFields(locationHierarchy);
