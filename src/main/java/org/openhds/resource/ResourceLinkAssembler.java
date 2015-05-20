@@ -4,7 +4,10 @@ import org.openhds.domain.util.ShallowCopier;
 import org.openhds.domain.model.UuidIdentifiable;
 import org.openhds.resource.controller.AbstractRestController;
 import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.core.AnnotationMappingDiscoverer;
+import org.springframework.hateoas.core.MappingDiscoverer;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,11 +21,18 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  */
 public class ResourceLinkAssembler<T extends UuidIdentifiable> extends ResourceAssemblerSupport<T, Resource> {
 
+    private static final MappingDiscoverer REQUEST_MAPPING_DISCOVERER = new AnnotationMappingDiscoverer(RequestMapping.class);
+
     private final EntityControllerRegistry entityControllerRegistry;
 
     public ResourceLinkAssembler(Class<? extends AbstractRestController> controllerClass, EntityControllerRegistry entityControllerRegistry) {
         super(controllerClass, Resource.class);
         this.entityControllerRegistry = entityControllerRegistry;
+    }
+
+    public static String getControllerPath(Class<? extends AbstractRestController> controllerClass) {
+        String mapping = REQUEST_MAPPING_DISCOVERER.getMapping(controllerClass);
+        return mapping.replace("/", "");
     }
 
     @Override
@@ -47,7 +57,7 @@ public class ResourceLinkAssembler<T extends UuidIdentifiable> extends ResourceA
     private void addCollectionLink(Resource<T> resource) {
         T entity = resource.getContent();
         Class<? extends AbstractRestController> controllerClass = entityControllerRegistry.getControllerClass(entity.getClass());
-        resource.add(linkTo(controllerClass).withRel("collection"));
+        resource.add(linkTo(controllerClass).withRel(getControllerPath(controllerClass)));
     }
 
     private void addUuidLinks(Resource<T> resource, List<ShallowCopier.StubReference> stubReport) {

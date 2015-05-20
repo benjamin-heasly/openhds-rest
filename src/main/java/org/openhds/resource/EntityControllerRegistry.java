@@ -32,4 +32,8 @@ public class EntityControllerRegistry {
         }
         return null;
     }
+
+    public Map<Class<? extends UuidIdentifiable>, Class<? extends AbstractRestController>> getControllers() {
+        return new HashMap<>(controllers);
+    }
 }
