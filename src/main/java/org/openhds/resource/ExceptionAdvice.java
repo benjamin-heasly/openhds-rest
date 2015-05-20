@@ -3,6 +3,7 @@ package org.openhds.resource;
 import org.springframework.hateoas.VndErrors;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -37,13 +38,20 @@ class ExceptionAdvice {
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public VndErrors notFoundException(NoSuchElementException ex) {
-        return new VndErrors("Nothing found: ", ex.getMessage());
+        return new VndErrors("Nothing found", ex.getMessage());
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public VndErrors userNotFoundExceptionHandler(UsernameNotFoundException ex) {
-        return new VndErrors("User not found: ", ex.getMessage());
+        return new VndErrors("User not found", ex.getMessage());
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    public VndErrors userNotFoundExceptionHandler(HttpRequestMethodNotSupportedException ex) {
+        return new VndErrors("Method not allowed", ex.getMessage());
     }
 }
