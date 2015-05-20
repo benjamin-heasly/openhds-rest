@@ -2,7 +2,7 @@ package org.openhds.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.annotations.GenericGenerator;
-import org.openhds.Description;
+import org.openhds.domain.util.Description;
 import org.openhds.security.model.User;
 
 import javax.persistence.*;

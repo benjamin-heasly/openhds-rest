@@ -1,4 +1,4 @@
-package org.openhds.domain;
+package org.openhds.domain.util;
 
 
 import org.hibernate.Hibernate;

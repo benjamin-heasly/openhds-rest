@@ -1,6 +1,6 @@
 package org.openhds.security.model;
 
-import org.openhds.Description;
+import org.openhds.domain.util.Description;
 
 import javax.persistence.*;
 import java.io.Serializable;

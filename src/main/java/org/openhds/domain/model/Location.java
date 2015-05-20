@@ -1,7 +1,7 @@
 
 package org.openhds.domain.model;
 
-import org.openhds.Description;
+import org.openhds.domain.util.Description;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;

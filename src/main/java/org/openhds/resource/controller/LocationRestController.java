@@ -1,7 +1,8 @@
-package org.openhds.resource;
+package org.openhds.resource.controller;
 
 import org.openhds.domain.model.Location;
 import org.openhds.repository.LocationRepository;
+import org.openhds.resource.EntityControllerRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -1,6 +1,7 @@
 package org.openhds.resource;
 
 import org.openhds.domain.model.UuidIdentifiable;
+import org.openhds.resource.controller.AbstractRestController;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

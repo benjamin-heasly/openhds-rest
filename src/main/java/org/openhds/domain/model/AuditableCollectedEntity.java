@@ -1,6 +1,6 @@
 package org.openhds.domain.model;
 
-import org.openhds.Description;
+import org.openhds.domain.util.Description;
 
 import javax.persistence.FetchType;
 import javax.persistence.ManyToOne;

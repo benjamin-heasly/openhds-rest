@@ -1,4 +1,4 @@
-package org.openhds;
+package org.openhds.domain.util;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
