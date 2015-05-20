@@ -10,10 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Use reflection to make a shallow copy of a UuidIdentifiable object.
@@ -32,8 +29,8 @@ import java.util.Set;
  * no-argument constructors that produce "default" or "blank" objects.  It also assumes
  * that Collection fields will be initialized statically or in the constructor.
  * <p>
- * If provided, populates a Collection of StubReferences indicating which objects were
- * converted to stubs.  The StubReferences will point to the original objects, that were
+ * If provided, populates a List of StubReferences indicating which objects were
+ * converted to stubs.  The StubReferences will point to the original objects that were
  * converted to stubs.  That way, the caller has the option to supplement the stubs.
  * <p>
  * This ShallowCopier had an unfortunate dependency on Hibernate.  This is necessary
@@ -70,7 +67,7 @@ public class ShallowCopier {
     }
 
     // Make a shallow copy of the given object.  Report which objects got converted to stubs.
-    public static <T extends UuidIdentifiable> T makeShallowCopy(T original, Collection<StubReference> stubReport) {
+    public static <T extends UuidIdentifiable> T makeShallowCopy(T original, List<StubReference> stubReport) {
         if (null == original) {
             return null;
         }
@@ -168,7 +165,7 @@ public class ShallowCopier {
     }
 
     // Copy multiple fields from an original object to a target of a compatible class.  Make and report stubs as necessary.
-    private static void assignAllFields(UuidIdentifiable original, UuidIdentifiable target, Set<Field> fields, Collection<StubReference> stubReport) {
+    private static void assignAllFields(UuidIdentifiable original, UuidIdentifiable target, Set<Field> fields, List<StubReference> stubReport) {
         if (null == original || null == target || null == fields) {
             return;
         }
@@ -218,7 +215,7 @@ public class ShallowCopier {
     }
 
     // Make a stub based on original an object's UuidIdentifiable field and assign it to a target of a compatible class.
-    private static void assignStub(UuidIdentifiable original, UuidIdentifiable target, Field field, Collection<StubReference> stubReport) {
+    private static void assignStub(UuidIdentifiable original, UuidIdentifiable target, Field field, List<StubReference> stubReport) {
         if (null == original || null == target || null == field) {
             return;
         }
@@ -247,7 +244,7 @@ public class ShallowCopier {
     }
 
     // Copy elements from an original object's Collection to a compatible target's Collection.  Make stubs as necessary.
-    private static void addStubsToCollection(UuidIdentifiable original, UuidIdentifiable target, Field field, Collection<StubReference> stubReport) {
+    private static void addStubsToCollection(UuidIdentifiable original, UuidIdentifiable target, Field field, List<StubReference> stubReport) {
         if (null == original || null == target || null == field) {
             return;
         }

@@ -28,7 +28,7 @@ public class ResourceLinkHelper {
 
     public static <T extends UuidIdentifiable> Resource<T> shallowResourceWithUuidLinks(T item) {
 
-        Set<ShallowCopier.StubReference> stubReport = new TreeSet<ShallowCopier.StubReference>(new AlphabeticalFields());
+        List<ShallowCopier.StubReference> stubReport = new ArrayList<>();
         T copy = ShallowCopier.makeShallowCopy(item, stubReport);
 
         Resource<T> resource = new Resource<T>(item);
@@ -50,7 +50,7 @@ public class ResourceLinkHelper {
         resource.add(linkTo(methodOn(controllerClass).readOne(item.getUuid())).withSelfRel());
     }
 
-    private static <T extends UuidIdentifiable> void addUuidLinks(Resource<T> resource, Set<ShallowCopier.StubReference> stubReport) {
+    private static <T extends UuidIdentifiable> void addUuidLinks(Resource<T> resource, List<ShallowCopier.StubReference> stubReport) {
         for (ShallowCopier.StubReference stubReference: stubReport) {
             UuidIdentifiable original = stubReference.getOriginal();
             Class<? extends AbstractRestController> controllerClass = controllerClassForItem(original);
@@ -65,12 +65,5 @@ public class ResourceLinkHelper {
             return controllerClasses.get(itemClass);
         }
         throw new RuntimeException("No Controller exists for items of class: " + itemClass);
-    }
-
-    private static class AlphabeticalFields implements Comparator<ShallowCopier.StubReference> {
-        @Override
-        public int compare(ShallowCopier.StubReference o1, ShallowCopier.StubReference o2) {
-            return o1.getFieldName().compareTo(o2.getFieldName());
-        }
     }
 }
