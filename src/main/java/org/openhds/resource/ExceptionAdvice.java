@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.NoSuchElementException;
 
 /**
@@ -23,7 +25,12 @@ class ExceptionAdvice {
     @ResponseBody
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public VndErrors generalException(Exception ex) {
-        return new VndErrors(ex.getClass().getSimpleName() + ": ", ex.getMessage());
+        // print full stack trace for unexpected errors
+        StringWriter writer = new StringWriter();
+        PrintWriter printWriter = new PrintWriter( writer );
+        ex.printStackTrace( printWriter );
+        printWriter.flush();
+        return new VndErrors(ex.getClass().getSimpleName() + ": " + ex.getMessage(), writer.toString());
     }
 
     @ExceptionHandler(NoSuchElementException.class)
