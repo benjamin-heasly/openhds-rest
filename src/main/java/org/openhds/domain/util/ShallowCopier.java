@@ -79,7 +79,7 @@ public class ShallowCopier {
         }
 
         T copy = newDefaultBlank(original);
-        Set<Field> allFields = getAllFields(original);
+        Set<Field> allFields = getAllFields(copy);
         assignAllFields(original, copy, allFields, stubReport);
         return copy;
     }
