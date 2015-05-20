@@ -31,9 +31,23 @@ public class ResourceLinkAssembler<T extends UuidIdentifiable> extends ResourceA
         T copy = ShallowCopier.makeShallowCopy(entity, stubReport);
 
         Resource<T> resource = new Resource<T>(copy);
+        addSelfLink(resource);
+        addCollectionLink(resource);
         addUuidLinks(resource, stubReport);
 
         return resource;
+    }
+
+    private void addSelfLink(Resource<T> resource) {
+        T entity = resource.getContent();
+        Class<? extends AbstractRestController> controllerClass = entityControllerRegistry.getControllerClass(entity.getClass());
+        resource.add(linkTo(methodOn(controllerClass).readOneCanonical(entity.getUuid())).withSelfRel());
+    }
+
+    private void addCollectionLink(Resource<T> resource) {
+        T entity = resource.getContent();
+        Class<? extends AbstractRestController> controllerClass = entityControllerRegistry.getControllerClass(entity.getClass());
+        resource.add(linkTo(controllerClass).withRel("collection"));
     }
 
     private void addUuidLinks(Resource<T> resource, List<ShallowCopier.StubReference> stubReport) {
