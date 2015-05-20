@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * Common interface for REST controllers.
  *
- * readOne() and readAll() are required for automatic HATEOAS link building.
+ * readOneCanonical() is required for automatic HATEOAS link building.
  *
  */
 @RestController
@@ -31,19 +31,19 @@ public abstract class AbstractRestController <T extends UuidIdentifiable> {
         resourceLinkAssembler = new ResourceLinkAssembler<>(this.getClass(), entityControllerRegistry);
     }
 
-    protected abstract T getOne(String id);
+    protected abstract T findOne(String id);
 
-    protected abstract Page<T> getPaged(Pageable pageable);
+    protected abstract Page<T> findPaged(Pageable pageable);
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Resource<T> readOne(@PathVariable String id) {
-        T entity = getOne(id);
+    public Resource<T> readOneCanonical(@PathVariable String id) {
+        T entity = findOne(id);
         return resourceLinkAssembler.toResource(entity);
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public PagedResources<T> readAll(Pageable pageable, PagedResourcesAssembler assembler) {
-        Page<T> entities = getPaged(pageable);
+        Page<T> entities = findPaged(pageable);
         return assembler.toResource(entities, resourceLinkAssembler);
     }
 

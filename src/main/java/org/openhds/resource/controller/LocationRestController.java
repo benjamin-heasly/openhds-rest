@@ -25,12 +25,12 @@ class LocationRestController extends AbstractRestController<Location> {
     }
 
     @Override
-    protected Location getOne(String id) {
-        return locationRepository.findByExtId(id).get();
+    protected Location findOne(String id) {
+        return locationRepository.findOne(id);
     }
 
     @Override
-    protected Page<Location> getPaged(Pageable pageable) {
+    protected Page<Location> findPaged(Pageable pageable) {
         return locationRepository.findAll(pageable);
     }
 }

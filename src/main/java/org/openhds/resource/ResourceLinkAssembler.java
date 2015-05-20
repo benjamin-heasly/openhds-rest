@@ -42,7 +42,7 @@ public class ResourceLinkAssembler<T extends UuidIdentifiable> extends ResourceA
 
             if (entityControllerRegistry.isRegistered(stub.getClass())) {
                 Class<? extends AbstractRestController> controllerClass = entityControllerRegistry.getControllerClass(stub.getClass());
-                resource.add(linkTo(methodOn(controllerClass).readOne(stub.getUuid())).withRel(stubReference.getFieldName()));
+                resource.add(linkTo(methodOn(controllerClass).readOneCanonical(stub.getUuid())).withRel(stubReference.getFieldName()));
             }
         }
     }

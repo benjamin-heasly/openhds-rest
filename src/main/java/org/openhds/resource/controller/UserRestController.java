@@ -31,12 +31,12 @@ class UserRestController extends AbstractRestController<User> {
     }
 
     @Override
-    protected User getOne(String id) {
-        return userRepository.findByUsername(id).get();
+    protected User findOne(String id) {
+        return userRepository.findOne(id);
     }
 
     @Override
-    protected Page<User> getPaged(Pageable pageable) {
+    protected Page<User> findPaged(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
 
