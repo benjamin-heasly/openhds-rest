@@ -1,4 +1,4 @@
-package org.openhds;
+package org.openhds.domain.util;
 
 import org.openhds.domain.model.*;
 import org.openhds.repository.*;
@@ -6,7 +6,7 @@ import org.openhds.security.model.Privilege;
 import org.openhds.security.model.Role;
 import org.openhds.security.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -17,9 +17,10 @@ import static java.util.stream.Collectors.toSet;
 /**
  * Created by Ben on 5/18/15.
  * <p>
- * This is just for proof of concept.  Initialize the db with some OpenHDS test objects.
+ * Initialize the db with some OpenHDS sample objects.
  */
-public class ProofOfConceptInitializer implements CommandLineRunner {
+@Component
+public class SampleDataGenerator {
 
     @Autowired
     private PrivilegeRepository privilegeRepository;
@@ -42,8 +43,19 @@ public class ProofOfConceptInitializer implements CommandLineRunner {
     @Autowired
     private LocationRepository locationRepository;
 
-    @Override
-    public void run(String... args) throws Exception {
+    public void clearData() {
+        locationRepository.deleteAllInBatch();
+        locationHierarchyRepository.deleteAllInBatch();
+        locationHierarchyLevelRepository.deleteAllInBatch();
+
+        fieldWorkerRepository.deleteAllInBatch();
+
+        userRepository.deleteAllInBatch();
+        roleRepository.deleteAllInBatch();
+        privilegeRepository.deleteAllInBatch();
+    }
+
+    public void generateSampleData() {
         addPrivileges(Privilege.Grant.values());
 
         addRole("user-role", Privilege.Grant.values());

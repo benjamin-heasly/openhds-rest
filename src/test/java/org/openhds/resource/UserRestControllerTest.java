@@ -40,7 +40,8 @@ public class UserRestControllerTest extends AbstractRestControllerTest {
     @Test
     @WithMockUser(username = username, password = password)
     public void readSingleUser() throws Exception {
-        mockMvc.perform(get("/users/user"))
+        User user = userRepository.findByUsername("user").get();
+        mockMvc.perform(get("/users/" + user.getUuid()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
                 .andExpect(jsonPath("$.username", is(username)));
@@ -51,8 +52,8 @@ public class UserRestControllerTest extends AbstractRestControllerTest {
     public void readUsers() throws Exception {
         mockMvc.perform(get("/users"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(regularJson))
-                .andExpect(jsonPath("$", hasSize(2)));
+                .andExpect(content().contentType(halJson))
+                .andExpect(jsonPath("$._embedded.userList", hasSize(2)));
     }
 
     @Test
@@ -69,9 +70,5 @@ public class UserRestControllerTest extends AbstractRestControllerTest {
                 .contentType(regularJson)
                 .content(userJson))
                 .andExpect(status().isCreated());
-
-        // TODO: test setup should handle database isolation for all tests
-        User toDelete = userRepository.findByUsername("test-username").get();
-        userRepository.delete(toDelete);
     }
 }

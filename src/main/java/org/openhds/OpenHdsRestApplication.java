@@ -1,5 +1,6 @@
 package org.openhds;
 
+import org.openhds.domain.util.SampleDataGenerator;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,8 +24,11 @@ import java.io.IOException;
 public class OpenHdsRestApplication {
 
     @Bean
-    public CommandLineRunner initOpenHDS() {
-        return new ProofOfConceptInitializer();
+    public CommandLineRunner initOpenHDS(SampleDataGenerator sampleDataGenerator) {
+        return (args) -> {
+            sampleDataGenerator.clearData();
+            sampleDataGenerator.generateSampleData();
+        };
     }
 
     @Bean

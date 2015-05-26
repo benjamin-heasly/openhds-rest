@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.openhds.OpenHdsRestApplication;
+import org.openhds.domain.util.SampleDataGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.hateoas.MediaTypes;
@@ -52,6 +53,9 @@ public abstract class AbstractRestControllerTest {
     protected WebApplicationContext webApplicationContext;
 
     @Autowired
+    private SampleDataGenerator sampleDataGenerator;
+
+    @Autowired
     private void setConverters(HttpMessageConverter<?>[] converters) {
         this.messageConverter = Arrays.asList(converters)
                 .stream()
@@ -63,6 +67,9 @@ public abstract class AbstractRestControllerTest {
 
     @Before
     public void setup() throws Exception {
+        sampleDataGenerator.clearData();
+        sampleDataGenerator.generateSampleData();
+
         this.mockMvc = webAppContextSetup(webApplicationContext)
                 .apply(springSecurity())
                 .build();
