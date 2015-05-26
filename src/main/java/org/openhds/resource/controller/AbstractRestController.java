@@ -28,7 +28,7 @@ public abstract class AbstractRestController <T extends UuidIdentifiable> {
 
     public AbstractRestController(Class<T> entityClass, EntityControllerRegistry entityControllerRegistry) {
         entityControllerRegistry.register(entityClass, this.getClass());
-        resourceLinkAssembler = new ResourceLinkAssembler<>(this.getClass(), entityControllerRegistry);
+        resourceLinkAssembler = new ResourceLinkAssembler<>(entityControllerRegistry);
     }
 
     protected abstract T findOne(String id);

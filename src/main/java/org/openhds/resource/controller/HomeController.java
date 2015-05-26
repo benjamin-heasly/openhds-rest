@@ -53,6 +53,7 @@ public class HomeController {
 
     private void addControllerLinks(Resource<String> resource) {
         for (Class<? extends AbstractRestController> controllerClass : entityControllerRegistry.getControllers().values()) {
+            // using controller class-level request mapping as the HATEOAS "rel" name
             resource.add(linkTo(controllerClass).withRel(getControllerPath(controllerClass)));
         }
     }
