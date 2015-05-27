@@ -8,8 +8,14 @@ import org.openhds.repository.LocationHierarchyRepository;
 import org.openhds.repository.LocationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MvcResult;
 
+import java.util.UUID;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -51,5 +57,23 @@ public class LocationRestControllerTest extends AbstractRestControllerTest {
                 .contentType(regularJson))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(halJson));
+    }
+
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void putNewLocation() throws Exception {
+
+        final String uuid = UUID.randomUUID().toString();
+
+        String jsonBody = this.toJson(makeLocationRegistration("bottom-one", "test-location"));
+        MvcResult mvcResult = mockMvc.perform(put("/locations/" + uuid)
+                .content(jsonBody)
+                .contentType(regularJson))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(halJson))
+                .andReturn();
+
+        String selfHref = extractJsonPath(mvcResult, "$._links.self.href");
+        assertThat(selfHref, containsString(uuid));
     }
 }

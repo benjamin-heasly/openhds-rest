@@ -15,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Calendar;
-import java.util.UUID;
 
 /**
  * Created by Ben on 5/18/15.
@@ -83,7 +82,6 @@ class LocationRestController extends AbstractRestController<Location> {
         location.setCollectedBy(fieldWorkerRepository.findOne(locationRegistration.getCollectedByUuid()));
         location.setLocationHierarchy(locationHierarchyRepository.findOne(locationRegistration.getLocationHierarchyUuid()));
         location.setInsertDate(Calendar.getInstance());
-        location.setUuid(UUID.randomUUID().toString().replace("-", ""));
 
         return locationRepository.save(location);
     }
