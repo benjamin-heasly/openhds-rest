@@ -1,5 +1,6 @@
 package org.openhds.security.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ import java.util.Set;
         "Roles are assigned to Users who may then act in OpenHDS with all of the associated Grant")
 @Entity
 @Table(name = "role")
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class Role implements Serializable {
 
     static final long serialVersionUID = 21L;
