@@ -24,7 +24,7 @@ public class UserRestControllerTest extends AbstractRestControllerTest {
     @WithMockUser(username = "invalid", password = "invalid", roles = {""})
     public void forbiddenUser() throws Exception {
         mockMvc.perform(post("/users/")
-                .content(this.json(new User()))
+                .content(this.toJson(new User()))
                 .contentType(halJson))
                 .andExpect(status().isForbidden());
     }
@@ -32,7 +32,7 @@ public class UserRestControllerTest extends AbstractRestControllerTest {
     @Test
     public void noUser() throws Exception {
         mockMvc.perform(post("/users/")
-                .content(this.json(new User()))
+                .content(this.toJson(new User()))
                 .contentType(halJson))
                 .andExpect(status().isUnauthorized());
     }
@@ -65,7 +65,7 @@ public class UserRestControllerTest extends AbstractRestControllerTest {
         newUser.setUsername("test-username");
         newUser.setPassword("password");
 
-        String userJson = json(newUser);
+        String userJson = toJson(newUser);
         this.mockMvc.perform(post("/users")
                 .contentType(regularJson)
                 .content(userJson))

@@ -21,8 +21,8 @@ public abstract class AuditableEntity implements UuidIdentifiable, Serializable 
     private static final long serialVersionUID = -4703049354466276068L;
 
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
+    @GeneratedValue(generator = "uuidIfMissing")
+    @GenericGenerator(name = "uuidIfMissing", strategy = "org.openhds.repository.util.IfMissingUuidGenerator")
     @Column(length = 36)
     protected String uuid;
 
