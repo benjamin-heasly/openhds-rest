@@ -1,6 +1,8 @@
 
 package org.openhds.domain.model;
 
+import org.openhds.domain.contract.AuditableCollectedEntity;
+import org.openhds.domain.contract.ExtIdIdentifiable;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.CascadeType;
@@ -18,7 +20,7 @@ import java.io.Serializable;
 @Description(description = "A distinct Location in the study area, at a particular LocationHierarchy.")
 @Entity
 @Table(name = "location")
-public class Location extends AuditableCollectedEntity implements Serializable {
+public class Location extends AuditableCollectedEntity implements ExtIdIdentifiable, Serializable {
 
     public final static long serialVersionUID = 169551578162260199L;
 
@@ -53,6 +55,16 @@ public class Location extends AuditableCollectedEntity implements Serializable {
     //@OneToMany(targetEntity = org.openhds.domain.model.Residency.class)
     //@JoinColumn(name = "location_uuid")
     //private List<Residency> residencies = new ArrayList<Residency>();
+
+    @Override
+    public String getExtId() {
+        return extId;
+    }
+
+    @Override
+    public void setExtId(String extId) {
+        this.extId = extId;
+    }
 
     // Extensions for bioko island project
     @Description(description = "The number of this building within a sector")
@@ -97,14 +109,6 @@ public class Location extends AuditableCollectedEntity implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getExtId() {
-        return extId;
-    }
-
-    public void setExtId(String id) {
-        extId = id;
     }
 
     public String getName() {

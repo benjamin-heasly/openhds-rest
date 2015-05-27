@@ -1,5 +1,7 @@
 package org.openhds.domain.util;
 
+import org.openhds.domain.contract.AuditableCollectedEntity;
+import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.domain.model.*;
 import org.openhds.repository.*;
 import org.openhds.security.model.Privilege;

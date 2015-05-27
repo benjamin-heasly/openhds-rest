@@ -1,6 +1,6 @@
 package org.openhds.domain.registration;
 
-import org.openhds.domain.model.UuidIdentifiable;
+import org.openhds.domain.contract.UuidIdentifiable;
 
 import java.util.Calendar;
 

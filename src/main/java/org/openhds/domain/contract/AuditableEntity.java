@@ -1,4 +1,4 @@
-package org.openhds.domain.model;
+package org.openhds.domain.contract;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.annotations.GenericGenerator;

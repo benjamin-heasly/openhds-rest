@@ -1,5 +1,7 @@
 package org.openhds.domain.model;
 
+import org.openhds.domain.contract.AuditableEntity;
+import org.openhds.domain.contract.ExtIdIdentifiable;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.Entity;
@@ -11,7 +13,7 @@ import java.io.Serializable;
 @Description(description = "A Field Worker represents a surveyor working in the study area.")
 @Entity
 @Table(name = "fieldworker")
-public class FieldWorker extends AuditableEntity implements Serializable {
+public class FieldWorker extends AuditableEntity implements ExtIdIdentifiable, Serializable {
 
     private static final long serialVersionUID = -7550088299362704483L;
 
@@ -36,6 +38,15 @@ public class FieldWorker extends AuditableEntity implements Serializable {
     @Description(description = "The ID prefix used in individual extId generation.")
     int idPrefix;
 
+    @Override
+    public String getExtId() {
+        return extId;
+    }
+
+    @Override
+    public void setExtId(String extId) {
+        this.extId = extId;
+    }
 
     public int getIdPrefix() {
         return idPrefix;
@@ -43,14 +54,6 @@ public class FieldWorker extends AuditableEntity implements Serializable {
 
     public void setIdPrefix(int idPrefix) {
         this.idPrefix = idPrefix;
-    }
-
-    public String getExtId() {
-        return extId;
-    }
-
-    public void setExtId(String extId) {
-        this.extId = extId;
     }
 
     public String getFirstName() {

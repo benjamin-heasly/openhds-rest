@@ -1,5 +1,7 @@
 package org.openhds.domain.model;
 
+import org.openhds.domain.contract.AuditableCollectedEntity;
+import org.openhds.domain.contract.ExtIdIdentifiable;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.CascadeType;
@@ -12,7 +14,7 @@ import java.io.Serializable;
 @Description(description = "A node in treelike representation of the study area geography.")
 @Entity
 @Table(name = "locationhierarchy")
-public class LocationHierarchy extends AuditableCollectedEntity implements Serializable {
+public class LocationHierarchy extends AuditableCollectedEntity implements ExtIdIdentifiable, Serializable {
 
     private static final long serialVersionUID = -5334850119671675888L;
 
@@ -32,10 +34,12 @@ public class LocationHierarchy extends AuditableCollectedEntity implements Seria
     @ManyToOne
     private LocationHierarchyLevel level;
 
+    @Override
     public String getExtId() {
         return extId;
     }
 
+    @Override
     public void setExtId(String extId) {
         this.extId = extId;
     }
