@@ -3,8 +3,8 @@ package org.openhds.security.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.annotations.GenericGenerator;
-import org.openhds.domain.util.Description;
 import org.openhds.domain.model.UuidIdentifiable;
+import org.openhds.domain.util.Description;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -30,7 +30,8 @@ public class User implements Serializable, UuidIdentifiable {
 
     @Id
     @GeneratedValue(generator = "uuidIfMissing")
-    @GenericGenerator(name = "uuidIfMissing", strategy = "org.openhds.repository.util.IfMissingUuidGenerator")
+    @GenericGenerator(name = "uuidIfMissing",
+            strategy = "org.openhds.repository.util.IfMissingUuidGenerator")
     @Column(length = 36)
     private String uuid;
 

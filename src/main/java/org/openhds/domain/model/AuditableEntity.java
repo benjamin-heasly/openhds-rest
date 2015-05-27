@@ -22,7 +22,8 @@ public abstract class AuditableEntity implements UuidIdentifiable, Serializable 
 
     @Id
     @GeneratedValue(generator = "uuidIfMissing")
-    @GenericGenerator(name = "uuidIfMissing", strategy = "org.openhds.repository.util.IfMissingUuidGenerator")
+    @GenericGenerator(name = "uuidIfMissing",
+            strategy = "org.openhds.repository.util.IfMissingUuidGenerator")
     @Column(length = 36)
     protected String uuid;
 

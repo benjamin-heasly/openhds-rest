@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.UUID;
 
-import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.endsWith;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -74,6 +74,6 @@ public class LocationRestControllerTest extends AbstractRestControllerTest {
                 .andReturn();
 
         String selfHref = extractJsonPath(mvcResult, "$._links.self.href");
-        assertThat(selfHref, containsString(uuid));
+        assertThat(selfHref, endsWith(uuid));
     }
 }
