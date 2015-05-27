@@ -1,4 +1,4 @@
-package org.openhds.domain.model;
+package org.openhds.domain.contract;
 
 /**
  * Identify entities that can be identified by a uuid.
@@ -7,8 +7,8 @@ package org.openhds.domain.model;
  */
 public interface UuidIdentifiable {
 
-    public String getUuid();
+    String getUuid();
 
-    public void setUuid(String uuid);
+    void setUuid(String uuid);
 
 }

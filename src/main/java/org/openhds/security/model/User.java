@@ -3,7 +3,7 @@ package org.openhds.security.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.annotations.GenericGenerator;
-import org.openhds.domain.model.UuidIdentifiable;
+import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.*;

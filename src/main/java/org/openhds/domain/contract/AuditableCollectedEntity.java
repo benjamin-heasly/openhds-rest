@@ -1,5 +1,6 @@
-package org.openhds.domain.model;
+package org.openhds.domain.contract;
 
+import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.FetchType;

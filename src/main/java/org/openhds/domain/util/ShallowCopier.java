@@ -3,7 +3,7 @@ package org.openhds.domain.util;
 
 import org.hibernate.Hibernate;
 import org.hibernate.proxy.HibernateProxy;
-import org.openhds.domain.model.UuidIdentifiable;
+import org.openhds.domain.contract.UuidIdentifiable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

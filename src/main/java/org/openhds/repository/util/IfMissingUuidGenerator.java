@@ -3,7 +3,7 @@ package org.openhds.repository.util;
 import org.hibernate.HibernateException;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.id.IdentifierGenerator;
-import org.openhds.domain.model.UuidIdentifiable;
+import org.openhds.domain.contract.UuidIdentifiable;
 
 import java.io.Serializable;
 import java.util.UUID;
