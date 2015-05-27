@@ -31,7 +31,7 @@ public class LocationRestControllerTest extends AbstractRestControllerTest {
 
     @Test
     @WithMockUser(username = username, password = password)
-    public void postLocation() throws Exception {
+    public void postNewLocation() throws Exception {
         LocationHierarchy locationHierarchy = locationHierarchyRepository.findByExtId("bottom-one").get();
 
         Location location = new Location();
@@ -44,7 +44,9 @@ public class LocationRestControllerTest extends AbstractRestControllerTest {
         locationRegistration.setLocationHierarchyUuid(locationHierarchy.getUuid());
 
         String jsonBody = this.toJson(locationRegistration);
-        mockMvc.perform(post("/locations").content(jsonBody))
+        mockMvc.perform(post("/locations")
+                .content(jsonBody)
+                .contentType(regularJson))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(halJson));
     }

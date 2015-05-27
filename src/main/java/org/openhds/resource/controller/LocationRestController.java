@@ -63,7 +63,8 @@ class LocationRestController extends AbstractRestController<Location> {
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.CREATED)
     Resource<Location> replace(@RequestBody LocationRegistration locationRegistration, @PathVariable String id) {
-        Location location = registerLocation(locationRegistration, id);
+        locationRegistration.getLocation().setUuid(id);
+        Location location = registerLocation(locationRegistration);
         return resourceLinkAssembler.toResource(location);
     }
 
@@ -79,11 +80,5 @@ class LocationRestController extends AbstractRestController<Location> {
         location.setUuid(UUID.randomUUID().toString().replace("-", ""));
 
         return locationRepository.save(location);
-    }
-
-    // TODO: this belongs in a Location service.  Ben and Wolfe collab.
-    private Location registerLocation(LocationRegistration locationRegistration, String id) {
-        locationRegistration.getLocation().setUuid(id);
-        return registerLocation(locationRegistration);
     }
 }
