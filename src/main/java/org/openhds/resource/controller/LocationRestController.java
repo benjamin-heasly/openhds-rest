@@ -1,8 +1,8 @@
 package org.openhds.resource.controller;
 
 import org.openhds.domain.model.Location;
-import org.openhds.domain.model.LocationHierarchy;
 import org.openhds.domain.registration.LocationRegistration;
+import org.openhds.repository.FieldWorkerRepository;
 import org.openhds.repository.LocationHierarchyRepository;
 import org.openhds.repository.LocationRepository;
 import org.openhds.repository.UserRepository;
@@ -30,15 +30,19 @@ class LocationRestController extends AbstractRestController<Location> {
 
     private final UserRepository userRepository;
 
+    private final FieldWorkerRepository fieldWorkerRepository;
+
     @Autowired
     public LocationRestController(EntityControllerRegistry entityControllerRegistry,
                                   LocationRepository locationRepository,
                                   LocationHierarchyRepository locationHierarchyRepository,
-                                  UserRepository userRepository) {
+                                  UserRepository userRepository,
+                                  FieldWorkerRepository fieldWorkerRepository) {
         super(Location.class, entityControllerRegistry);
         this.locationRepository = locationRepository;
         this.locationHierarchyRepository = locationHierarchyRepository;
         this.userRepository = userRepository;
+        this.fieldWorkerRepository = fieldWorkerRepository;
     }
 
     @Override
@@ -70,12 +74,14 @@ class LocationRestController extends AbstractRestController<Location> {
 
     // TODO: this belongs in a Location service.  Ben and Wolfe collab.
     private Location registerLocation(LocationRegistration locationRegistration) {
-        LocationHierarchy locationHierarchy = locationHierarchyRepository.findOne(locationRegistration.getLocationHierarchyUuid());
         Location location = locationRegistration.getLocation();
 
         // TODO: this should come from the authenticated Principal
         location.setInsertBy(userRepository.findAll().get(0));
-        location.setLocationHierarchy(locationHierarchy);
+
+        // fill in auditable fields
+        location.setCollectedBy(fieldWorkerRepository.findOne(locationRegistration.getCollectedByUuid()));
+        location.setLocationHierarchy(locationHierarchyRepository.findOne(locationRegistration.getLocationHierarchyUuid()));
         location.setInsertDate(Calendar.getInstance());
         location.setUuid(UUID.randomUUID().toString().replace("-", ""));
 

@@ -2,7 +2,6 @@ package org.openhds.resource;
 
 import org.junit.Test;
 import org.openhds.domain.model.Location;
-import org.openhds.domain.model.LocationHierarchy;
 import org.openhds.domain.registration.LocationRegistration;
 import org.openhds.repository.FieldWorkerRepository;
 import org.openhds.repository.LocationHierarchyRepository;
@@ -29,21 +28,24 @@ public class LocationRestControllerTest extends AbstractRestControllerTest {
     @Autowired
     private LocationHierarchyRepository locationHierarchyRepository;
 
-    @Test
-    @WithMockUser(username = username, password = password)
-    public void postNewLocation() throws Exception {
-        LocationHierarchy locationHierarchy = locationHierarchyRepository.findByExtId("bottom-one").get();
-
+    private LocationRegistration makeLocationRegistration(String hierarchyName, String name) {
         Location location = new Location();
-        location.setName("new-location");
-        location.setExtId("new-location");
-        location.setCollectedBy(fieldWorkerRepository.findAll().get(0));
+        location.setName(name);
+        location.setExtId(name);
 
         LocationRegistration locationRegistration = new LocationRegistration();
         locationRegistration.setLocation(location);
-        locationRegistration.setLocationHierarchyUuid(locationHierarchy.getUuid());
+        locationRegistration.setLocationHierarchyUuid(locationHierarchyRepository.findByExtId(hierarchyName).get().getUuid());
+        locationRegistration.setCollectedByUuid(fieldWorkerRepository.findAll().get(0).getUuid());
 
-        String jsonBody = this.toJson(locationRegistration);
+        return locationRegistration;
+    }
+
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void postNewLocation() throws Exception {
+
+        String jsonBody = this.toJson(makeLocationRegistration("bottom-one", "test-location"));
         mockMvc.perform(post("/locations")
                 .content(jsonBody)
                 .contentType(regularJson))
