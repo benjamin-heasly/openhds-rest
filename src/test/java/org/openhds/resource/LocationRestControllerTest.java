@@ -43,7 +43,8 @@ public class LocationRestControllerTest extends AbstractRestControllerTest {
         locationRegistration.setLocation(location);
         locationRegistration.setLocationHierarchyUuid(locationHierarchy.getUuid());
 
-        mockMvc.perform(post("/locations").content(this.json(locationRegistration)))
+        String jsonBody = this.toJson(locationRegistration);
+        mockMvc.perform(post("/locations").content(jsonBody))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(halJson));
     }

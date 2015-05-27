@@ -75,7 +75,7 @@ public abstract class AbstractRestControllerTest {
                 .build();
     }
 
-    protected String json(Object o) throws IOException {
+    protected String toJson(Object o) throws IOException {
         MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
         this.messageConverter.write(o, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
         return mockHttpOutputMessage.getBodyAsString();
