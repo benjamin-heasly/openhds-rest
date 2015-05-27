@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.endsWith;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -57,6 +58,32 @@ public class LocationRestControllerTest extends AbstractRestControllerTest {
                 .contentType(regularJson))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(halJson));
+    }
+
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void postUpdateLocation() throws Exception {
+
+        String newName = UUID.randomUUID().toString();
+        Location oldLocation = locationRepository.findByExtId("location-a").get();
+        oldLocation.setName(newName);
+
+        LocationRegistration locationRegistration = new LocationRegistration();
+        locationRegistration.setLocation(oldLocation);
+        locationRegistration.setLocationHierarchyUuid(oldLocation.getLocationHierarchy().getUuid());
+        locationRegistration.setCollectedByUuid(fieldWorkerRepository.findAll().get(0).getUuid());
+
+        String jsonBody = this.toJson(locationRegistration);
+        mockMvc.perform(post("/locations")
+                .content(jsonBody)
+                .contentType(regularJson))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(halJson))
+                .andReturn();
+
+        Location updatedLocation = locationRepository.findByExtId("location-a").get();
+        assertEquals(oldLocation.getUuid(), updatedLocation.getUuid());
+        assertEquals(newName, updatedLocation.getName());
     }
 
     @Test
