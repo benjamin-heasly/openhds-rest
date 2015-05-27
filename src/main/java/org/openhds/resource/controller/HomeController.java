@@ -1,7 +1,8 @@
 package org.openhds.resource.controller;
 
-import org.openhds.resource.EntityControllerRegistry;
+import org.openhds.resource.ResourceLinkAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityLinks;
 import org.springframework.hateoas.Resource;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.Clock;
 import java.time.OffsetDateTime;
 
-import static org.openhds.resource.ResourceLinkAssembler.getControllerPath;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
@@ -24,11 +24,15 @@ public class HomeController {
 
     private static final String CONTENTS_REL = "contents";
 
-    private final EntityControllerRegistry entityControllerRegistry;
+    private final EntityLinks entityLinks;
+
+    private final ResourceLinkAssembler resourceLinkAssembler;
 
     @Autowired
-    public HomeController(EntityControllerRegistry entityControllerRegistry) {
-        this.entityControllerRegistry = entityControllerRegistry;
+    public HomeController(EntityLinks entityLinks,
+                          ResourceLinkAssembler resourceLinkAssembler) {
+        this.entityLinks = entityLinks;
+        this.resourceLinkAssembler = resourceLinkAssembler;
     }
 
     @RequestMapping("/")
@@ -52,9 +56,9 @@ public class HomeController {
     }
 
     private void addControllerLinks(Resource<String> resource) {
-        for (Class<? extends AbstractRestController> controllerClass : entityControllerRegistry.getControllers().values()) {
-            // using controller class-level request mapping as the HATEOAS "rel" name
-            resource.add(linkTo(controllerClass).withRel(getControllerPath(controllerClass)));
+        for (Class<?> entityClass : resourceLinkAssembler.getEntitiesToControllers().keySet()) {
+            resource.add(entityLinks.linkToCollectionResource(entityClass)
+                    .withRel(resourceLinkAssembler.getControllerRel(entityClass)));
         }
     }
 }

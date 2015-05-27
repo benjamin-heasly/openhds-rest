@@ -1,7 +1,6 @@
 package org.openhds.resource.controller;
 
 import org.openhds.domain.contract.UuidIdentifiable;
-import org.openhds.resource.EntityControllerRegistry;
 import org.openhds.resource.ResourceLinkAssembler;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,11 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public abstract class AbstractRestController <T extends UuidIdentifiable> {
 
-    protected final ResourceLinkAssembler<T> resourceLinkAssembler;
+    protected final ResourceLinkAssembler resourceLinkAssembler;
 
-    public AbstractRestController(Class<T> entityClass, EntityControllerRegistry entityControllerRegistry) {
-        entityControllerRegistry.register(entityClass, this.getClass());
-        resourceLinkAssembler = new ResourceLinkAssembler<>(entityControllerRegistry);
+    public AbstractRestController(ResourceLinkAssembler resourceLinkAssembler) {
+        this.resourceLinkAssembler = resourceLinkAssembler;
     }
 
     protected abstract T findOne(String id);

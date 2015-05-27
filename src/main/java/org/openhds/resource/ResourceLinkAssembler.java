@@ -2,70 +2,85 @@ package org.openhds.resource;
 
 import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.domain.util.ShallowCopier;
-import org.openhds.resource.controller.AbstractRestController;
-import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.ResourceAssembler;
-import org.springframework.hateoas.core.AnnotationMappingDiscoverer;
-import org.springframework.hateoas.core.MappingDiscoverer;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.hateoas.*;
+import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+import java.lang.annotation.Annotation;
+import java.util.*;
 
 
 /**
  * Created by Ben on 5/19/15.
  */
-public class ResourceLinkAssembler<T extends UuidIdentifiable> implements ResourceAssembler<T, Resource> {
+@Component
+public class ResourceLinkAssembler implements ResourceAssembler<UuidIdentifiable, Resource> {
 
-    private static final MappingDiscoverer REQUEST_MAPPING_DISCOVERER = new AnnotationMappingDiscoverer(RequestMapping.class);
+    private final EntityLinks entityLinks;
 
-    private final EntityControllerRegistry entityControllerRegistry;
+    private final ApplicationContext applicationContext;
 
-    public ResourceLinkAssembler(EntityControllerRegistry entityControllerRegistry) {
-        this.entityControllerRegistry = entityControllerRegistry;
+    private final Map<Class<?>, Class<?>> entitiesToControllers = new HashMap<>();
+
+    @Autowired
+    public ResourceLinkAssembler(EntityLinks entityLinks, ApplicationContext applicationContext) {
+        this.entityLinks = entityLinks;
+        this.applicationContext = applicationContext;
+
+        discoverEntitiesAndControllers();
     }
 
-    public static String getControllerPath(Class<? extends AbstractRestController> controllerClass) {
-        String mapping = REQUEST_MAPPING_DISCOVERER.getMapping(controllerClass);
-        return mapping.replace("/", "");
+    // Use collection request mapping as the controller's "rel".
+    public String getControllerRel(Class<?> entityClass) {
+        Link link = entityLinks.linkToCollectionResource(entityClass);
+        String[] pathParts = link.getHref().split("/");
+        return pathParts[pathParts.length - 1];
+    }
+
+    // Search the application context for entities and their controllers.
+    private void discoverEntitiesAndControllers() {
+        for (Class<?> controllerClass : getBeanClassesWithAnnotation(ExposesResourceFor.class)) {
+            ExposesResourceFor exposesResourceFor = controllerClass.getAnnotation(ExposesResourceFor.class);
+            entitiesToControllers.put(exposesResourceFor.value(), controllerClass);
+        }
+    }
+
+    // Search the application context for annotated classes.
+    private Iterable<Class<?>> getBeanClassesWithAnnotation(Class<? extends Annotation> annotationClass) {
+        Set<Class<?>> annotatedClasses = new HashSet<Class<?>>();
+        for (String beanName : applicationContext.getBeanDefinitionNames()) {
+            Annotation annotation = applicationContext.findAnnotationOnBean(beanName, annotationClass);
+            if (annotation != null) {
+                annotatedClasses.add(applicationContext.getType(beanName));
+            }
+        }
+        return annotatedClasses;
+    }
+
+    public Map<Class<?>, Class<?>> getEntitiesToControllers() {
+        return new HashMap<>(entitiesToControllers);
     }
 
     @Override
-    public Resource toResource(T entity) {
+    public Resource toResource(UuidIdentifiable entity) {
         List<ShallowCopier.StubReference> stubReport = new ArrayList<>();
-        T copy = ShallowCopier.makeShallowCopy(entity, stubReport);
+        UuidIdentifiable copy = ShallowCopier.makeShallowCopy(entity, stubReport);
 
-        Resource<T> resource = new Resource<T>(copy);
-        addSelfLink(resource);
-        addCollectionLink(resource);
-        addUuidLinks(resource, stubReport);
+        Resource<UuidIdentifiable> resource = new Resource<>(copy);
+        resource.add(entityLinks.linkToSingleResource(copy.getClass(), copy.getUuid()));
+        resource.add(entityLinks.linkToCollectionResource(copy.getClass()).withRel(getControllerRel(copy.getClass())));
+        addStubLinks(resource, stubReport);
 
         return resource;
     }
 
-    private void addSelfLink(Resource<T> resource) {
-        T entity = resource.getContent();
-        Class<? extends AbstractRestController> controllerClass = entityControllerRegistry.getControllerClass(entity.getClass());
-        resource.add(linkTo(methodOn(controllerClass).readOneCanonical(entity.getUuid())).withSelfRel());
-    }
-
-    private void addCollectionLink(Resource<T> resource) {
-        T entity = resource.getContent();
-        Class<? extends AbstractRestController> controllerClass = entityControllerRegistry.getControllerClass(entity.getClass());
-        resource.add(linkTo(controllerClass).withRel(getControllerPath(controllerClass)));
-    }
-
-    private void addUuidLinks(Resource<T> resource, List<ShallowCopier.StubReference> stubReport) {
+    private void addStubLinks(Resource<?> resource, List<ShallowCopier.StubReference> stubReport) {
         for (ShallowCopier.StubReference stubReference : stubReport) {
             UuidIdentifiable stub = stubReference.getStub();
 
-            if (entityControllerRegistry.isRegistered(stub.getClass())) {
-                Class<? extends AbstractRestController> controllerClass = entityControllerRegistry.getControllerClass(stub.getClass());
-                resource.add(linkTo(methodOn(controllerClass).readOneCanonical(stub.getUuid())).withRel(stubReference.getFieldName()));
+            if (entityLinks.supports(stub.getClass())) {
+                resource.add(entityLinks.linkToSingleResource(stub.getClass(), stub.getUuid()).withRel(stubReference.getFieldName()));
             }
         }
     }

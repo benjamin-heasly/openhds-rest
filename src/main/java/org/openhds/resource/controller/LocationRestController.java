@@ -6,10 +6,11 @@ import org.openhds.repository.FieldWorkerRepository;
 import org.openhds.repository.LocationHierarchyRepository;
 import org.openhds.repository.LocationRepository;
 import org.openhds.repository.UserRepository;
-import org.openhds.resource.EntityControllerRegistry;
+import org.openhds.resource.ResourceLinkAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ import java.util.Calendar;
  */
 @RestController
 @RequestMapping("/locations")
+@ExposesResourceFor(Location.class)
 class LocationRestController extends AbstractRestController<Location> {
 
     private final LocationRepository locationRepository;
@@ -32,12 +34,12 @@ class LocationRestController extends AbstractRestController<Location> {
     private final FieldWorkerRepository fieldWorkerRepository;
 
     @Autowired
-    public LocationRestController(EntityControllerRegistry entityControllerRegistry,
+    public LocationRestController(ResourceLinkAssembler resourceLinkAssembler,
                                   LocationRepository locationRepository,
                                   LocationHierarchyRepository locationHierarchyRepository,
                                   UserRepository userRepository,
                                   FieldWorkerRepository fieldWorkerRepository) {
-        super(Location.class, entityControllerRegistry);
+        super(resourceLinkAssembler);
         this.locationRepository = locationRepository;
         this.locationHierarchyRepository = locationHierarchyRepository;
         this.userRepository = userRepository;
