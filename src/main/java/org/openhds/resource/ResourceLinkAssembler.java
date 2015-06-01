@@ -1,19 +1,21 @@
 package org.openhds.resource;
 
+import org.openhds.domain.contract.ExtIdIdentifiable;
 import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.domain.util.ShallowCopier;
 import org.openhds.resource.controller.EntityRestController;
+import org.openhds.resource.controller.ExtIdRestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.hateoas.EntityLinks;
-import org.springframework.hateoas.ExposesResourceFor;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.*;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.Annotation;
 import java.util.*;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 
 /**
@@ -37,7 +39,7 @@ public class ResourceLinkAssembler extends ResourceAssemblerSupport<UuidIdentifi
     }
 
     // Use collection request mapping as the controller's "rel".
-    public String getControllerRel(Class<?> entityClass) {
+    public String getControllerRelName(Class<?> entityClass) {
         Link link = entityLinks.linkToCollectionResource(entityClass);
         String[] pathParts = link.getHref().split("/");
         return pathParts[pathParts.length - 1];
@@ -77,11 +79,18 @@ public class ResourceLinkAssembler extends ResourceAssemblerSupport<UuidIdentifi
         Resource<UuidIdentifiable> resource = new Resource<>(copy);
         addStubLinks(resource, stubReport);
 
-        // add basic links
-        resource.add(entityLinks.linkToSingleResource(copy.getClass(), copy.getUuid()));
-        resource.add(entityLinks.linkToCollectionResource(copy.getClass()).withRel(getControllerRel(copy.getClass())));
+        addSelfLink(resource, copy);
+        addCollectionLink(resource, copy);
 
         return resource;
+    }
+
+    public <T extends UuidIdentifiable> Resources<?> wrapCollection(Iterable<T> entities) {
+        ArrayList<Resource> resourceList = new ArrayList<>();
+        for (T entity : entities) {
+            resourceList.add(toResource(entity));
+        }
+        return new Resources<>(resourceList);
     }
 
     private void addStubLinks(Resource<?> resource, List<ShallowCopier.StubReference> stubReport) {
@@ -89,8 +98,37 @@ public class ResourceLinkAssembler extends ResourceAssemblerSupport<UuidIdentifi
             UuidIdentifiable stub = stubReference.getStub();
 
             if (entityLinks.supports(stub.getClass())) {
-                resource.add(entityLinks.linkToSingleResource(stub.getClass(), stub.getUuid()).withRel(stubReference.getFieldName()));
+                addStubLink(resource, stub, stubReference.getFieldName());
             }
         }
+    }
+
+    protected void addSelfLink(ResourceSupport resourceSupport, UuidIdentifiable entity) {
+        resourceSupport.add(entityLinks.linkToSingleResource(entity.getClass(), entity.getUuid()));
+
+        // TODO: Can we reimplement this with dynamic dispatch instead of instanceof?
+        if (entity instanceof ExtIdIdentifiable) {
+            ExtIdIdentifiable extIdIdentifiable = (ExtIdIdentifiable) entity;
+            Class<ExtIdRestController> extIdRestControllerClass = (Class<ExtIdRestController>) entitiesToControllers.get(entity.getClass());
+            addByExtIdLink(resourceSupport, extIdRestControllerClass, extIdIdentifiable.getExtId(), "self-external");
+        }
+    }
+
+    public void addCollectionLink(ResourceSupport resourceSupport, UuidIdentifiable entity) {
+        Class<?> entityClass = entity.getClass();
+        resourceSupport.add(entityLinks.linkToCollectionResource(entityClass).withRel(getControllerRelName(entityClass)));
+    }
+
+    public void addStubLink(ResourceSupport resourceSupport, UuidIdentifiable entity, String relName) {
+        resourceSupport.add(entityLinks.linkToSingleResource(entity.getClass(), entity.getUuid()).withRel(relName));
+    }
+
+    public void addByExtIdLink(ResourceSupport resourceSupport,
+                                Class<? extends ExtIdRestController> controllerClass,
+                                String extId,
+                                String relName) {
+        resourceSupport.add(linkTo(methodOn(controllerClass)
+                .readByExtId(extId))
+                .withRel(relName));
     }
 }
