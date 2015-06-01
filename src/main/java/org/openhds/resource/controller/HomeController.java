@@ -58,7 +58,7 @@ public class HomeController {
     private void addControllerLinks(Resource<String> resource) {
         for (Class<?> entityClass : resourceLinkAssembler.getEntitiesToControllers().keySet()) {
             resource.add(entityLinks.linkToCollectionResource(entityClass)
-                    .withRel(resourceLinkAssembler.getControllerRel(entityClass)));
+                    .withRel(resourceLinkAssembler.getControllerRelName(entityClass)));
         }
     }
 }

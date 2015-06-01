@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by Ben on 5/26/15.
  */
-public class hateoasTraversalTest extends AbstractRestControllerTest {
+public class HateoasTraversalTest extends AbstractRestControllerTest {
 
     @Test
     @WithMockUser(username = username, password = password)

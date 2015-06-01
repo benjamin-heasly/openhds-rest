@@ -1,8 +1,10 @@
 package org.openhds.resource;
 
+import org.openhds.domain.contract.ExtIdIdentifiable;
 import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.domain.util.ShallowCopier;
 import org.openhds.resource.controller.EntityRestController;
+import org.openhds.resource.controller.ExtIdRestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.hateoas.EntityLinks;
@@ -14,6 +16,9 @@ import org.springframework.stereotype.Component;
 
 import java.lang.annotation.Annotation;
 import java.util.*;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 
 /**
@@ -37,7 +42,7 @@ public class ResourceLinkAssembler extends ResourceAssemblerSupport<UuidIdentifi
     }
 
     // Use collection request mapping as the controller's "rel".
-    public String getControllerRel(Class<?> entityClass) {
+    public String getControllerRelName(Class<?> entityClass) {
         Link link = entityLinks.linkToCollectionResource(entityClass);
         String[] pathParts = link.getHref().split("/");
         return pathParts[pathParts.length - 1];
@@ -77,9 +82,8 @@ public class ResourceLinkAssembler extends ResourceAssemblerSupport<UuidIdentifi
         Resource<UuidIdentifiable> resource = new Resource<>(copy);
         addStubLinks(resource, stubReport);
 
-        // add basic links
-        resource.add(entityLinks.linkToSingleResource(copy.getClass(), copy.getUuid()));
-        resource.add(entityLinks.linkToCollectionResource(copy.getClass()).withRel(getControllerRel(copy.getClass())));
+        addSelfLink(resource, copy);
+        addCollectionLink(resource, copy);
 
         return resource;
     }
@@ -89,8 +93,27 @@ public class ResourceLinkAssembler extends ResourceAssemblerSupport<UuidIdentifi
             UuidIdentifiable stub = stubReference.getStub();
 
             if (entityLinks.supports(stub.getClass())) {
-                resource.add(entityLinks.linkToSingleResource(stub.getClass(), stub.getUuid()).withRel(stubReference.getFieldName()));
+                addStubLink(resource, stub, stubReference.getFieldName());
             }
         }
+    }
+
+    protected void addSelfLink(Resource resource, UuidIdentifiable entity) {
+        resource.add(entityLinks.linkToSingleResource(entity.getClass(), entity.getUuid()));
+
+        // TODO: Gross.  Reimplement with dynamic dispatch?
+        if (entity instanceof ExtIdIdentifiable) {
+            ExtIdIdentifiable extIdIdentifiable = (ExtIdIdentifiable) entity;
+            Class<ExtIdRestController> extIdController = (Class<ExtIdRestController>) entitiesToControllers.get(entity.getClass());
+            resource.add(linkTo(methodOn(extIdController).readByExtId(extIdIdentifiable.getExtId())).withRel("self-external"));
+        }
+    }
+
+    private void addCollectionLink(Resource resource, UuidIdentifiable entity) {
+        resource.add(entityLinks.linkToCollectionResource(entity.getClass()).withRel(getControllerRelName(entity.getClass())));
+    }
+
+    private void addStubLink(Resource resource, UuidIdentifiable entity, String relName) {
+        resource.add(entityLinks.linkToSingleResource(entity.getClass(), entity.getUuid()).withRel(relName));
     }
 }
