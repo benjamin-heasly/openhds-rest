@@ -1,4 +1,4 @@
-package org.openhds.domain.util;
+package org.openhds.repository.util;
 
 import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.contract.AuditableEntity;
@@ -80,6 +80,9 @@ public class SampleDataGenerator {
         addLocation("location-b", "bottom-one");
         addLocation("location-c", "bottom-two");
         addLocation("location-d", "bottom-two");
+        addLocation("duplicated", "bottom-two");
+        addLocation("duplicated", "bottom-two");
+
     }
 
     private void addPrivileges(Privilege.Grant... grants) {
