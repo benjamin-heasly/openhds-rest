@@ -106,11 +106,11 @@ public class ResourceLinkAssembler extends ResourceAssemblerSupport<UuidIdentifi
     protected void addSelfLink(ResourceSupport resourceSupport, UuidIdentifiable entity) {
         resourceSupport.add(entityLinks.linkToSingleResource(entity.getClass(), entity.getUuid()));
 
-        // TODO: Can we reimplement this with dynamic dispatch instead of instanceof?
+        // TODO: Replace instanceof with overridden method on...something.
         if (entity instanceof ExtIdIdentifiable) {
             ExtIdIdentifiable extIdIdentifiable = (ExtIdIdentifiable) entity;
-            Class<ExtIdRestController> extIdRestControllerClass = (Class<ExtIdRestController>) entitiesToControllers.get(entity.getClass());
-            addByExtIdLink(resourceSupport, extIdRestControllerClass, extIdIdentifiable.getExtId(), "self-external");
+            Class<ExtIdRestController> controllerClass = (Class<ExtIdRestController>) entitiesToControllers.get(entity.getClass());
+            addByExtIdLink(resourceSupport, controllerClass, extIdIdentifiable.getExtId(), "self-external");
         }
     }
 
