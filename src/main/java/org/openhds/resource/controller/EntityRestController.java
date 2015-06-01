@@ -12,30 +12,33 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.NoSuchElementException;
+
 /**
  * Created by Ben on 5/18/15.
  *
  * Common interface for REST controllers.
  *
- * readOneCanonical() is required for automatic HATEOAS link building.
- *
  */
 @RestController
-public abstract class AbstractRestController <T extends UuidIdentifiable> {
+public abstract class EntityRestController<T extends UuidIdentifiable> {
 
     protected final ResourceLinkAssembler resourceLinkAssembler;
 
-    public AbstractRestController(ResourceLinkAssembler resourceLinkAssembler) {
+    public EntityRestController(ResourceLinkAssembler resourceLinkAssembler) {
         this.resourceLinkAssembler = resourceLinkAssembler;
     }
 
-    protected abstract T findOne(String id);
+    protected abstract T findOneCanonical(String id);
 
     protected abstract Page<T> findPaged(Pageable pageable);
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Resource<T> readOneCanonical(@PathVariable String id) {
-        T entity = findOne(id);
+        T entity = findOneCanonical(id);
+        if (null == entity) {
+            throw new NoSuchElementException("No entity found with canonical id: " + id);
+        }
         return resourceLinkAssembler.toResource(entity);
     }
 

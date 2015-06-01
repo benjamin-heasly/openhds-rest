@@ -151,7 +151,7 @@ public class SampleDataGenerator {
         locationHierarchy.setLevel(locationHierarchyLevelRepository.findByName(levelName).get());
 
         if (null != parentName) {
-            locationHierarchy.setParent(locationHierarchyRepository.findByExtId(parentName).get());
+            locationHierarchy.setParent(locationHierarchyRepository.findByExtId(parentName).get(0));
         }
 
         locationHierarchyRepository.save(locationHierarchy);
@@ -164,7 +164,7 @@ public class SampleDataGenerator {
 
         location.setName(name);
         location.setExtId(name);
-        location.setLocationHierarchy(locationHierarchyRepository.findByExtId(hierarchyName).get());
+        location.setLocationHierarchy(locationHierarchyRepository.findByExtId(hierarchyName).get(0));
 
         locationRepository.save(location);
     }

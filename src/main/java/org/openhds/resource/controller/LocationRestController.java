@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Created by Ben on 5/18/15.
@@ -23,7 +24,7 @@ import java.util.Calendar;
 @RestController
 @RequestMapping("/locations")
 @ExposesResourceFor(Location.class)
-class LocationRestController extends AbstractRestController<Location> {
+class LocationRestController extends ExtIdRestController<Location> {
 
     private final LocationRepository locationRepository;
 
@@ -47,13 +48,18 @@ class LocationRestController extends AbstractRestController<Location> {
     }
 
     @Override
-    protected Location findOne(String id) {
+    protected Location findOneCanonical(String id) {
         return locationRepository.findOne(id);
     }
 
     @Override
     protected Page<Location> findPaged(Pageable pageable) {
         return locationRepository.findAll(pageable);
+    }
+
+    @Override
+    protected List<Location> findByExtId(String id) {
+        return locationRepository.findByExtId(id);
     }
 
     // TODO: can probably factor this into a superclass.

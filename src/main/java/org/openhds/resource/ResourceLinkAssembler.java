@@ -2,9 +2,14 @@ package org.openhds.resource;
 
 import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.domain.util.ShallowCopier;
+import org.openhds.resource.controller.EntityRestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.hateoas.*;
+import org.springframework.hateoas.EntityLinks;
+import org.springframework.hateoas.ExposesResourceFor;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 import org.springframework.stereotype.Component;
 
 import java.lang.annotation.Annotation;
@@ -15,7 +20,7 @@ import java.util.*;
  * Created by Ben on 5/19/15.
  */
 @Component
-public class ResourceLinkAssembler implements ResourceAssembler<UuidIdentifiable, Resource> {
+public class ResourceLinkAssembler extends ResourceAssemblerSupport<UuidIdentifiable, Resource> {
 
     private final EntityLinks entityLinks;
 
@@ -25,9 +30,9 @@ public class ResourceLinkAssembler implements ResourceAssembler<UuidIdentifiable
 
     @Autowired
     public ResourceLinkAssembler(EntityLinks entityLinks, ApplicationContext applicationContext) {
+        super(EntityRestController.class, Resource.class);
         this.entityLinks = entityLinks;
         this.applicationContext = applicationContext;
-
         discoverEntitiesAndControllers();
     }
 
@@ -64,13 +69,17 @@ public class ResourceLinkAssembler implements ResourceAssembler<UuidIdentifiable
 
     @Override
     public Resource toResource(UuidIdentifiable entity) {
+        // make a shallow copy of entity with stubs instead of a deep object graph
         List<ShallowCopier.StubReference> stubReport = new ArrayList<>();
         UuidIdentifiable copy = ShallowCopier.makeShallowCopy(entity, stubReport);
 
+        // make a link to each stub object
         Resource<UuidIdentifiable> resource = new Resource<>(copy);
+        addStubLinks(resource, stubReport);
+
+        // add basic links
         resource.add(entityLinks.linkToSingleResource(copy.getClass(), copy.getUuid()));
         resource.add(entityLinks.linkToCollectionResource(copy.getClass()).withRel(getControllerRel(copy.getClass())));
-        addStubLinks(resource, stubReport);
 
         return resource;
     }

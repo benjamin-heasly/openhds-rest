@@ -42,7 +42,7 @@ public class LocationRestControllerTest extends AbstractRestControllerTest {
 
         LocationRegistration locationRegistration = new LocationRegistration();
         locationRegistration.setLocation(location);
-        locationRegistration.setLocationHierarchyUuid(locationHierarchyRepository.findByExtId(hierarchyName).get().getUuid());
+        locationRegistration.setLocationHierarchyUuid(locationHierarchyRepository.findByExtId(hierarchyName).get(0).getUuid());
         locationRegistration.setCollectedByUuid(fieldWorkerRepository.findAll().get(0).getUuid());
 
         return locationRegistration;
@@ -65,7 +65,7 @@ public class LocationRestControllerTest extends AbstractRestControllerTest {
     public void postUpdateLocation() throws Exception {
 
         String newName = UUID.randomUUID().toString();
-        Location oldLocation = locationRepository.findByExtId("location-a").get();
+        Location oldLocation = locationRepository.findByExtId("location-a").get(0);
         oldLocation.setName(newName);
 
         LocationRegistration locationRegistration = new LocationRegistration();
@@ -81,7 +81,7 @@ public class LocationRestControllerTest extends AbstractRestControllerTest {
                 .andExpect(content().contentType(halJson))
                 .andReturn();
 
-        Location updatedLocation = locationRepository.findByExtId("location-a").get();
+        Location updatedLocation = locationRepository.findByExtId("location-a").get(0);
         assertEquals(oldLocation.getUuid(), updatedLocation.getUuid());
         assertEquals(newName, updatedLocation.getName());
     }

@@ -22,7 +22,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RestController
 @RequestMapping("/users")
 @ExposesResourceFor(User.class)
-class UserRestController extends AbstractRestController<User> {
+class UserRestController extends EntityRestController<User> {
 
     private final UserRepository userRepository;
 
@@ -33,7 +33,7 @@ class UserRestController extends AbstractRestController<User> {
     }
 
     @Override
-    protected User findOne(String id) {
+    protected User findOneCanonical(String id) {
         return userRepository.findOne(id);
     }
 
