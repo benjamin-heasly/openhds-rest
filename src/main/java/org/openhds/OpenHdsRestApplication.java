@@ -2,7 +2,7 @@ package org.openhds;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
-import org.openhds.domain.util.SampleDataGenerator;
+import org.openhds.repository.util.SampleDataGenerator;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

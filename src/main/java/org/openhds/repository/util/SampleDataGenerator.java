@@ -1,4 +1,4 @@
-package org.openhds.domain.util;
+package org.openhds.repository.util;
 
 import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.contract.AuditableEntity;
@@ -80,6 +80,9 @@ public class SampleDataGenerator {
         addLocation("location-b", "bottom-one");
         addLocation("location-c", "bottom-two");
         addLocation("location-d", "bottom-two");
+        addLocation("duplicated", "bottom-two");
+        addLocation("duplicated", "bottom-two");
+
     }
 
     private void addPrivileges(Privilege.Grant... grants) {
@@ -151,7 +154,7 @@ public class SampleDataGenerator {
         locationHierarchy.setLevel(locationHierarchyLevelRepository.findByName(levelName).get());
 
         if (null != parentName) {
-            locationHierarchy.setParent(locationHierarchyRepository.findByExtId(parentName).get());
+            locationHierarchy.setParent(locationHierarchyRepository.findByExtId(parentName).get(0));
         }
 
         locationHierarchyRepository.save(locationHierarchy);
@@ -164,7 +167,7 @@ public class SampleDataGenerator {
 
         location.setName(name);
         location.setExtId(name);
-        location.setLocationHierarchy(locationHierarchyRepository.findByExtId(hierarchyName).get());
+        location.setLocationHierarchy(locationHierarchyRepository.findByExtId(hierarchyName).get(0));
 
         locationRepository.save(location);
     }
