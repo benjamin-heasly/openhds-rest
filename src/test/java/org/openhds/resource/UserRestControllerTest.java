@@ -53,7 +53,7 @@ public class UserRestControllerTest extends AbstractRestControllerTest {
         mockMvc.perform(get("/users"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
-                .andExpect(jsonPath("$._embedded.userList", hasSize(2)));
+                .andExpect(jsonPath("$._embedded.users", hasSize(2)));
     }
 
     @Test
