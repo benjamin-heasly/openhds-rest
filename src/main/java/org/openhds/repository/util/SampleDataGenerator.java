@@ -115,7 +115,7 @@ public class SampleDataGenerator {
         User user = userRepository.findAll().get(0);
         auditableEntity.setInsertBy(user);
         auditableEntity.setInsertDate(Calendar.getInstance());
-        auditableEntity.setUuid(UUID.randomUUID().toString().replace("-", ""));
+        auditableEntity.setUuid(UUID.randomUUID().toString());
     }
 
     private void initCollectedFields(AuditableCollectedEntity auditableCollectedEntity) {
