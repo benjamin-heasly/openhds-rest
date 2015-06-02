@@ -6,7 +6,7 @@ import org.openhds.repository.FieldWorkerRepository;
 import org.openhds.repository.LocationHierarchyRepository;
 import org.openhds.repository.LocationRepository;
 import org.openhds.repository.UserRepository;
-import org.openhds.resource.links.ResourceLinkAssembler;
+import org.openhds.resource.links.EntityLinkAssembler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,12 +35,12 @@ class LocationRestController extends ExtIdRestController<Location> {
     private final FieldWorkerRepository fieldWorkerRepository;
 
     @Autowired
-    public LocationRestController(ResourceLinkAssembler resourceLinkAssembler,
+    public LocationRestController(EntityLinkAssembler entityLinkAssembler,
                                   LocationRepository locationRepository,
                                   LocationHierarchyRepository locationHierarchyRepository,
                                   UserRepository userRepository,
                                   FieldWorkerRepository fieldWorkerRepository) {
-        super(resourceLinkAssembler);
+        super(entityLinkAssembler);
         this.locationRepository = locationRepository;
         this.locationHierarchyRepository = locationHierarchyRepository;
         this.userRepository = userRepository;
@@ -65,18 +65,18 @@ class LocationRestController extends ExtIdRestController<Location> {
     // TODO: can probably factor this into a superclass.
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    Resource<Location> insert(@RequestBody LocationRegistration locationRegistration) {
+    Resource insert(@RequestBody LocationRegistration locationRegistration) {
         Location location = registerLocation(locationRegistration);
-        return resourceLinkAssembler.toResource(location);
+        return entityLinkAssembler.toResource(location);
     }
 
     // TODO: can probably factor this into a superclass.
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.CREATED)
-    Resource<Location> replace(@RequestBody LocationRegistration locationRegistration, @PathVariable String id) {
+    Resource replace(@RequestBody LocationRegistration locationRegistration, @PathVariable String id) {
         locationRegistration.getLocation().setUuid(id);
         Location location = registerLocation(locationRegistration);
-        return resourceLinkAssembler.toResource(location);
+        return entityLinkAssembler.toResource(location);
     }
 
     // TODO: this belongs in a Location service.  Ben and Wolfe collab.

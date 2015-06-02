@@ -1,7 +1,7 @@
 package org.openhds.resource.controller;
 
 import org.openhds.repository.UserRepository;
-import org.openhds.resource.links.ResourceLinkAssembler;
+import org.openhds.resource.links.EntityLinkAssembler;
 import org.openhds.security.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,13 +22,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RestController
 @RequestMapping("/users")
 @ExposesResourceFor(User.class)
-class UserRestController extends EntityRestController<User> {
+class UserRestController extends UuidRestController<User> {
 
     private final UserRepository userRepository;
 
     @Autowired
-    public UserRestController(ResourceLinkAssembler resourceLinkAssembler, UserRepository userRepository) {
-        super(resourceLinkAssembler);
+    public UserRestController(EntityLinkAssembler entityLinkAssembler, UserRepository userRepository) {
+        super(entityLinkAssembler);
         this.userRepository = userRepository;
     }
 

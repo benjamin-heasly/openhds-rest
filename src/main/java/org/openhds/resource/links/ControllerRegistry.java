@@ -1,5 +1,6 @@
 package org.openhds.resource.links;
 
+import org.openhds.resource.controller.UuidRestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.hateoas.ExposesResourceFor;
@@ -21,7 +22,7 @@ import java.util.*;
 public class ControllerRegistry {
     private final ApplicationContext applicationContext;
 
-    private final Map<Class<?>, Class<?>> entitiesToControllers = new HashMap<>();
+    private final Map<Class<?>, Class<UuidRestController>> entitiesToControllers = new HashMap<>();
     private final Map<Class<?>, String> entitiesToPaths = new HashMap<>();
 
     @Autowired
@@ -35,7 +36,7 @@ public class ControllerRegistry {
         for (Class<?> controllerClass : getBeanClassesWithAnnotation(ExposesResourceFor.class)) {
             ExposesResourceFor exposesResourceFor = controllerClass.getAnnotation(ExposesResourceFor.class);
             Class<?> entityClass = exposesResourceFor.value();
-            entitiesToControllers.put(entityClass, controllerClass);
+            entitiesToControllers.put(entityClass, (Class<UuidRestController>) controllerClass);
 
             RequestMapping requestMapping = controllerClass.getAnnotation(RequestMapping.class);
             entitiesToPaths.put(entityClass, firstPathComponent(requestMapping.value()));
@@ -58,11 +59,15 @@ public class ControllerRegistry {
         return Paths.get(paths[0]).subpath(0, 1).toString();
     }
 
-    public Map<Class<?>, Class<?>> getEntitiesToControllers() {
+    public Map<Class<?>, Class<UuidRestController>> getEntitiesToControllers() {
         return Collections.unmodifiableMap(entitiesToControllers);
     }
 
     public Map<Class<?>, String> getEntitiesToPaths() {
         return Collections.unmodifiableMap(entitiesToPaths);
+    }
+
+    public <T extends UuidRestController> T getController(Class<T> controllerClass) {
+        return applicationContext.getBean(controllerClass);
     }
 }

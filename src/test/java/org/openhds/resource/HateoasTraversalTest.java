@@ -1,6 +1,8 @@
 package org.openhds.resource;
 
 import org.junit.Test;
+import org.openhds.resource.controller.ExtIdRestController;
+import org.springframework.hateoas.Link;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -19,13 +21,13 @@ public class HateoasTraversalTest extends AbstractRestControllerTest {
         String locationsUrl = getAndExtractJsonPath("/", "$._links.locations.href");
 
         // find the first location from the list of locations
-        String oneLocationUrl = getAndExtractJsonPath(locationsUrl, "$._embedded.locations[0]._links.self.href");
+        String oneLocationUrl = getAndExtractJsonPath(locationsUrl, "$._embedded.locations[0]._links." + Link.REL_SELF + ".href");
 
         // follow the "external id" link to f the same location
-        String externalLocationUrl = getAndExtractJsonPath(oneLocationUrl, "$._links.self-external.href");
+        String externalLocationUrl = getAndExtractJsonPath(oneLocationUrl, "$._links." + ExtIdRestController.REL_SECTION + ".href");
 
         // find the user who inserted the location, from the location
-        String insertByUrl = getAndExtractJsonPath(externalLocationUrl, "$._embedded.locations[0]._links.insertBy.href");
+        String insertByUrl = getAndExtractJsonPath(externalLocationUrl, "$._embedded.locations[0]._links.insertby.href");
 
         // find the user's "self"
         String insertBySelfUrl = getAndExtractJsonPath(insertByUrl, "$._links.self.href");
