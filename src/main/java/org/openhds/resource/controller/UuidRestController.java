@@ -1,7 +1,7 @@
 package org.openhds.resource.controller;
 
 import org.openhds.domain.contract.UuidIdentifiable;
-import org.openhds.resource.ResourceLinkAssembler;
+import org.openhds.resource.links.EntityLinkAssembler;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -16,17 +16,16 @@ import java.util.NoSuchElementException;
 
 /**
  * Created by Ben on 5/18/15.
- *
+ * <p>
  * Common interface for REST controllers.
- *
  */
 @RestController
-public abstract class EntityRestController<T extends UuidIdentifiable> {
+public abstract class UuidRestController<T extends UuidIdentifiable> {
 
-    protected final ResourceLinkAssembler resourceLinkAssembler;
+    protected final EntityLinkAssembler entityLinkAssembler;
 
-    public EntityRestController(ResourceLinkAssembler resourceLinkAssembler) {
-        this.resourceLinkAssembler = resourceLinkAssembler;
+    public UuidRestController(EntityLinkAssembler entityLinkAssembler) {
+        this.entityLinkAssembler = entityLinkAssembler;
     }
 
     protected abstract T findOneCanonical(String id);
@@ -34,18 +33,20 @@ public abstract class EntityRestController<T extends UuidIdentifiable> {
     protected abstract Page<T> findPaged(Pageable pageable);
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public Resource<T> readOneCanonical(@PathVariable String id) {
+    public Resource<?> readOneCanonical(@PathVariable String id) {
         T entity = findOneCanonical(id);
         if (null == entity) {
             throw new NoSuchElementException("No entity found with canonical id: " + id);
         }
-        return resourceLinkAssembler.toResource(entity);
+        return entityLinkAssembler.toResource(entity);
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public PagedResources<T> readAll(Pageable pageable, PagedResourcesAssembler assembler) {
+    public PagedResources readAll(Pageable pageable, PagedResourcesAssembler assembler) {
         Page<T> entities = findPaged(pageable);
-        return assembler.toResource(entities, resourceLinkAssembler);
+        return assembler.toResource(entities, entityLinkAssembler);
     }
 
+    public void supplementResource(Resource resource) {
+    }
 }
