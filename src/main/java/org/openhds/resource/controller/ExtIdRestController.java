@@ -1,7 +1,7 @@
 package org.openhds.resource.controller;
 
 import org.openhds.domain.contract.ExtIdIdentifiable;
-import org.openhds.resource.ResourceLinkAssembler;
+import org.openhds.resource.links.ResourceLinkAssembler;
 import org.springframework.hateoas.Resources;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;

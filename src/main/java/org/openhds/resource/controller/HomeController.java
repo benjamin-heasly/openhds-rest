@@ -1,6 +1,6 @@
 package org.openhds.resource.controller;
 
-import org.openhds.resource.ResourceLinkAssembler;
+import org.openhds.resource.links.ControllerRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityLinks;
 import org.springframework.hateoas.Resource;
@@ -26,13 +26,13 @@ public class HomeController {
 
     private final EntityLinks entityLinks;
 
-    private final ResourceLinkAssembler resourceLinkAssembler;
+    private final ControllerRegistry controllerRegistry;
 
     @Autowired
     public HomeController(EntityLinks entityLinks,
-                          ResourceLinkAssembler resourceLinkAssembler) {
+                          ControllerRegistry controllerRegistry) {
         this.entityLinks = entityLinks;
-        this.resourceLinkAssembler = resourceLinkAssembler;
+        this.controllerRegistry = controllerRegistry;
     }
 
     @RequestMapping("/")
@@ -56,9 +56,9 @@ public class HomeController {
     }
 
     private void addControllerLinks(Resource<String> resource) {
-        for (Class<?> entityClass : resourceLinkAssembler.getEntitiesToControllers().keySet()) {
+        for (Class<?> entityClass : controllerRegistry.getEntitiesToControllers().keySet()) {
             resource.add(entityLinks.linkToCollectionResource(entityClass)
-                    .withRel(resourceLinkAssembler.getControllerRelName(entityClass)));
+                    .withRel(controllerRegistry.getEntitiesToPaths().get(entityClass)));
         }
     }
 }

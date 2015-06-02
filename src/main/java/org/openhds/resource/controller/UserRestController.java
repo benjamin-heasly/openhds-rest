@@ -1,7 +1,7 @@
 package org.openhds.resource.controller;
 
 import org.openhds.repository.UserRepository;
-import org.openhds.resource.ResourceLinkAssembler;
+import org.openhds.resource.links.ResourceLinkAssembler;
 import org.openhds.security.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

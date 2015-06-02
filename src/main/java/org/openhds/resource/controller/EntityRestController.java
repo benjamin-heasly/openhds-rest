@@ -1,7 +1,7 @@
 package org.openhds.resource.controller;
 
 import org.openhds.domain.contract.UuidIdentifiable;
-import org.openhds.resource.ResourceLinkAssembler;
+import org.openhds.resource.links.ResourceLinkAssembler;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;

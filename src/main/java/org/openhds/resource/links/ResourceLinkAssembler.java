@@ -1,4 +1,4 @@
-package org.openhds.resource;
+package org.openhds.resource.links;
 
 import org.openhds.domain.contract.ExtIdIdentifiable;
 import org.openhds.domain.contract.UuidIdentifiable;
@@ -6,13 +6,15 @@ import org.openhds.domain.util.ShallowCopier;
 import org.openhds.resource.controller.EntityRestController;
 import org.openhds.resource.controller.ExtIdRestController;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.hateoas.*;
+import org.springframework.hateoas.EntityLinks;
+import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.ResourceSupport;
+import org.springframework.hateoas.Resources;
 import org.springframework.hateoas.mvc.ResourceAssemblerSupport;
 import org.springframework.stereotype.Component;
 
-import java.lang.annotation.Annotation;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -26,47 +28,13 @@ public class ResourceLinkAssembler extends ResourceAssemblerSupport<UuidIdentifi
 
     private final EntityLinks entityLinks;
 
-    private final ApplicationContext applicationContext;
-
-    private final Map<Class<?>, Class<?>> entitiesToControllers = new HashMap<>();
+    private final ControllerRegistry controllerRegistry;
 
     @Autowired
-    public ResourceLinkAssembler(EntityLinks entityLinks, ApplicationContext applicationContext) {
+    public ResourceLinkAssembler(EntityLinks entityLinks, ControllerRegistry controllerRegistry) {
         super(EntityRestController.class, Resource.class);
+        this.controllerRegistry = controllerRegistry;
         this.entityLinks = entityLinks;
-        this.applicationContext = applicationContext;
-        discoverEntitiesAndControllers();
-    }
-
-    // Use collection request mapping as the controller's "rel".
-    public String getControllerRelName(Class<?> entityClass) {
-        Link link = entityLinks.linkToCollectionResource(entityClass);
-        String[] pathParts = link.getHref().split("/");
-        return pathParts[pathParts.length - 1];
-    }
-
-    // Search the application context for entities and their controllers.
-    private void discoverEntitiesAndControllers() {
-        for (Class<?> controllerClass : getBeanClassesWithAnnotation(ExposesResourceFor.class)) {
-            ExposesResourceFor exposesResourceFor = controllerClass.getAnnotation(ExposesResourceFor.class);
-            entitiesToControllers.put(exposesResourceFor.value(), controllerClass);
-        }
-    }
-
-    // Search the application context for annotated classes.
-    private Iterable<Class<?>> getBeanClassesWithAnnotation(Class<? extends Annotation> annotationClass) {
-        Set<Class<?>> annotatedClasses = new HashSet<Class<?>>();
-        for (String beanName : applicationContext.getBeanDefinitionNames()) {
-            Annotation annotation = applicationContext.findAnnotationOnBean(beanName, annotationClass);
-            if (annotation != null) {
-                annotatedClasses.add(applicationContext.getType(beanName));
-            }
-        }
-        return annotatedClasses;
-    }
-
-    public Map<Class<?>, Class<?>> getEntitiesToControllers() {
-        return new HashMap<>(entitiesToControllers);
     }
 
     @Override
@@ -109,14 +77,15 @@ public class ResourceLinkAssembler extends ResourceAssemblerSupport<UuidIdentifi
         // TODO: Replace instanceof with overridden method on...something.
         if (entity instanceof ExtIdIdentifiable) {
             ExtIdIdentifiable extIdIdentifiable = (ExtIdIdentifiable) entity;
-            Class<ExtIdRestController> controllerClass = (Class<ExtIdRestController>) entitiesToControllers.get(entity.getClass());
+            Class<ExtIdRestController> controllerClass =
+                    (Class<ExtIdRestController>) controllerRegistry.getEntitiesToControllers().get(entity.getClass());
             addByExtIdLink(resourceSupport, controllerClass, extIdIdentifiable.getExtId(), "self-external");
         }
     }
 
     public void addCollectionLink(ResourceSupport resourceSupport, UuidIdentifiable entity) {
         Class<?> entityClass = entity.getClass();
-        resourceSupport.add(entityLinks.linkToCollectionResource(entityClass).withRel(getControllerRelName(entityClass)));
+        resourceSupport.add(entityLinks.linkToCollectionResource(entityClass).withRel(controllerRegistry.getEntitiesToPaths().get(entityClass)));
     }
 
     public void addStubLink(ResourceSupport resourceSupport, UuidIdentifiable entity, String relName) {
