@@ -1,7 +1,7 @@
 package org.openhds.resource.controller;
 
 import org.openhds.domain.model.Location;
-import org.openhds.domain.registration.LocationRegistration;
+import org.openhds.resource.registration.LocationRegistration;
 import org.openhds.repository.FieldWorkerRepository;
 import org.openhds.repository.LocationHierarchyRepository;
 import org.openhds.repository.LocationRepository;
@@ -11,9 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.ExposesResourceFor;
-import org.springframework.hateoas.Resource;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Calendar;
 import java.util.List;
@@ -24,7 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/locations")
 @ExposesResourceFor(Location.class)
-class LocationRestController extends ExtIdRestController<Location> {
+class LocationRestController extends ExtIdRestController<Location, LocationRegistration> {
 
     private final LocationRepository locationRepository;
 
@@ -62,35 +61,26 @@ class LocationRestController extends ExtIdRestController<Location> {
         return locationRepository.findByExtId(id);
     }
 
-    // TODO: can probably factor this into a superclass.
-    @RequestMapping(method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    Resource insert(@RequestBody LocationRegistration locationRegistration) {
-        Location location = registerLocation(locationRegistration);
-        return entityLinkAssembler.toResource(location);
-    }
-
-    // TODO: can probably factor this into a superclass.
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    @ResponseStatus(HttpStatus.CREATED)
-    Resource replace(@RequestBody LocationRegistration locationRegistration, @PathVariable String id) {
-        locationRegistration.getLocation().setUuid(id);
-        Location location = registerLocation(locationRegistration);
-        return entityLinkAssembler.toResource(location);
-    }
-
-    // TODO: this belongs in a Location service.  Ben and Wolfe collab.
-    private Location registerLocation(LocationRegistration locationRegistration) {
-        Location location = locationRegistration.getLocation();
+    @Override
+    protected Location register(LocationRegistration registration) {
+        // TODO: this implementation belongs in a Location service.  Ben and Wolfe collab.
+        Location location = registration.getLocation();
 
         // TODO: this should come from the authenticated Principal
         location.setInsertBy(userRepository.findAll().get(0));
 
         // fill in auditable fields
-        location.setCollectedBy(fieldWorkerRepository.findOne(locationRegistration.getCollectedByUuid()));
-        location.setLocationHierarchy(locationHierarchyRepository.findOne(locationRegistration.getLocationHierarchyUuid()));
+        location.setCollectedBy(fieldWorkerRepository.findOne(registration.getCollectedByUuid()));
+        location.setLocationHierarchy(locationHierarchyRepository.findOne(registration.getLocationHierarchyUuid()));
         location.setInsertDate(Calendar.getInstance());
 
         return locationRepository.save(location);
     }
+
+    @Override
+    protected Location register(LocationRegistration registration, String id) {
+        registration.getLocation().setUuid(id);
+        return register(registration);
+    }
+
 }

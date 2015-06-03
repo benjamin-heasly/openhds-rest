@@ -1,6 +1,7 @@
 package org.openhds.resource.controller;
 
 import org.openhds.domain.contract.ExtIdIdentifiable;
+import org.openhds.resource.registration.Registration;
 import org.openhds.resource.links.EntityLinkAssembler;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
@@ -19,7 +20,8 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 /**
  * Created by Ben on 6/1/15.
  */
-public abstract class ExtIdRestController<T extends ExtIdIdentifiable> extends UuidRestController<T> {
+public abstract class ExtIdRestController<T extends ExtIdIdentifiable, U extends Registration<T>>
+        extends UuidRestController<T, U> {
 
     public static final String REL_SECTION = "section";
 

@@ -2,16 +2,18 @@ package org.openhds.resource.controller;
 
 import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.resource.links.EntityLinkAssembler;
+import org.openhds.resource.registration.Registration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.Resource;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.NoSuchElementException;
 
 /**
@@ -20,7 +22,7 @@ import java.util.NoSuchElementException;
  * Common interface for REST controllers.
  */
 @RestController
-public abstract class UuidRestController<T extends UuidIdentifiable> {
+public abstract class UuidRestController<T extends UuidIdentifiable, U extends Registration<T>> {
 
     protected final EntityLinkAssembler entityLinkAssembler;
 
@@ -28,9 +30,16 @@ public abstract class UuidRestController<T extends UuidIdentifiable> {
         this.entityLinkAssembler = entityLinkAssembler;
     }
 
+    // templates to be implemented with entity services, etc.
     protected abstract T findOneCanonical(String id);
-
     protected abstract Page<T> findPaged(Pageable pageable);
+    protected abstract T register(U registration);
+    protected abstract T register(U registration, String id);
+
+    // optionally add entity-specific links to an HATEOAS resource
+    public void supplementResource(Resource resource) {
+    }
+
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Resource<?> readOneCanonical(@PathVariable String id) {
@@ -47,6 +56,24 @@ public abstract class UuidRestController<T extends UuidIdentifiable> {
         return assembler.toResource(entities, entityLinkAssembler);
     }
 
-    public void supplementResource(Resource resource) {
+    @RequestMapping(method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    Resource insert(@RequestBody U registration, HttpServletResponse response) {
+        T entity = register(registration);
+        addLocationHeader(response, entity);
+        return entityLinkAssembler.toResource(entity);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.CREATED)
+    Resource replace(@RequestBody U registration, @PathVariable String id) {
+        T entity = register(registration, id);
+        return entityLinkAssembler.toResource(entity);
+    }
+
+    private void addLocationHeader(HttpServletResponse response, T entity) {
+        response.setHeader(HttpHeaders.LOCATION, ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(entity.getUuid()).toUri().toString());
     }
 }
