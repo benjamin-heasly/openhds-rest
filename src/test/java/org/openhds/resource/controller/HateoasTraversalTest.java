@@ -1,7 +1,6 @@
-package org.openhds.resource;
+package org.openhds.resource.controller;
 
 import org.junit.Test;
-import org.openhds.resource.controller.ExtIdRestController;
 import org.springframework.hateoas.Link;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;

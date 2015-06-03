@@ -1,4 +1,4 @@
-package org.openhds.resource;
+package org.openhds.resource.controller;
 
 import org.junit.Test;
 import org.openhds.repository.UserRepository;

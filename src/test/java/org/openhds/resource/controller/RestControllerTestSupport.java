@@ -1,4 +1,4 @@
-package org.openhds.resource;
+package org.openhds.resource.controller;
 
 import com.jayway.jsonpath.JsonPath;
 import org.junit.Before;

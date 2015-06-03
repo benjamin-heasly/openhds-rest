@@ -1,4 +1,4 @@
-package org.openhds.resource;
+package org.openhds.resource.controller;
 
 import org.springframework.http.MediaType;
 import org.springframework.mock.http.MockHttpInputMessage;
