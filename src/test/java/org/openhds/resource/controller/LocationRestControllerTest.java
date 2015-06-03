@@ -2,10 +2,11 @@ package org.openhds.resource.controller;
 
 import org.junit.Test;
 import org.openhds.domain.model.Location;
-import org.openhds.resource.registration.LocationRegistration;
 import org.openhds.repository.FieldWorkerRepository;
 import org.openhds.repository.LocationHierarchyRepository;
 import org.openhds.repository.LocationRepository;
+import org.openhds.resource.registration.LocationRegistration;
+import org.openhds.resource.registration.Registration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
@@ -37,12 +38,45 @@ public class LocationRestControllerTest extends UuidRestControllerTest<Location>
 
     @Override
     protected Location makeValidEntity(String name, String id) {
-        return null;
+        Location location = new Location();
+        location.setUuid(id);
+        location.setName(name);
+        location.setExtId(name);
+        return location;
     }
 
     @Override
     protected Location makeInvalidEntity(String name, String id) {
         return null;
+    }
+
+    @Override
+    protected Registration<Location> makeValidRegistration(String name, String id) {
+        LocationRegistration registration = new LocationRegistration();
+        registration.setLocation(makeValidEntity(name, id));
+        registration.setLocationHierarchyUuid(locationHierarchyRepository.findAll().get(0).getUuid());
+        registration.setCollectedByUuid(fieldWorkerRepository.findAll().get(0).getUuid());
+        return registration;
+    }
+
+    @Override
+    protected Registration<Location> makeInvalidRegistration(String name, String id) {
+        return null;
+    }
+
+    @Override
+    protected Location getAnyExisting() {
+        return locationRepository.findAll().get(0);
+    }
+
+    @Override
+    protected long getCount() {
+        return locationRepository.count();
+    }
+
+    @Override
+    protected String getResourceName() {
+        return "locations";
     }
 
     private LocationRegistration makeLocationRegistration(String hierarchyName, String name) {
