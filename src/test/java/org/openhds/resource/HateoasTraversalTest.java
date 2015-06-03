@@ -12,7 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by Ben on 5/26/15.
  */
-public class HateoasTraversalTest extends AbstractRestControllerTest {
+public class HateoasTraversalTest extends RestControllerTestSupport {
 
     @Test
     @WithMockUser(username = username, password = password)
@@ -31,7 +31,6 @@ public class HateoasTraversalTest extends AbstractRestControllerTest {
 
         // find the user's "self"
         String insertBySelfUrl = getAndExtractJsonPath(insertByUrl, "$._links.self.href");
-
     }
 
     private String getAndExtractJsonPath(String url, String linkPath) throws Exception {

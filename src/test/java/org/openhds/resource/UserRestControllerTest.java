@@ -16,10 +16,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by Ben on 5/19/15.
  */
-public class UserRestControllerTest extends AbstractRestControllerTest {
+public class UserRestControllerTest extends UuidRestControllerTest<User> {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Override
+    protected User makeValidEntity(String name, String id) {
+        return null;
+    }
+
+    @Override
+    protected User makeInvalidEntity(String name, String id) {
+        return null;
+    }
 
     @Test
     @WithMockUser(username = "invalid", password = "invalid", roles = {""})

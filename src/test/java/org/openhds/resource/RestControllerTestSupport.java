@@ -1,8 +1,8 @@
 package org.openhds.resource;
 
 import com.jayway.jsonpath.JsonPath;
-import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openhds.OpenHdsRestApplication;
 import org.openhds.repository.util.SampleDataGenerator;
@@ -10,31 +10,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.mock.http.MockHttpOutputMessage;
+import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-
 /**
- * Created by Ben on 5/4/15.
+ * Created by Ben on 6/3/15.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = OpenHdsRestApplication.class)
 @WebAppConfiguration
-public abstract class AbstractRestControllerTest {
+public class RestControllerTestSupport {
 
     protected final MediaType halJson = new MediaType(
             MediaTypes.HAL_JSON.getType(),
@@ -50,22 +46,22 @@ public abstract class AbstractRestControllerTest {
 
     protected MockMvc mockMvc;
 
-    protected HttpMessageConverter messageConverter;
-
     @Autowired
     protected WebApplicationContext webApplicationContext;
 
     @Autowired
-    private SampleDataGenerator sampleDataGenerator;
+    protected SampleDataGenerator sampleDataGenerator;
 
     @Autowired
-    private void setConverters(HttpMessageConverter<?>[] converters) {
-        this.messageConverter = Arrays.asList(converters)
-                .stream()
-                .filter(hmc -> hmc instanceof MappingJackson2HttpMessageConverter)
-                .findAny()
-                .get();
-        Assert.assertNotNull("the JSON message converter must not be null", this.messageConverter);
+    protected MappingJackson2HttpMessageConverter jsonMessageConverter;
+
+    @Autowired
+    protected MappingJackson2XmlHttpMessageConverter xmlMessageConverter;
+
+    protected String extractJsonPath(MvcResult mvcResult, String linkPath) throws Exception {
+        String linkHref = JsonPath.read(mvcResult.getResponse().getContentAsString(), linkPath);
+        assertNotNull(linkHref);
+        return linkHref;
     }
 
     @Before
@@ -76,17 +72,12 @@ public abstract class AbstractRestControllerTest {
         this.mockMvc = webAppContextSetup(webApplicationContext)
                 .apply(springSecurity())
                 .build();
+
+        assertNotNull("the Json message converter must not be null", jsonMessageConverter);
+        assertNotNull("the Xml message converter must not be null", xmlMessageConverter);
     }
 
-    protected String toJson(Object o) throws IOException {
-        MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
-        this.messageConverter.write(o, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
-        return mockHttpOutputMessage.getBodyAsString();
-    }
-
-    protected String extractJsonPath(MvcResult mvcResult, String linkPath) throws Exception {
-        String linkHref = JsonPath.read(mvcResult.getResponse().getContentAsString(), linkPath);
-        assertNotNull(linkHref);
-        return linkHref;
+    @Test
+    public void initializes() throws Exception {
     }
 }

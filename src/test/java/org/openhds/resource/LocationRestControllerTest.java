@@ -24,7 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by Ben on 5/26/15.
  */
-public class LocationRestControllerTest extends AbstractRestControllerTest {
+public class LocationRestControllerTest extends UuidRestControllerTest<Location> {
 
     @Autowired
     private LocationRepository locationRepository;
@@ -34,6 +34,16 @@ public class LocationRestControllerTest extends AbstractRestControllerTest {
 
     @Autowired
     private LocationHierarchyRepository locationHierarchyRepository;
+
+    @Override
+    protected Location makeValidEntity(String name, String id) {
+        return null;
+    }
+
+    @Override
+    protected Location makeInvalidEntity(String name, String id) {
+        return null;
+    }
 
     private LocationRegistration makeLocationRegistration(String hierarchyName, String name) {
         Location location = new Location();
