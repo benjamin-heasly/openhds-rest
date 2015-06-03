@@ -26,20 +26,15 @@ public class UserRestControllerTest extends UuidRestControllerTest<User> {
     }
 
     @Override
-    protected User makeInvalidEntity(String name, String id) {
-        return null;
+    protected User makeInvalidEntity() {
+        return new User();
     }
 
     @Override
-    protected Registration<User> makeValidRegistration(String name, String id) {
+    protected Registration<User> makeRegistration(User entity) {
         UserRegistration registration = new UserRegistration();
-        registration.setUser(makeValidEntity(name, id));
+        registration.setUser(entity);
         return registration;
-    }
-
-    @Override
-    protected Registration<User> makeInvalidRegistration(String name, String id) {
-        return null;
     }
 
     @Override

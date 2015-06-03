@@ -23,11 +23,9 @@ public abstract class UuidRestControllerTest <T extends UuidIdentifiable> extend
 
     protected abstract T makeValidEntity(String name, String id);
 
-    protected abstract T makeInvalidEntity(String name, String id);
+    protected abstract T makeInvalidEntity();
 
-    protected abstract Registration<T> makeValidRegistration(String name, String id);
-
-    protected abstract Registration<T> makeInvalidRegistration(String name, String id);
+    protected abstract Registration<T> makeRegistration(T entity);
 
     protected abstract T getAnyExisting();
 
@@ -37,6 +35,11 @@ public abstract class UuidRestControllerTest <T extends UuidIdentifiable> extend
 
     protected String getResourceUrl() {
         return "/" + getResourceName() + "/";
+    }
+
+    protected T makeUpdateEntity(String name) {
+        T original = getAnyExisting();
+        return makeValidEntity(name, original.getUuid());
     }
 
     protected String toJson(Object o) throws IOException {
@@ -65,16 +68,16 @@ public abstract class UuidRestControllerTest <T extends UuidIdentifiable> extend
     @WithMockUser(username = "invalid", password = "invalid", roles = {""})
     public void forbiddenPost() throws Exception {
         mockMvc.perform(post(getResourceUrl())
-                .content(toJson(makeValidRegistration("test registration", "test id")))
-                .contentType(halJson))
+                .contentType(regularJson)
+                .content(toJson(makeRegistration(makeValidEntity("test registration", "test id")))))
                 .andExpect(status().isForbidden());
     }
 
     @Test
     public void noUserPost() throws Exception {
         mockMvc.perform(post(getResourceUrl())
-                .content(toJson(makeValidRegistration("test registration", "test id")))
-                .contentType(halJson))
+                .contentType(regularJson)
+                .content(toJson(makeRegistration(makeValidEntity("test registration", "test id")))))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -83,9 +86,33 @@ public abstract class UuidRestControllerTest <T extends UuidIdentifiable> extend
     public void postNew() throws Exception {
         this.mockMvc.perform(post(getResourceUrl())
                 .contentType(regularJson)
-                .content(toJson(makeValidRegistration("test name", "test id"))))
+                .content(toJson(makeRegistration(makeValidEntity("test registration", "test id")))))
                 .andExpect(status().isCreated());
     }
+
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void postUpdate() throws Exception {
+        this.mockMvc.perform(post(getResourceUrl())
+                .contentType(regularJson)
+                .content(toJson(makeRegistration(makeUpdateEntity("test update")))))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void postInvalid() throws Exception {
+        this.mockMvc.perform(post(getResourceUrl())
+                .contentType(regularJson)
+                .content(toJson(makeRegistration(makeInvalidEntity()))))
+                .andExpect(status().is4xxClientError());
+    }
+
+    // put new
+
+    // put update
+
+    // put invalid
 
     @Test
     @WithMockUser(username = username, password = password)

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import javax.validation.ConstraintViolationException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.NoSuchElementException;
@@ -32,6 +33,13 @@ class ExceptionAdvice {
         ex.printStackTrace( printWriter );
         printWriter.flush();
         return new VndErrors(ex.getClass().getSimpleName() + ": " + ex.getMessage(), writer.toString());
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public VndErrors constraintException(ConstraintViolationException ex) {
+        return new VndErrors("Constraint Violation", ex.getMessage());
     }
 
     @ExceptionHandler(NoSuchElementException.class)

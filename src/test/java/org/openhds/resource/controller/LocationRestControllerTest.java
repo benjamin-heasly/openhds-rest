@@ -14,9 +14,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.endsWith;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,22 +44,17 @@ public class LocationRestControllerTest extends UuidRestControllerTest<Location>
     }
 
     @Override
-    protected Location makeInvalidEntity(String name, String id) {
-        return null;
+    protected Location makeInvalidEntity() {
+        return new Location();
     }
 
     @Override
-    protected Registration<Location> makeValidRegistration(String name, String id) {
+    protected Registration<Location> makeRegistration(Location entity) {
         LocationRegistration registration = new LocationRegistration();
-        registration.setLocation(makeValidEntity(name, id));
+        registration.setLocation(entity);
         registration.setLocationHierarchyUuid(locationHierarchyRepository.findAll().get(0).getUuid());
         registration.setCollectedByUuid(fieldWorkerRepository.findAll().get(0).getUuid());
         return registration;
-    }
-
-    @Override
-    protected Registration<Location> makeInvalidRegistration(String name, String id) {
-        return null;
     }
 
     @Override
@@ -90,44 +83,6 @@ public class LocationRestControllerTest extends UuidRestControllerTest<Location>
         locationRegistration.setCollectedByUuid(fieldWorkerRepository.findAll().get(0).getUuid());
 
         return locationRegistration;
-    }
-
-    @Test
-    @WithMockUser(username = username, password = password)
-    public void postNewLocation() throws Exception {
-
-        String jsonBody = this.toJson(makeLocationRegistration("bottom-one", "test-location"));
-        mockMvc.perform(post("/locations")
-                .content(jsonBody)
-                .contentType(regularJson))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(halJson));
-    }
-
-    @Test
-    @WithMockUser(username = username, password = password)
-    public void postUpdateLocation() throws Exception {
-
-        String newName = UUID.randomUUID().toString();
-        Location oldLocation = locationRepository.findByExtId("location-a").get(0);
-        oldLocation.setName(newName);
-
-        LocationRegistration locationRegistration = new LocationRegistration();
-        locationRegistration.setLocation(oldLocation);
-        locationRegistration.setLocationHierarchyUuid(oldLocation.getLocationHierarchy().getUuid());
-        locationRegistration.setCollectedByUuid(fieldWorkerRepository.findAll().get(0).getUuid());
-
-        String jsonBody = this.toJson(locationRegistration);
-        mockMvc.perform(post("/locations")
-                .content(jsonBody)
-                .contentType(regularJson))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(halJson))
-                .andReturn();
-
-        Location updatedLocation = locationRepository.findByExtId("location-a").get(0);
-        assertEquals(oldLocation.getUuid(), updatedLocation.getUuid());
-        assertEquals(newName, updatedLocation.getName());
     }
 
     @Test
