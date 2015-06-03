@@ -2,6 +2,7 @@ package org.openhds.resource;
 
 import org.junit.Test;
 import org.openhds.repository.UserRepository;
+import org.openhds.resource.registration.UserRegistration;
 import org.openhds.security.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -58,14 +59,16 @@ public class UserRestControllerTest extends AbstractRestControllerTest {
 
     @Test
     @WithMockUser(username = username, password = password)
-    public void createBookmark() throws Exception {
+    public void createUser() throws Exception {
         User newUser = new User();
         newUser.setFirstName("first");
         newUser.setLastName("last");
         newUser.setUsername("test-username");
         newUser.setPassword("password");
+        UserRegistration registration = new UserRegistration();
+        registration.setUser(newUser);
 
-        String userJson = toJson(newUser);
+        String userJson = toJson(registration);
         this.mockMvc.perform(post("/users")
                 .contentType(regularJson)
                 .content(userJson))

@@ -1,4 +1,4 @@
-package org.openhds.domain.registration;
+package org.openhds.resource.registration;
 
 import org.openhds.domain.model.Location;
 import org.openhds.domain.util.Description;

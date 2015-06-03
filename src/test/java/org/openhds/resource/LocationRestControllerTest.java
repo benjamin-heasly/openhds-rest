@@ -2,7 +2,7 @@ package org.openhds.resource;
 
 import org.junit.Test;
 import org.openhds.domain.model.Location;
-import org.openhds.domain.registration.LocationRegistration;
+import org.openhds.resource.registration.LocationRegistration;
 import org.openhds.repository.FieldWorkerRepository;
 import org.openhds.repository.LocationHierarchyRepository;
 import org.openhds.repository.LocationRepository;

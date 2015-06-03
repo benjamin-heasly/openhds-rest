@@ -2,19 +2,14 @@ package org.openhds.resource.controller;
 
 import org.openhds.repository.UserRepository;
 import org.openhds.resource.links.EntityLinkAssembler;
+import org.openhds.resource.registration.UserRegistration;
 import org.openhds.security.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.ExposesResourceFor;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 /**
  * Created by Ben on 5/18/15.
@@ -22,7 +17,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RestController
 @RequestMapping("/users")
 @ExposesResourceFor(User.class)
-class UserRestController extends UuidRestController<User> {
+class UserRestController extends UuidRestController<User, UserRegistration> {
 
     private final UserRepository userRepository;
 
@@ -42,13 +37,15 @@ class UserRestController extends UuidRestController<User> {
         return userRepository.findAll(pageable);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<?> add(@RequestBody User input) {
-        User result = userRepository.save(input);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{username}")
-                .buildAndExpand(result.getUsername()).toUri());
-        return new ResponseEntity<>(result, httpHeaders, HttpStatus.CREATED);
+    @Override
+    protected User register(UserRegistration registration) {
+        return userRepository.save(registration.getUser());
     }
+
+    @Override
+    protected User register(UserRegistration registration, String id) {
+        registration.getUser().setUuid(id);
+        return register(registration);
+    }
+
 }
