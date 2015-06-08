@@ -17,7 +17,13 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
+import org.w3c.dom.Document;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
+import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
 
 import static org.junit.Assert.assertNotNull;
@@ -41,6 +47,11 @@ public class RestControllerTestSupport {
             MediaType.APPLICATION_JSON.getSubtype(),
             Charset.forName("utf8"));
 
+    protected final MediaType regularXml = new MediaType(
+            MediaType.APPLICATION_XML.getType(),
+            MediaType.APPLICATION_XML.getSubtype(),
+            Charset.forName("utf8"));
+
     protected final String username = "user";
     protected final String password = "password";
 
@@ -58,10 +69,19 @@ public class RestControllerTestSupport {
     @Autowired
     protected MappingJackson2XmlHttpMessageConverter xmlMessageConverter;
 
-    protected String extractJsonPath(MvcResult mvcResult, String linkPath) throws Exception {
-        String linkHref = JsonPath.read(mvcResult.getResponse().getContentAsString(), linkPath);
-        assertNotNull(linkHref);
-        return linkHref;
+    protected String extractJsonPath(MvcResult mvcResult, String path) throws Exception {
+        String value = JsonPath.read(mvcResult.getResponse().getContentAsString(), path);
+        assertNotNull(value);
+        return value;
+    }
+
+    protected String extractXmlPath(MvcResult mvcResult, String path) throws Exception {
+        DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document document = documentBuilder.parse(new ByteArrayInputStream(mvcResult.getResponse().getContentAsByteArray()));
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        String value = xPath.compile(path).evaluate(document);
+        assertNotNull(value);
+        return value;
     }
 
     @Before

@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by Ben on 5/4/15.
  */
-public abstract class UuidRestControllerTest <T extends UuidIdentifiable> extends RestControllerTestSupport {
+public abstract class UuidRestControllerTest<T extends UuidIdentifiable> extends RestControllerTestSupport {
 
     protected abstract T makeValidEntity(String name, String id);
 
@@ -91,10 +91,20 @@ public abstract class UuidRestControllerTest <T extends UuidIdentifiable> extend
 
     @Test
     @WithMockUser(username = username, password = password)
-    public void postNew() throws Exception {
+    public void postNewJson() throws Exception {
         this.mockMvc.perform(post(getResourceUrl())
                 .contentType(regularJson)
                 .content(toJson(makeRegistration(makeValidEntity("test registration", "test id")))))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void postNewXml() throws Exception {
+        this.mockMvc.perform(post(getResourceUrl())
+                .contentType(regularXml)
+                .accept(regularXml)
+                .content(toXml(makeRegistration(makeValidEntity("test registration", "test id")))))
                 .andExpect(status().isCreated());
     }
 
@@ -133,6 +143,25 @@ public abstract class UuidRestControllerTest <T extends UuidIdentifiable> extend
         assertEquals(uuid, responseUuid);
 
         String selfHref = extractJsonPath(mvcResult, "$._links.self.href");
+        assertThat(selfHref, endsWith(uuid));
+    }
+
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void putNewXml() throws Exception {
+        final String uuid = UUID.randomUUID().toString();
+
+        MvcResult mvcResult = this.mockMvc.perform(put(getResourceUrl() + uuid)
+                .contentType(regularXml)
+                .accept(regularXml)
+                .content(toXml(makeRegistration(makeValidEntity("test registration", "test id")))))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        String responseUuid = extractXmlPath(mvcResult, "/Resource/uuid");
+        assertEquals(uuid, responseUuid);
+
+        String selfHref = extractXmlPath(mvcResult, "/Resource/link/link[@rel='self']/@href");
         assertThat(selfHref, endsWith(uuid));
     }
 
@@ -190,7 +219,22 @@ public abstract class UuidRestControllerTest <T extends UuidIdentifiable> extend
         mockMvc.perform(get(getResourceUrl()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
-                .andExpect(jsonPath("$._embedded." + getResourceName(), hasSize((int)getCount())));
+                .andExpect(jsonPath("$._embedded." + getResourceName(), hasSize((int) getCount())));
+    }
+
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void getPaged() throws Exception {
+        // get the first page of size 1
+        mockMvc.perform(get(getResourceUrl())
+                .param("page", "0")
+                .param("size", "1")
+                .param("sort", "uuid"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(halJson))
+                .andExpect(jsonPath("$._embedded." + getResourceName(), hasSize(1)))
+                .andExpect(jsonPath("$.page.size", is(1)))
+                .andExpect(jsonPath("$.page.number", is(0)));
     }
 
 }
