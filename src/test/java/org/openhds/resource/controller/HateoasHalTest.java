@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by Ben on 5/26/15.
  */
-public class HateoasTraversalTest extends RestControllerTestSupport {
+public class HateoasHalTest extends RestControllerTestSupport {
 
     @Test
     @WithMockUser(username = username, password = password)
@@ -41,4 +41,43 @@ public class HateoasTraversalTest extends RestControllerTestSupport {
                 .andReturn();
         return extractJsonPath(mvcResult, linkPath);
     }
+
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void pluralCollectionNameJson() throws Exception {
+        this.mockMvc.perform(get("/locations")
+                .contentType(regularJson)
+                .accept(halJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded.locations").exists());
+    }
+
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void pluralCollectionNameXml() throws Exception {
+        this.mockMvc.perform(get("/locations")
+                .contentType(regularXml)
+                .accept(regularXml))
+                .andExpect(status().isOk())
+                .andExpect(xpath("/pagedEntities/content").exists());
+    }
+
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void selfLinkJson() throws Exception {
+        this.mockMvc.perform(get("/")
+                .accept(halJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._links.self").exists());
+    }
+
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void selfLinkXml() throws Exception {
+        this.mockMvc.perform(get("/")
+                .accept(regularXml))
+                .andExpect(status().isOk())
+                .andExpect(xpath("/Resource/link/link[@rel='self']/@href").exists());
+    }
+
 }
