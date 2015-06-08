@@ -1,5 +1,6 @@
 package org.openhds.domain.contract;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.annotations.GenericGenerator;
 import org.openhds.domain.util.Description;
@@ -16,6 +17,7 @@ import java.util.Calendar;
 @Description(description = "An AuditableEntity can be any entity stored in the database that needs to be audited.")
 @MappedSuperclass
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class AuditableEntity implements UuidIdentifiable, Serializable {
 
     private static final long serialVersionUID = -4703049354466276068L;

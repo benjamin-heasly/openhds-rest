@@ -8,6 +8,9 @@ import org.openhds.resource.registration.LocationRegistration;
 import org.openhds.resource.registration.Registration;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 
 /**
  * Created by Ben on 5/26/15.
@@ -38,6 +41,18 @@ public class LocationRestControllerTest extends ExtIdRestControllerTest<Location
     }
 
     @Override
+    protected void verifyEntityExistsWithNameAndId(Location entity, String name, String id) {
+        assertNotNull(entity);
+
+        Location savedLocation = locationRepository.findOne(id);
+        assertNotNull(savedLocation);
+
+        assertEquals(id, savedLocation.getUuid());
+        assertEquals(id, entity.getUuid());
+        assertEquals(entity.getName(), savedLocation.getName());
+    }
+
+    @Override
     protected Registration<Location> makeRegistration(Location entity) {
         LocationRegistration registration = new LocationRegistration();
         registration.setLocation(entity);
@@ -59,6 +74,11 @@ public class LocationRestControllerTest extends ExtIdRestControllerTest<Location
     @Override
     protected String getResourceName() {
         return "locations";
+    }
+
+    @Override
+    protected Class<Location> getEntityClass() {
+        return Location.class;
     }
 
     private LocationRegistration makeLocationRegistration(String hierarchyName, String name) {

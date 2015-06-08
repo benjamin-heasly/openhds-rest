@@ -1,6 +1,7 @@
 package org.openhds.security.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.annotations.GenericGenerator;
 import org.openhds.domain.contract.UuidIdentifiable;
@@ -18,6 +19,7 @@ import static java.util.stream.Collectors.toSet;
 @Entity
 @Table(name = "user")
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements Serializable, UuidIdentifiable {
 
     static final long serialVersionUID = 23L;

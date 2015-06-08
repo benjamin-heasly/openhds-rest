@@ -12,13 +12,11 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.io.IOException;
 import java.util.UUID;
 
-import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 
 /**
  * Created by Ben on 5/4/15.
@@ -29,6 +27,8 @@ public abstract class UuidRestControllerTest<T extends UuidIdentifiable> extends
 
     protected abstract T makeInvalidEntity();
 
+    protected abstract void verifyEntityExistsWithNameAndId(T entity, String name, String id);
+
     protected abstract Registration<T> makeRegistration(T entity);
 
     protected abstract T getAnyExisting();
@@ -36,6 +36,8 @@ public abstract class UuidRestControllerTest<T extends UuidIdentifiable> extends
     protected abstract long getCount();
 
     protected abstract String getResourceName();
+
+    protected abstract Class<T> getEntityClass();
 
     protected String getResourceUrl() {
         return "/" + getResourceName() + "/";
@@ -92,29 +94,47 @@ public abstract class UuidRestControllerTest<T extends UuidIdentifiable> extends
     @Test
     @WithMockUser(username = username, password = password)
     public void postNewJson() throws Exception {
-        this.mockMvc.perform(post(getResourceUrl())
+        T entity = makeValidEntity("test registration", "test id");
+
+        MvcResult mvcResult = this.mockMvc.perform(post(getResourceUrl())
                 .contentType(regularJson)
-                .content(toJson(makeRegistration(makeValidEntity("test registration", "test id")))))
-                .andExpect(status().isCreated());
+                .content(toJson(makeRegistration(entity))))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        T responseEntity = fromJson(getEntityClass(), mvcResult.getResponse().getContentAsString());
+        verifyEntityExistsWithNameAndId(responseEntity, "test registration", entity.getUuid());
     }
 
     @Test
     @WithMockUser(username = username, password = password)
     public void postNewXml() throws Exception {
-        this.mockMvc.perform(post(getResourceUrl())
+        T entity = makeValidEntity("test registration", "test id");
+
+        MvcResult mvcResult = this.mockMvc.perform(post(getResourceUrl())
                 .contentType(regularXml)
                 .accept(regularXml)
-                .content(toXml(makeRegistration(makeValidEntity("test registration", "test id")))))
-                .andExpect(status().isCreated());
+                .content(toXml(makeRegistration(entity))))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        T responseEntity = fromXml(getEntityClass(), mvcResult.getResponse().getContentAsString());
+        verifyEntityExistsWithNameAndId(responseEntity, "test registration", entity.getUuid());
     }
 
     @Test
     @WithMockUser(username = username, password = password)
     public void postUpdate() throws Exception {
-        this.mockMvc.perform(post(getResourceUrl())
+        T entity = makeUpdateEntity("test update");
+
+        MvcResult mvcResult = this.mockMvc.perform(post(getResourceUrl())
                 .contentType(regularJson)
-                .content(toJson(makeRegistration(makeUpdateEntity("test update")))))
-                .andExpect(status().isCreated());
+                .content(toJson(makeRegistration(entity))))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        T responseEntity = fromJson(getEntityClass(), mvcResult.getResponse().getContentAsString());
+        verifyEntityExistsWithNameAndId(responseEntity, "test update", entity.getUuid());
     }
 
     @Test
@@ -132,55 +152,48 @@ public abstract class UuidRestControllerTest<T extends UuidIdentifiable> extends
     @WithMockUser(username = username, password = password)
     public void putNew() throws Exception {
         final String uuid = UUID.randomUUID().toString();
+        T entity = makeValidEntity("test registration", "ignored id");
 
         MvcResult mvcResult = this.mockMvc.perform(put(getResourceUrl() + uuid)
                 .contentType(regularJson)
-                .content(toJson(makeRegistration(makeValidEntity("test registration", "test id")))))
+                .content(toJson(makeRegistration(entity))))
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        String responseUuid = extractJsonPath(mvcResult, "$.uuid");
-        assertEquals(uuid, responseUuid);
-
-        String selfHref = extractJsonPath(mvcResult, "$._links.self.href");
-        assertThat(selfHref, endsWith(uuid));
+        T responseEntity = fromJson(getEntityClass(), mvcResult.getResponse().getContentAsString());
+        verifyEntityExistsWithNameAndId(responseEntity, "test registration", uuid);
     }
 
     @Test
     @WithMockUser(username = username, password = password)
     public void putNewXml() throws Exception {
         final String uuid = UUID.randomUUID().toString();
+        T entity = makeValidEntity("test registration", "ignored id");
 
         MvcResult mvcResult = this.mockMvc.perform(put(getResourceUrl() + uuid)
                 .contentType(regularXml)
                 .accept(regularXml)
-                .content(toXml(makeRegistration(makeValidEntity("test registration", "test id")))))
+                .content(toXml(makeRegistration(entity))))
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        String responseUuid = extractXmlPath(mvcResult, "/Resource/uuid");
-        assertEquals(uuid, responseUuid);
-
-        String selfHref = extractXmlPath(mvcResult, "/Resource/link/link[@rel='self']/@href");
-        assertThat(selfHref, endsWith(uuid));
+        T responseEntity = fromXml(getEntityClass(), mvcResult.getResponse().getContentAsString());
+        verifyEntityExistsWithNameAndId(responseEntity, "test registration", uuid);
     }
 
     @Test
     @WithMockUser(username = username, password = password)
     public void putUpdate() throws Exception {
-        final String uuid = UUID.randomUUID().toString();
+        T entity = makeUpdateEntity("test update");
 
-        MvcResult mvcResult = this.mockMvc.perform(put(getResourceUrl() + uuid)
+        MvcResult mvcResult = this.mockMvc.perform(put(getResourceUrl() + entity.getUuid())
                 .contentType(regularJson)
-                .content(toJson(makeRegistration(makeUpdateEntity("test update")))))
+                .content(toJson(makeRegistration(entity))))
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        String responseUuid = extractJsonPath(mvcResult, "$.uuid");
-        assertEquals(uuid, responseUuid);
-
-        String selfHref = extractJsonPath(mvcResult, "$._links.self.href");
-        assertThat(selfHref, endsWith(uuid));
+        T responseEntity = fromJson(getEntityClass(), mvcResult.getResponse().getContentAsString());
+        verifyEntityExistsWithNameAndId(responseEntity, "test update", entity.getUuid());
     }
 
     @Test
@@ -200,10 +213,22 @@ public abstract class UuidRestControllerTest<T extends UuidIdentifiable> extends
     @WithMockUser(username = username, password = password)
     public void getSingleValid() throws Exception {
         T entity = getAnyExisting();
-        mockMvc.perform(get(getResourceUrl() + entity.getUuid()))
+        mockMvc.perform(get(getResourceUrl() + entity.getUuid())
+                .accept(halJson))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
                 .andExpect(jsonPath("$.uuid", is(entity.getUuid())));
+    }
+
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void getSingleValidXml() throws Exception {
+        T entity = getAnyExisting();
+        mockMvc.perform(get(getResourceUrl() + entity.getUuid())
+                .accept(regularXml))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(regularXml))
+                .andExpect(xpath("/Resource/uuid").string(entity.getUuid()));
     }
 
     @Test

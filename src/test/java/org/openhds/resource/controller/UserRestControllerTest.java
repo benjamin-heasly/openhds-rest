@@ -6,6 +6,9 @@ import org.openhds.resource.registration.UserRegistration;
 import org.openhds.security.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 /**
  * Created by Ben on 5/19/15.
  */
@@ -31,6 +34,18 @@ public class UserRestControllerTest extends UuidRestControllerTest<User> {
     }
 
     @Override
+    protected void verifyEntityExistsWithNameAndId(User entity, String name, String id) {
+        assertNotNull(entity);
+
+        User savedUser = userRepository.findOne(id);
+        assertNotNull(savedUser);
+
+        assertEquals(id, savedUser.getUuid());
+        assertEquals(id, entity.getUuid());
+        assertEquals(entity.getUsername(), savedUser.getUsername());
+    }
+
+    @Override
     protected Registration<User> makeRegistration(User entity) {
         UserRegistration registration = new UserRegistration();
         registration.setUser(entity);
@@ -50,5 +65,10 @@ public class UserRestControllerTest extends UuidRestControllerTest<User> {
     @Override
     protected String getResourceName() {
         return "users";
+    }
+
+    @Override
+    protected Class<User> getEntityClass() {
+        return User.class;
     }
 }
