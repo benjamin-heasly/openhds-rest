@@ -15,6 +15,7 @@ import java.util.UUID;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -67,6 +68,8 @@ public abstract class UuidRestControllerTest <T extends UuidIdentifiable> extend
         return (T) xmlMessageConverter.read(targetClass, mockHttpInputMessage);
     }
 
+    // User auth
+
     @Test
     @WithMockUser(username = "invalid", password = "invalid", roles = {""})
     public void forbiddenPost() throws Exception {
@@ -83,6 +86,8 @@ public abstract class UuidRestControllerTest <T extends UuidIdentifiable> extend
                 .content(toJson(makeRegistration(makeValidEntity("test registration", "test id")))))
                 .andExpect(status().isUnauthorized());
     }
+
+    // POST
 
     @Test
     @WithMockUser(username = username, password = password)
@@ -111,6 +116,8 @@ public abstract class UuidRestControllerTest <T extends UuidIdentifiable> extend
                 .andExpect(status().is4xxClientError());
     }
 
+    // PUT
+
     @Test
     @WithMockUser(username = username, password = password)
     public void putNew() throws Exception {
@@ -121,6 +128,9 @@ public abstract class UuidRestControllerTest <T extends UuidIdentifiable> extend
                 .content(toJson(makeRegistration(makeValidEntity("test registration", "test id")))))
                 .andExpect(status().isCreated())
                 .andReturn();
+
+        String responseUuid = extractJsonPath(mvcResult, "$.uuid");
+        assertEquals(uuid, responseUuid);
 
         String selfHref = extractJsonPath(mvcResult, "$._links.self.href");
         assertThat(selfHref, endsWith(uuid));
@@ -137,6 +147,9 @@ public abstract class UuidRestControllerTest <T extends UuidIdentifiable> extend
                 .andExpect(status().isCreated())
                 .andReturn();
 
+        String responseUuid = extractJsonPath(mvcResult, "$.uuid");
+        assertEquals(uuid, responseUuid);
+
         String selfHref = extractJsonPath(mvcResult, "$._links.self.href");
         assertThat(selfHref, endsWith(uuid));
     }
@@ -152,14 +165,23 @@ public abstract class UuidRestControllerTest <T extends UuidIdentifiable> extend
                 .andExpect(status().is4xxClientError());
     }
 
+    // GET
+
     @Test
     @WithMockUser(username = username, password = password)
-    public void getSingle() throws Exception {
+    public void getSingleValid() throws Exception {
         T entity = getAnyExisting();
         mockMvc.perform(get(getResourceUrl() + entity.getUuid()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
                 .andExpect(jsonPath("$.uuid", is(entity.getUuid())));
+    }
+
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void getSingleInvalid() throws Exception {
+        mockMvc.perform(get(getResourceUrl() + "invalid id"))
+                .andExpect(status().is4xxClientError());
     }
 
     @Test
