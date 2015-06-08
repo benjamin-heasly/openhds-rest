@@ -62,7 +62,6 @@ public class WebSecurityConfiguration {
         }
     }
 
-
     @Configuration
     public static class FilterRegistrationConfig {
 

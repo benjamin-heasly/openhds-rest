@@ -14,6 +14,7 @@ import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.ConstraintViolationException;
 import java.util.Calendar;
 import java.util.List;
 
@@ -65,6 +66,10 @@ class LocationRestController extends ExtIdRestController<Location, LocationRegis
     protected Location register(LocationRegistration registration) {
         // TODO: this implementation belongs in a Location service.  Ben and Wolfe collab.
         Location location = registration.getLocation();
+
+        if (null == location.getName()) {
+            throw new ConstraintViolationException("Location name must not be null.", null);
+        }
 
         // TODO: this should come from the authenticated Principal
         location.setInsertBy(userRepository.findAll().get(0));

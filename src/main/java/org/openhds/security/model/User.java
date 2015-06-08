@@ -7,6 +7,8 @@ import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -35,6 +37,8 @@ public class User implements Serializable, UuidIdentifiable {
     @Column(length = 36)
     private String uuid;
 
+    @NotNull
+    @Size(min = 1)
     @Description(description = "User's first name")
     private String firstName;
 
@@ -44,6 +48,8 @@ public class User implements Serializable, UuidIdentifiable {
     @Description(description = "Description of the user.")
     private String description;
 
+    @NotNull
+    @Size(min = 1)
     @Description(description = "The name used for logging into the system.")
     private String username;
 

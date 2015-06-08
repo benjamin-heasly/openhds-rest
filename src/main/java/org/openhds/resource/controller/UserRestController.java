@@ -11,6 +11,8 @@ import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.ConstraintViolationException;
+
 /**
  * Created by Ben on 5/18/15.
  */
@@ -39,6 +41,12 @@ class UserRestController extends UuidRestController<User, UserRegistration> {
 
     @Override
     protected User register(UserRegistration registration) {
+        // TODO: this implementation belongs in a User service.  Wolfe and Ben collab.
+        final User user = registration.getUser();
+        if (null == user.getUsername()) {
+            throw new ConstraintViolationException("User username may not be null.", null);
+        }
+
         return userRepository.save(registration.getUser());
     }
 
