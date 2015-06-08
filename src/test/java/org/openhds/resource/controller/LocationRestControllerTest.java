@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Created by Ben on 5/26/15.
  */
-public class LocationRestControllerTest extends UuidRestControllerTest<Location> {
+public class LocationRestControllerTest extends ExtIdRestControllerTest<Location> {
 
     @Autowired
     private LocationRepository locationRepository;

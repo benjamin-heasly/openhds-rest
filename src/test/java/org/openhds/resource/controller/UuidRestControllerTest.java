@@ -210,7 +210,7 @@ public abstract class UuidRestControllerTest<T extends UuidIdentifiable> extends
     @WithMockUser(username = username, password = password)
     public void getSingleInvalid() throws Exception {
         mockMvc.perform(get(getResourceUrl() + "invalid id"))
-                .andExpect(status().is4xxClientError());
+                .andExpect(status().isNotFound());
     }
 
     @Test

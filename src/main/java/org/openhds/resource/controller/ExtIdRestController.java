@@ -34,7 +34,7 @@ public abstract class ExtIdRestController<T extends ExtIdIdentifiable, U extends
     @RequestMapping(value = "/external/{id}", method = RequestMethod.GET)
     public Resources<?> readByExtId(@PathVariable String id) {
         List<T> entities = findByExtId(id);
-        if (null == entities) {
+        if (null == entities || 0 == entities.size()) {
             throw new NoSuchElementException("No entities found with external id: " + id);
         }
         Resources resources = entityLinkAssembler.wrapCollection(entities);
