@@ -12,11 +12,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.io.IOException;
 import java.util.UUID;
 
-import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -141,9 +139,6 @@ public abstract class UuidRestControllerTest<T extends UuidIdentifiable> extends
 
         String responseUuid = extractJsonPath(mvcResult, "$.uuid");
         assertEquals(uuid, responseUuid);
-
-        String selfHref = extractJsonPath(mvcResult, "$._links.self.href");
-        assertThat(selfHref, endsWith(uuid));
     }
 
     @Test
@@ -160,9 +155,6 @@ public abstract class UuidRestControllerTest<T extends UuidIdentifiable> extends
 
         String responseUuid = extractXmlPath(mvcResult, "/Resource/uuid");
         assertEquals(uuid, responseUuid);
-
-        String selfHref = extractXmlPath(mvcResult, "/Resource/link/link[@rel='self']/@href");
-        assertThat(selfHref, endsWith(uuid));
     }
 
     @Test
@@ -178,9 +170,6 @@ public abstract class UuidRestControllerTest<T extends UuidIdentifiable> extends
 
         String responseUuid = extractJsonPath(mvcResult, "$.uuid");
         assertEquals(uuid, responseUuid);
-
-        String selfHref = extractJsonPath(mvcResult, "$._links.self.href");
-        assertThat(selfHref, endsWith(uuid));
     }
 
     @Test
