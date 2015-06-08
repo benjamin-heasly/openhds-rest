@@ -7,13 +7,16 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.http.MockHttpInputMessage;
 import org.springframework.mock.http.MockHttpOutputMessage;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.io.IOException;
+import java.util.UUID;
 
+import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.junit.Assert.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -108,11 +111,46 @@ public abstract class UuidRestControllerTest <T extends UuidIdentifiable> extend
                 .andExpect(status().is4xxClientError());
     }
 
-    // put new
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void putNew() throws Exception {
+        final String uuid = UUID.randomUUID().toString();
 
-    // put update
+        MvcResult mvcResult = this.mockMvc.perform(put(getResourceUrl() + uuid)
+                .contentType(regularJson)
+                .content(toJson(makeRegistration(makeValidEntity("test registration", "test id")))))
+                .andExpect(status().isCreated())
+                .andReturn();
 
-    // put invalid
+        String selfHref = extractJsonPath(mvcResult, "$._links.self.href");
+        assertThat(selfHref, endsWith(uuid));
+    }
+
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void putUpdate() throws Exception {
+        final String uuid = UUID.randomUUID().toString();
+
+        MvcResult mvcResult = this.mockMvc.perform(put(getResourceUrl() + uuid)
+                .contentType(regularJson)
+                .content(toJson(makeRegistration(makeUpdateEntity("test update")))))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        String selfHref = extractJsonPath(mvcResult, "$._links.self.href");
+        assertThat(selfHref, endsWith(uuid));
+    }
+
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void putInvalid() throws Exception {
+        final String uuid = UUID.randomUUID().toString();
+
+        this.mockMvc.perform(put(getResourceUrl() + uuid)
+                .contentType(regularJson)
+                .content(toJson(makeRegistration(makeInvalidEntity()))))
+                .andExpect(status().is4xxClientError());
+    }
 
     @Test
     @WithMockUser(username = username, password = password)

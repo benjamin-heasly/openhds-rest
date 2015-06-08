@@ -42,7 +42,8 @@ class UserRestController extends UuidRestController<User, UserRegistration> {
     @Override
     protected User register(UserRegistration registration) {
         // TODO: this implementation belongs in a User service.  Wolfe and Ben collab.
-        if (null == registration.getUser().getUuid()) {
+        final User user = registration.getUser();
+        if (null == user.getUsername()) {
             throw new ConstraintViolationException("User username may not be null.", null);
         }
 

@@ -1,6 +1,5 @@
 package org.openhds.resource.controller;
 
-import org.junit.Test;
 import org.openhds.domain.model.Location;
 import org.openhds.repository.FieldWorkerRepository;
 import org.openhds.repository.LocationHierarchyRepository;
@@ -8,16 +7,6 @@ import org.openhds.repository.LocationRepository;
 import org.openhds.resource.registration.LocationRegistration;
 import org.openhds.resource.registration.Registration;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.web.servlet.MvcResult;
-
-import java.util.UUID;
-
-import static org.hamcrest.CoreMatchers.endsWith;
-import static org.junit.Assert.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 /**
@@ -85,21 +74,4 @@ public class LocationRestControllerTest extends UuidRestControllerTest<Location>
         return locationRegistration;
     }
 
-    @Test
-    @WithMockUser(username = username, password = password)
-    public void putNewLocation() throws Exception {
-
-        final String uuid = UUID.randomUUID().toString();
-
-        String jsonBody = this.toJson(makeLocationRegistration("bottom-one", "test-location"));
-        MvcResult mvcResult = mockMvc.perform(put("/locations/" + uuid)
-                .content(jsonBody)
-                .contentType(regularJson))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(halJson))
-                .andReturn();
-
-        String selfHref = extractJsonPath(mvcResult, "$._links.self.href");
-        assertThat(selfHref, endsWith(uuid));
-    }
 }
