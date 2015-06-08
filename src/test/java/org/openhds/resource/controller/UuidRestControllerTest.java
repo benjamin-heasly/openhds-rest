@@ -27,6 +27,8 @@ public abstract class UuidRestControllerTest<T extends UuidIdentifiable> extends
 
     protected abstract T makeInvalidEntity();
 
+    protected abstract void verifyEntityExistsWithNameAndId(T entity, String name, String id);
+
     protected abstract Registration<T> makeRegistration(T entity);
 
     protected abstract T getAnyExisting();
@@ -34,6 +36,8 @@ public abstract class UuidRestControllerTest<T extends UuidIdentifiable> extends
     protected abstract long getCount();
 
     protected abstract String getResourceName();
+
+    protected abstract Class<T> getEntityClass();
 
     protected String getResourceUrl() {
         return "/" + getResourceName() + "/";
@@ -90,29 +94,47 @@ public abstract class UuidRestControllerTest<T extends UuidIdentifiable> extends
     @Test
     @WithMockUser(username = username, password = password)
     public void postNewJson() throws Exception {
-        this.mockMvc.perform(post(getResourceUrl())
+        T entity = makeValidEntity("test registration", "test id");
+
+        MvcResult mvcResult = this.mockMvc.perform(post(getResourceUrl())
                 .contentType(regularJson)
-                .content(toJson(makeRegistration(makeValidEntity("test registration", "test id")))))
-                .andExpect(status().isCreated());
+                .content(toJson(makeRegistration(entity))))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        T responseEntity = fromJson(getEntityClass(), mvcResult.getResponse().getContentAsString());
+        verifyEntityExistsWithNameAndId(responseEntity, "test registration", entity.getUuid());
     }
 
     @Test
     @WithMockUser(username = username, password = password)
     public void postNewXml() throws Exception {
-        this.mockMvc.perform(post(getResourceUrl())
+        T entity = makeValidEntity("test registration", "test id");
+
+        MvcResult mvcResult = this.mockMvc.perform(post(getResourceUrl())
                 .contentType(regularXml)
                 .accept(regularXml)
-                .content(toXml(makeRegistration(makeValidEntity("test registration", "test id")))))
-                .andExpect(status().isCreated());
+                .content(toXml(makeRegistration(entity))))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        T responseEntity = fromXml(getEntityClass(), mvcResult.getResponse().getContentAsString());
+        verifyEntityExistsWithNameAndId(responseEntity, "test registration", entity.getUuid());
     }
 
     @Test
     @WithMockUser(username = username, password = password)
     public void postUpdate() throws Exception {
-        this.mockMvc.perform(post(getResourceUrl())
+        T entity = makeUpdateEntity("test update");
+
+        MvcResult mvcResult = this.mockMvc.perform(post(getResourceUrl())
                 .contentType(regularJson)
-                .content(toJson(makeRegistration(makeUpdateEntity("test update")))))
-                .andExpect(status().isCreated());
+                .content(toJson(makeRegistration(entity))))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        T responseEntity = fromJson(getEntityClass(), mvcResult.getResponse().getContentAsString());
+        verifyEntityExistsWithNameAndId(responseEntity, "test update", entity.getUuid());
     }
 
     @Test
