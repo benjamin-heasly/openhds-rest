@@ -40,7 +40,6 @@ public abstract class UuidRestController<T extends UuidIdentifiable, U extends R
     public void supplementResource(Resource resource) {
     }
 
-
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Resource<?> readOneCanonical(@PathVariable String id) {
         T entity = findOneCanonical(id);
@@ -51,7 +50,7 @@ public abstract class UuidRestController<T extends UuidIdentifiable, U extends R
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public PagedResources readAll(Pageable pageable, PagedResourcesAssembler assembler) {
+    public PagedResources readPaged(Pageable pageable, PagedResourcesAssembler assembler) {
         Page<T> entities = findPaged(pageable);
         return assembler.toResource(entities, entityLinkAssembler);
     }

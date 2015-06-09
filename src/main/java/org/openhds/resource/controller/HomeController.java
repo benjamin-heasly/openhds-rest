@@ -22,8 +22,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RestController
 public class HomeController {
 
-    private static final String CONTENTS_REL = "contents";
-
     private final EntityLinks entityLinks;
 
     private final ControllerRegistry controllerRegistry;
@@ -52,7 +50,6 @@ public class HomeController {
 
     private void addSelfLink(Resource<String> resource) {
         resource.add(linkTo(methodOn(HomeController.class).home()).withSelfRel());
-        resource.add(linkTo(methodOn(HomeController.class).home()).withRel(CONTENTS_REL));
     }
 
     private void addControllerLinks(Resource<String> resource) {
