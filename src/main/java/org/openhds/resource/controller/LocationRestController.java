@@ -7,6 +7,7 @@ import org.openhds.repository.LocationHierarchyRepository;
 import org.openhds.repository.LocationRepository;
 import org.openhds.repository.UserRepository;
 import org.openhds.resource.links.EntityLinkAssembler;
+import org.openhds.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +27,7 @@ import java.util.List;
 @ExposesResourceFor(Location.class)
 class LocationRestController extends ExtIdRestController<Location, LocationRegistration> {
 
-    private final LocationRepository locationRepository;
+    private final LocationService locationService;
 
     private final LocationHierarchyRepository locationHierarchyRepository;
 
@@ -36,12 +37,12 @@ class LocationRestController extends ExtIdRestController<Location, LocationRegis
 
     @Autowired
     public LocationRestController(EntityLinkAssembler entityLinkAssembler,
-                                  LocationRepository locationRepository,
+                                  LocationService locationService,
                                   LocationHierarchyRepository locationHierarchyRepository,
                                   UserRepository userRepository,
                                   FieldWorkerRepository fieldWorkerRepository) {
         super(entityLinkAssembler);
-        this.locationRepository = locationRepository;
+        this.locationService = locationService;
         this.locationHierarchyRepository = locationHierarchyRepository;
         this.userRepository = userRepository;
         this.fieldWorkerRepository = fieldWorkerRepository;
@@ -49,17 +50,17 @@ class LocationRestController extends ExtIdRestController<Location, LocationRegis
 
     @Override
     protected Location findOneCanonical(String id) {
-        return locationRepository.findOne(id);
+        return locationService.findOne(id);
     }
 
     @Override
     protected Page<Location> findPaged(Pageable pageable) {
-        return locationRepository.findAll(pageable);
+        return locationService.findPaged(pageable);
     }
 
     @Override
     protected List<Location> findByExtId(String id) {
-        return locationRepository.findByExtId(id);
+        return locationService.findByExtId(id);
     }
 
     @Override
@@ -79,7 +80,7 @@ class LocationRestController extends ExtIdRestController<Location, LocationRegis
         location.setLocationHierarchy(locationHierarchyRepository.findOne(registration.getLocationHierarchyUuid()));
         location.setInsertDate(Calendar.getInstance());
 
-        return locationRepository.save(location);
+        return locationService.create(location);
     }
 
     @Override

@@ -14,4 +14,5 @@ public interface LocationRepository extends JpaRepository<Location, String> {
     List<Location> findByExtId(String extId);
     List<Location> findByName(String name);
     List<Location> findByLocationHierarchy(LocationHierarchy parent);
+
 }
