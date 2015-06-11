@@ -1,13 +1,13 @@
 package org.openhds.resource.controller;
 
 import org.openhds.domain.model.Location;
+import org.openhds.repository.LocationRepository;
 import org.openhds.resource.registration.LocationRegistration;
 import org.openhds.repository.FieldWorkerRepository;
 import org.openhds.repository.LocationHierarchyRepository;
-import org.openhds.repository.LocationRepository;
 import org.openhds.repository.UserRepository;
 import org.openhds.resource.links.EntityLinkAssembler;
-import org.openhds.service.LocationService;
+import org.openhds.service.impl.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +27,7 @@ import java.util.List;
 @ExposesResourceFor(Location.class)
 class LocationRestController extends ExtIdRestController<Location, LocationRegistration> {
 
-    private final LocationService locationService;
+    private final LocationRepository locationRepository;
 
     private final LocationHierarchyRepository locationHierarchyRepository;
 
@@ -37,12 +37,12 @@ class LocationRestController extends ExtIdRestController<Location, LocationRegis
 
     @Autowired
     public LocationRestController(EntityLinkAssembler entityLinkAssembler,
-                                  LocationService locationService,
+                                  LocationRepository locationRepository,
                                   LocationHierarchyRepository locationHierarchyRepository,
                                   UserRepository userRepository,
                                   FieldWorkerRepository fieldWorkerRepository) {
         super(entityLinkAssembler);
-        this.locationService = locationService;
+        this.locationRepository = locationRepository;
         this.locationHierarchyRepository = locationHierarchyRepository;
         this.userRepository = userRepository;
         this.fieldWorkerRepository = fieldWorkerRepository;
@@ -50,17 +50,17 @@ class LocationRestController extends ExtIdRestController<Location, LocationRegis
 
     @Override
     protected Location findOneCanonical(String id) {
-        return locationService.findOne(id);
+        return locationRepository.findOne(id);
     }
 
     @Override
     protected Page<Location> findPaged(Pageable pageable) {
-        return locationService.findPaged(pageable);
+        return locationRepository.findAll(pageable);
     }
 
     @Override
     protected List<Location> findByExtId(String id) {
-        return locationService.findByExtId(id);
+        return locationRepository.findByExtId(id);
     }
 
     @Override
@@ -80,7 +80,7 @@ class LocationRestController extends ExtIdRestController<Location, LocationRegis
         location.setLocationHierarchy(locationHierarchyRepository.findOne(registration.getLocationHierarchyUuid()));
         location.setInsertDate(Calendar.getInstance());
 
-        return locationService.create(location);
+        return locationRepository.save(location);
     }
 
     @Override

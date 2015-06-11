@@ -6,7 +6,6 @@ import org.openhds.repository.LocationHierarchyRepository;
 import org.openhds.repository.LocationRepository;
 import org.openhds.resource.registration.LocationRegistration;
 import org.openhds.resource.registration.Registration;
-import org.openhds.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertEquals;
@@ -19,7 +18,7 @@ import static org.junit.Assert.assertNotNull;
 public class LocationRestControllerTest extends ExtIdRestControllerTest<Location> {
 
     @Autowired
-    private LocationService locationService;
+    private LocationRepository locationRepository;
 
     @Autowired
     private FieldWorkerRepository fieldWorkerRepository;
@@ -45,7 +44,7 @@ public class LocationRestControllerTest extends ExtIdRestControllerTest<Location
     protected void verifyEntityExistsWithNameAndId(Location entity, String name, String id) {
         assertNotNull(entity);
 
-        Location savedLocation = locationService.findOne(id);
+        Location savedLocation = locationRepository.findOne(id);
         assertNotNull(savedLocation);
 
         assertEquals(id, savedLocation.getUuid());
@@ -64,7 +63,7 @@ public class LocationRestControllerTest extends ExtIdRestControllerTest<Location
 
     @Override
     protected Location getAnyExisting() {
-        return locationService.findAll().get(0);
+        return locationRepository.findAll().get(0);
     }
 
     @Override
