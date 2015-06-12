@@ -29,5 +29,9 @@ public abstract class AbstractUuidService <T>{
         return repository.findAll(pageable);
     }
 
+    public T createOrUpdate(T entity){
+        return repository.save(entity);
+    }
+
 
 }
