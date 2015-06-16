@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.ConstraintViolationException;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Ben on 5/18/15.
@@ -56,6 +55,11 @@ class LocationRestController extends AuditableExtIdRestController<Location, Loca
     @Override
     protected Page<Location> findPaged(Pageable pageable) {
         return locationRepository.findAll(pageable);
+    }
+
+    @Override
+    protected Page<Location> findPagedByInsertDate(Pageable pageable, ZonedDateTime insertedSince, ZonedDateTime insertedBefore) {
+        return locationRepository.findByInsertDateBetween(insertedSince, insertedBefore, pageable);
     }
 
     @Override
