@@ -24,7 +24,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/locations")
 @ExposesResourceFor(Location.class)
-class LocationRestController extends AuditableExternalRestController<Location, LocationRegistration> {
+class LocationRestController extends AuditableExtIdRestController<Location, LocationRegistration> {
 
     private final LocationRepository locationRepository;
 

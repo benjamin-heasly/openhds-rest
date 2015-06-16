@@ -1,5 +1,6 @@
 package org.openhds.resource.controller;
 
+import org.openhds.domain.contract.AuditableExtIdEntity;
 import org.openhds.domain.contract.ExtIdIdentifiable;
 import org.openhds.resource.registration.Registration;
 import org.openhds.resource.links.EntityLinkAssembler;
@@ -20,12 +21,12 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 /**
  * Created by Ben on 6/1/15.
  */
-public abstract class AuditableExternalRestController<T extends ExtIdIdentifiable, U extends Registration<T>>
-        extends UuidIdentifiableRestController<T, U> {
+public abstract class AuditableExtIdRestController<T extends AuditableExtIdEntity, U extends Registration<T>>
+        extends AuditableCollectedRestController<T, U> {
 
     public static final String REL_SECTION = "section";
 
-    public AuditableExternalRestController(EntityLinkAssembler entityLinkAssembler) {
+    public AuditableExtIdRestController(EntityLinkAssembler entityLinkAssembler) {
         super(entityLinkAssembler);
     }
 
