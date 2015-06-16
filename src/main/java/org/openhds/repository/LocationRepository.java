@@ -10,8 +10,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface LocationRepository extends JpaRepository<Location, String> {
-    List<Location> findByExtId(String extId);
+public interface LocationRepository extends AuditableCollectedRepository<Location> {
+
     List<Location> findByName(String name);
     List<Location> findByLocationHierarchy(LocationHierarchy parent);
 
