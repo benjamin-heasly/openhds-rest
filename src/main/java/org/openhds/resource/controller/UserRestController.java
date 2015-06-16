@@ -19,7 +19,7 @@ import javax.validation.ConstraintViolationException;
 @RestController
 @RequestMapping("/users")
 @ExposesResourceFor(User.class)
-class UserRestController extends UuidRestController<User, UserRegistration> {
+class UserRestController extends UuidIdentifiableRestController<User, UserRegistration> {
 
     private final UserRepository userRepository;
 

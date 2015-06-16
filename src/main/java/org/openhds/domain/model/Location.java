@@ -1,8 +1,7 @@
 
 package org.openhds.domain.model;
 
-import org.openhds.domain.contract.AuditableCollectedEntity;
-import org.openhds.domain.contract.ExtIdIdentifiable;
+import org.openhds.domain.contract.AuditableExtIdEntity;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.CascadeType;
@@ -20,14 +19,9 @@ import java.io.Serializable;
 @Description(description = "A distinct Location in the study area, at a particular LocationHierarchy.")
 @Entity
 @Table(name = "location")
-public class Location extends AuditableCollectedEntity implements ExtIdIdentifiable, Serializable {
+public class Location extends AuditableExtIdEntity implements Serializable {
 
     public final static long serialVersionUID = 169551578162260199L;
-
-    @NotNull
-    @Size(min = 1)
-    @Description(description = "External Id of the location. This id is used internally.")
-    private String extId;
 
     @NotNull
     @Size(min = 1)
@@ -55,16 +49,6 @@ public class Location extends AuditableCollectedEntity implements ExtIdIdentifia
     //@OneToMany(targetEntity = org.openhds.domain.model.Residency.class)
     //@JoinColumn(name = "location_uuid")
     //private List<Residency> residencies = new ArrayList<Residency>();
-
-    @Override
-    public String getExtId() {
-        return extId;
-    }
-
-    @Override
-    public void setExtId(String extId) {
-        this.extId = extId;
-    }
 
     // Extensions for bioko island project
     @Description(description = "The number of this building within a sector")
@@ -261,15 +245,6 @@ public class Location extends AuditableCollectedEntity implements ExtIdIdentifia
 
     public void setDistrictName(String districtName) {
         this.districtName = districtName;
-    }
-
-    public static Location makeStub(String uuid, String extId) {
-
-        Location stub = new Location();
-        stub.setUuid(uuid);
-        stub.setExtId(extId);
-        return stub;
-
     }
 
     @Override

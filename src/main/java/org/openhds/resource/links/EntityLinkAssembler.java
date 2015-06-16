@@ -2,7 +2,7 @@ package org.openhds.resource.links;
 
 import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.domain.util.ShallowCopier;
-import org.openhds.resource.controller.UuidRestController;
+import org.openhds.resource.controller.UuidIdentifiableRestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.*;
 import org.springframework.stereotype.Component;
@@ -81,7 +81,7 @@ public class EntityLinkAssembler implements ResourceAssembler<UuidIdentifiable, 
 
     // Let an entity's controller add entity-specific links if it wants.
     private void addSupplementalLinks(UuidIdentifiable entity, Resource resource) {
-        Class<UuidRestController> controllerClass = controllerRegistry.getEntitiesToControllers().get(entity.getClass());
+        Class<UuidIdentifiableRestController> controllerClass = controllerRegistry.getEntitiesToControllers().get(entity.getClass());
         controllerRegistry.getController(controllerClass).supplementResource(resource);
     }
 }

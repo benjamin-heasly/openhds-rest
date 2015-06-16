@@ -22,11 +22,11 @@ import java.util.NoSuchElementException;
  * Common interface for REST controllers.
  */
 @RestController
-public abstract class UuidRestController<T extends UuidIdentifiable, U extends Registration<T>> {
+public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable, U extends Registration<T>> {
 
     protected final EntityLinkAssembler entityLinkAssembler;
 
-    public UuidRestController(EntityLinkAssembler entityLinkAssembler) {
+    public UuidIdentifiableRestController(EntityLinkAssembler entityLinkAssembler) {
         this.entityLinkAssembler = entityLinkAssembler;
     }
 

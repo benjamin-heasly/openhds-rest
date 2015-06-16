@@ -23,7 +23,7 @@ public class HateoasHalTest extends RestControllerTestSupport {
         String oneLocationUrl = getAndExtractJsonPath(locationsUrl, "$._embedded.locations[0]._links." + Link.REL_SELF + ".href");
 
         // follow the "external id" link to f the same location
-        String externalLocationUrl = getAndExtractJsonPath(oneLocationUrl, "$._links." + ExtIdRestController.REL_SECTION + ".href");
+        String externalLocationUrl = getAndExtractJsonPath(oneLocationUrl, "$._links." + AuditableExtIdRestController.REL_SECTION + ".href");
 
         // find the user who inserted the location, from the location
         String insertByUrl = getAndExtractJsonPath(externalLocationUrl, "$._embedded.locations[0]._links.insertby.href");
