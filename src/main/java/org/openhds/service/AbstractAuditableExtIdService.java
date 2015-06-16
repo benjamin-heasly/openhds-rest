@@ -1,6 +1,7 @@
 package org.openhds.service;
 
 import org.openhds.domain.contract.AuditableExtIdEntity;
+import org.openhds.repository.AuditableExtIdRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -8,8 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public abstract class AbstractAuditableExtIdService<T extends AuditableExtIdEntity> extends AbstractAuditableCollectedService<T>{
 
-    public AbstractAuditableExtIdService(JpaRepository respository) {
-        super(respository);
+    public AbstractAuditableExtIdService(AuditableExtIdRepository repository) {
+        super(repository);
     }
 
 }

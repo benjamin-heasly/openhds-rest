@@ -1,6 +1,7 @@
 package org.openhds.service;
 
 import org.openhds.domain.contract.AuditableCollectedEntity;
+import org.openhds.repository.AuditableCollectedRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -8,8 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public abstract class AbstractAuditableCollectedService<T extends AuditableCollectedEntity> extends AbstractAuditableService<T> {
 
-    public AbstractAuditableCollectedService(JpaRepository respository) {
-        super(respository);
+    public AbstractAuditableCollectedService(AuditableCollectedRepository repository) {
+        super(repository);
     }
 
 }
