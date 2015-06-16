@@ -20,12 +20,12 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 /**
  * Created by Ben on 6/1/15.
  */
-public abstract class ExtIdRestController<T extends ExtIdIdentifiable, U extends Registration<T>>
-        extends UuidRestController<T, U> {
+public abstract class AuditableExternalRestController<T extends ExtIdIdentifiable, U extends Registration<T>>
+        extends UuidIdentifiableRestController<T, U> {
 
     public static final String REL_SECTION = "section";
 
-    public ExtIdRestController(EntityLinkAssembler entityLinkAssembler) {
+    public AuditableExternalRestController(EntityLinkAssembler entityLinkAssembler) {
         super(entityLinkAssembler);
     }
 
