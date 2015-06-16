@@ -1,8 +1,10 @@
 package org.openhds;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
+import com.fasterxml.jackson.datatype.jsr310.JSR310Module;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import org.openhds.repository.util.SampleDataGenerator;
 import org.springframework.boot.CommandLineRunner;
@@ -43,6 +45,10 @@ public class OpenHdsRestApplication {
         // respect JAXB annotations
         mapper.registerModule(new JaxbAnnotationModule());
 
+        // work with java.time
+        mapper.registerModule(new JSR310Module());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
         converter.setObjectMapper(mapper);
         return converter;
     }
@@ -57,6 +63,10 @@ public class OpenHdsRestApplication {
 
         // respect JAXB annotations
         mapper.registerModule(new JaxbAnnotationModule());
+
+        // work with java.time
+        mapper.registerModule(new JSR310Module());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         converter.setObjectMapper(mapper);
         return converter;
