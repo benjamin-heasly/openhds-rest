@@ -11,7 +11,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by Ben on 6/8/15.
  */
-public abstract class ExtIdRestControllerTest<T extends AuditableExtIdEntity> extends UuidRestControllerTest<T> {
+public abstract class AuditableExtIdRestControllerTest<T extends AuditableExtIdEntity>
+        extends AuditableCollectedRestControllerTest<T> {
 
     protected String getExternalResourceUrl() {
         return getResourceUrl() + "external/";

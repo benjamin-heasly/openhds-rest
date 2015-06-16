@@ -12,7 +12,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by Ben on 5/19/15.
  */
-public class UserRestControllerTest extends UuidRestControllerTest<User> {
+public class UserRestControllerTest extends UuidIdentifiableRestControllerTest<User> {
 
     @Autowired
     private UserRepository userRepository;

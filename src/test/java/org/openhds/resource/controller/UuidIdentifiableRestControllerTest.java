@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by Ben on 5/4/15.
  */
-public abstract class UuidRestControllerTest<T extends UuidIdentifiable> extends RestControllerTestSupport {
+public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifiable> extends RestControllerTestSupport {
 
     protected abstract T makeValidEntity(String name, String id);
 
