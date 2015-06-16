@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.ConstraintViolationException;
-import java.util.Calendar;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -78,7 +78,7 @@ class LocationRestController extends AuditableExtIdRestController<Location, Loca
         // fill in auditable fields
         location.setCollectedBy(fieldWorkerRepository.findOne(registration.getCollectedByUuid()));
         location.setLocationHierarchy(locationHierarchyRepository.findOne(registration.getLocationHierarchyUuid()));
-        location.setInsertDate(Calendar.getInstance());
+        location.setInsertDate(ZonedDateTime.now());
 
         return locationRepository.save(location);
     }

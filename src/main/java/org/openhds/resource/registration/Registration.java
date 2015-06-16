@@ -2,7 +2,7 @@ package org.openhds.resource.registration;
 
 import org.openhds.domain.contract.UuidIdentifiable;
 
-import java.util.Calendar;
+import java.time.ZonedDateTime;
 
 /**
  * Created by Ben on 5/26/15.
@@ -25,7 +25,7 @@ public abstract class Registration<T extends UuidIdentifiable> {
 
     protected String registrationVersionName;
 
-    protected Calendar registrationDateTime;
+    protected ZonedDateTime registrationDateTime;
 
     protected String registrationSystemName;
 
@@ -47,11 +47,11 @@ public abstract class Registration<T extends UuidIdentifiable> {
         this.registrationVersionName = registrationVersionName;
     }
 
-    public Calendar getRegistrationDateTime() {
+    public ZonedDateTime getRegistrationDateTime() {
         return registrationDateTime;
     }
 
-    public void setRegistrationDateTime(Calendar registrationDateTime) {
+    public void setRegistrationDateTime(ZonedDateTime registrationDateTime) {
         this.registrationDateTime = registrationDateTime;
     }
 
