@@ -36,7 +36,7 @@ class UserRestController extends UuidIdentifiableRestController<User, UserRegist
     }
 
     @Override
-    protected Page<User> findPaged(Pageable pageable, Map<String, String> params) {
+    protected Page<User> findPaged(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
 

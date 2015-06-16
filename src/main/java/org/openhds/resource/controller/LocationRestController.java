@@ -54,7 +54,7 @@ class LocationRestController extends AuditableExtIdRestController<Location, Loca
     }
 
     @Override
-    protected Page<Location> findPaged(Pageable pageable, Map<String, String> params) {
+    protected Page<Location> findPaged(Pageable pageable) {
         return locationRepository.findAll(pageable);
     }
 
