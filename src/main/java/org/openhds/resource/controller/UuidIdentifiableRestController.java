@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 /**
@@ -32,11 +33,11 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
 
     // templates to be implemented with entity services, etc.
     protected abstract T findOneCanonical(String id);
-    protected abstract Page<T> findPaged(Pageable pageable);
+    protected abstract Page<T> findPaged(Pageable pageable, Map<String, String> params);
     protected abstract T register(U registration);
     protected abstract T register(U registration, String id);
 
-    // optionally add entity-specific links to an HATEOAS resource
+    // optionally add entity-specific links to a HATEOAS resource
     public void supplementResource(Resource resource) {
     }
 
@@ -50,8 +51,9 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public PagedResources readPaged(Pageable pageable, PagedResourcesAssembler assembler) {
-        Page<T> entities = findPaged(pageable);
+    public PagedResources readPaged(Pageable pageable, PagedResourcesAssembler assembler,
+                                    @RequestParam Map<String, String> params) {
+        Page<T> entities = findPaged(pageable, params);
         return assembler.toResource(entities, entityLinkAssembler);
     }
 

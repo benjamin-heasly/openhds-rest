@@ -1,12 +1,12 @@
 package org.openhds.resource.controller;
 
 import org.openhds.domain.model.Location;
-import org.openhds.repository.LocationRepository;
-import org.openhds.resource.registration.LocationRegistration;
 import org.openhds.repository.FieldWorkerRepository;
 import org.openhds.repository.LocationHierarchyRepository;
+import org.openhds.repository.LocationRepository;
 import org.openhds.repository.UserRepository;
 import org.openhds.resource.links.EntityLinkAssembler;
+import org.openhds.resource.registration.LocationRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.ConstraintViolationException;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Ben on 5/18/15.
@@ -53,7 +54,7 @@ class LocationRestController extends AuditableExtIdRestController<Location, Loca
     }
 
     @Override
-    protected Page<Location> findPaged(Pageable pageable) {
+    protected Page<Location> findPaged(Pageable pageable, Map<String, String> params) {
         return locationRepository.findAll(pageable);
     }
 
