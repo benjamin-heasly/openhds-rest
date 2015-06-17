@@ -26,10 +26,6 @@ public abstract class AuditableExtIdRestController<T extends AuditableExtIdEntit
 
     public static final String REL_SECTION = "section";
 
-    public AuditableExtIdRestController(EntityLinkAssembler entityLinkAssembler) {
-        super(entityLinkAssembler);
-    }
-
     protected abstract List<T> findByExtId(String id);
 
     @RequestMapping(value = "/external/{id}", method = RequestMethod.GET)

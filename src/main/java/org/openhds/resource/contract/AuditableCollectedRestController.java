@@ -1,7 +1,6 @@
 package org.openhds.resource.contract;
 
 import org.openhds.domain.contract.AuditableCollectedEntity;
-import org.openhds.resource.links.EntityLinkAssembler;
 import org.openhds.resource.registration.Registration;
 
 /**
@@ -9,9 +8,5 @@ import org.openhds.resource.registration.Registration;
  */
 public abstract class AuditableCollectedRestController <T extends AuditableCollectedEntity, U extends Registration<T>>
         extends AuditableRestController<T, U> {
-
-    public AuditableCollectedRestController(EntityLinkAssembler entityLinkAssembler) {
-        super(entityLinkAssembler);
-    }
 
 }

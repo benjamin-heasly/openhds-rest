@@ -6,7 +6,6 @@ import org.openhds.repository.LocationHierarchyRepository;
 import org.openhds.repository.LocationRepository;
 import org.openhds.repository.UserRepository;
 import org.openhds.resource.contract.AuditableExtIdRestController;
-import org.openhds.resource.links.EntityLinkAssembler;
 import org.openhds.resource.registration.LocationRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,12 +38,10 @@ class LocationRestController extends AuditableExtIdRestController<Location, Loca
     private final FieldWorkerRepository fieldWorkerRepository;
 
     @Autowired
-    public LocationRestController(EntityLinkAssembler entityLinkAssembler,
-                                  LocationRepository locationRepository,
+    public LocationRestController(LocationRepository locationRepository,
                                   LocationHierarchyRepository locationHierarchyRepository,
                                   UserRepository userRepository,
                                   FieldWorkerRepository fieldWorkerRepository) {
-        super(entityLinkAssembler);
         this.locationRepository = locationRepository;
         this.locationHierarchyRepository = locationHierarchyRepository;
         this.userRepository = userRepository;

@@ -3,6 +3,7 @@ package org.openhds.resource.contract;
 import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.resource.links.EntityLinkAssembler;
 import org.openhds.resource.registration.Registration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -26,11 +27,8 @@ import java.util.stream.Stream;
 @RestController
 public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable, U extends Registration<T>> {
 
-    protected final EntityLinkAssembler entityLinkAssembler;
-
-    public UuidIdentifiableRestController(EntityLinkAssembler entityLinkAssembler) {
-        this.entityLinkAssembler = entityLinkAssembler;
-    }
+    @Autowired
+    protected EntityLinkAssembler entityLinkAssembler;
 
     // templates to be implemented with entity services, etc.
     protected abstract T findOneCanonical(String id);

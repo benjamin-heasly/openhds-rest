@@ -21,10 +21,6 @@ import java.util.NoSuchElementException;
 public abstract class AuditableRestController<T extends AuditableEntity, U extends Registration<T>>
         extends UuidIdentifiableRestController<T, U> {
 
-    public AuditableRestController(EntityLinkAssembler entityLinkAssembler) {
-        super(entityLinkAssembler);
-    }
-
     protected abstract Page<T> findPagedByInsertDate(Pageable pageable, ZonedDateTime insertedAfter, ZonedDateTime insertedBefore);
     protected abstract Page<T> findVoided(Pageable pageable);
     protected abstract void update(T entity);

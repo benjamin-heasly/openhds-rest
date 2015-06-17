@@ -2,7 +2,6 @@ package org.openhds.resource.controller;
 
 import org.openhds.repository.UserRepository;
 import org.openhds.resource.contract.UuidIdentifiableRestController;
-import org.openhds.resource.links.EntityLinkAssembler;
 import org.openhds.resource.registration.UserRegistration;
 import org.openhds.security.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +28,7 @@ class UserRestController extends UuidIdentifiableRestController<User, UserRegist
     private final UserRepository userRepository;
 
     @Autowired
-    public UserRestController(EntityLinkAssembler entityLinkAssembler, UserRepository userRepository) {
-        super(entityLinkAssembler);
+    public UserRestController(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
