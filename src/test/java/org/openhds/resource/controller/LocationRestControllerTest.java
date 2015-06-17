@@ -15,7 +15,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by Ben on 5/26/15.
  */
-public class LocationRestControllerTest extends ExtIdRestControllerTest<Location> {
+public class LocationRestControllerTest extends AuditableExtIdRestControllerTest<Location> {
 
     @Autowired
     private LocationRepository locationRepository;

@@ -1,12 +1,12 @@
 package org.openhds.resource.controller;
 
 import org.openhds.domain.model.Location;
-import org.openhds.repository.LocationRepository;
-import org.openhds.resource.registration.LocationRegistration;
 import org.openhds.repository.FieldWorkerRepository;
 import org.openhds.repository.LocationHierarchyRepository;
+import org.openhds.repository.LocationRepository;
 import org.openhds.repository.UserRepository;
 import org.openhds.resource.links.EntityLinkAssembler;
+import org.openhds.resource.registration.LocationRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.ConstraintViolationException;
-import java.util.Calendar;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -58,6 +58,24 @@ class LocationRestController extends AuditableExtIdRestController<Location, Loca
     }
 
     @Override
+    protected Page<Location> findPagedByInsertDate(Pageable pageable, ZonedDateTime insertedAfter, ZonedDateTime insertedBefore) {
+        // TODO: this is probably a method of AuditableService
+        if (null == insertedAfter) {
+            if (null == insertedBefore) {
+                return locationRepository.findAll(pageable);
+            } else {
+                return locationRepository.findByInsertDateBefore(insertedBefore, pageable);
+            }
+        } else {
+            if (null == insertedBefore) {
+                return locationRepository.findByInsertDateAfter(insertedAfter, pageable);
+            } else {
+                return locationRepository.findByInsertDateBetween(insertedAfter, insertedBefore, pageable);
+            }
+        }
+    }
+
+    @Override
     protected List<Location> findByExtId(String id) {
         return locationRepository.findByExtId(id);
     }
@@ -77,7 +95,7 @@ class LocationRestController extends AuditableExtIdRestController<Location, Loca
         // fill in auditable fields
         location.setCollectedBy(fieldWorkerRepository.findOne(registration.getCollectedByUuid()));
         location.setLocationHierarchy(locationHierarchyRepository.findOne(registration.getLocationHierarchyUuid()));
-        location.setInsertDate(Calendar.getInstance());
+        location.setInsertDate(ZonedDateTime.now());
 
         return locationRepository.save(location);
     }

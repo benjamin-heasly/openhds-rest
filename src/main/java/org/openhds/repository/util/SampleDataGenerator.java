@@ -2,7 +2,10 @@ package org.openhds.repository.util;
 
 import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.contract.AuditableEntity;
-import org.openhds.domain.model.*;
+import org.openhds.domain.model.FieldWorker;
+import org.openhds.domain.model.Location;
+import org.openhds.domain.model.LocationHierarchy;
+import org.openhds.domain.model.LocationHierarchyLevel;
 import org.openhds.repository.*;
 import org.openhds.security.model.Privilege;
 import org.openhds.security.model.Role;
@@ -10,8 +13,8 @@ import org.openhds.security.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.UUID;
 
 import static java.util.stream.Collectors.toSet;
@@ -114,7 +117,7 @@ public class SampleDataGenerator {
     private void initAuditableFields(AuditableEntity auditableEntity) {
         User user = userRepository.findAll().get(0);
         auditableEntity.setInsertBy(user);
-        auditableEntity.setInsertDate(Calendar.getInstance());
+        auditableEntity.setInsertDate(ZonedDateTime.now());
         auditableEntity.setUuid(UUID.randomUUID().toString());
     }
 

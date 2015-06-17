@@ -9,7 +9,7 @@ import org.openhds.security.model.User;
 import javax.persistence.*;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
-import java.util.Calendar;
+import java.time.ZonedDateTime;
 
 /**
  * @author Dave Roberge
@@ -40,14 +40,14 @@ public abstract class AuditableEntity implements UuidIdentifiable, Serializable 
     protected boolean deleted = false;
 
     @Description(description = "Date that the data was voided.")
-    protected Calendar voidDate;
+    protected ZonedDateTime voidDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @Description(description = "User who inserted the data.")
     protected User insertBy;
 
     @Description(description = "Date of insertion.")
-    protected Calendar insertDate;
+    protected ZonedDateTime insertDate;
 
     @Override
     public String getUuid() {
@@ -84,11 +84,11 @@ public abstract class AuditableEntity implements UuidIdentifiable, Serializable 
         this.deleted = deleted;
     }
 
-    public Calendar getVoidDate() {
+    public ZonedDateTime getVoidDate() {
         return voidDate;
     }
 
-    public void setVoidDate(Calendar voidDate) {
+    public void setVoidDate(ZonedDateTime voidDate) {
         this.voidDate = voidDate;
     }
 
@@ -100,11 +100,11 @@ public abstract class AuditableEntity implements UuidIdentifiable, Serializable 
         this.insertBy = insertBy;
     }
 
-    public Calendar getInsertDate() {
+    public ZonedDateTime getInsertDate() {
         return insertDate;
     }
 
-    public void setInsertDate(Calendar insertDate) {
+    public void setInsertDate(ZonedDateTime insertDate) {
         this.insertDate = insertDate;
     }
 

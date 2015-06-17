@@ -18,6 +18,8 @@ target/
 # Gradle
 build/
 .gradle/
+gradle/
+gradle*
 
 # javac
 *.class

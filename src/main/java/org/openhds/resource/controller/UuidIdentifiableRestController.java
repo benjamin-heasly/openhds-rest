@@ -36,7 +36,7 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
     protected abstract T register(U registration);
     protected abstract T register(U registration, String id);
 
-    // optionally add entity-specific links to an HATEOAS resource
+    // optionally add entity-specific links to a HATEOAS resource
     public void supplementResource(Resource resource) {
     }
 

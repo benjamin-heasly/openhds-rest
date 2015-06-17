@@ -1,9 +1,8 @@
 package org.openhds;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import org.openhds.repository.util.SampleDataGenerator;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -36,13 +35,7 @@ public class OpenHdsRestApplication {
     public MappingJackson2HttpMessageConverter jsonConverter() {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         ObjectMapper mapper = new ObjectMapper();
-
-        // don't serialize hibernate proxies
-        mapper.registerModule(new Hibernate4Module());
-
-        // respect JAXB annotations
-        mapper.registerModule(new JaxbAnnotationModule());
-
+        configureObjectMapper(mapper);
         converter.setObjectMapper(mapper);
         return converter;
     }
@@ -51,15 +44,14 @@ public class OpenHdsRestApplication {
     public MappingJackson2XmlHttpMessageConverter xmlConverter() {
         MappingJackson2XmlHttpMessageConverter converter = new MappingJackson2XmlHttpMessageConverter();
         ObjectMapper mapper = new XmlMapper();
-
-        // don't serialize hibernate proxies
-        mapper.registerModule(new Hibernate4Module());
-
-        // respect JAXB annotations
-        mapper.registerModule(new JaxbAnnotationModule());
-
+        configureObjectMapper(mapper);
         converter.setObjectMapper(mapper);
         return converter;
+    }
+
+    private static void configureObjectMapper(ObjectMapper mapper) {
+        mapper.findAndRegisterModules();
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
     public static void main(String[] args) {
