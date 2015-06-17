@@ -1,9 +1,9 @@
-package org.openhds.resource.controller;
+package org.openhds.resource.contract;
 
 import org.openhds.domain.contract.AuditableExtIdEntity;
 import org.openhds.domain.contract.ExtIdIdentifiable;
-import org.openhds.resource.registration.Registration;
 import org.openhds.resource.links.EntityLinkAssembler;
+import org.openhds.resource.registration.Registration;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceSupport;

@@ -1,5 +1,6 @@
 package org.openhds.resource;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.hateoas.VndErrors;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -33,6 +34,13 @@ class ExceptionAdvice {
         ex.printStackTrace( printWriter );
         printWriter.flush();
         return new VndErrors(ex.getClass().getSimpleName() + ": " + ex.getMessage(), writer.toString());
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public VndErrors constraintException(DataIntegrityViolationException ex) {
+        return new VndErrors("Data Conflict", ex.getMessage());
     }
 
     @ExceptionHandler(ConstraintViolationException.class)

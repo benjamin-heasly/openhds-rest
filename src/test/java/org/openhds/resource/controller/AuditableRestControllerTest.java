@@ -9,13 +9,11 @@ import java.time.ZonedDateTime;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import static org.junit.Assert.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Created by Ben on 6/16/15.
@@ -25,6 +23,10 @@ public abstract class AuditableRestControllerTest <T extends AuditableEntity>
 
     protected String getByInsertDateResourceUrl() {
         return getResourceUrl() + "byinsertdate/";
+    }
+
+    protected String getVoidedResourceUrl() {
+        return getResourceUrl() + "voided/";
     }
 
     @Test
@@ -77,6 +79,35 @@ public abstract class AuditableRestControllerTest <T extends AuditableEntity>
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
                 .andExpect(jsonPath("$._embedded." + getResourceName(), hasSize(1)));
+    }
+
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void getVoided() throws Exception {
+        // make one
+        T entity = insertNewAndReturn();
+        mockMvc.perform(get(getResourceUrl() + entity.getUuid()))
+                .andExpect(status().isOk());
+
+        // nothing voided yet
+        mockMvc.perform(get(getVoidedResourceUrl()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(halJson))
+                .andExpect(jsonPath("$._embedded.", isEmptyOrNullString()));
+
+        // void it
+        mockMvc.perform(delete(getResourceUrl() + entity.getUuid()))
+                .andExpect(status().isNoContent());
+
+        // one voided
+        mockMvc.perform(get(getVoidedResourceUrl()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(halJson))
+                .andExpect(jsonPath("$._embedded." + getResourceName(), hasSize(1)));
+
+        // can't get it anymore
+        mockMvc.perform(get(getResourceUrl() + entity.getUuid()))
+                .andExpect(status().isNotFound());
     }
 
     private T insertNewAndReturn() throws Exception {

@@ -1,6 +1,7 @@
 package org.openhds.resource.controller;
 
 import org.openhds.repository.UserRepository;
+import org.openhds.resource.contract.UuidIdentifiableRestController;
 import org.openhds.resource.links.EntityLinkAssembler;
 import org.openhds.resource.registration.UserRegistration;
 import org.openhds.security.model.User;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.ConstraintViolationException;
-import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  * Created by Ben on 5/18/15.
@@ -57,4 +58,11 @@ class UserRestController extends UuidIdentifiableRestController<User, UserRegist
         return register(registration);
     }
 
+    @Override
+    protected void removeOneCanonical(String id, String voidReason) {
+        if (!userRepository.exists(id)) {
+            throw new NoSuchElementException("No User with id " + id);
+        }
+        userRepository.delete(id);
+    }
 }
