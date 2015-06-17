@@ -1,7 +1,7 @@
 package org.openhds.resource.contract;
 
 import org.openhds.domain.contract.AuditableEntity;
-import org.openhds.resource.links.EntityLinkAssembler;
+import org.openhds.repository.AuditableRepository;
 import org.openhds.resource.registration.Registration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,9 +21,22 @@ import java.util.NoSuchElementException;
 public abstract class AuditableRestController<T extends AuditableEntity, U extends Registration<T>>
         extends UuidIdentifiableRestController<T, U> {
 
-    protected abstract Page<T> findPagedByInsertDate(Pageable pageable, ZonedDateTime insertedAfter, ZonedDateTime insertedBefore);
-    protected abstract Page<T> findVoided(Pageable pageable);
-    protected abstract void update(T entity);
+    private final AuditableRepository<T> repository;
+
+    public AuditableRestController(AuditableRepository<T> repository) {
+        super(repository);
+        this.repository = repository;
+    }
+
+    @Override
+    protected Page<T> findAll(Pageable pageable) {
+        return repository.findByDeletedFalse(pageable);
+    }
+
+    @Override
+    protected T findOne(String id) {
+        return repository.findByDeletedFalseAndUuid(id);
+    }
 
     // insertedAfter <= insertDate < insertedBefore
     @RequestMapping(value = "/byinsertdate", method = RequestMethod.GET)
@@ -39,17 +52,35 @@ public abstract class AuditableRestController<T extends AuditableEntity, U exten
         return assembler.toResource(entities, entityLinkAssembler);
     }
 
+    protected Page<T> findPagedByInsertDate(Pageable pageable, ZonedDateTime insertedAfter, ZonedDateTime insertedBefore) {
+        // TODO: this is probably a method of AuditableService
+        if (null == insertedAfter) {
+            if (null == insertedBefore) {
+                return repository.findByDeletedFalse(pageable);
+            } else {
+                return repository.findByDeletedFalseAndInsertDateBefore(insertedBefore, pageable);
+            }
+        } else {
+            if (null == insertedBefore) {
+                return repository.findByDeletedFalseAndInsertDateAfter(insertedAfter, pageable);
+            } else {
+                return repository.findByDeletedFalseAndInsertDateBetween(insertedAfter, insertedBefore, pageable);
+            }
+        }
+    }
+
+
     // for auditing
     @RequestMapping(value = "/voided", method = RequestMethod.GET)
     public PagedResources readPagedByInertDate(Pageable pageable, PagedResourcesAssembler assembler) {
-        Page<T> entities = findVoided(pageable);
+        Page<T> entities = repository.findByDeletedTrue(pageable);
         return assembler.toResource(entities, entityLinkAssembler);
     }
 
     @Override
     protected void removeOneCanonical(String id, String voidReason) {
         // TODO: this should be in Auditable Service
-        T entity = findOneCanonical(id);
+        T entity = findOne(id);
         if (null == entity) {
             throw new NoSuchElementException("No entity found with id " + id);
         }
@@ -58,7 +89,7 @@ public abstract class AuditableRestController<T extends AuditableEntity, U exten
         entity.setVoidDate(ZonedDateTime.now());
         entity.setVoidReason(voidReason);
         // TODO: entity.setVoidBy( authenticated principal );
-        update(entity);
+        repository.save(entity);
     }
 
 }

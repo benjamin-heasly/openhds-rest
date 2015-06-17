@@ -1,6 +1,7 @@
 package org.openhds.resource.contract;
 
 import org.openhds.domain.contract.UuidIdentifiable;
+import org.openhds.repository.UuidIdentifiableRepository;
 import org.openhds.resource.links.EntityLinkAssembler;
 import org.openhds.resource.registration.Registration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +29,13 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
     @Autowired
     protected EntityLinkAssembler entityLinkAssembler;
 
+    private final UuidIdentifiableRepository<T> repository;
+
+    public UuidIdentifiableRestController(UuidIdentifiableRepository<T> repository) {
+        this.repository = repository;
+    }
+
     // templates to be implemented with entity services, etc.
-    protected abstract T findOneCanonical(String id);
-    protected abstract Page<T> findPaged(Pageable pageable);
     protected abstract T register(U registration);
     protected abstract T register(U registration, String id);
     protected abstract void removeOneCanonical(String id, String reason);
@@ -39,9 +44,17 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
     public void supplementResource(Resource resource) {
     }
 
+    protected Page<T> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
+    }
+
+    protected T findOne(String id) {
+        return repository.findOne(id);
+    }
+
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Resource<?> readOneCanonical(@PathVariable String id) {
-        T entity = findOneCanonical(id);
+        T entity = findOne(id);
         if (null == entity) {
             throw new NoSuchElementException("No entity found with canonical id: " + id);
         }
@@ -50,7 +63,7 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
 
     @RequestMapping(method = RequestMethod.GET)
     public PagedResources readPaged(Pageable pageable, PagedResourcesAssembler assembler) {
-        Page<T> entities = findPaged(pageable);
+        Page<T> entities = findAll(pageable);
         return assembler.toResource(entities, entityLinkAssembler);
     }
 

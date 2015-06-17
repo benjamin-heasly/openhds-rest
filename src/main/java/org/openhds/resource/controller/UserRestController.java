@@ -5,15 +5,11 @@ import org.openhds.resource.contract.UuidIdentifiableRestController;
 import org.openhds.resource.registration.UserRegistration;
 import org.openhds.security.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.ConstraintViolationException;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -28,17 +24,8 @@ class UserRestController extends UuidIdentifiableRestController<User, UserRegist
 
     @Autowired
     public UserRestController(UserRepository userRepository) {
+        super(userRepository);
         this.userRepository = userRepository;
-    }
-
-    @Override
-    protected User findOneCanonical(String id) {
-        return userRepository.findOne(id);
-    }
-
-    @Override
-    protected Page<User> findPaged(Pageable pageable) {
-        return userRepository.findAll(pageable);
     }
 
     @Override

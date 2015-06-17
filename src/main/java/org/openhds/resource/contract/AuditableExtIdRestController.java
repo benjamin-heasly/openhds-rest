@@ -2,6 +2,7 @@ package org.openhds.resource.contract;
 
 import org.openhds.domain.contract.AuditableExtIdEntity;
 import org.openhds.domain.contract.ExtIdIdentifiable;
+import org.openhds.repository.AuditableExtIdRepository;
 import org.openhds.resource.links.EntityLinkAssembler;
 import org.openhds.resource.registration.Registration;
 import org.springframework.hateoas.Link;
@@ -26,11 +27,16 @@ public abstract class AuditableExtIdRestController<T extends AuditableExtIdEntit
 
     public static final String REL_SECTION = "section";
 
-    protected abstract List<T> findByExtId(String id);
+    private final AuditableExtIdRepository<T> repository;
+
+    public AuditableExtIdRestController(AuditableExtIdRepository<T> repository) {
+        super(repository);
+        this.repository = repository;
+    }
 
     @RequestMapping(value = "/external/{id}", method = RequestMethod.GET)
     public Resources<?> readByExtId(@PathVariable String id) {
-        List<T> entities = findByExtId(id);
+        List<T> entities = repository.findByExtId(id);
         if (null == entities || 0 == entities.size()) {
             throw new NoSuchElementException("No entities found with external id: " + id);
         }
