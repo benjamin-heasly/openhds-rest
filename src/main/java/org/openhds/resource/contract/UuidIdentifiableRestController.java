@@ -6,7 +6,6 @@ import org.openhds.resource.registration.Registration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.Resource;
@@ -17,7 +16,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.NoSuchElementException;
-import java.util.stream.Stream;
 
 /**
  * Created by Ben on 5/18/15.
@@ -33,7 +31,6 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
     // templates to be implemented with entity services, etc.
     protected abstract T findOneCanonical(String id);
     protected abstract Page<T> findPaged(Pageable pageable);
-    protected abstract Stream<T> findBulk(Sort sort);
     protected abstract T register(U registration);
     protected abstract T register(U registration, String id);
     protected abstract void removeOneCanonical(String id, String reason);
@@ -58,8 +55,9 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
     }
 
     @RequestMapping(value = "/bulk", method = RequestMethod.GET)
-    public Stream<T> readBulk(Sort sort) {
-        return findBulk(sort);
+    public Iterable<T> readBulk(Pageable pageable) {
+        // TODO: return iterator over all pages
+        return null;
     }
 
     @RequestMapping(method = RequestMethod.POST)

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.ConstraintViolationException;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.stream.Stream;
 
 /**
  * Created by Ben on 5/18/15.
@@ -114,10 +113,5 @@ class LocationRestController extends AuditableExtIdRestController<Location, Loca
     @Override
     protected Page<Location> findVoided(Pageable pageable) {
         return locationRepository.findByDeletedTrue(pageable);
-    }
-
-    @Override
-    protected Stream<Location> findBulk(Sort sort) {
-        return locationRepository.findByUuidNotNull(sort);
     }
 }

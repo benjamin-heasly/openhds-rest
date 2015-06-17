@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.ConstraintViolationException;
+import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Stream;
 
 /**
  * Created by Ben on 5/18/15.
@@ -65,10 +65,4 @@ class UserRestController extends UuidIdentifiableRestController<User, UserRegist
         }
         userRepository.delete(id);
     }
-
-    @Override
-    protected Stream<User> findBulk(Sort sort) {
-        return userRepository.findByUuidNotNull(sort);
-    }
-
 }
