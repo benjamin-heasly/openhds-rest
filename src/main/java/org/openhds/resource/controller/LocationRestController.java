@@ -108,7 +108,7 @@ class LocationRestController extends AuditableExtIdRestController<Location, Loca
     }
 
     @Override
-    protected void deleteOneCanonical(String id) {
-        locationRepository.delete(id);
+    protected void update(Location entity) {
+        locationRepository.save(entity);
     }
 }
