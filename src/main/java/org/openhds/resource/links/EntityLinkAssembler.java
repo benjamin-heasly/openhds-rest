@@ -2,7 +2,7 @@ package org.openhds.resource.links;
 
 import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.domain.util.ShallowCopier;
-import org.openhds.resource.controller.UuidIdentifiableRestController;
+import org.openhds.resource.contract.UuidIdentifiableRestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.*;
 import org.springframework.stereotype.Component;

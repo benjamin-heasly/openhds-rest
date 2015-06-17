@@ -1,6 +1,6 @@
 package org.openhds.resource.links;
 
-import org.openhds.resource.controller.UuidIdentifiableRestController;
+import org.openhds.resource.contract.UuidIdentifiableRestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.hateoas.ExposesResourceFor;

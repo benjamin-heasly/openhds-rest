@@ -1,6 +1,7 @@
 package org.openhds.resource.controller;
 
 import org.openhds.repository.UserRepository;
+import org.openhds.resource.contract.UuidIdentifiableRestController;
 import org.openhds.resource.links.EntityLinkAssembler;
 import org.openhds.resource.registration.UserRegistration;
 import org.openhds.security.model.User;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.ConstraintViolationException;
-import java.util.Map;
 
 /**
  * Created by Ben on 5/18/15.

@@ -1,4 +1,4 @@
-package org.openhds.resource.controller;
+package org.openhds.resource.contract;
 
 import org.openhds.domain.contract.AuditableExtIdEntity;
 import org.openhds.domain.contract.ExtIdIdentifiable;

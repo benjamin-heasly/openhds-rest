@@ -1,4 +1,4 @@
-package org.openhds.resource.controller;
+package org.openhds.resource.contract;
 
 import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.resource.links.EntityLinkAssembler;
