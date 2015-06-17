@@ -50,6 +50,7 @@ public class LocationRestControllerTest extends AuditableExtIdRestControllerTest
         assertEquals(id, savedLocation.getUuid());
         assertEquals(id, entity.getUuid());
         assertEquals(entity.getName(), savedLocation.getName());
+
     }
 
     @Override
