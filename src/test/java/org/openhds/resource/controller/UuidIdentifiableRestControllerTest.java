@@ -3,6 +3,7 @@ package org.openhds.resource.controller;
 import org.junit.Test;
 import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.resource.registration.Registration;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.http.MockHttpInputMessage;
 import org.springframework.mock.http.MockHttpOutputMessage;
@@ -12,15 +13,10 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.io.IOException;
 import java.util.UUID;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 /**
@@ -265,6 +261,52 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
                 .andExpect(jsonPath("$._embedded." + getResourceName(), hasSize(1)))
                 .andExpect(jsonPath("$.page.size", is(1)))
                 .andExpect(jsonPath("$.page.number", is(0)));
+    }
+
+    // DELETE
+
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void deleteCollection() throws Exception {
+        mockMvc.perform(delete(getResourceUrl()))
+                .andExpect(status().isMethodNotAllowed());
+    }
+
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void deleteInvalid() throws Exception {
+        final String invalidId = "not an id";
+        mockMvc.perform(delete(getResourceUrl() + invalidId))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void deleteExisting() throws Exception {
+        T entity = getAnyExisting();
+        MvcResult mvcResult = mockMvc.perform(delete(getResourceUrl() + entity.getUuid()))
+                .andReturn();
+        assertThat(mvcResult.getResponse().getStatus(),
+                isOneOf(HttpStatus.CONFLICT.value(), HttpStatus.NO_CONTENT.value()));
+    }
+
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void deleteNew() throws Exception {
+        T entity = makeValidEntity("delete me", "test id");
+        this.mockMvc.perform(post(getResourceUrl())
+                .contentType(regularJson)
+                .content(toJson(makeRegistration(entity))))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(get(getResourceUrl() + entity.getUuid()))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(delete(getResourceUrl() + entity.getUuid()))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get(getResourceUrl() + entity.getUuid()))
+                .andExpect(status().isNotFound());
     }
 
 }

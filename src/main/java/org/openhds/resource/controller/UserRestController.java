@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.ConstraintViolationException;
+import java.util.NoSuchElementException;
 
 /**
  * Created by Ben on 5/18/15.
@@ -58,7 +59,10 @@ class UserRestController extends UuidIdentifiableRestController<User, UserRegist
     }
 
     @Override
-    protected void voidOneCanonical(String id, String voidReason) {
+    protected void removeOneCanonical(String id, String voidReason) {
+        if (!userRepository.exists(id)) {
+            throw new NoSuchElementException("No User with id " + id);
+        }
         userRepository.delete(id);
     }
 }

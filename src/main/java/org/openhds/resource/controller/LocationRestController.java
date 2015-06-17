@@ -50,12 +50,12 @@ class LocationRestController extends AuditableExtIdRestController<Location, Loca
 
     @Override
     protected Location findOneCanonical(String id) {
-        return locationRepository.findOne(id);
+        return locationRepository.findByDeletedFalseAndUuid(id);
     }
 
     @Override
     protected Page<Location> findPaged(Pageable pageable) {
-        return locationRepository.findAll(pageable);
+        return locationRepository.findByDeletedFalse(pageable);
     }
 
     @Override
@@ -63,15 +63,15 @@ class LocationRestController extends AuditableExtIdRestController<Location, Loca
         // TODO: this is probably a method of AuditableService
         if (null == insertedAfter) {
             if (null == insertedBefore) {
-                return locationRepository.findAll(pageable);
+                return locationRepository.findByDeletedFalse(pageable);
             } else {
-                return locationRepository.findByInsertDateBefore(insertedBefore, pageable);
+                return locationRepository.findByDeletedFalseAndInsertDateBefore(insertedBefore, pageable);
             }
         } else {
             if (null == insertedBefore) {
-                return locationRepository.findByInsertDateAfter(insertedAfter, pageable);
+                return locationRepository.findByDeletedFalseAndInsertDateAfter(insertedAfter, pageable);
             } else {
-                return locationRepository.findByInsertDateBetween(insertedAfter, insertedBefore, pageable);
+                return locationRepository.findByDeletedFalseAndInsertDateBetween(insertedAfter, insertedBefore, pageable);
             }
         }
     }
@@ -110,5 +110,10 @@ class LocationRestController extends AuditableExtIdRestController<Location, Loca
     @Override
     protected void update(Location entity) {
         locationRepository.save(entity);
+    }
+
+    @Override
+    protected Page<Location> findVoided(Pageable pageable) {
+        return locationRepository.findByDeletedTrue(pageable);
     }
 }

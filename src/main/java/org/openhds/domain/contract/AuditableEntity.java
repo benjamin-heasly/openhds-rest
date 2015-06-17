@@ -29,21 +29,21 @@ public abstract class AuditableEntity implements UuidIdentifiable, Serializable 
     @Column(length = 36)
     protected String uuid;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @Description(description = "The user that voided the data.")
-    protected User voidBy;
-
-    @Description(description = "Reason for voiding the data.")
-    protected String voidReason;
-
-    @Description(description = "Indicator for signaling some data to be deleted.")
+    @Description(description = "Marker for soft delete / void of the record.")
     protected boolean deleted = false;
 
-    @Description(description = "Date that the data was voided.")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Description(description = "The User who voided the record.")
+    protected User voidBy;
+
+    @Description(description = "Reason for voiding the record.")
+    protected String voidReason;
+
+    @Description(description = "Date that the record was voided.")
     protected ZonedDateTime voidDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Description(description = "User who inserted the data.")
+    @Description(description = "User who inserted the record.")
     protected User insertBy;
 
     @Description(description = "Date of insertion.")

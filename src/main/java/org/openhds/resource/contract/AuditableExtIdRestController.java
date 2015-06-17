@@ -2,8 +2,8 @@ package org.openhds.resource.contract;
 
 import org.openhds.domain.contract.AuditableExtIdEntity;
 import org.openhds.domain.contract.ExtIdIdentifiable;
-import org.openhds.resource.registration.Registration;
 import org.openhds.resource.links.EntityLinkAssembler;
+import org.openhds.resource.registration.Registration;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceSupport;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -32,7 +31,6 @@ public abstract class AuditableExtIdRestController<T extends AuditableExtIdEntit
     }
 
     protected abstract List<T> findByExtId(String id);
-    protected abstract void update(T entity);
 
     @RequestMapping(value = "/external/{id}", method = RequestMethod.GET)
     public Resources<?> readByExtId(@PathVariable String id) {
@@ -58,16 +56,5 @@ public abstract class AuditableExtIdRestController<T extends AuditableExtIdEntit
     public void supplementResource(Resource resource) {
         ExtIdIdentifiable entity = (ExtIdIdentifiable) resource.getContent();
         addByExtIdLink(resource, entity.getExtId(), REL_SECTION);
-    }
-
-    @Override
-    protected void voidOneCanonical(String id, String voidReason) {
-        // TODO: this should be in Auditable Service
-        T entity = findOneCanonical(id);
-        entity.setDeleted(true);
-        entity.setVoidDate(ZonedDateTime.now());
-        entity.setVoidReason(voidReason);
-        // TODO: entity.setVoidBy( authenticated principal );
-        update(entity);
     }
 }

@@ -13,8 +13,17 @@ import java.time.ZonedDateTime;
 @NoRepositoryBean
 public interface AuditableRepository<T extends AuditableEntity> extends UuidIdentifiableRepository<T>{
 
-    Page<T> findByInsertDateBetween(ZonedDateTime insertedAfter, ZonedDateTime insertedBefore, Pageable pageable);
-    Page<T> findByInsertDateAfter(ZonedDateTime insertedAfter, Pageable pageable);
-    Page<T> findByInsertDateBefore(ZonedDateTime insertedBefore, Pageable pageable);
+    // instead of findOne()
+    T findByDeletedFalseAndUuid(String id);
+
+    // instead of findAll(Pageable)
+    Page<T> findByDeletedFalse(Pageable pageable);
+
+    Page<T> findByDeletedFalseAndInsertDateBetween(ZonedDateTime insertedAfter, ZonedDateTime insertedBefore, Pageable pageable);
+    Page<T> findByDeletedFalseAndInsertDateAfter(ZonedDateTime insertedAfter, Pageable pageable);
+    Page<T> findByDeletedFalseAndInsertDateBefore(ZonedDateTime insertedBefore, Pageable pageable);
+
+    // for auditing
+    Page<T> findByDeletedTrue(Pageable pageable);
 
 }

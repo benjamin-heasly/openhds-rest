@@ -35,7 +35,7 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
     protected abstract Page<T> findPaged(Pageable pageable);
     protected abstract T register(U registration);
     protected abstract T register(U registration, String id);
-    protected abstract void voidOneCanonical(String id, String voidReason);
+    protected abstract void removeOneCanonical(String id, String reason);
 
     // optionally add entity-specific links to a HATEOAS resource
     public void supplementResource(Resource resource) {
@@ -73,8 +73,8 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteOneCanonical(@PathVariable String id, @RequestParam(required = false) String voidReason) {
-        voidOneCanonical(id, voidReason);
+    public void deleteOneCanonical(@PathVariable String id, @RequestParam(required = false) String reason) {
+        removeOneCanonical(id, reason);
     }
 
     private void addLocationHeader(HttpServletResponse response, T entity) {
