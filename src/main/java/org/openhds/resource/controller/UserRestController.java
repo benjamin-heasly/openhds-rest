@@ -57,4 +57,8 @@ class UserRestController extends UuidIdentifiableRestController<User, UserRegist
         return register(registration);
     }
 
+    @Override
+    protected void deleteOneCanonical(String id) {
+        userRepository.delete(id);
+    }
 }

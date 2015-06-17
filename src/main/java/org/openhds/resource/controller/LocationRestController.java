@@ -107,4 +107,8 @@ class LocationRestController extends AuditableExtIdRestController<Location, Loca
         return register(registration);
     }
 
+    @Override
+    protected void deleteOneCanonical(String id) {
+        locationRepository.delete(id);
+    }
 }
