@@ -58,8 +58,21 @@ class LocationRestController extends AuditableExtIdRestController<Location, Loca
     }
 
     @Override
-    protected Page<Location> findPagedByInsertDate(Pageable pageable, ZonedDateTime insertedSince, ZonedDateTime insertedBefore) {
-        return locationRepository.findByInsertDateBetween(insertedSince, insertedBefore, pageable);
+    protected Page<Location> findPagedByInsertDate(Pageable pageable, ZonedDateTime insertedAfter, ZonedDateTime insertedBefore) {
+        // TODO: this is probably a method of AuditableService
+        if (null == insertedAfter) {
+            if (null == insertedBefore) {
+                return locationRepository.findAll(pageable);
+            } else {
+                return locationRepository.findByInsertDateBefore(insertedBefore, pageable);
+            }
+        } else {
+            if (null == insertedBefore) {
+                return locationRepository.findByInsertDateAfter(insertedAfter, pageable);
+            } else {
+                return locationRepository.findByInsertDateBetween(insertedAfter, insertedBefore, pageable);
+            }
+        }
     }
 
     @Override

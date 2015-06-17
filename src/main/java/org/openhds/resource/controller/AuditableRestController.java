@@ -6,6 +6,7 @@ import org.openhds.resource.registration.Registration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,13 +24,19 @@ public abstract class AuditableRestController<T extends AuditableEntity, U exten
         super(entityLinkAssembler);
     }
 
-    protected abstract Page<T> findPagedByInsertDate(Pageable pageable, ZonedDateTime insertedSince, ZonedDateTime insertedBefore);
+    protected abstract Page<T> findPagedByInsertDate(Pageable pageable, ZonedDateTime insertedAfter, ZonedDateTime insertedBefore);
 
+    // insertedAfter <= insertDate < insertedBefore
     @RequestMapping(value = "/byinsertdate", method = RequestMethod.GET)
-    public PagedResources readPaged(Pageable pageable, PagedResourcesAssembler assembler,
-                                    @RequestParam(required = false) ZonedDateTime insertedSince,
-                                    @RequestParam(required = false) ZonedDateTime insertedBefore) {
-        Page<T> entities = findPagedByInsertDate(pageable, insertedSince, insertedBefore);
+    public PagedResources readPagedByInertDate(Pageable pageable, PagedResourcesAssembler assembler,
+                                               @RequestParam(required = false)
+                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                               ZonedDateTime insertedAfter,
+                                               @RequestParam(required = false)
+                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                               ZonedDateTime insertedBefore) {
+
+        Page<T> entities = findPagedByInsertDate(pageable, insertedAfter, insertedBefore);
         return assembler.toResource(entities, entityLinkAssembler);
     }
 }
