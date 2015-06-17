@@ -96,6 +96,8 @@ public class RestControllerTestSupport {
 
         assertNotNull("the Json message converter must not be null", jsonMessageConverter);
         assertNotNull("the Xml message converter must not be null", xmlMessageConverter);
+
+
     }
 
     @Test

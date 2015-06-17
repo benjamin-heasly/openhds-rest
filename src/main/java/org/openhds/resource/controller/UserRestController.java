@@ -8,12 +8,15 @@ import org.openhds.security.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.ConstraintViolationException;
 import java.util.NoSuchElementException;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Created by Ben on 5/18/15.
@@ -65,4 +68,11 @@ class UserRestController extends UuidIdentifiableRestController<User, UserRegist
         }
         userRepository.delete(id);
     }
+
+    @Override
+    protected Stream<User> findBulk(Sort sort) {
+        Iterable<User> userIterable = userRepository.findAll(sort);
+        return StreamSupport.stream(userIterable.spliterator(), false);
+    }
+
 }

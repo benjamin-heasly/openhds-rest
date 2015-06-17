@@ -11,6 +11,7 @@ import org.openhds.resource.registration.LocationRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.ConstraintViolationException;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * Created by Ben on 5/18/15.
@@ -115,5 +118,11 @@ class LocationRestController extends AuditableExtIdRestController<Location, Loca
     @Override
     protected Page<Location> findVoided(Pageable pageable) {
         return locationRepository.findByDeletedTrue(pageable);
+    }
+
+    @Override
+    protected Stream<Location> findBulk(Sort sort) {
+        Iterable<Location> locationIterable = locationRepository.findAll(sort);
+        return StreamSupport.stream(locationIterable.spliterator(), false);
     }
 }
