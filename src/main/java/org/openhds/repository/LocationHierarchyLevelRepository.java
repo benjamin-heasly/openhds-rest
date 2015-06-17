@@ -5,11 +5,10 @@ package org.openhds.repository;
  */
 
 import org.openhds.domain.model.LocationHierarchyLevel;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface LocationHierarchyLevelRepository extends JpaRepository<LocationHierarchyLevel, String> {
+public interface LocationHierarchyLevelRepository extends AuditableRepository<LocationHierarchyLevel> {
     Optional<LocationHierarchyLevel> findByKeyIdentifier(int key);
     Optional<LocationHierarchyLevel> findByName(String name);
 }

@@ -19,7 +19,6 @@ import javax.validation.ConstraintViolationException;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 /**
  * Created by Ben on 5/18/15.
@@ -119,7 +118,6 @@ class LocationRestController extends AuditableExtIdRestController<Location, Loca
 
     @Override
     protected Stream<Location> findBulk(Sort sort) {
-        Iterable<Location> locationIterable = locationRepository.findAll(sort);
-        return StreamSupport.stream(locationIterable.spliterator(), false);
+        return locationRepository.findByUuidNotNull(sort);
     }
 }

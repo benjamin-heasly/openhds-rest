@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.ConstraintViolationException;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 /**
  * Created by Ben on 5/18/15.
@@ -69,8 +68,7 @@ class UserRestController extends UuidIdentifiableRestController<User, UserRegist
 
     @Override
     protected Stream<User> findBulk(Sort sort) {
-        Iterable<User> userIterable = userRepository.findAll(sort);
-        return StreamSupport.stream(userIterable.spliterator(), false);
+        return userRepository.findByUuidNotNull(sort);
     }
 
 }
