@@ -2,6 +2,7 @@ package org.openhds.resource.contract;
 
 import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.repository.UuidIdentifiableRepository;
+import org.openhds.repository.util.PageIterator;
 import org.openhds.resource.links.EntityLinkAssembler;
 import org.openhds.resource.registration.Registration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,16 +41,16 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
     protected abstract T register(U registration, String id);
     protected abstract void removeOneCanonical(String id, String reason);
 
-    // optionally add entity-specific links to a HATEOAS resource
-    public void supplementResource(Resource resource) {
-    }
-
     protected Page<T> findAll(Pageable pageable) {
         return repository.findAll(pageable);
     }
 
     protected T findOne(String id) {
         return repository.findOne(id);
+    }
+
+    // optionally add entity-specific links to a HATEOAS resource
+    public void supplementResource(Resource resource) {
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -68,9 +69,8 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
     }
 
     @RequestMapping(value = "/bulk", method = RequestMethod.GET)
-    public Iterable<T> readBulk(Pageable pageable) {
-        // TODO: return iterator over all pages
-        return null;
+    public PageIterator<T> readBulk(Pageable pageable) {
+        return new PageIterator<>(repository, pageable);
     }
 
     @RequestMapping(method = RequestMethod.POST)

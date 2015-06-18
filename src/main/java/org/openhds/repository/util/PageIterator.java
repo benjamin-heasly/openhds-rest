@@ -25,19 +25,25 @@ public class PageIterator<T> implements Iterator<Page<T>> {
 
     @Override
     public boolean hasNext() {
-        if (null == currentPage) {
-            currentPage = repository.findAll(pageable);
-        }
-        return currentPage.hasNext();
+        return null == currentPage || currentPage.hasNext();
     }
 
     @Override
     public Page<T> next() {
+        if (null == currentPage) {
+            return readNextPage();
+        }
+
         if (!hasNext()) {
             throw new NoSuchElementException();
         }
-        pageable = pageable.next();
+
+        return readNextPage();
+    }
+
+    private Page<T> readNextPage() {
         currentPage = repository.findAll(pageable);
+        pageable = pageable.next();
         return currentPage;
     }
 }
