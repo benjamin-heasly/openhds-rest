@@ -44,6 +44,7 @@ public class PageIterator<T> implements Iterator<Page<T>> {
         return readNextPage();
     }
 
+    // TODO: clear() the Hibernate session after each page?  see @PersistenceContext and EntityManager
     private Page<T> readNextPage() {
         currentPage = repository.findAll(pageable);
         pageable = pageable.next();

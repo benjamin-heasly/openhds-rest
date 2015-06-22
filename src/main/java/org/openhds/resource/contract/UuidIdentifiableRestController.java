@@ -68,8 +68,11 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
         return assembler.toResource(entities, entityLinkAssembler);
     }
 
+    // TODO: should just expose a Sort, not a Pageable.  Make Pageable an implementation detail.
     @RequestMapping(value = "/bulk", method = RequestMethod.GET)
     public PageIterator<T> readBulk(Pageable pageable) {
+        // TODO: use resource name, not controller class name
+        // TODO: how to expose only shallow copies?
         return new PageIterator<>(repository, pageable, this.getClass().getSimpleName());
     }
 

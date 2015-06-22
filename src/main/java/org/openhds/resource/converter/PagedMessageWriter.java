@@ -12,6 +12,7 @@ import org.springframework.http.converter.json.AbstractJackson2HttpMessageConver
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
 
 /**
  * Created by Ben on 6/17/15.
@@ -24,11 +25,20 @@ import java.io.OutputStream;
  */
 public class PagedMessageWriter extends AbstractHttpMessageConverter<PageIterator<?>> {
 
+    public interface Delimiter {
+        void writePrefix(OutputStream outputStream, PageIterator<?> pageIterator) throws IOException;
+        void writeDelimiter(OutputStream outputStream, PageIterator<?> pageIterator) throws IOException;
+        void writeSuffix(OutputStream outputStream, PageIterator<?> pageIterator) throws IOException;
+    }
+
     private final AbstractJackson2HttpMessageConverter converter;
 
-    public PagedMessageWriter(AbstractJackson2HttpMessageConverter converter) {
+    private final Delimiter delimiter;
+
+    public PagedMessageWriter(AbstractJackson2HttpMessageConverter converter, Delimiter delimiter) {
         super(converter.getSupportedMediaTypes().toArray(new MediaType[0]));
         this.converter = converter;
+        this.delimiter = delimiter;
     }
 
     @Override
@@ -56,24 +66,23 @@ public class PagedMessageWriter extends AbstractHttpMessageConverter<PageIterato
     protected void writeInternal(PageIterator<?> pageIterator, HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {
 
-        final MediaType mediaType = chooseMediaTypeForMessage(outputMessage);
-
         final OutputStream outputStream = outputMessage.getBody();
+
+        delimiter.writePrefix(outputStream, pageIterator);
 
         while (pageIterator.hasNext()) {
             Page page = pageIterator.next();
-            for (Object object : page) {
-                converter.getObjectMapper().writeValue(outputStream, object);
+            Iterator<?> objectIterator = page.getContent().iterator();
+            while (objectIterator.hasNext()) {
+                outputStream.write(converter.getObjectMapper().writeValueAsBytes(objectIterator.next()));
+
+                // fussy: don't write delimiter after the last item
+                if (objectIterator.hasNext() || pageIterator.hasNext()) {
+                    delimiter.writeDelimiter(outputStream, pageIterator);
+                } else {
+                    delimiter.writeSuffix(outputStream, pageIterator);
+                }
             }
         }
-
-    }
-
-    private MediaType chooseMediaTypeForMessage(HttpOutputMessage outputMessage) {
-        MediaType messageType = outputMessage.getHeaders().getContentType();
-        if (null != messageType) {
-            return messageType;
-        }
-        return getSupportedMediaTypes().get(0);
     }
 }
