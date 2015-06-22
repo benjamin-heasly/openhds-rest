@@ -12,15 +12,18 @@ import java.util.NoSuchElementException;
  */
 public class PageIterator<T> implements Iterator<Page<T>> {
 
+    private final String collectionName;
+
     private final JpaRepository<T, ?> repository;
 
     private Pageable pageable;
 
     private Page<T> currentPage;
 
-    public PageIterator(JpaRepository<T, ?> repository, Pageable pageable) {
+    public PageIterator(JpaRepository<T, ?> repository, Pageable pageable, String collectionName) {
         this.repository = repository;
         this.pageable = pageable.first();
+        this.collectionName = collectionName;
     }
 
     @Override
@@ -45,5 +48,9 @@ public class PageIterator<T> implements Iterator<Page<T>> {
         currentPage = repository.findAll(pageable);
         pageable = pageable.next();
         return currentPage;
+    }
+
+    public String getCollectionName() {
+        return collectionName;
     }
 }
