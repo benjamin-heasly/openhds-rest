@@ -70,7 +70,7 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
 
     @RequestMapping(value = "/bulk", method = RequestMethod.GET)
     public PageIterator<T> readBulk(Pageable pageable) {
-        return new PageIterator<>(repository, pageable);
+        return new PageIterator<>(repository, pageable, this.getClass().getSimpleName());
     }
 
     @RequestMapping(method = RequestMethod.POST)

@@ -24,23 +24,11 @@ import java.io.OutputStream;
  */
 public class PagedMessageWriter extends AbstractHttpMessageConverter<PageIterator<?>> {
 
-    public interface MessageStreamHelperFactory {
-        MessageStreamHelper newMessageStreamHelper(OutputStream outputStream);
-    }
-
-    public interface MessageStreamHelper {
-        void startMessageStream() throws IOException;
-        void endMessageStream() throws IOException;
-    }
-
     private final AbstractJackson2HttpMessageConverter converter;
 
-    private final MessageStreamHelperFactory helperFactory;
-
-    public PagedMessageWriter(AbstractJackson2HttpMessageConverter converter, MessageStreamHelperFactory helperFactory) {
+    public PagedMessageWriter(AbstractJackson2HttpMessageConverter converter) {
         super(converter.getSupportedMediaTypes().toArray(new MediaType[0]));
         this.converter = converter;
-        this.helperFactory = helperFactory;
     }
 
     @Override
@@ -72,26 +60,13 @@ public class PagedMessageWriter extends AbstractHttpMessageConverter<PageIterato
 
         final OutputStream outputStream = outputMessage.getBody();
 
-        MessageStreamHelper helper = null;
-        if (null != helperFactory) {
-            helper = helperFactory.newMessageStreamHelper(outputStream);
-            helper.startMessageStream();
-            outputStream.flush();
-        }
-
         while (pageIterator.hasNext()) {
             Page page = pageIterator.next();
             for (Object object : page) {
-                outputStream.write(converter.getObjectMapper().writeValueAsBytes(object));
-                outputStream.flush();
-                //converter.getObjectMapper().writeValue(outputStream, object);
+                converter.getObjectMapper().writeValue(outputStream, object);
             }
         }
 
-        if (null != helper) {
-            helper.endMessageStream();
-            outputStream.flush();
-        }
     }
 
     private MediaType chooseMediaTypeForMessage(HttpOutputMessage outputMessage) {

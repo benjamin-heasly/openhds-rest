@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.openhds.repository.util.SampleDataGenerator;
 import org.openhds.resource.converter.PagedMessageWriter;
-import org.openhds.resource.converter.XmlMessageStreamHelperFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -66,12 +65,12 @@ public class OpenHdsRestApplication {
 
         @Bean
         PagedMessageWriter jsonPagedMessageWriter() {
-            return new PagedMessageWriter(jsonConverter(), null);
+            return new PagedMessageWriter(jsonConverter());
         }
 
         @Bean
         PagedMessageWriter xmlPagedMessageWriter() {
-            return new PagedMessageWriter(xmlConverter(), new XmlMessageStreamHelperFactory());
+            return new PagedMessageWriter(xmlConverter());
         }
 
         @Override
