@@ -8,11 +8,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 
 /**
  * @author Dave Roberge
  */
-@Description(description = "An AuditableCollectedEntity is any entity collected by a Field Worker that needs to be audited")
+@Description(description = "An AuditableCollectedEntity is any entity collected by a Field Worker.")
 @MappedSuperclass
 public abstract class AuditableCollectedEntity extends AuditableEntity implements Serializable {
 
@@ -25,6 +26,9 @@ public abstract class AuditableCollectedEntity extends AuditableEntity implement
     @ManyToOne(fetch = FetchType.LAZY, targetEntity = FieldWorker.class)
     @Description(description = "The field worker who collected the data, identified by external id.")
     protected FieldWorker collectedBy;
+
+    @Description(description = "Date of collection/survey.")
+    protected ZonedDateTime collectionDateTime;
 
     @Description(description = "Error message if the entity failed validation.")
     protected String statusMessage;
@@ -43,6 +47,14 @@ public abstract class AuditableCollectedEntity extends AuditableEntity implement
 
     public void setCollectedBy(FieldWorker collectedBy) {
         this.collectedBy = collectedBy;
+    }
+
+    public ZonedDateTime getCollectionDateTime() {
+        return collectionDateTime;
+    }
+
+    public void setCollectionDateTime(ZonedDateTime collectionDateTime) {
+        this.collectionDateTime = collectionDateTime;
     }
 
     public String getStatusMessage() {
