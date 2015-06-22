@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openhds.OpenHdsRestApplication;
 import org.openhds.domain.contract.AuditableEntity;
-import org.openhds.helpers.AbstractTestHelper;
 import org.openhds.repository.util.SampleDataGenerator;
 import org.openhds.service.contract.AbstractAuditableService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,20 +23,20 @@ import static org.junit.Assert.assertNotNull;
 @SpringApplicationConfiguration(classes = OpenHdsRestApplication.class)
 @WebAppConfiguration
 public abstract class AuditableServiceTest<T extends AuditableEntity,
-        U extends AbstractAuditableService, V extends AbstractTestHelper<T>>{
+        U extends AbstractAuditableService>{
 
     @Autowired
     protected SampleDataGenerator sampleDataGenerator;
 
     protected U service;
 
-    protected V helper;
-
-    protected abstract void initialize(U service, V helper);
+    protected abstract T makeInvalidEntity();
+    protected abstract T makeValidEntity(String name, String id);
+    protected abstract void initialize(U service);
 
     @Before
     public void setup() throws Exception {
-        initialize(service, helper);
+        initialize(service);
         sampleDataGenerator.clearData();
         sampleDataGenerator.generateSampleData();
     }
