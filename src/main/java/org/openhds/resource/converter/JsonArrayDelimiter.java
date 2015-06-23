@@ -1,6 +1,6 @@
 package org.openhds.resource.converter;
 
-import org.openhds.repository.util.PageIterator;
+import org.openhds.repository.results.PageIterator;
 
 import java.io.IOException;
 import java.io.OutputStream;

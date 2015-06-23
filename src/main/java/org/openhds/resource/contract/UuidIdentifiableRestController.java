@@ -2,7 +2,7 @@ package org.openhds.resource.contract;
 
 import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.repository.UuidIdentifiableRepository;
-import org.openhds.repository.util.PageIterator;
+import org.openhds.repository.results.PageIterator;
 import org.openhds.resource.links.EntityLinkAssembler;
 import org.openhds.resource.registration.Registration;
 import org.springframework.beans.factory.annotation.Autowired;

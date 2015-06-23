@@ -1,8 +1,7 @@
-package org.openhds.repository.util;
+package org.openhds.repository.results;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -12,18 +11,19 @@ import java.util.NoSuchElementException;
  */
 public class PageIterator<T> implements Iterator<Page<T>> {
 
-    private final String collectionName;
+    public interface PagedQueryable<T> {
+        Page<T> query(Pageable pageable);
+    }
 
-    private final JpaRepository<T, ?> repository;
+    private final PagedQueryable<T> pagedQueryable;
 
     private Pageable pageable;
 
     private Page<T> currentPage;
 
-    public PageIterator(JpaRepository<T, ?> repository, Pageable pageable, String collectionName) {
-        this.repository = repository;
+    public PageIterator(PagedQueryable<T> pagedQueryable, Pageable pageable) {
+        this.pagedQueryable = pagedQueryable;
         this.pageable = pageable.first();
-        this.collectionName = collectionName;
     }
 
     @Override
@@ -44,14 +44,10 @@ public class PageIterator<T> implements Iterator<Page<T>> {
         return readNextPage();
     }
 
-    // TODO: clear() the Hibernate session after each page?  see @PersistenceContext and EntityManager
     private Page<T> readNextPage() {
-        currentPage = repository.findAll(pageable);
+        currentPage = pagedQueryable.query(pageable);
         pageable = pageable.next();
         return currentPage;
     }
 
-    public String getCollectionName() {
-        return collectionName;
-    }
 }

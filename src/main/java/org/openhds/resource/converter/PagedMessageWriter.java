@@ -1,6 +1,6 @@
 package org.openhds.resource.converter;
 
-import org.openhds.repository.util.PageIterator;
+import org.openhds.repository.results.PageIterator;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
