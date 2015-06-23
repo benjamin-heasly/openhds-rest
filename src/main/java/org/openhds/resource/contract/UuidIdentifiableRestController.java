@@ -6,6 +6,7 @@ import org.openhds.repository.results.EntityIterator;
 import org.openhds.repository.results.PageIterator;
 import org.openhds.repository.results.PagingEntityIterator;
 import org.openhds.repository.results.ShallowCopyIterator;
+import org.openhds.resource.links.ControllerRegistry;
 import org.openhds.resource.links.EntityLinkAssembler;
 import org.openhds.resource.registration.Registration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +35,17 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
     @Autowired
     protected EntityLinkAssembler entityLinkAssembler;
 
+    @Autowired
+    protected ControllerRegistry controllerRegistry;
+
     private final UuidIdentifiableRepository<T> repository;
 
     public UuidIdentifiableRestController(UuidIdentifiableRepository<T> repository) {
         this.repository = repository;
+    }
+
+    protected String getResourceName() {
+        return controllerRegistry.getControllersToPaths().get(this.getClass());
     }
 
     // templates to be implemented with entity services, etc.
@@ -75,9 +83,8 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
     // TODO: move to Auditable, with date range params optional
     @RequestMapping(value = "/bulk", method = RequestMethod.GET)
     public EntityIterator<T> readBulk(Sort sort) {
-        // TODO: use resource name, not controller class name
         PageIterator<T> pageIterator = new PageIterator<>(repository::findAll, sort);
-        EntityIterator<T> entityIterator = new PagingEntityIterator<>(pageIterator, getClass().getSimpleName());
+        EntityIterator<T> entityIterator = new PagingEntityIterator<>(pageIterator, getResourceName());
         return new ShallowCopyIterator<>(entityIterator);
     }
 
