@@ -1,7 +1,9 @@
-package org.openhds.resource.controller;
+package org.openhds.resource.contract;
 
 import org.junit.Test;
 import org.openhds.domain.contract.UuidIdentifiable;
+import org.openhds.repository.UuidIdentifiableRepository;
+import org.openhds.resource.controller.RestControllerTestSupport;
 import org.openhds.resource.registration.Registration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,7 +24,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by Ben on 5/4/15.
  */
-public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifiable> extends RestControllerTestSupport {
+public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifiable,
+        U extends UuidIdentifiableRepository<T>,
+        V extends UuidIdentifiableRestController<T, ?>>
+        extends RestControllerTestSupport {
+
+    protected U repository;
+
+    protected V controller;
+
+    protected abstract void initialize(U repository, V controller);
 
     protected abstract T makeValidEntity(String name, String id);
 
@@ -32,20 +43,16 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
 
     protected abstract Registration<T> makeRegistration(T entity);
 
-    protected abstract T getAnyExisting();
-
-    protected abstract long getCount();
-
-    protected abstract String getResourceName();
-
-    protected abstract Class<T> getEntityClass();
-
     protected String getResourceUrl() {
-        return "/" + getResourceName() + "/";
+        return "/" + controller.getResourceName() + "/";
+    }
+
+    protected T findAnyExisting() {
+        return repository.findAll().get(0);
     }
 
     protected T makeUpdateEntity(String name) {
-        T original = getAnyExisting();
+        T original = findAnyExisting();
         return makeValidEntity(name, original.getUuid());
     }
 
@@ -103,7 +110,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        T responseEntity = fromJson(getEntityClass(), mvcResult.getResponse().getContentAsString());
+        T responseEntity = fromJson(controller.getEntityClass(), mvcResult.getResponse().getContentAsString());
         verifyEntityExistsWithNameAndId(responseEntity, "test registration", entity.getUuid());
     }
 
@@ -119,7 +126,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        T responseEntity = fromXml(getEntityClass(), mvcResult.getResponse().getContentAsString());
+        T responseEntity = fromXml(controller.getEntityClass(), mvcResult.getResponse().getContentAsString());
         verifyEntityExistsWithNameAndId(responseEntity, "test registration", entity.getUuid());
     }
 
@@ -134,7 +141,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        T responseEntity = fromJson(getEntityClass(), mvcResult.getResponse().getContentAsString());
+        T responseEntity = fromJson(controller.getEntityClass(), mvcResult.getResponse().getContentAsString());
         verifyEntityExistsWithNameAndId(responseEntity, "test update", entity.getUuid());
     }
 
@@ -161,7 +168,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        T responseEntity = fromJson(getEntityClass(), mvcResult.getResponse().getContentAsString());
+        T responseEntity = fromJson(controller.getEntityClass(), mvcResult.getResponse().getContentAsString());
         verifyEntityExistsWithNameAndId(responseEntity, "test registration", uuid);
     }
 
@@ -178,7 +185,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        T responseEntity = fromXml(getEntityClass(), mvcResult.getResponse().getContentAsString());
+        T responseEntity = fromXml(controller.getEntityClass(), mvcResult.getResponse().getContentAsString());
         verifyEntityExistsWithNameAndId(responseEntity, "test registration", uuid);
     }
 
@@ -193,7 +200,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        T responseEntity = fromJson(getEntityClass(), mvcResult.getResponse().getContentAsString());
+        T responseEntity = fromJson(controller.getEntityClass(), mvcResult.getResponse().getContentAsString());
         verifyEntityExistsWithNameAndId(responseEntity, "test update", entity.getUuid());
     }
 
@@ -213,7 +220,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
     @Test
     @WithMockUser(username = username, password = password)
     public void getSingleValid() throws Exception {
-        T entity = getAnyExisting();
+        T entity = findAnyExisting();
         mockMvc.perform(get(getResourceUrl() + entity.getUuid())
                 .accept(halJson))
                 .andExpect(status().isOk())
@@ -224,7 +231,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
     @Test
     @WithMockUser(username = username, password = password)
     public void getSingleValidXml() throws Exception {
-        T entity = getAnyExisting();
+        T entity = findAnyExisting();
         mockMvc.perform(get(getResourceUrl() + entity.getUuid())
                 .accept(regularXml))
                 .andExpect(status().isOk())
@@ -245,7 +252,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
         mockMvc.perform(get(getResourceUrl()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
-                .andExpect(jsonPath("$._embedded." + getResourceName(), hasSize((int) getCount())));
+                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize((int) repository.count())));
     }
 
     @Test
@@ -258,7 +265,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
                 .param("sort", "uuid"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
-                .andExpect(jsonPath("$._embedded." + getResourceName(), hasSize(1)))
+                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(1)))
                 .andExpect(jsonPath("$.page.size", is(1)))
                 .andExpect(jsonPath("$.page.number", is(0)));
     }
@@ -271,7 +278,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
                 .accept(regularJson))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(regularJson))
-                .andExpect(jsonPath("$", hasSize((int) getCount())));
+                .andExpect(jsonPath("$", hasSize((int) repository.count())));
     }
 
     @Test
@@ -282,7 +289,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
                 .accept(regularXml))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(regularXml))
-                .andExpect(xpath("/" + getResourceName() + "/*").nodeCount((int) getCount()));
+                .andExpect(xpath("/" + controller.getResourceName() + "/*").nodeCount((int) repository.count()));
     }
 
     // DELETE
@@ -305,7 +312,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
     @Test
     @WithMockUser(username = username, password = password)
     public void deleteExisting() throws Exception {
-        T entity = getAnyExisting();
+        T entity = findAnyExisting();
         MvcResult mvcResult = mockMvc.perform(delete(getResourceUrl() + entity.getUuid()))
                 .andReturn();
         assertThat(mvcResult.getResponse().getStatus(),

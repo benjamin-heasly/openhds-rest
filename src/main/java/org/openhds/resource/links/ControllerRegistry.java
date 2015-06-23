@@ -1,6 +1,5 @@
 package org.openhds.resource.links;
 
-import org.openhds.resource.contract.UuidIdentifiableRestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.hateoas.ExposesResourceFor;
@@ -22,9 +21,10 @@ import java.util.*;
 public class ControllerRegistry {
     private final ApplicationContext applicationContext;
 
-    private final Map<Class<?>, Class<? extends UuidIdentifiableRestController>> entitiesToControllers = new HashMap<>();
+    private final Map<Class<?>, Class<?>> entitiesToControllers = new HashMap<>();
+    private final Map<Class<?>, Class<?>> controllersToEntities = new HashMap<>();
     private final Map<Class<?>, String> entitiesToPaths = new HashMap<>();
-    private final Map<Class<? extends UuidIdentifiableRestController>, String> controllersToPaths = new HashMap<>();
+    private final Map<Class<?>, String> controllersToPaths = new HashMap<>();
 
     @Autowired
     public ControllerRegistry(ApplicationContext applicationContext) {
@@ -34,18 +34,21 @@ public class ControllerRegistry {
 
     // Search the application context for entities and their controllers.
     private void discoverControllers() {
-        for (Class<?> clazz : getBeanClassesWithAnnotation(ExposesResourceFor.class)) {
-            Class<? extends UuidIdentifiableRestController> controllerClass = (Class<? extends UuidIdentifiableRestController>) clazz;
-
+        for (Class<?> controllerClass : getBeanClassesWithAnnotation(ExposesResourceFor.class)) {
             ExposesResourceFor exposesResourceFor = controllerClass.getAnnotation(ExposesResourceFor.class);
             Class<?> entityClass = exposesResourceFor.value();
             entitiesToControllers.put(entityClass, controllerClass);
+            controllersToEntities.put(controllerClass, entityClass);
+        }
 
+        for (Class<?> controllerClass : getBeanClassesWithAnnotation(RequestMapping.class)) {
             RequestMapping requestMapping = controllerClass.getAnnotation(RequestMapping.class);
             String controllerPath = firstPathComponent(requestMapping.value());
+            Class<?> entityClass = controllersToEntities.get(controllerClass);
             entitiesToPaths.put(entityClass, controllerPath);
             controllersToPaths.put(controllerClass, controllerPath);
         }
+
     }
 
     // Search the application context for annotated classes.
@@ -64,19 +67,23 @@ public class ControllerRegistry {
         return Paths.get(paths[0]).subpath(0, 1).toString();
     }
 
-    public Map<Class<?>, Class<? extends UuidIdentifiableRestController>> getEntitiesToControllers() {
+    public Map<Class<?>, Class<?>> getEntitiesToControllers() {
         return Collections.unmodifiableMap(entitiesToControllers);
+    }
+
+    public Map<Class<?>, Class<?>> getControllersToEntities() {
+        return Collections.unmodifiableMap(controllersToEntities);
     }
 
     public Map<Class<?>, String> getEntitiesToPaths() {
         return Collections.unmodifiableMap(entitiesToPaths);
     }
 
-    public Map<Class<? extends UuidIdentifiableRestController>, String> getControllersToPaths() {
+    public Map<Class<?>, String> getControllersToPaths() {
         return Collections.unmodifiableMap(controllersToPaths);
     }
 
-    public <T extends UuidIdentifiableRestController> T getController(Class<T> controllerClass) {
+    public <T> T getController(Class<T> controllerClass) {
         return applicationContext.getBean(controllerClass);
     }
 }
