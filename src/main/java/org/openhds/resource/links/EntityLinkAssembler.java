@@ -4,7 +4,10 @@ import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.domain.util.ShallowCopier;
 import org.openhds.resource.contract.UuidIdentifiableRestController;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.*;
+import org.springframework.hateoas.EntityLinks;
+import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.ResourceAssembler;
+import org.springframework.hateoas.Resources;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -81,7 +84,10 @@ public class EntityLinkAssembler implements ResourceAssembler<UuidIdentifiable, 
 
     // Let an entity's controller add entity-specific links if it wants.
     private void addSupplementalLinks(UuidIdentifiable entity, Resource resource) {
-        Class<? extends UuidIdentifiableRestController> controllerClass = controllerRegistry.getEntitiesToControllers().get(entity.getClass());
-        controllerRegistry.getController(controllerClass).supplementResource(resource);
+        Class<?> controllerClass = controllerRegistry.getEntitiesToControllers().get(entity.getClass());
+
+        // controller registry only holds UuidIdentifiableRestController
+        UuidIdentifiableRestController controller = (UuidIdentifiableRestController) controllerRegistry.getController(controllerClass);
+        controller.supplementResource(resource);
     }
 }
