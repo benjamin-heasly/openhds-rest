@@ -5,6 +5,7 @@ import org.openhds.repository.AuditableRepository;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.repository.results.PageIterator;
 import org.openhds.repository.results.PagingEntityIterator;
+import org.openhds.security.model.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
@@ -26,9 +27,7 @@ public abstract class AbstractAuditableService<T extends AuditableEntity, V exte
 
     public EntityIterator<T> findAll(Sort sort) {
 
-        PageIterator<T> pageIterator = new PageIterator<>(repository::findByDeletedFalse, sort);
-
-        return new PagingEntityIterator<>(pageIterator);
+        return iteratorFromPageable(repository::findAll, sort);
 
     }
 
@@ -61,7 +60,25 @@ public abstract class AbstractAuditableService<T extends AuditableEntity, V exte
         return repository.save(entity);
     }
 
-    private EntityIterator<T> iteratorFromPageable(PageIterator.PagedQueryable<T> pagedQueryable, Sort sort) {
+    //TODO: write test
+    public T delete(T entity, String reason){
+        entity.setDeleted(true);
+        entity.setVoidReason(reason);
+        //TODO: setVoidBy when global user is accessible
+        return  repository.save(entity);
+    }
+
+    //TODO: write test
+    public EntityIterator<T> findAllDeleted(Sort sort){
+        return iteratorFromPageable(pageable -> repository.findByDeletedTrue(pageable), sort);
+    }
+
+    //TODO: write test
+    public EntityIterator<T> findByInsertBy(Sort sort, User user){
+        return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndInsertBy(user, pageable), sort);
+    }
+
+    protected EntityIterator<T> iteratorFromPageable(PageIterator.PagedQueryable<T> pagedQueryable, Sort sort) {
 
         return new PagingEntityIterator<>(new PageIterator<>(pagedQueryable, sort));
 
