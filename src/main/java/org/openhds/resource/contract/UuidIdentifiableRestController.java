@@ -84,7 +84,8 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
     @RequestMapping(value = "/bulk", method = RequestMethod.GET)
     public EntityIterator<T> readBulk(Sort sort) {
         PageIterator<T> pageIterator = new PageIterator<>(repository::findAll, sort);
-        EntityIterator<T> entityIterator = new PagingEntityIterator<>(pageIterator, getResourceName());
+        EntityIterator<T> entityIterator = new PagingEntityIterator<>(pageIterator);
+        entityIterator.setCollectionName(getResourceName());
         return new ShallowCopyIterator<>(entityIterator);
     }
 

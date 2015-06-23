@@ -25,4 +25,6 @@ public interface EntityIterator<T extends UuidIdentifiable> extends Iterable<T> 
 
     String getCollectionName();
 
+    void setCollectionName(String collectionName);
+
 }

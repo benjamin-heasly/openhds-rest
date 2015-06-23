@@ -36,6 +36,11 @@ public class ShallowCopyIterator<T extends UuidIdentifiable> implements EntityIt
     }
 
     @Override
+    public void setCollectionName(String collectionName) {
+        original.setCollectionName(collectionName);
+    }
+
+    @Override
     public Iterator<T> iterator() {
         return this;
     }

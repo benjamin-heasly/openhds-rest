@@ -16,13 +16,12 @@ public class PagingEntityIterator<T extends UuidIdentifiable> implements EntityI
 
     private final PageIterator<T> pageIterator;
 
-    private final String collectionName;
+    private String collectionName;
 
     private Iterator<T> objectIterator;
 
-    public PagingEntityIterator(PageIterator<T> pageIterator, String collectionName) {
+    public PagingEntityIterator(PageIterator<T> pageIterator) {
         this.pageIterator = pageIterator;
-        this.collectionName = collectionName;
 
         if (pageIterator.hasNext()) {
             objectIterator = nextObjectIterator();
@@ -46,6 +45,11 @@ public class PagingEntityIterator<T extends UuidIdentifiable> implements EntityI
     @Override
     public String getCollectionName() {
         return collectionName;
+    }
+
+    @Override
+    public void setCollectionName(String collectionName) {
+        this.collectionName = collectionName;
     }
 
     @Override
