@@ -263,6 +263,28 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
                 .andExpect(jsonPath("$.page.number", is(0)));
     }
 
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void getBulkJson() throws Exception {
+        mockMvc.perform(get(getResourceUrl() + "/bulk")
+                .param("sort", "uuid")
+                .accept(regularJson))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(regularJson))
+                .andExpect(jsonPath("$", hasSize((int) getCount())));
+    }
+
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void getBulkXml() throws Exception {
+        mockMvc.perform(get(getResourceUrl() + "/bulk")
+                .param("sort", "uuid")
+                .accept(regularXml))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(regularXml))
+                .andExpect(xpath("/" + getResourceName() + "/*").nodeCount((int) getCount()));
+    }
+
     // DELETE
 
     @Test
