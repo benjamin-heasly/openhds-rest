@@ -11,6 +11,7 @@ import org.openhds.resource.registration.Registration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.Resource;
@@ -71,11 +72,11 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
         return assembler.toResource(entities, entityLinkAssembler);
     }
 
-    // TODO: should just expose a Sort, not a Pageable.  Make Pageable an implementation detail.
+    // TODO: move to Auditable, with date range params optional
     @RequestMapping(value = "/bulk", method = RequestMethod.GET)
-    public EntityIterator<T> readBulk(Pageable pageable) {
+    public EntityIterator<T> readBulk(Sort sort) {
         // TODO: use resource name, not controller class name
-        PageIterator<T> pageIterator = new PageIterator<>(repository::findAll, pageable);
+        PageIterator<T> pageIterator = new PageIterator<>(repository::findAll, sort);
         EntityIterator<T> entityIterator = new PagingEntityIterator<>(pageIterator, getClass().getSimpleName());
         return new ShallowCopyIterator<>(entityIterator);
     }
