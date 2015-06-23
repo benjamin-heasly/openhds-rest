@@ -132,7 +132,7 @@ public class SampleDataGenerator {
 
         fieldWorker.setFirstName(name);
         fieldWorker.setLastName(name);
-        fieldWorker.setExtId(name);
+        fieldWorker.setFieldWorkerId(name);
         fieldWorker.setPassword(password);
         fieldWorker.setPasswordHash(password);
         fieldWorkerRepository.save(fieldWorker);

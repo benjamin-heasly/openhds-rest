@@ -1,6 +1,8 @@
 package org.openhds.repository;
 
 import org.openhds.domain.contract.ExtIdIdentifiable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
@@ -13,5 +15,6 @@ import java.util.List;
 public interface ExtIdentifiableRepository <T extends ExtIdIdentifiable> extends JpaRepository<T, String> {
 
     List<T> findByExtId(String extId);
+    Page<T> findByDeletedFalseAndExtId(String extId, Pageable pageable);
 
 }

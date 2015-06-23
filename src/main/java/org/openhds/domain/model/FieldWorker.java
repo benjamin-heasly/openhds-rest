@@ -13,13 +13,13 @@ import java.io.Serializable;
 @Description(description = "A Field Worker represents a surveyor working in the study area.")
 @Entity
 @Table(name = "fieldworker")
-public class FieldWorker extends AuditableEntity implements ExtIdIdentifiable, Serializable {
+public class FieldWorker extends AuditableEntity implements Serializable {
 
     private static final long serialVersionUID = -7550088299362704483L;
 
     @NotNull
     @Description(description = "User-facing Id of the field worker")
-    String extId;
+    String fieldWorkerId;
 
     @Description(description = "First name of the field worker.")
     String firstName;
@@ -38,14 +38,12 @@ public class FieldWorker extends AuditableEntity implements ExtIdIdentifiable, S
     @Description(description = "The ID prefix used in individual extId generation.")
     int idPrefix;
 
-    @Override
-    public String getExtId() {
-        return extId;
+    public String getFieldWorkerId() {
+        return fieldWorkerId;
     }
 
-    @Override
-    public void setExtId(String extId) {
-        this.extId = extId;
+    public void setFieldWorkerId(String fieldWorkerId) {
+        this.fieldWorkerId = fieldWorkerId;
     }
 
     public int getIdPrefix() {
