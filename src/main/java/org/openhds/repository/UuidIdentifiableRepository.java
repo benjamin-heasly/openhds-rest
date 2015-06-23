@@ -10,5 +10,4 @@ import org.springframework.data.repository.NoRepositoryBean;
 @NoRepositoryBean
 public interface UuidIdentifiableRepository<T extends UuidIdentifiable> extends JpaRepository<T, String>{
 
-
 }

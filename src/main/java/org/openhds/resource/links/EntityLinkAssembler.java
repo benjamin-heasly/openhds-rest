@@ -81,7 +81,7 @@ public class EntityLinkAssembler implements ResourceAssembler<UuidIdentifiable, 
 
     // Let an entity's controller add entity-specific links if it wants.
     private void addSupplementalLinks(UuidIdentifiable entity, Resource resource) {
-        Class<UuidIdentifiableRestController> controllerClass = controllerRegistry.getEntitiesToControllers().get(entity.getClass());
+        Class<? extends UuidIdentifiableRestController> controllerClass = controllerRegistry.getEntitiesToControllers().get(entity.getClass());
         controllerRegistry.getController(controllerClass).supplementResource(resource);
     }
 }

@@ -22,8 +22,9 @@ import java.util.*;
 public class ControllerRegistry {
     private final ApplicationContext applicationContext;
 
-    private final Map<Class<?>, Class<UuidIdentifiableRestController>> entitiesToControllers = new HashMap<>();
+    private final Map<Class<?>, Class<? extends UuidIdentifiableRestController>> entitiesToControllers = new HashMap<>();
     private final Map<Class<?>, String> entitiesToPaths = new HashMap<>();
+    private final Map<Class<? extends UuidIdentifiableRestController>, String> controllersToPaths = new HashMap<>();
 
     @Autowired
     public ControllerRegistry(ApplicationContext applicationContext) {
@@ -33,13 +34,17 @@ public class ControllerRegistry {
 
     // Search the application context for entities and their controllers.
     private void discoverControllers() {
-        for (Class<?> controllerClass : getBeanClassesWithAnnotation(ExposesResourceFor.class)) {
+        for (Class<?> clazz : getBeanClassesWithAnnotation(ExposesResourceFor.class)) {
+            Class<? extends UuidIdentifiableRestController> controllerClass = (Class<? extends UuidIdentifiableRestController>) clazz;
+
             ExposesResourceFor exposesResourceFor = controllerClass.getAnnotation(ExposesResourceFor.class);
             Class<?> entityClass = exposesResourceFor.value();
-            entitiesToControllers.put(entityClass, (Class<UuidIdentifiableRestController>) controllerClass);
+            entitiesToControllers.put(entityClass, controllerClass);
 
             RequestMapping requestMapping = controllerClass.getAnnotation(RequestMapping.class);
-            entitiesToPaths.put(entityClass, firstPathComponent(requestMapping.value()));
+            String controllerPath = firstPathComponent(requestMapping.value());
+            entitiesToPaths.put(entityClass, controllerPath);
+            controllersToPaths.put(controllerClass, controllerPath);
         }
     }
 
@@ -59,12 +64,16 @@ public class ControllerRegistry {
         return Paths.get(paths[0]).subpath(0, 1).toString();
     }
 
-    public Map<Class<?>, Class<UuidIdentifiableRestController>> getEntitiesToControllers() {
+    public Map<Class<?>, Class<? extends UuidIdentifiableRestController>> getEntitiesToControllers() {
         return Collections.unmodifiableMap(entitiesToControllers);
     }
 
     public Map<Class<?>, String> getEntitiesToPaths() {
         return Collections.unmodifiableMap(entitiesToPaths);
+    }
+
+    public Map<Class<? extends UuidIdentifiableRestController>, String> getControllersToPaths() {
+        return Collections.unmodifiableMap(controllersToPaths);
     }
 
     public <T extends UuidIdentifiableRestController> T getController(Class<T> controllerClass) {

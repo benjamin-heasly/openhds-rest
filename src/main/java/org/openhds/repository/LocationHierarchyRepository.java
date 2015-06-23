@@ -6,11 +6,10 @@ package org.openhds.repository;
 
 import org.openhds.domain.model.LocationHierarchy;
 import org.openhds.domain.model.LocationHierarchyLevel;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface LocationHierarchyRepository extends JpaRepository<LocationHierarchy, String> {
+public interface LocationHierarchyRepository extends AuditableCollectedRepository<LocationHierarchy> {
     List<LocationHierarchy> findByExtId(String extId);
     List<LocationHierarchy> findByName(String name);
     List<LocationHierarchy> findByParent(LocationHierarchy parent);

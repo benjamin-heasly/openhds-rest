@@ -1,10 +1,18 @@
 package org.openhds.resource.contract;
 
 import org.openhds.domain.contract.UuidIdentifiable;
+import org.openhds.repository.UuidIdentifiableRepository;
+import org.openhds.repository.results.EntityIterator;
+import org.openhds.repository.results.PageIterator;
+import org.openhds.repository.results.PagingEntityIterator;
+import org.openhds.repository.results.ShallowCopyIterator;
+import org.openhds.resource.links.ControllerRegistry;
 import org.openhds.resource.links.EntityLinkAssembler;
 import org.openhds.resource.registration.Registration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedResources;
 import org.springframework.hateoas.Resource;
@@ -24,18 +32,34 @@ import java.util.NoSuchElementException;
 @RestController
 public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable, U extends Registration<T>> {
 
-    protected final EntityLinkAssembler entityLinkAssembler;
+    @Autowired
+    protected EntityLinkAssembler entityLinkAssembler;
 
-    public UuidIdentifiableRestController(EntityLinkAssembler entityLinkAssembler) {
-        this.entityLinkAssembler = entityLinkAssembler;
+    @Autowired
+    protected ControllerRegistry controllerRegistry;
+
+    private final UuidIdentifiableRepository<T> repository;
+
+    public UuidIdentifiableRestController(UuidIdentifiableRepository<T> repository) {
+        this.repository = repository;
+    }
+
+    protected String getResourceName() {
+        return controllerRegistry.getControllersToPaths().get(this.getClass());
     }
 
     // templates to be implemented with entity services, etc.
-    protected abstract T findOneCanonical(String id);
-    protected abstract Page<T> findPaged(Pageable pageable);
     protected abstract T register(U registration);
     protected abstract T register(U registration, String id);
     protected abstract void removeOneCanonical(String id, String reason);
+
+    protected Page<T> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
+    }
+
+    protected T findOne(String id) {
+        return repository.findOne(id);
+    }
 
     // optionally add entity-specific links to a HATEOAS resource
     public void supplementResource(Resource resource) {
@@ -43,7 +67,7 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Resource<?> readOneCanonical(@PathVariable String id) {
-        T entity = findOneCanonical(id);
+        T entity = findOne(id);
         if (null == entity) {
             throw new NoSuchElementException("No entity found with canonical id: " + id);
         }
@@ -52,8 +76,17 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
 
     @RequestMapping(method = RequestMethod.GET)
     public PagedResources readPaged(Pageable pageable, PagedResourcesAssembler assembler) {
-        Page<T> entities = findPaged(pageable);
+        Page<T> entities = findAll(pageable);
         return assembler.toResource(entities, entityLinkAssembler);
+    }
+
+    // TODO: move to Auditable, with date range params optional
+    @RequestMapping(value = "/bulk", method = RequestMethod.GET)
+    public EntityIterator<T> readBulk(Sort sort) {
+        PageIterator<T> pageIterator = new PageIterator<>(repository::findAll, sort);
+        EntityIterator<T> entityIterator = new PagingEntityIterator<>(pageIterator);
+        entityIterator.setCollectionName(getResourceName());
+        return new ShallowCopyIterator<>(entityIterator);
     }
 
     @RequestMapping(method = RequestMethod.POST)

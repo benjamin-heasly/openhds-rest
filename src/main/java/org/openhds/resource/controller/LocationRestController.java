@@ -6,18 +6,14 @@ import org.openhds.repository.LocationHierarchyRepository;
 import org.openhds.repository.LocationRepository;
 import org.openhds.repository.UserRepository;
 import org.openhds.resource.contract.AuditableExtIdRestController;
-import org.openhds.resource.links.EntityLinkAssembler;
 import org.openhds.resource.registration.LocationRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.ConstraintViolationException;
 import java.time.ZonedDateTime;
-import java.util.List;
 
 /**
  * Created by Ben on 5/18/15.
@@ -36,49 +32,15 @@ class LocationRestController extends AuditableExtIdRestController<Location, Loca
     private final FieldWorkerRepository fieldWorkerRepository;
 
     @Autowired
-    public LocationRestController(EntityLinkAssembler entityLinkAssembler,
-                                  LocationRepository locationRepository,
+    public LocationRestController(LocationRepository locationRepository,
                                   LocationHierarchyRepository locationHierarchyRepository,
                                   UserRepository userRepository,
                                   FieldWorkerRepository fieldWorkerRepository) {
-        super(entityLinkAssembler);
+        super(locationRepository);
         this.locationRepository = locationRepository;
         this.locationHierarchyRepository = locationHierarchyRepository;
         this.userRepository = userRepository;
         this.fieldWorkerRepository = fieldWorkerRepository;
-    }
-
-    @Override
-    protected Location findOneCanonical(String id) {
-        return locationRepository.findByDeletedFalseAndUuid(id);
-    }
-
-    @Override
-    protected Page<Location> findPaged(Pageable pageable) {
-        return locationRepository.findByDeletedFalse(pageable);
-    }
-
-    @Override
-    protected Page<Location> findPagedByInsertDate(Pageable pageable, ZonedDateTime insertedAfter, ZonedDateTime insertedBefore) {
-        // TODO: this is probably a method of AuditableService
-        if (null == insertedAfter) {
-            if (null == insertedBefore) {
-                return locationRepository.findByDeletedFalse(pageable);
-            } else {
-                return locationRepository.findByDeletedFalseAndInsertDateBefore(insertedBefore, pageable);
-            }
-        } else {
-            if (null == insertedBefore) {
-                return locationRepository.findByDeletedFalseAndInsertDateAfter(insertedAfter, pageable);
-            } else {
-                return locationRepository.findByDeletedFalseAndInsertDateBetween(insertedAfter, insertedBefore, pageable);
-            }
-        }
-    }
-
-    @Override
-    protected List<Location> findByExtId(String id) {
-        return locationRepository.findByExtId(id);
     }
 
     @Override
@@ -107,13 +69,4 @@ class LocationRestController extends AuditableExtIdRestController<Location, Loca
         return register(registration);
     }
 
-    @Override
-    protected void update(Location entity) {
-        locationRepository.save(entity);
-    }
-
-    @Override
-    protected Page<Location> findVoided(Pageable pageable) {
-        return locationRepository.findByDeletedTrue(pageable);
-    }
 }
