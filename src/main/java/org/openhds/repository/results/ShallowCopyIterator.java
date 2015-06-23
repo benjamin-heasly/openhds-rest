@@ -25,7 +25,7 @@ public class ShallowCopyIterator<T extends UuidIdentifiable> implements EntityIt
     public List<T> toList() {
         List<T> list = new ArrayList<>();
         for (T entity : original) {
-            list.add(entity);
+            list.add(shallowCopy(entity));
         }
         return list;
     }
