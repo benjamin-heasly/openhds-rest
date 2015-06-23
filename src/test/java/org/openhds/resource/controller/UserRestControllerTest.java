@@ -13,10 +13,14 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by Ben on 5/19/15.
  */
-public class UserRestControllerTest extends UuidIdentifiableRestControllerTest<User> {
+public class UserRestControllerTest extends UuidIdentifiableRestControllerTest<User, UserRepository, UserRestController> {
 
     @Autowired
-    private UserRepository userRepository;
+    @Override
+    protected void initialize(UserRepository repository, UserRestController controller) {
+        this.repository = repository;
+        this.controller = controller;
+    }
 
     @Override
     protected User makeValidEntity(String name, String id) {
@@ -38,7 +42,7 @@ public class UserRestControllerTest extends UuidIdentifiableRestControllerTest<U
     protected void verifyEntityExistsWithNameAndId(User entity, String name, String id) {
         assertNotNull(entity);
 
-        User savedUser = userRepository.findOne(id);
+        User savedUser = repository.findOne(id);
         assertNotNull(savedUser);
 
         assertEquals(id, savedUser.getUuid());
@@ -53,23 +57,4 @@ public class UserRestControllerTest extends UuidIdentifiableRestControllerTest<U
         return registration;
     }
 
-    @Override
-    protected User getAnyExisting() {
-        return userRepository.findAll().get(0);
-    }
-
-    @Override
-    protected long getCount() {
-        return userRepository.count();
-    }
-
-    @Override
-    protected String getResourceName() {
-        return "users";
-    }
-
-    @Override
-    protected Class<User> getEntityClass() {
-        return User.class;
-    }
 }

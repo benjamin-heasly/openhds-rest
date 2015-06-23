@@ -16,16 +16,20 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by Ben on 5/26/15.
  */
-public class LocationRestControllerTest extends AuditableExtIdRestControllerTest<Location> {
-
-    @Autowired
-    private LocationRepository locationRepository;
+public class LocationRestControllerTest extends AuditableExtIdRestControllerTest<Location, LocationRepository, LocationRestController> {
 
     @Autowired
     private FieldWorkerRepository fieldWorkerRepository;
 
     @Autowired
     private LocationHierarchyRepository locationHierarchyRepository;
+
+    @Autowired
+    @Override
+    protected void initialize(LocationRepository repository, LocationRestController controller) {
+        this.repository = repository;
+        this.controller = controller;
+    }
 
     @Override
     protected Location makeValidEntity(String name, String id) {
@@ -45,7 +49,7 @@ public class LocationRestControllerTest extends AuditableExtIdRestControllerTest
     protected void verifyEntityExistsWithNameAndId(Location entity, String name, String id) {
         assertNotNull(entity);
 
-        Location savedLocation = locationRepository.findOne(id);
+        Location savedLocation = repository.findOne(id);
         assertNotNull(savedLocation);
 
         assertEquals(id, savedLocation.getUuid());
@@ -61,26 +65,6 @@ public class LocationRestControllerTest extends AuditableExtIdRestControllerTest
         registration.setLocationHierarchyUuid(locationHierarchyRepository.findAll().get(0).getUuid());
         registration.setCollectedByUuid(fieldWorkerRepository.findAll().get(0).getUuid());
         return registration;
-    }
-
-    @Override
-    protected Location getAnyExisting() {
-        return locationRepository.findAll().get(0);
-    }
-
-    @Override
-    protected long getCount() {
-        return locationRepository.count();
-    }
-
-    @Override
-    protected String getResourceName() {
-        return "locations";
-    }
-
-    @Override
-    protected Class<Location> getEntityClass() {
-        return Location.class;
     }
 
     private LocationRegistration makeLocationRegistration(String hierarchyName, String name) {

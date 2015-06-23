@@ -2,6 +2,7 @@ package org.openhds.resource.contract;
 
 import org.junit.Test;
 import org.openhds.domain.contract.AuditableEntity;
+import org.openhds.repository.AuditableRepository;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -10,16 +11,16 @@ import java.time.ZonedDateTime;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
  * Created by Ben on 6/16/15.
  */
-public abstract class AuditableRestControllerTest <T extends AuditableEntity>
-        extends UuidIdentifiableRestControllerTest<T> {
+public abstract class AuditableRestControllerTest<T extends AuditableEntity,
+        U extends AuditableRepository<T>,
+        V extends AuditableRestController<T, ?>>
+        extends UuidIdentifiableRestControllerTest<T, U, V> {
 
     protected String getByInsertDateResourceUrl() {
         return getResourceUrl() + "byinsertdate/";
@@ -49,21 +50,21 @@ public abstract class AuditableRestControllerTest <T extends AuditableEntity>
                 .param("insertedBefore", beforeInsert.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
-                .andExpect(jsonPath("$._embedded." + getResourceName(), hasSize((int) getCount() - 1)));
+                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize((int) repository.count() - 1)));
 
         // one record > beforeInsert
         mockMvc.perform(get(getByInsertDateResourceUrl())
                 .param("insertedAfter", beforeInsert.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
-                .andExpect(jsonPath("$._embedded." + getResourceName(), hasSize(1)));
+                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(1)));
 
         // all records < afterInsert
         mockMvc.perform(get(getByInsertDateResourceUrl())
                 .param("insertedBefore", afterInsert.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
-                .andExpect(jsonPath("$._embedded." + getResourceName(), hasSize((int) getCount())));
+                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize((int) repository.count())));
 
         // no records > afterInsert
         mockMvc.perform(get(getByInsertDateResourceUrl())
@@ -78,7 +79,7 @@ public abstract class AuditableRestControllerTest <T extends AuditableEntity>
                 .param("insertedBefore", afterInsert.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
-                .andExpect(jsonPath("$._embedded." + getResourceName(), hasSize(1)));
+                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(1)));
     }
 
     @Test
@@ -103,7 +104,7 @@ public abstract class AuditableRestControllerTest <T extends AuditableEntity>
         mockMvc.perform(get(getVoidedResourceUrl()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
-                .andExpect(jsonPath("$._embedded." + getResourceName(), hasSize(1)));
+                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(1)));
 
         // can't get it anymore
         mockMvc.perform(get(getResourceUrl() + entity.getUuid()))
@@ -119,7 +120,7 @@ public abstract class AuditableRestControllerTest <T extends AuditableEntity>
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        return fromJson(getEntityClass(), mvcResult.getResponse().getContentAsString());
+        return fromJson(controller.getEntityClass(), mvcResult.getResponse().getContentAsString());
     }
 
 }

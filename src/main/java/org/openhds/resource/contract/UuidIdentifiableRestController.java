@@ -48,8 +48,8 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
         return controllerRegistry.getControllersToPaths().get(this.getClass());
     }
 
-    protected Class<?> getEntityClass() {
-        return controllerRegistry.getControllersToEntities().get(this.getClass());
+    protected Class<T> getEntityClass() {
+        return (Class<T>) controllerRegistry.getControllersToEntities().get(this.getClass());
     }
 
     // templates to be implemented with entity services, etc.
