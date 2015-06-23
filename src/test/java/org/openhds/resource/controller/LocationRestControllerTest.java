@@ -4,6 +4,7 @@ import org.openhds.domain.model.Location;
 import org.openhds.repository.FieldWorkerRepository;
 import org.openhds.repository.LocationHierarchyRepository;
 import org.openhds.repository.LocationRepository;
+import org.openhds.resource.contract.AuditableExtIdRestControllerTest;
 import org.openhds.resource.registration.LocationRegistration;
 import org.openhds.resource.registration.Registration;
 import org.springframework.beans.factory.annotation.Autowired;

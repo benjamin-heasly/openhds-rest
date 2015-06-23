@@ -1,7 +1,8 @@
-package org.openhds.resource.controller;
+package org.openhds.resource.contract;
 
 import org.junit.Test;
 import org.openhds.domain.contract.UuidIdentifiable;
+import org.openhds.resource.controller.RestControllerTestSupport;
 import org.openhds.resource.registration.Registration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;

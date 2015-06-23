@@ -1,4 +1,4 @@
-package org.openhds.resource.controller;
+package org.openhds.resource.contract;
 
 import org.junit.Test;
 import org.openhds.domain.contract.AuditableEntity;

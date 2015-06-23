@@ -1,6 +1,7 @@
 package org.openhds.resource.controller;
 
 import org.openhds.repository.UserRepository;
+import org.openhds.resource.contract.UuidIdentifiableRestControllerTest;
 import org.openhds.resource.registration.Registration;
 import org.openhds.resource.registration.UserRegistration;
 import org.openhds.security.model.User;
