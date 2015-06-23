@@ -2,9 +2,14 @@ package org.openhds.resource.contract;
 
 import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.repository.AuditableRepository;
+import org.openhds.repository.results.EntityIterator;
+import org.openhds.repository.results.PageIterator;
+import org.openhds.repository.results.PagingEntityIterator;
+import org.openhds.repository.results.ShallowCopyIterator;
 import org.openhds.resource.registration.Registration;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.PagedResources;
@@ -38,17 +43,54 @@ public abstract class AuditableRestController<T extends AuditableEntity, U exten
         return repository.findByDeletedFalseAndUuid(id);
     }
 
+    @Override
+    protected void removeOneCanonical(String id, String voidReason) {
+        // TODO: this should be in Auditable Service
+        T entity = findOne(id);
+        if (null == entity) {
+            throw new NoSuchElementException("No entity found with id " + id);
+        }
+
+        entity.setDeleted(true);
+        entity.setVoidDate(ZonedDateTime.now());
+        entity.setVoidReason(voidReason);
+        // TODO: entity.setVoidBy( authenticated principal );
+        repository.save(entity);
+    }
+
     // insertedAfter <= insertDate < insertedBefore
-    @RequestMapping(value = "/byinsertdate", method = RequestMethod.GET)
-    public PagedResources readPagedByInertDate(Pageable pageable, PagedResourcesAssembler assembler,
-                                               @RequestParam(required = false)
-                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                               ZonedDateTime insertedAfter,
-                                               @RequestParam(required = false)
-                                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                               ZonedDateTime insertedBefore) {
+    @RequestMapping(value = "/bydate", method = RequestMethod.GET)
+    public PagedResources readByDatePaged(Pageable pageable, PagedResourcesAssembler assembler,
+                                          @RequestParam(required = false)
+                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                          ZonedDateTime insertedAfter,
+                                          @RequestParam(required = false)
+                                          @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                          ZonedDateTime insertedBefore) {
 
         Page<T> entities = findPagedByInsertDate(pageable, insertedAfter, insertedBefore);
+        return assembler.toResource(entities, entityLinkAssembler);
+    }
+
+    // insertedAfter <= insertDate < insertedBefore, no HATEOAS
+    @RequestMapping(value = "/bydate/bulk", method = RequestMethod.GET)
+    public EntityIterator<T> readByDateBulk(Sort sort,
+                                            @RequestParam(required = false)
+                                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                            ZonedDateTime insertedAfter,
+                                            @RequestParam(required = false)
+                                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                            ZonedDateTime insertedBefore) {
+        PageIterator<T> pageIterator = new PageIterator<>((pageable) -> findPagedByInsertDate(pageable, insertedAfter, insertedBefore), sort);
+        EntityIterator<T> entityIterator = new PagingEntityIterator<>(pageIterator);
+        entityIterator.setCollectionName(getResourceName());
+        return new ShallowCopyIterator<>(entityIterator);
+    }
+
+    // for auditing
+    @RequestMapping(value = "/voided", method = RequestMethod.GET)
+    public PagedResources readPagedByInertDate(Pageable pageable, PagedResourcesAssembler assembler) {
+        Page<T> entities = repository.findByDeletedTrue(pageable);
         return assembler.toResource(entities, entityLinkAssembler);
     }
 
@@ -68,28 +110,4 @@ public abstract class AuditableRestController<T extends AuditableEntity, U exten
             }
         }
     }
-
-
-    // for auditing
-    @RequestMapping(value = "/voided", method = RequestMethod.GET)
-    public PagedResources readPagedByInertDate(Pageable pageable, PagedResourcesAssembler assembler) {
-        Page<T> entities = repository.findByDeletedTrue(pageable);
-        return assembler.toResource(entities, entityLinkAssembler);
-    }
-
-    @Override
-    protected void removeOneCanonical(String id, String voidReason) {
-        // TODO: this should be in Auditable Service
-        T entity = findOne(id);
-        if (null == entity) {
-            throw new NoSuchElementException("No entity found with id " + id);
-        }
-
-        entity.setDeleted(true);
-        entity.setVoidDate(ZonedDateTime.now());
-        entity.setVoidReason(voidReason);
-        // TODO: entity.setVoidBy( authenticated principal );
-        repository.save(entity);
-    }
-
 }

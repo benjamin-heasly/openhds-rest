@@ -84,7 +84,6 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
         return assembler.toResource(entities, entityLinkAssembler);
     }
 
-    // TODO: move to Auditable, with date range params optional
     @RequestMapping(value = "/bulk", method = RequestMethod.GET)
     public EntityIterator<T> readBulk(Sort sort) {
         PageIterator<T> pageIterator = new PageIterator<>(repository::findAll, sort);
