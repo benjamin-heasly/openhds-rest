@@ -2,7 +2,10 @@ package org.openhds.resource.contract;
 
 import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.repository.UuidIdentifiableRepository;
+import org.openhds.repository.results.EntityIterator;
 import org.openhds.repository.results.PageIterator;
+import org.openhds.repository.results.PagingEntityIterator;
+import org.openhds.repository.results.ShallowCopyIterator;
 import org.openhds.resource.links.EntityLinkAssembler;
 import org.openhds.resource.registration.Registration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,10 +73,11 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
 
     // TODO: should just expose a Sort, not a Pageable.  Make Pageable an implementation detail.
     @RequestMapping(value = "/bulk", method = RequestMethod.GET)
-    public PageIterator<T> readBulk(Pageable pageable) {
+    public EntityIterator<T> readBulk(Pageable pageable) {
         // TODO: use resource name, not controller class name
-        // TODO: how to expose only shallow copies?
-        return new PageIterator<>(repository, pageable, this.getClass().getSimpleName());
+        PageIterator<T> pageIterator = new PageIterator<>(repository::findAll, pageable);
+        EntityIterator<T> entityIterator = new PagingEntityIterator<>(pageIterator, getClass().getSimpleName());
+        return new ShallowCopyIterator<>(entityIterator);
     }
 
     @RequestMapping(method = RequestMethod.POST)

@@ -1,7 +1,6 @@
 package org.openhds.resource.converter;
 
-import org.openhds.repository.results.PageIterator;
-import org.springframework.data.domain.Page;
+import org.openhds.repository.results.EntityIterator;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.HttpOutputMessage;
 import org.springframework.http.MediaType;
@@ -17,25 +16,25 @@ import java.util.Iterator;
 /**
  * Created by Ben on 6/17/15.
  * <p>
- * Wrap a message converter to write multiple pages of results.
+ * Wrap an existing message converter to iterate many results.
  *
  * Article with method override advice.
  * https://www.airpair.com/java/posts/spring-streams-memory-efficiency
  *
  */
-public class PagedMessageWriter extends AbstractHttpMessageConverter<PageIterator<?>> {
+public class EntityCollectionMessageWriter extends AbstractHttpMessageConverter<EntityIterator<?>> {
 
     public interface Delimiter {
-        void writePrefix(OutputStream outputStream, PageIterator<?> pageIterator) throws IOException;
-        void writeDelimiter(OutputStream outputStream, PageIterator<?> pageIterator) throws IOException;
-        void writeSuffix(OutputStream outputStream, PageIterator<?> pageIterator) throws IOException;
+        void writePrefix(OutputStream outputStream, EntityIterator<?> entityIterator) throws IOException;
+        void writeDelimiter(OutputStream outputStream, EntityIterator<?> entityIterator) throws IOException;
+        void writeSuffix(OutputStream outputStream, EntityIterator<?> entityIterator) throws IOException;
     }
 
     private final AbstractJackson2HttpMessageConverter converter;
 
     private final Delimiter delimiter;
 
-    public PagedMessageWriter(AbstractJackson2HttpMessageConverter converter, Delimiter delimiter) {
+    public EntityCollectionMessageWriter(AbstractJackson2HttpMessageConverter converter, Delimiter delimiter) {
         super(converter.getSupportedMediaTypes().toArray(new MediaType[0]));
         this.converter = converter;
         this.delimiter = delimiter;
@@ -48,7 +47,7 @@ public class PagedMessageWriter extends AbstractHttpMessageConverter<PageIterato
 
     @Override
     public boolean canWrite(Class<?> clazz, MediaType mediaType) {
-        return PageIterator.class.isAssignableFrom(clazz) && canWrite(mediaType);
+        return EntityIterator.class.isAssignableFrom(clazz) && canWrite(mediaType);
     }
 
     @Override
@@ -58,31 +57,29 @@ public class PagedMessageWriter extends AbstractHttpMessageConverter<PageIterato
     }
 
     @Override
-    protected PageIterator<?> readInternal(Class clazz, HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
+    protected EntityIterator<?> readInternal(Class clazz, HttpInputMessage inputMessage) throws IOException, HttpMessageNotReadableException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    protected void writeInternal(PageIterator<?> pageIterator, HttpOutputMessage outputMessage)
+    protected void writeInternal(EntityIterator<?> entityIterator, HttpOutputMessage outputMessage)
             throws IOException, HttpMessageNotWritableException {
 
         final OutputStream outputStream = outputMessage.getBody();
 
-        delimiter.writePrefix(outputStream, pageIterator);
+        delimiter.writePrefix(outputStream, entityIterator);
 
-        while (pageIterator.hasNext()) {
-            Page page = pageIterator.next();
-            Iterator<?> objectIterator = page.getContent().iterator();
-            while (objectIterator.hasNext()) {
-                outputStream.write(converter.getObjectMapper().writeValueAsBytes(objectIterator.next()));
+        Iterator<?> iterator = entityIterator.iterator();
+        while (iterator.hasNext()) {
+            outputStream.write(converter.getObjectMapper().writeValueAsBytes(iterator.next()));
 
-                // fussy: don't write delimiter after the last item
-                if (objectIterator.hasNext() || pageIterator.hasNext()) {
-                    delimiter.writeDelimiter(outputStream, pageIterator);
-                } else {
-                    delimiter.writeSuffix(outputStream, pageIterator);
-                }
+            // fussy: don't write delimiter after the last item
+            if (iterator.hasNext()) {
+                delimiter.writeDelimiter(outputStream, entityIterator);
+            } else {
+                delimiter.writeSuffix(outputStream, entityIterator);
             }
         }
     }
+
 }
