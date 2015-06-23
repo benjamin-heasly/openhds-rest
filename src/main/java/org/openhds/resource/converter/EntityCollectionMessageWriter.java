@@ -70,6 +70,13 @@ public class EntityCollectionMessageWriter extends AbstractHttpMessageConverter<
         delimiter.writePrefix(outputStream, entityIterator);
 
         Iterator<?> iterator = entityIterator.iterator();
+
+        // empty collection
+        if (!iterator.hasNext()) {
+            delimiter.writeSuffix(outputStream, entityIterator);
+            return;
+        }
+
         while (iterator.hasNext()) {
             outputStream.write(converter.getObjectMapper().writeValueAsBytes(iterator.next()));
 
