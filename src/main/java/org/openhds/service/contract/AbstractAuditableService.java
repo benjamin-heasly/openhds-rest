@@ -27,7 +27,7 @@ public abstract class AbstractAuditableService<T extends AuditableEntity, V exte
 
     public EntityIterator<T> findAll(Sort sort) {
 
-        return iteratorFromPageable(repository::findAll, sort);
+        return iteratorFromPageable(repository::findByDeletedFalse, sort);
 
     }
 
@@ -60,7 +60,6 @@ public abstract class AbstractAuditableService<T extends AuditableEntity, V exte
         return repository.save(entity);
     }
 
-    //TODO: write test
     public T delete(T entity, String reason){
         entity.setDeleted(true);
         entity.setVoidReason(reason);
@@ -68,12 +67,10 @@ public abstract class AbstractAuditableService<T extends AuditableEntity, V exte
         return  repository.save(entity);
     }
 
-    //TODO: write test
     public EntityIterator<T> findAllDeleted(Sort sort){
         return iteratorFromPageable(pageable -> repository.findByDeletedTrue(pageable), sort);
     }
 
-    //TODO: write test
     public EntityIterator<T> findByInsertBy(Sort sort, User user){
         return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndInsertBy(user, pageable), sort);
     }

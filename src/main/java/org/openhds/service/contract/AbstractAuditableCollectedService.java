@@ -18,12 +18,10 @@ public abstract class AbstractAuditableCollectedService<T extends AuditableColle
         super(repository);
     }
 
-    //TODO: write test
-    public EntityIterator<T> findByCollectedBy(FieldWorker fieldWorker, Sort sort){
+    public EntityIterator<T> findByCollectedBy(Sort sort, FieldWorker fieldWorker){
         return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndCollectedBy(fieldWorker, pageable), sort);
     }
 
-    //TODO: write test
     public EntityIterator<T> findByCollectionDateTime(Sort sort, ZonedDateTime collectedAfter, ZonedDateTime collectedBefore) {
 
         if (null != collectedAfter && null != collectedBefore) {

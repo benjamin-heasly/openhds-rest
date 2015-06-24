@@ -15,8 +15,7 @@ public abstract class AbstractAuditableExtIdService<T extends AuditableExtIdEnti
         super(repository);
     }
 
-    //TODO: write test
-    public EntityIterator<T> findByExtId(String extId, Sort sort) {
+    public EntityIterator<T> findByExtId(Sort sort, String extId) {
         return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndExtId(extId, pageable), sort);
     }
 
