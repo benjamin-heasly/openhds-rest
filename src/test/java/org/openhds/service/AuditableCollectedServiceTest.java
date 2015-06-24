@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
-import org.openhds.service.contract.AbstractAuditableService;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -15,13 +14,12 @@ import static org.junit.Assert.assertNotEquals;
 /**
  * Created by wolfe on 6/17/15.
  */
-public abstract class AuditableCollectedServiceTest<T extends AuditableCollectedEntity,
-        U extends AbstractAuditableCollectedService> extends AuditableServiceTest<T, U> {
+public abstract class AuditableCollectedServiceTest
+        <T extends AuditableCollectedEntity, U extends AbstractAuditableCollectedService<T, ?>>
+        extends AuditableServiceTest<T, U> {
 
     @Test
-    public void findByCollectedBy(){
-
-        resetData();
+    public void findByCollectedBy() {
 
         T entity = makeValidEntity("testEntity", "testEntity");
 
@@ -31,13 +29,11 @@ public abstract class AuditableCollectedServiceTest<T extends AuditableCollected
 
         service.createOrUpdate(entity);
 
-        assertEquals(service.findByCollectedBy(null, fieldWorker).toList().size(), entityCount+1);
+        assertEquals(service.findByCollectedBy(null, fieldWorker).toList().size(), entityCount + 1);
     }
 
     @Test
-    public void findByCollectionDateTime(){
-
-        resetData();
+    public void findByCollectionDateTime() {
 
         ZonedDateTime earlyTime = ZonedDateTime.parse("2007-12-03T10:15:30+01:00[Europe/Paris]");
         ZonedDateTime lateTime = ZonedDateTime.parse("2008-12-03T10:15:30+01:00[Europe/Paris]");
@@ -56,7 +52,7 @@ public abstract class AuditableCollectedServiceTest<T extends AuditableCollected
         List<T> afterReslts = service.findByCollectionDateTime(null, earlyTime, null).toList();
         assertNotEquals(afterReslts.size(), 0);
 
-        List<T> beforeReslts = service.findByCollectionDateTime(null,null,lateTime).toList();
+        List<T> beforeReslts = service.findByCollectionDateTime(null, null, lateTime).toList();
         assertNotEquals(beforeReslts.size(), 0);
     }
 }
