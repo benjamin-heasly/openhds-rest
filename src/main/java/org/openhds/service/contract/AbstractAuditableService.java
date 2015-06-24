@@ -3,8 +3,6 @@ package org.openhds.service.contract;
 import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.repository.contract.AuditableRepository;
 import org.openhds.repository.results.EntityIterator;
-import org.openhds.repository.results.PageIterator;
-import org.openhds.repository.results.PagingEntityIterator;
 import org.openhds.security.model.User;
 import org.springframework.data.domain.Sort;
 
@@ -13,7 +11,8 @@ import java.time.ZonedDateTime;
 /**
  * Created by wolfe on 6/11/15.
  */
-public abstract class AbstractAuditableService<T extends AuditableEntity, V extends AuditableRepository<T>>
+public abstract class AbstractAuditableService
+        <T extends AuditableEntity, V extends AuditableRepository<T>>
         extends AbstractUuidService<T, V> {
 
     public AbstractAuditableService(V repository) {
@@ -74,9 +73,4 @@ public abstract class AbstractAuditableService<T extends AuditableEntity, V exte
         return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndInsertBy(user, pageable), sort);
     }
 
-    protected EntityIterator<T> iteratorFromPageable(PageIterator.PagedQueryable<T> pagedQueryable, Sort sort) {
-
-        return new PagingEntityIterator<>(new PageIterator<>(pagedQueryable, sort));
-
-    }
 }
