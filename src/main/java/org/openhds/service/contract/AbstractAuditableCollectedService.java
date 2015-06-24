@@ -2,7 +2,7 @@ package org.openhds.service.contract;
 
 import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.model.FieldWorker;
-import org.openhds.repository.AuditableCollectedRepository;
+import org.openhds.repository.contract.AuditableCollectedRepository;
 import org.openhds.repository.results.EntityIterator;
 import org.springframework.data.domain.Sort;
 

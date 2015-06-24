@@ -1,10 +1,10 @@
 package org.openhds.resource.controller;
 
 import org.openhds.domain.model.Location;
-import org.openhds.repository.FieldWorkerRepository;
-import org.openhds.repository.LocationHierarchyRepository;
-import org.openhds.repository.LocationRepository;
-import org.openhds.repository.UserRepository;
+import org.openhds.repository.concrete.FieldWorkerRepository;
+import org.openhds.repository.concrete.LocationHierarchyRepository;
+import org.openhds.repository.concrete.LocationRepository;
+import org.openhds.repository.concrete.UserRepository;
 import org.openhds.resource.contract.AuditableExtIdRestController;
 import org.openhds.resource.registration.LocationRegistration;
 import org.springframework.beans.factory.annotation.Autowired;

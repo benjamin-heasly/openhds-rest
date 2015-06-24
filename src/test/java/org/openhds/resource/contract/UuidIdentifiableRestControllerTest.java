@@ -2,7 +2,7 @@ package org.openhds.resource.contract;
 
 import org.junit.Test;
 import org.openhds.domain.contract.UuidIdentifiable;
-import org.openhds.repository.UuidIdentifiableRepository;
+import org.openhds.repository.contract.UuidIdentifiableRepository;
 import org.openhds.resource.controller.RestControllerTestSupport;
 import org.openhds.resource.registration.Registration;
 import org.springframework.http.HttpStatus;

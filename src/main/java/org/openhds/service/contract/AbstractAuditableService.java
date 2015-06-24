@@ -1,12 +1,11 @@
 package org.openhds.service.contract;
 
 import org.openhds.domain.contract.AuditableEntity;
-import org.openhds.repository.AuditableRepository;
+import org.openhds.repository.contract.AuditableRepository;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.repository.results.PageIterator;
 import org.openhds.repository.results.PagingEntityIterator;
 import org.openhds.security.model.User;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.time.ZonedDateTime;

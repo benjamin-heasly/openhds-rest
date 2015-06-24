@@ -2,7 +2,7 @@ package org.openhds.resource.contract;
 
 import org.openhds.domain.contract.AuditableExtIdEntity;
 import org.openhds.domain.contract.ExtIdIdentifiable;
-import org.openhds.repository.AuditableExtIdRepository;
+import org.openhds.repository.contract.AuditableExtIdRepository;
 import org.openhds.resource.links.EntityLinkAssembler;
 import org.openhds.resource.registration.Registration;
 import org.springframework.hateoas.Link;

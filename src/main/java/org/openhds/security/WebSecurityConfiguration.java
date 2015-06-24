@@ -1,6 +1,6 @@
 package org.openhds.security;
 
-import org.openhds.repository.UserRepository;
+import org.openhds.repository.concrete.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;

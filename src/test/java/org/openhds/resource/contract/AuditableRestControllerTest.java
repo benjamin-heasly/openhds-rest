@@ -2,7 +2,7 @@ package org.openhds.resource.contract;
 
 import org.junit.Test;
 import org.openhds.domain.contract.AuditableEntity;
-import org.openhds.repository.AuditableRepository;
+import org.openhds.repository.contract.AuditableRepository;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
 

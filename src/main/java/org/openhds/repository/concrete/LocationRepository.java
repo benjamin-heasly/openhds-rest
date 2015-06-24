@@ -1,4 +1,4 @@
-package org.openhds.repository;
+package org.openhds.repository.concrete;
 
 /**
  * Created by Ben on 5/4/15.
@@ -6,6 +6,7 @@ package org.openhds.repository;
 
 import org.openhds.domain.model.Location;
 import org.openhds.domain.model.LocationHierarchy;
+import org.openhds.repository.contract.AuditableExtIdRepository;
 
 import java.util.List;
 
