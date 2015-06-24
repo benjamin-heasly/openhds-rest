@@ -18,16 +18,28 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
 
     protected final V repository;
 
-    public long countAll() {
-        return repository.count();
-    }
-
     public AbstractUuidService(V repository) {
         this.repository = repository;
     }
 
+    public long countAll() {
+        return repository.count();
+    }
+
     public EntityIterator<T> findAll(Sort sort) {
         return iteratorFromPageable(repository::findAll, sort);
+    }
+
+    public void delete(T entity, String reason){
+        repository.delete(entity);
+    }
+
+    public T findOne(String id){
+        return repository.findOne(id);
+    }
+
+    public T createOrUpdate(T entity){
+        return repository.save(entity);
     }
 
     public EntityIterator<T> findByMultipleValues(Sort sort, QueryValue... queryValues) {
@@ -44,4 +56,5 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
     protected EntityIterator<T> iteratorFromPageable(PageIterator.PagedQueryable<T> pagedQueryable, Sort sort) {
         return new PagingEntityIterator<>(new PageIterator<>(pagedQueryable, sort));
     }
+
 }

@@ -54,15 +54,11 @@ public abstract class AbstractAuditableService
 
     }
 
-    public T createOrUpdate(T entity){
-        return repository.save(entity);
-    }
-
-    public T delete(T entity, String reason){
+    public void delete(T entity, String reason){
         entity.setDeleted(true);
         entity.setVoidReason(reason);
         //TODO: setVoidBy when global user is accessible
-        return  repository.save(entity);
+        repository.save(entity);
     }
 
     public EntityIterator<T> findAllDeleted(Sort sort){
