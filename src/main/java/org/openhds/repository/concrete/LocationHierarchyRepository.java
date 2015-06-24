@@ -6,7 +6,7 @@ package org.openhds.repository.concrete;
 
 import org.openhds.domain.model.LocationHierarchy;
 import org.openhds.domain.model.LocationHierarchyLevel;
-import org.openhds.repository.contract.AuditableCollectedRepository;
+import org.openhds.repository.contract.AuditableExtIdRepository;
 
 import java.util.List;
 

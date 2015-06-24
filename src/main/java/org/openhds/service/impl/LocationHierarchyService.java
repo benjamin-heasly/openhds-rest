@@ -1,7 +1,7 @@
 package org.openhds.service.impl;
 
 import org.openhds.domain.model.LocationHierarchy;
-import org.openhds.repository.LocationHierarchyRepository;
+import org.openhds.repository.concrete.LocationHierarchyRepository;
 import org.openhds.service.contract.AbstractAuditableExtIdService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
