@@ -16,10 +16,27 @@ import org.springframework.data.jpa.domain.Specification;
  */
 public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends UuidIdentifiableRepository<T>> {
 
+    public final static String UNKNOWN_ENTITY_UUID = "UNKNOWN";
+
     protected final V repository;
 
     public AbstractUuidService(V repository) {
         this.repository = repository;
+    }
+
+    protected abstract T makeUnknownEntity();
+
+    private void persistUnknownEntity() {
+        T unknownEntity = makeUnknownEntity();
+        unknownEntity.setUuid(UNKNOWN_ENTITY_UUID);
+        repository.save(unknownEntity);
+    }
+
+    public T getUnknownEntity() {
+        if (!repository.exists(UNKNOWN_ENTITY_UUID)) {
+            persistUnknownEntity();
+        }
+        return repository.findOne(UNKNOWN_ENTITY_UUID);
     }
 
     public long countAll() {

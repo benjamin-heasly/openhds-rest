@@ -13,7 +13,19 @@ import org.springframework.stereotype.Service;
 public class LocationHierarchyService extends AbstractAuditableExtIdService<LocationHierarchy, LocationHierarchyRepository>{
 
     @Autowired
+    FieldWorkerService fieldWorkerService;
+
+    @Autowired
     public LocationHierarchyService(LocationHierarchyRepository repository) {
         super(repository);
+    }
+
+    @Override
+    protected LocationHierarchy makeUnknownEntity() {
+        LocationHierarchy locationHierarchy = new LocationHierarchy();
+        locationHierarchy.setName("unknown");
+        locationHierarchy.setExtId("unknown");
+        locationHierarchy.setCollectedBy(fieldWorkerService.getUnknownEntity());
+        return locationHierarchy;
     }
 }

@@ -17,5 +17,11 @@ public class FieldWorkerService extends AbstractAuditableService<FieldWorker, Fi
         super(repository);
     }
 
-
+    @Override
+    protected FieldWorker makeUnknownEntity() {
+        FieldWorker fieldWorker = new FieldWorker();
+        fieldWorker.setFieldWorkerId("unknown");
+        fieldWorker.setPasswordHash("unknown");
+        return fieldWorker;
+    }
 }

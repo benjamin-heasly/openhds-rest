@@ -17,6 +17,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by wolfe on 6/17/15.
@@ -57,6 +58,13 @@ public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends Abst
         service.createOrUpdate(makeValidEntity("testEntity", "testEntity"));
         //TODO: move to uuid service and add assertion
 
+    }
+
+    @Test
+    public void getUnknownEntity() {
+        T unknownEntity = service.getUnknownEntity();
+        assertNotNull(unknownEntity);
+        assertEquals(AbstractUuidService.UNKNOWN_ENTITY_UUID, unknownEntity.getUuid());
     }
 
     @Test
