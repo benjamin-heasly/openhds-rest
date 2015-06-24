@@ -1,4 +1,4 @@
-package org.openhds.repository;
+package org.openhds.repository.contract;
 
 import org.openhds.domain.contract.ExtIdIdentifiable;
 import org.springframework.data.jpa.repository.JpaRepository;

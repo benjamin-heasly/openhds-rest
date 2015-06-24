@@ -2,7 +2,7 @@ package org.openhds.resource.contract;
 
 import org.junit.Test;
 import org.openhds.domain.contract.AuditableExtIdEntity;
-import org.openhds.repository.AuditableExtIdRepository;
+import org.openhds.repository.contract.AuditableExtIdRepository;
 import org.springframework.security.test.context.support.WithMockUser;
 
 import static org.hamcrest.Matchers.is;

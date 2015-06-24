@@ -1,7 +1,7 @@
 package org.openhds.resource.contract;
 
 import org.openhds.domain.contract.AuditableCollectedEntity;
-import org.openhds.repository.AuditableCollectedRepository;
+import org.openhds.repository.contract.AuditableCollectedRepository;
 import org.openhds.resource.registration.Registration;
 
 /**

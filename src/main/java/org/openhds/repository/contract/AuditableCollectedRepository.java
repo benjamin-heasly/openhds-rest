@@ -1,9 +1,7 @@
-package org.openhds.repository;
+package org.openhds.repository.contract;
 
 import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.springframework.data.repository.NoRepositoryBean;
-
-import java.util.List;
 
 /**
  * Created by wolfe on 6/12/15.

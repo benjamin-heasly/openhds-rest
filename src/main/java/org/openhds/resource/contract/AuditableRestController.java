@@ -1,7 +1,7 @@
 package org.openhds.resource.contract;
 
 import org.openhds.domain.contract.AuditableEntity;
-import org.openhds.repository.AuditableRepository;
+import org.openhds.repository.contract.AuditableRepository;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.repository.results.PageIterator;
 import org.openhds.repository.results.PagingEntityIterator;

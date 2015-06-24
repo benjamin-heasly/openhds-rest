@@ -1,7 +1,7 @@
 package org.openhds.service.contract;
 
 import org.openhds.domain.contract.AuditableEntity;
-import org.openhds.repository.AuditableRepository;
+import org.openhds.repository.contract.AuditableRepository;
 
 /**
  * Created by wolfe on 6/11/15.

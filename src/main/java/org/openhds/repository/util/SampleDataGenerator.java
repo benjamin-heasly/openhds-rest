@@ -6,7 +6,7 @@ import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.Location;
 import org.openhds.domain.model.LocationHierarchy;
 import org.openhds.domain.model.LocationHierarchyLevel;
-import org.openhds.repository.*;
+import org.openhds.repository.concrete.*;
 import org.openhds.security.model.Privilege;
 import org.openhds.security.model.Role;
 import org.openhds.security.model.User;

@@ -1,7 +1,7 @@
 package org.openhds.resource.contract;
 
 import org.openhds.domain.contract.UuidIdentifiable;
-import org.openhds.repository.UuidIdentifiableRepository;
+import org.openhds.repository.contract.UuidIdentifiableRepository;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.repository.results.PageIterator;
 import org.openhds.repository.results.PagingEntityIterator;

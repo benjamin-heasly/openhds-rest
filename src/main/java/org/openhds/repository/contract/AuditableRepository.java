@@ -1,4 +1,4 @@
-package org.openhds.repository;
+package org.openhds.repository.contract;
 
 import org.openhds.domain.contract.AuditableEntity;
 import org.springframework.data.domain.Page;
