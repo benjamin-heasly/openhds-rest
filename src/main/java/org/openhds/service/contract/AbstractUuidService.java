@@ -32,7 +32,7 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
         return iteratorFromPageable(pageable -> repository.findAll(specification, pageable), sort);
     }
 
-    // Iterate entites based on paged queries.
+    // Iterate entities based on paged queries.
     protected EntityIterator<T> iteratorFromPageable(PageIterator.PagedQueryable<T> pagedQueryable, Sort sort) {
         return new PagingEntityIterator<>(new PageIterator<>(pagedQueryable, sort));
     }
