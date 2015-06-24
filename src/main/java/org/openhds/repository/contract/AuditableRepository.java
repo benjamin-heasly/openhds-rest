@@ -1,6 +1,7 @@
 package org.openhds.repository.contract;
 
 import org.openhds.domain.contract.AuditableEntity;
+import org.openhds.security.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.NoRepositoryBean;
@@ -22,6 +23,9 @@ public interface AuditableRepository<T extends AuditableEntity> extends UuidIden
     Page<T> findByDeletedFalseAndInsertDateBetween(ZonedDateTime insertedAfter, ZonedDateTime insertedBefore, Pageable pageable);
     Page<T> findByDeletedFalseAndInsertDateAfter(ZonedDateTime insertedAfter, Pageable pageable);
     Page<T> findByDeletedFalseAndInsertDateBefore(ZonedDateTime insertedBefore, Pageable pageable);
+
+    Page<T> findByDeletedFalseAndInsertBy(User user, Pageable pageable);
+
 
     // for auditing
     Page<T> findByDeletedTrue(Pageable pageable);

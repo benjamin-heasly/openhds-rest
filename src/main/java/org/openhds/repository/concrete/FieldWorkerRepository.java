@@ -10,7 +10,6 @@ import org.openhds.repository.contract.AuditableRepository;
 import java.util.List;
 
 public interface FieldWorkerRepository extends AuditableRepository<FieldWorker> {
-    List<FieldWorker> findByExtId(String extId);
     List<FieldWorker> findByFirstName(String name);
     List<FieldWorker> findByLastName(String name);
 }
