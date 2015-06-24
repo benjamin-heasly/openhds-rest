@@ -2,7 +2,7 @@ package org.openhds.service.impl;
 
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.errors.endpoint.ErrorServiceEndPoint;
-import org.openhds.errors.model.ErrorLog;
+import org.openhds.errors.model.*;
 import org.openhds.repository.concrete.ErrorLogRepository;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
@@ -27,9 +27,15 @@ public class ErrorLogService extends AbstractAuditableCollectedService<ErrorLog,
     private FieldWorkerService fieldWorkerService;
 
     @Override
+    protected ErrorLog makeUnknownEntity() {
+        ErrorLog errorLog = new ErrorLog();
+        errorLog.setCollectedBy(fieldWorkerService.getUnknownEntity());
+        return errorLog;
+    }
+
     public ErrorLog logError(ErrorLog error) {
         if (null == error.getCollectedBy()) {
-            error.setCollectedBy(fieldWorkerService.getUnknownFieldWorker());
+            error.setCollectedBy(fieldWorkerService.getUnknownEntity());
         }
 
         for (ErrorServiceEndPoint errorEndPoint : errorEndPoints) {

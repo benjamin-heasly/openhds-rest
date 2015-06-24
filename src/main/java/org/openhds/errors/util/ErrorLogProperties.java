@@ -1,10 +1,14 @@
 package org.openhds.errors.util;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ErrorHandlingProperties {
+@Configuration
+@PropertySource("classpath:error-log.properties")
+public class ErrorLogProperties {
 
     @Value("${email.sendOnCreate}")
     private String sendOnCreate;

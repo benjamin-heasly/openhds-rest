@@ -1,18 +1,18 @@
 package org.openhds.errors.endpoint.impl;
 
 import org.openhds.errors.endpoint.ErrorServiceEndPoint;
-import org.openhds.errors.model.ErrorLog;
 import org.openhds.errors.model.Error;
+import org.openhds.errors.model.ErrorLog;
 import org.openhds.errors.util.ErrorConstants;
+import org.openhds.errors.util.ErrorLogProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
 import java.util.List;
 
-@Component
+//@Component
 public class EmailEndPoint implements ErrorServiceEndPoint {
 
     private static final String CREATE = "ERROR_CREATED";
@@ -23,7 +23,7 @@ public class EmailEndPoint implements ErrorServiceEndPoint {
     private JavaMailSender mailService;
 
     @Autowired
-    private ErrorHandlingPropertiesService errorProperties;
+    private ErrorLogProperties errorProperties;
 
     @Override
     public void logError(ErrorLog errorLog) {
