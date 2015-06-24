@@ -16,7 +16,7 @@ import java.util.List;
 public class Specifications {
 
     // Query for matching multiple property values.
-    public <T extends UuidIdentifiable>Specification<T> multiValue(final QueryValue ... queryValues) {
+    public static <T extends UuidIdentifiable>Specification<T> multiValue(final QueryValue ... queryValues) {
         return new Specification<T>() {
             @Override
             public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -26,7 +26,7 @@ public class Specifications {
     }
 
     // Query for a property in some range, and matching multiple other property values.
-    public <T extends UuidIdentifiable>Specification<T> rangedMultiValue(final QueryRange queryRange, final QueryValue ... queryValues) {
+    public static <T extends UuidIdentifiable>Specification<T> rangedMultiValue(final QueryRange queryRange, final QueryValue ... queryValues) {
         return new Specification<T>() {
             @Override
             public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
@@ -37,11 +37,11 @@ public class Specifications {
         };
     }
 
-    private Predicate inRange(Root<?> root, CriteriaBuilder cb, QueryRange queryRange) {
+    private static Predicate inRange(Root<?> root, CriteriaBuilder cb, QueryRange queryRange) {
         return cb.between(root.get(queryRange.getPropertyName()), queryRange.getMin(), queryRange.getMax());
     }
 
-    private Predicate allValuesEqual(Root<?> root, CriteriaBuilder cb, QueryValue ... queryValues) {
+    private static Predicate allValuesEqual(Root<?> root, CriteriaBuilder cb, QueryValue ... queryValues) {
         List<Predicate> predicates = new ArrayList<>();
         for (QueryValue queryValue : queryValues) {
             predicates.add(cb.equal(root.get(queryValue.getPropertyName()), queryValue.getValue()));
