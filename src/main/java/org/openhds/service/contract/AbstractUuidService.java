@@ -18,8 +18,16 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
 
     protected final V repository;
 
+    public long countAll() {
+        return repository.count();
+    }
+
     public AbstractUuidService(V repository) {
         this.repository = repository;
+    }
+
+    public EntityIterator<T> findAll(Sort sort) {
+        return iteratorFromPageable(repository::findAll, sort);
     }
 
     public EntityIterator<T> findByMultipleValues(Sort sort, QueryValue... queryValues) {
