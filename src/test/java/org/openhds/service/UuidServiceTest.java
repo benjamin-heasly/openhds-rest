@@ -50,6 +50,16 @@ public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends Abst
     }
 
     @Test
+    public void create() {
+
+        resetData();
+
+        service.createOrUpdate(makeValidEntity("testEntity", "testEntity"));
+        //TODO: move to uuid service and add assertion
+
+    }
+
+    @Test
     public void findByMultipleValues() {
         // query for uuid like an existing entity
         T entity = service.findAll(null).iterator().next();

@@ -27,12 +27,6 @@ public abstract class AuditableServiceTest
 
     }
 
-    @Test
-    public void create() {
-
-        service.createOrUpdate(makeValidEntity("testEntity", "testEntity"));
-
-    }
 
     @Test
     public void update() {
