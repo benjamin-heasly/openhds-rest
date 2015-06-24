@@ -9,7 +9,7 @@ import org.openhds.domain.model.LocationHierarchyLevel;
 
 import java.util.List;
 
-public interface LocationHierarchyRepository extends AuditableCollectedRepository<LocationHierarchy> {
+public interface LocationHierarchyRepository extends AuditableExtIdRepository<LocationHierarchy> {
     List<LocationHierarchy> findByExtId(String extId);
     List<LocationHierarchy> findByName(String name);
     List<LocationHierarchy> findByParent(LocationHierarchy parent);
