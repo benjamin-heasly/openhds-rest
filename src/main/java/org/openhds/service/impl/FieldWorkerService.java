@@ -17,5 +17,4 @@ public class FieldWorkerService extends AbstractAuditableService<FieldWorker, Fi
         super(repository);
     }
 
-
 }

@@ -12,6 +12,4 @@ public interface ErrorLogRepository extends AuditableCollectedRepository<ErrorLo
     Page<ErrorLog> findByEntityType(String entityType, Pageable pageable);
     Page<ErrorLog> findByResolutionStatus(String resolutionStatus, Pageable pageable);
     Page<ErrorLog> findByAssignedTo(String assignedTo, Pageable pageable);
-    //Page<ErrorLog> findAllByFilters(String entityType, Pageable pageable);
-
 }
