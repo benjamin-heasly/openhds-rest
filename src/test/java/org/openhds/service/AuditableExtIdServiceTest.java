@@ -15,9 +15,7 @@ public abstract class AuditableExtIdServiceTest
 
 
     @Test
-    public void findByExtId(){
-
-        resetData();
+    public void findByExtId() {
 
         String id = "testEntity";
 

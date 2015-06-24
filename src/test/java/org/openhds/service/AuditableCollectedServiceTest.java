@@ -21,8 +21,6 @@ public abstract class AuditableCollectedServiceTest
     @Test
     public void findByCollectedBy() {
 
-        resetData();
-
         T entity = makeValidEntity("testEntity", "testEntity");
 
         FieldWorker fieldWorker = entity.getCollectedBy();
@@ -36,8 +34,6 @@ public abstract class AuditableCollectedServiceTest
 
     @Test
     public void findByCollectionDateTime() {
-
-        resetData();
 
         ZonedDateTime earlyTime = ZonedDateTime.parse("2007-12-03T10:15:30+01:00[Europe/Paris]");
         ZonedDateTime lateTime = ZonedDateTime.parse("2008-12-03T10:15:30+01:00[Europe/Paris]");

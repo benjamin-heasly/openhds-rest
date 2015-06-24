@@ -16,13 +16,11 @@ import static org.junit.Assert.*;
 
 public abstract class AuditableServiceTest
         <T extends AuditableEntity, U extends AbstractAuditableService<T, ?>>
-        extends UuidServiceTest <T, U> {
+        extends UuidServiceTest<T, U> {
 
 
     @Test
     public void findAll() {
-
-        resetData();
 
         List<T> results = service.findAll(null).toList();
         assertNotNull(results.get(0));
@@ -32,16 +30,12 @@ public abstract class AuditableServiceTest
     @Test
     public void create() {
 
-        resetData();
-
         service.createOrUpdate(makeValidEntity("testEntity", "testEntity"));
 
     }
 
     @Test
     public void update() {
-
-        resetData();
 
         String id = "testId";
 
@@ -58,8 +52,6 @@ public abstract class AuditableServiceTest
 
     @Test
     public void findByInsertDate() {
-
-        resetData();
 
         ZonedDateTime earlyTime = ZonedDateTime.parse("2007-12-03T10:15:30+01:00[Europe/Paris]");
         ZonedDateTime lateTime = ZonedDateTime.parse("2008-12-03T10:15:30+01:00[Europe/Paris]");
@@ -86,8 +78,6 @@ public abstract class AuditableServiceTest
     @Test
     public void delete() {
 
-        resetData();
-
         int entityCount = service.findAll(null).toList().size();
         int deletedCount = service.findAllDeleted(null).toList().size();
         T entity = makeValidEntity("testEntity", "testEntity");
@@ -105,8 +95,6 @@ public abstract class AuditableServiceTest
 
     @Test
     public void findByUser() {
-
-        resetData();
 
         T entity = makeValidEntity("testEntity", "testEntity");
         User user = entity.getInsertBy();
