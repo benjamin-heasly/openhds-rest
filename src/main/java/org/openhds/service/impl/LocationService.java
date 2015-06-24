@@ -14,9 +14,23 @@ import org.springframework.stereotype.Service;
 public class LocationService extends AbstractAuditableExtIdService<Location, LocationRepository> {
 
     @Autowired
+    FieldWorkerService fieldWorkerService;
+
+    @Autowired
+    LocationHierarchyService locationHierarchyService;
+
+    @Autowired
     public LocationService(LocationRepository locationRepository) {
         super(locationRepository);
     }
 
-
+    @Override
+    protected Location makeUnknownEntity() {
+        Location location = new Location();
+        location.setName("unknown");
+        location.setExtId("unknown");
+        location.setCollectedBy(fieldWorkerService.getUnknownEntity());
+        location.setLocationHierarchy(locationHierarchyService.getUnknownEntity());
+        return location;
+    }
 }
