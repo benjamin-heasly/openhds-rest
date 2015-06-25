@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by wolfe on 6/17/15.
+ *
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -42,21 +43,19 @@ public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends Abst
     @Before
     public void setup() throws Exception {
         initialize(service);
-        resetData();
-    }
-
-    protected void resetData() {
         sampleDataGenerator.clearData();
         sampleDataGenerator.generateSampleData();
     }
 
+
     @Test
     public void create() {
 
-        resetData();
+        int beforeCreationSize = service.findAll(null).toList().size();
 
         service.createOrUpdate(makeValidEntity("testEntity", "testEntity"));
-        //TODO: move to uuid service and add assertion
+
+        assertEquals(service.findAll(null).toList().size(), beforeCreationSize + 1);
 
     }
 
