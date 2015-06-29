@@ -3,15 +3,15 @@ package org.openhds.repository.queries;
 /**
  * Created by Ben on 6/24/15.
  */
-public class QueryRange {
+public class QueryRange<R extends java.lang.Comparable> {
 
     private final String propertyName;
 
-    private final String min;
+    private final R min;
 
-    private final String max;
+    private final R max;
 
-    public QueryRange(String propertyName, String min, String max) {
+    public QueryRange(String propertyName, R min, R max) {
         this.propertyName = propertyName;
         this.min = min;
         this.max = max;
@@ -21,11 +21,11 @@ public class QueryRange {
         return propertyName;
     }
 
-    public String getMin() {
+    public R getMin() {
         return min;
     }
 
-    public String getMax() {
+    public R getMax() {
         return max;
     }
 }

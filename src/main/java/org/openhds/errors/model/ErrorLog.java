@@ -5,6 +5,7 @@ import org.openhds.domain.util.Description;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class ErrorLog extends AuditableCollectedEntity implements Serializable {
 
     private String resolutionStatus;
 
-    private Calendar dateOfResolution;
+    private ZonedDateTime dateOfResolution;
 
     public String getDataPayload() {
         return dataPayload;
@@ -71,11 +72,11 @@ public class ErrorLog extends AuditableCollectedEntity implements Serializable {
         this.resolutionStatus = resolutionStatus;
     }
 
-    public Calendar getDateOfResolution() {
+    public ZonedDateTime getDateOfResolution() {
         return dateOfResolution;
     }
 
-    public void setDateOfResolution(Calendar dateOfResolution) {
+    public void setDateOfResolution(ZonedDateTime dateOfResolution) {
         this.dateOfResolution = dateOfResolution;
     }
 }

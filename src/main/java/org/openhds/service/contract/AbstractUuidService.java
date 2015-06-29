@@ -64,7 +64,7 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
         return iteratorFromPageable(pageable -> repository.findAll(specification, pageable), sort);
     }
 
-    public EntityIterator<T> findByMultipleValuesranged(Sort sort, QueryRange queryRange, QueryValue... queryValues) {
+    public EntityIterator<T> findByMultipleValuesRanged(Sort sort, QueryRange queryRange, QueryValue... queryValues) {
         Specification<T> specification = Specifications.rangedMultiValue(queryRange, queryValues);
         return iteratorFromPageable(pageable -> repository.findAll(specification, pageable), sort);
     }

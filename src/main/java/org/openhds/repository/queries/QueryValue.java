@@ -7,9 +7,9 @@ public class QueryValue {
 
     private final String propertyName;
 
-    private final String value;
+    private final Object value;
 
-    public QueryValue(String propertyName, String value) {
+    public QueryValue(String propertyName, Object value) {
         this.propertyName = propertyName;
         this.value = value;
     }
@@ -18,7 +18,7 @@ public class QueryValue {
         return propertyName;
     }
 
-    public String getValue() {
+    public Object getValue() {
         return value;
     }
 }

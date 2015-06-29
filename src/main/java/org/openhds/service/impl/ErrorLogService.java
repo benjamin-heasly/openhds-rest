@@ -44,11 +44,7 @@ public class ErrorLogService extends AbstractAuditableCollectedService<ErrorLog,
 
         return error;
     }
-
-    public ErrorLog findErrorById(String id) {
-        return repository.findOne(id);
-    }
-
+    
     public EntityIterator<ErrorLog> findAllErrorsByEntityType(String entityType, Sort sort) {
         return iteratorFromPageable(pageable -> repository.findByEntityType(entityType, pageable), sort);
     }
