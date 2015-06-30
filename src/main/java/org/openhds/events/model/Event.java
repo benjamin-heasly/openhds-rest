@@ -75,9 +75,9 @@ public class Event extends AuditableEntity implements Serializable {
             return null;
         }
 
-        for (EventMetadata medadata : eventMetadata) {
-            if (medadata.getSystem().equals(system)) {
-                return medadata;
+        for (EventMetadata metadata : eventMetadata) {
+            if (metadata.getSystem().equals(system)) {
+                return metadata;
             }
         }
 
