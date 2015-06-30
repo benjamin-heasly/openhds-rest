@@ -58,30 +58,30 @@ public abstract class AuditableRestController<T extends AuditableEntity, U exten
         repository.save(entity);
     }
 
-    // insertedAfter <= insertDate < insertedBefore
+    // afterDate <= lastModifiedDate < beforeDate
     @RequestMapping(value = "/bydate", method = RequestMethod.GET)
     public PagedResources readByDatePaged(Pageable pageable, PagedResourcesAssembler assembler,
                                           @RequestParam(required = false)
                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                          ZonedDateTime insertedAfter,
+                                          ZonedDateTime afterDate,
                                           @RequestParam(required = false)
                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                          ZonedDateTime insertedBefore) {
+                                          ZonedDateTime beforeDate) {
 
-        Page<T> entities = findPagedByInsertDate(pageable, insertedAfter, insertedBefore);
+        Page<T> entities = findPagedByDate(pageable, afterDate, beforeDate);
         return assembler.toResource(entities, entityLinkAssembler);
     }
 
-    // insertedAfter <= insertDate < insertedBefore, no HATEOAS
+    // afterDate <= lastModifiedDate < beforeDate, no HATEOAS
     @RequestMapping(value = "/bydate/bulk", method = RequestMethod.GET)
     public EntityIterator<T> readByDateBulk(Sort sort,
                                             @RequestParam(required = false)
                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                            ZonedDateTime insertedAfter,
+                                            ZonedDateTime afterDate,
                                             @RequestParam(required = false)
                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                            ZonedDateTime insertedBefore) {
-        PageIterator<T> pageIterator = new PageIterator<>((pageable) -> findPagedByInsertDate(pageable, insertedAfter, insertedBefore), sort);
+                                            ZonedDateTime beforeDate) {
+        PageIterator<T> pageIterator = new PageIterator<>((pageable) -> findPagedByDate(pageable, afterDate, beforeDate), sort);
         EntityIterator<T> entityIterator = new PagingEntityIterator<>(pageIterator);
         entityIterator.setCollectionName(getResourceName());
         return new ShallowCopyIterator<>(entityIterator);
@@ -94,19 +94,19 @@ public abstract class AuditableRestController<T extends AuditableEntity, U exten
         return assembler.toResource(entities, entityLinkAssembler);
     }
 
-    protected Page<T> findPagedByInsertDate(Pageable pageable, ZonedDateTime insertedAfter, ZonedDateTime insertedBefore) {
+    protected Page<T> findPagedByDate(Pageable pageable, ZonedDateTime afterDate, ZonedDateTime beforeDate) {
         // TODO: this is probably a method of AuditableService
-        if (null == insertedAfter) {
-            if (null == insertedBefore) {
+        if (null == afterDate) {
+            if (null == beforeDate) {
                 return repository.findByDeletedFalse(pageable);
             } else {
-                return repository.findByDeletedFalseAndInsertDateBefore(insertedBefore, pageable);
+                return repository.findByDeletedFalseAndLastModifiedDateBefore(beforeDate, pageable);
             }
         } else {
-            if (null == insertedBefore) {
-                return repository.findByDeletedFalseAndInsertDateAfter(insertedAfter, pageable);
+            if (null == beforeDate) {
+                return repository.findByDeletedFalseAndLastModifiedDateAfter(afterDate, pageable);
             } else {
-                return repository.findByDeletedFalseAndInsertDateBetween(insertedAfter, insertedBefore, pageable);
+                return repository.findByDeletedFalseAndLastModifiedDateBetween(afterDate, beforeDate, pageable);
             }
         }
     }

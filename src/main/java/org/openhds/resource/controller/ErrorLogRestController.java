@@ -64,8 +64,10 @@ public class ErrorLogRestController extends AuditableCollectedRestController<Err
         }
 
         errorLog.setInsertBy(userRepository.findAll().get(0));
+        errorLog.setLastModifiedBy(userRepository.findAll().get(0));
         errorLog.setCollectedBy(fieldWorkerService.findOne(registration.getCollectedByUuid()));
         errorLog.setInsertDate(ZonedDateTime.now());
+        errorLog.setLastModifiedDate(ZonedDateTime.now());
 
         return errorLogService.createOrUpdate(registration.getErrorLog());
     }

@@ -43,11 +43,18 @@ public abstract class AuditableEntity implements UuidIdentifiable, Serializable 
     protected ZonedDateTime voidDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @Description(description = "User who inserted the record.")
+    @Description(description = "User who first inserted the record.")
     protected User insertBy;
 
     @Description(description = "Date of insertion.")
     protected ZonedDateTime insertDate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Description(description = "User who last updated inserted the record.")
+    protected User lastModifiedBy;
+
+    @Description(description = "Date of insertion.")
+    protected ZonedDateTime lastModifiedDate;
 
     @Override
     public String getUuid() {
@@ -106,6 +113,22 @@ public abstract class AuditableEntity implements UuidIdentifiable, Serializable 
 
     public void setInsertDate(ZonedDateTime insertDate) {
         this.insertDate = insertDate;
+    }
+
+    public User getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    public void setLastModifiedBy(User lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    public ZonedDateTime getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(ZonedDateTime lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 
     @Override
