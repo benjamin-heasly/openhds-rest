@@ -33,7 +33,7 @@ public class ErrorLogUtil {
     }
 
     private static List<Error> generateErrors(List<String> errors) {
-        List<Error> objectErrors = new ArrayList<Error>();
+        List<Error> objectErrors = new ArrayList<>();
 
         for (String error : errors) {
             Error objectError = new Error(error);

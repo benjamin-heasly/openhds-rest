@@ -3,6 +3,7 @@ package org.openhds.resource.controller;
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.ErrorLogRepository;
+import org.openhds.repository.concrete.UserRepository;
 import org.openhds.repository.queries.QueryRange;
 import org.openhds.repository.queries.QueryValue;
 import org.openhds.repository.results.EntityIterator;
@@ -12,10 +13,13 @@ import org.openhds.service.impl.ErrorLogService;
 import org.openhds.service.impl.FieldWorkerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.ConstraintViolationException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,23 +27,41 @@ import java.util.List;
 /**
  * Created by bsh on 6/29/15.
  */
+@RestController
+@RequestMapping("/errorLogs")
+@ExposesResourceFor(ErrorLog.class)
 public class ErrorLogRestController extends AuditableCollectedRestController<ErrorLog, ErrorLogRegistration> {
 
     private final ErrorLogService errorLogService;
 
     private final FieldWorkerService fieldWorkerService;
 
+    private final UserRepository userRepository;
+
     @Autowired
     public ErrorLogRestController(ErrorLogRepository errorLogRepository,
                                   ErrorLogService errorLogService,
-                                  FieldWorkerService fieldWorkerService) {
+                                  FieldWorkerService fieldWorkerService,
+                                  UserRepository userRepository) {
         super(errorLogRepository);
         this.errorLogService = errorLogService;
         this.fieldWorkerService = fieldWorkerService;
+        this.userRepository = userRepository;
     }
 
     @Override
     protected ErrorLog register(ErrorLogRegistration registration) {
+        // TODO: this seems like service stuff
+        ErrorLog errorLog = registration.getErrorLog();
+
+        if (null == errorLog.getDataPayload()) {
+            throw new ConstraintViolationException("Error log payload must not be null.", null);
+        }
+
+        errorLog.setInsertBy(userRepository.findAll().get(0));
+        errorLog.setCollectedBy(fieldWorkerService.findOne(registration.getCollectedByUuid()));
+        errorLog.setInsertDate(ZonedDateTime.now());
+
         return errorLogService.createOrUpdate(registration.getErrorLog());
     }
 
@@ -86,7 +108,7 @@ public class ErrorLogRestController extends AuditableCollectedRestController<Err
             rangeMax = maxDate;
         }
 
-        // default to 7 date range of one week
+        // default to date range of one week
         ZonedDateTime rangeMin = rangeMax.minusDays(7);
         if (minDate != null) {
             rangeMin = minDate;
