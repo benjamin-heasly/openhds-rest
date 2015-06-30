@@ -8,6 +8,7 @@ import org.openhds.domain.model.LocationHierarchy;
 import org.openhds.domain.model.LocationHierarchyLevel;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.errors.model.Error;
+import org.openhds.events.model.EventMetadata;
 import org.openhds.repository.concrete.*;
 import org.openhds.security.model.Privilege;
 import org.openhds.security.model.Role;
@@ -56,7 +57,16 @@ public class SampleDataGenerator {
     @Autowired
     private ErrorLogRepository errorLogRepository;
 
+    @Autowired
+    private EventMetadataRepository eventMetadataRepository;
+
+    @Autowired
+    private EventRepository eventRepository;
+
     public void clearData() {
+        eventMetadataRepository.deleteAllInBatch();
+        eventRepository.deleteAllInBatch();
+
         errorRepository.deleteAllInBatch();
         errorLogRepository.deleteAllInBatch();
 
