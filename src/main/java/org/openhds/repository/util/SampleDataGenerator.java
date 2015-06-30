@@ -8,6 +8,7 @@ import org.openhds.domain.model.LocationHierarchy;
 import org.openhds.domain.model.LocationHierarchyLevel;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.errors.model.Error;
+import org.openhds.events.model.Event;
 import org.openhds.events.model.EventMetadata;
 import org.openhds.repository.concrete.*;
 import org.openhds.security.model.Privilege;
@@ -108,6 +109,8 @@ public class SampleDataGenerator {
         addLocation("duplicated", "bottom-two");
 
         addErrorLog("sample error");
+
+        addEvent("sample event", "sample system");
     }
 
     private void addPrivileges(Privilege.Grant... grants) {
@@ -210,5 +213,18 @@ public class SampleDataGenerator {
         errorLog.getErrors().add(error);
 
         errorLogRepository.save(errorLog);
+    }
+
+    private void addEvent(String description, String system) {
+        Event event = new Event();
+        initAuditableFields(event);
+        event.setEventData(description);
+
+        EventMetadata eventMetadata = new EventMetadata();
+        initAuditableFields(eventMetadata);
+        eventMetadata.setSystem(system);
+        event.getEventMetadata().add(eventMetadata);
+
+        eventRepository.save(event);
     }
 }
