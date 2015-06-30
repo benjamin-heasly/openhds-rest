@@ -27,6 +27,7 @@ public abstract class AuditableCollectedEntity extends AuditableEntity implement
     @Description(description = "The field worker who collected the data, identified by external id.")
     protected FieldWorker collectedBy;
 
+    @NotNull
     @Description(description = "Date of collection/survey.")
     protected ZonedDateTime collectionDateTime;
 

@@ -136,6 +136,7 @@ public class SampleDataGenerator {
     private void initCollectedFields(AuditableCollectedEntity auditableCollectedEntity) {
         FieldWorker fieldWorker = fieldWorkerRepository.findAll().get(0);
         auditableCollectedEntity.setCollectedBy(fieldWorker);
+        auditableCollectedEntity.setCollectionDateTime(ZonedDateTime.now());
     }
 
     private void addFieldWorker(String name, String password) {

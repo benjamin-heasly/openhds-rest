@@ -13,6 +13,9 @@ public abstract class AuditableExtIdServiceTest
         <T extends AuditableExtIdEntity, U extends AbstractAuditableExtIdService<T, ?>>
         extends AuditableCollectedServiceTest<T, U> {
 
+    /**
+     * Persists an entity with a specific extId and checks that the result set from findByExtId has increased by 1
+     */
 
     @Test
     public void findByExtId() {
@@ -26,6 +29,7 @@ public abstract class AuditableExtIdServiceTest
         service.createOrUpdate(entity);
 
         assertEquals(service.findByExtId(null, id).toList().size(), entityCount + 1);
+
 
     }
 

@@ -23,6 +23,12 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by wolfe on 6/17/15.
  *
+ *  These service unit tests test the type hierarchy for the services.
+ *
+ *  Each class and its subtypes has tests the test the methods specific to that
+ *  particular layer of the hierarchy. For example: AuditableCollectedServiceTest only tests
+ *  the methods added in AbstractAuditableCollectedService like findByCollectionTime.
+ *
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)

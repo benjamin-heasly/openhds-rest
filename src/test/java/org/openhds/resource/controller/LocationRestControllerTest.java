@@ -9,6 +9,8 @@ import org.openhds.resource.registration.LocationRegistration;
 import org.openhds.resource.registration.Registration;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.ZonedDateTime;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -37,6 +39,7 @@ public class LocationRestControllerTest extends AuditableExtIdRestControllerTest
         location.setUuid(id);
         location.setName(name);
         location.setExtId(name);
+        location.setCollectionDateTime(ZonedDateTime.now());
         return location;
     }
 

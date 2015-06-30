@@ -18,6 +18,11 @@ public abstract class AuditableCollectedServiceTest
         <T extends AuditableCollectedEntity, U extends AbstractAuditableCollectedService<T, ?>>
         extends AuditableServiceTest<T, U> {
 
+    /**
+     * Create an entity and save a reference to its collectedBy fieldworker, after creation check that
+     * findByCollectedBy for that fieldworker returns 1 more than before.
+     */
+
     @Test
     public void findByCollectedBy() {
 
@@ -31,6 +36,12 @@ public abstract class AuditableCollectedServiceTest
 
         assertEquals(service.findByCollectedBy(null, fieldWorker).toList().size(), entityCount + 1);
     }
+
+    /**
+     * Creates an entity with a late collectionDateTime and an entity with an early collectionDateTime
+     * checks that the results between those two times is exactly 2 and that everything before and after
+     * is not 0.
+     */
 
     @Test
     public void findByCollectionDateTime() {

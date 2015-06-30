@@ -1,6 +1,8 @@
 package org.openhds.service.contract;
 
 import org.openhds.domain.contract.UuidIdentifiable;
+import org.openhds.errors.model.Error;
+import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.contract.UuidIdentifiableRepository;
 import org.openhds.repository.queries.QueryRange;
 import org.openhds.repository.queries.QueryValue;
@@ -12,6 +14,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by wolfe on 6/11/15.
@@ -49,16 +58,28 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
         return iteratorFromPageable(repository::findAll, sort);
     }
 
-    public void delete(T entity, String reason){
+    public void delete(T entity, String reason) {
         repository.delete(entity);
     }
 
-    public T findOne(String id){
+    public T findOne(String id) {
         return repository.findOne(id);
     }
 
-    public T createOrUpdate(T entity){
-        return repository.save(entity);
+    public T createOrUpdate(T entity) {
+
+        ErrorLog errorLog = new ErrorLog();
+        validate(entity, errorLog);
+
+        if (!errorLog.getErrors().isEmpty()) {
+            //TODO: Log errorLog
+            //throw new ErrorLogException(errorLog);
+        } else {
+            repository.save(entity);
+            //TODO: log event
+        }
+
+        return entity;
     }
 
     public EntityIterator<T> findByMultipleValues(Sort sort, QueryValue... queryValues) {
@@ -86,4 +107,20 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
         return new PagingEntityIterator<>(new PageIterator<>(pagedQueryable, sort));
     }
 
+    public void validate(T entity, ErrorLog errorLog) {
+
+        //Fire JSR-303 annotations
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+        Set<ConstraintViolation<T>> violations = validator.validate(entity);
+
+        List<Error> errors = errorLog.getErrors();
+        //Convert violation set to OpenHDS Errors
+        for (ConstraintViolation violation : violations) {
+            errors.add(new Error(violation.getMessage()));
+        }
+
+        //TODO: Manual validation for UuidService
+
+    }
 }
