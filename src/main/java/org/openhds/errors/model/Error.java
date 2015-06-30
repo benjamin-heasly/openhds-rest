@@ -19,7 +19,6 @@ public class Error implements UuidIdentifiable, Serializable {
     @Column(length = 36)
     protected String uuid;
 
-
     private static final long serialVersionUID = 1L;
 
     private String errorMessage;

@@ -4,6 +4,7 @@ import org.openhds.domain.model.FieldWorker;
 import org.openhds.errors.model.Error;
 import org.openhds.errors.model.ErrorLog;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -12,7 +13,7 @@ public class ErrorLogUtil {
 
     public static ErrorLog generateErrorLog(String assignedTo,
                                             String dataPayload,
-                                            Calendar dateOfResolution,
+                                            ZonedDateTime dateOfResolution,
                                             String entityType,
                                             FieldWorker fieldWorker,
                                             String resolutionStatus,
@@ -32,7 +33,7 @@ public class ErrorLogUtil {
     }
 
     private static List<Error> generateErrors(List<String> errors) {
-        List<Error> objectErrors = new ArrayList<Error>();
+        List<Error> objectErrors = new ArrayList<>();
 
         for (String error : errors) {
             Error objectError = new Error(error);

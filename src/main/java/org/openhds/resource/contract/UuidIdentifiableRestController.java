@@ -44,11 +44,11 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
         this.repository = repository;
     }
 
-    protected String getResourceName() {
+    public String getResourceName() {
         return controllerRegistry.getControllersToPaths().get(this.getClass());
     }
 
-    protected Class<T> getEntityClass() {
+    public Class<T> getEntityClass() {
         return (Class<T>) controllerRegistry.getControllersToEntities().get(this.getClass());
     }
 

@@ -66,18 +66,4 @@ public class LocationRestControllerTest extends AuditableExtIdRestControllerTest
         registration.setCollectedByUuid(fieldWorkerRepository.findAll().get(0).getUuid());
         return registration;
     }
-
-    private LocationRegistration makeLocationRegistration(String hierarchyName, String name) {
-        Location location = new Location();
-        location.setName(name);
-        location.setExtId(name);
-
-        LocationRegistration locationRegistration = new LocationRegistration();
-        locationRegistration.setLocation(location);
-        locationRegistration.setLocationHierarchyUuid(locationHierarchyRepository.findByExtId(hierarchyName).get(0).getUuid());
-        locationRegistration.setCollectedByUuid(fieldWorkerRepository.findAll().get(0).getUuid());
-
-        return locationRegistration;
-    }
-
 }

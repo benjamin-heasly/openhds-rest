@@ -6,6 +6,8 @@ import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.Location;
 import org.openhds.domain.model.LocationHierarchy;
 import org.openhds.domain.model.LocationHierarchyLevel;
+import org.openhds.errors.model.ErrorLog;
+import org.openhds.errors.model.Error;
 import org.openhds.repository.concrete.*;
 import org.openhds.security.model.Privilege;
 import org.openhds.security.model.Role;
@@ -48,7 +50,16 @@ public class SampleDataGenerator {
     @Autowired
     private LocationRepository locationRepository;
 
+    @Autowired
+    private ErrorRepository errorRepository;
+
+    @Autowired
+    private ErrorLogRepository errorLogRepository;
+
     public void clearData() {
+        errorRepository.deleteAllInBatch();
+        errorLogRepository.deleteAllInBatch();
+
         locationRepository.deleteAllInBatch();
         locationHierarchyRepository.deleteAllInBatch();
         locationHierarchyLevelRepository.deleteAllInBatch();
@@ -86,6 +97,7 @@ public class SampleDataGenerator {
         addLocation("duplicated", "bottom-two");
         addLocation("duplicated", "bottom-two");
 
+        addErrorLog("sample error");
     }
 
     private void addPrivileges(Privilege.Grant... grants) {
@@ -173,5 +185,18 @@ public class SampleDataGenerator {
         location.setLocationHierarchy(locationHierarchyRepository.findByExtId(hierarchyName).get(0));
 
         locationRepository.save(location);
+    }
+
+    private void addErrorLog(String description) {
+        ErrorLog errorLog = new ErrorLog();
+        initAuditableFields(errorLog);
+        initCollectedFields(errorLog);
+
+        errorLog.setDataPayload(description);
+        Error error = new Error();
+        error.setErrorMessage(description);
+        errorLog.getErrors().add(error);
+
+        errorLogRepository.save(errorLog);
     }
 }

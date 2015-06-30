@@ -150,7 +150,8 @@ public abstract class AuditableRestControllerTest<T extends AuditableEntity,
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        return fromJson(controller.getEntityClass(), mvcResult.getResponse().getContentAsString());
+        T created = fromJson(controller.getEntityClass(), mvcResult.getResponse().getContentAsString());
+        return created;
     }
 
 }

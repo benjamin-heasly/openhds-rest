@@ -11,6 +11,7 @@ import org.openhds.repository.util.SampleDataGenerator;
 import org.openhds.service.contract.AbstractUuidService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -39,6 +40,8 @@ public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends Abst
     protected abstract T makeValidEntity(String name, String id);
 
     protected abstract void initialize(U service);
+
+    protected final Sort UUID_SORT = new Sort("uuid");
 
     @Before
     public void setup() throws Exception {
@@ -73,7 +76,7 @@ public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends Abst
         QueryValue queryValue = new QueryValue("uuid", entity.getUuid());
 
         // reuse the same property multiple times in the query
-        List<T> results = service.findByMultipleValues(null, queryValue, queryValue, queryValue).toList();
+        List<T> results = service.findByMultipleValues(UUID_SORT, queryValue, queryValue, queryValue).toList();
         assertEquals(1, results.size());
         assertEquals(entity, results.get(0));
     }
@@ -86,7 +89,7 @@ public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends Abst
         QueryValue impossibleValue = new QueryValue("uuid", "not an id");
 
         // reuse the same property multiple times in the query
-        List<T> results = service.findByMultipleValues(null, queryValue, queryValue, impossibleValue).toList();
+        List<T> results = service.findByMultipleValues(UUID_SORT, queryValue, queryValue, impossibleValue).toList();
         assertEquals(0, results.size());
     }
 
@@ -97,7 +100,7 @@ public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends Abst
         QueryValue uuidValue = new QueryValue("uuid", entity.getUuid());
         QueryValue badValue = new QueryValue("notAProperty", entity.getUuid());
 
-        service.findByMultipleValues(null, uuidValue, badValue);
+        service.findByMultipleValues(UUID_SORT, uuidValue, badValue);
     }
 
     @Test
@@ -107,10 +110,10 @@ public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends Abst
         QueryValue queryValue = new QueryValue("uuid", entity.getUuid());
 
         // range by a single value
-        QueryRange queryRange = new QueryRange("uuid", entity.getUuid(), entity.getUuid());
+        QueryRange<String> queryRange = new QueryRange<>("uuid", entity.getUuid(), entity.getUuid());
 
         // reuse the same property multiple times in the query
-        List<T> results = service.findByMultipleValuesranged(null, queryRange, queryValue, queryValue, queryValue).toList();
+        List<T> results = service.findByMultipleValuesRanged(UUID_SORT, queryRange, queryValue, queryValue, queryValue).toList();
         assertEquals(1, results.size());
         assertEquals(entity, results.get(0));
     }
@@ -122,10 +125,10 @@ public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends Abst
         QueryValue queryValue = new QueryValue("uuid", entity.getUuid());
 
         // range by a nonexistent property
-        QueryRange queryRange = new QueryRange("notAProperty", entity.getUuid(), entity.getUuid());
+        QueryRange<String> queryRange = new QueryRange<>("notAProperty", entity.getUuid(), entity.getUuid());
 
         // reuse the same property multiple times in the query
-        List<T> results = service.findByMultipleValuesranged(null, queryRange, queryValue, queryValue, queryValue).toList();
+        service.findByMultipleValuesRanged(UUID_SORT, queryRange, queryValue, queryValue, queryValue).toList();
     }
 
     @Test()
@@ -135,10 +138,10 @@ public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends Abst
         QueryValue queryValue = new QueryValue("uuid", entity.getUuid());
 
         // the range Z-A is impossible
-        QueryRange queryRange = new QueryRange("uuid", "Z", "A");
+        QueryRange<String> queryRange = new QueryRange<>("uuid", "Z", "A");
 
         // reuse the same property multiple times in the query
-        List<T> results = service.findByMultipleValuesranged(null, queryRange, queryValue, queryValue, queryValue).toList();
+        List<T> results = service.findByMultipleValuesRanged(UUID_SORT, queryRange, queryValue, queryValue, queryValue).toList();
         assertEquals(0, results.size());
     }
 }

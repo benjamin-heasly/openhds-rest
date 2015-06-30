@@ -8,6 +8,8 @@ import org.openhds.repository.queries.Specifications;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.repository.results.PageIterator;
 import org.openhds.repository.results.PagingEntityIterator;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -64,9 +66,19 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
         return iteratorFromPageable(pageable -> repository.findAll(specification, pageable), sort);
     }
 
-    public EntityIterator<T> findByMultipleValuesranged(Sort sort, QueryRange queryRange, QueryValue... queryValues) {
+    public Page<T> findByMultipleValues(Pageable pageable, QueryValue... queryValues) {
+        Specification<T> specification = Specifications.multiValue(queryValues);
+        return repository.findAll(specification, pageable);
+    }
+
+    public EntityIterator<T> findByMultipleValuesRanged(Sort sort, QueryRange queryRange, QueryValue... queryValues) {
         Specification<T> specification = Specifications.rangedMultiValue(queryRange, queryValues);
         return iteratorFromPageable(pageable -> repository.findAll(specification, pageable), sort);
+    }
+
+    public Page<T> findByMultipleValuesRanged(Pageable pageable, QueryRange queryRange, QueryValue... queryValues) {
+        Specification<T> specification = Specifications.rangedMultiValue(queryRange, queryValues);
+        return repository.findAll(specification, pageable);
     }
 
     // Iterate entities based on paged queries.
