@@ -23,9 +23,12 @@ public interface AuditableRepository<T extends AuditableEntity> extends UuidIden
     Page<T> findByDeletedFalseAndInsertDateBetween(ZonedDateTime insertedAfter, ZonedDateTime insertedBefore, Pageable pageable);
     Page<T> findByDeletedFalseAndInsertDateAfter(ZonedDateTime insertedAfter, Pageable pageable);
     Page<T> findByDeletedFalseAndInsertDateBefore(ZonedDateTime insertedBefore, Pageable pageable);
+    Page<T> findByDeletedFalseAndLastModifiedDateBetween(ZonedDateTime modifiedAfter, ZonedDateTime modifiedBefore, Pageable pageable);
+    Page<T> findByDeletedFalseAndLastModifiedDateAfter(ZonedDateTime modifiedAfter, Pageable pageable);
+    Page<T> findByDeletedFalseAndLastModifiedDateBefore(ZonedDateTime modifiedBefore, Pageable pageable);
 
     Page<T> findByDeletedFalseAndInsertBy(User user, Pageable pageable);
-
+    Page<T> findByDeletedFalseAndLastModifiedBy(User user, Pageable pageable);
 
     // for auditing
     Page<T> findByDeletedTrue(Pageable pageable);
