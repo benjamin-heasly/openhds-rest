@@ -1,7 +1,7 @@
 package org.openhds.resource.controller;
 
 import org.openhds.domain.model.FieldWorker;
-import org.openhds.errors.model.ErrorLog;
+import org.openhds.errors.model.*;
 import org.openhds.repository.concrete.ErrorLogRepository;
 import org.openhds.repository.concrete.UserRepository;
 import org.openhds.repository.queries.QueryRange;
@@ -12,8 +12,13 @@ import org.openhds.resource.registration.ErrorLogRegistration;
 import org.openhds.service.impl.ErrorLogService;
 import org.openhds.service.impl.FieldWorkerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.ExposesResourceFor;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -54,8 +59,8 @@ public class ErrorLogRestController extends AuditableCollectedRestController<Err
         // TODO: this seems like service stuff
         ErrorLog errorLog = registration.getErrorLog();
 
-        if (null == errorLog.getDataPayload()) {
-            throw new ConstraintViolationException("Error log payload must not be null.", null);
+        if (null == errorLog.getErrors() || errorLog.getErrors().isEmpty()) {
+            throw new ConstraintViolationException("ErrorLog Error list must not be null or empty.", null);
         }
 
         errorLog.setInsertBy(userRepository.findAll().get(0));
@@ -72,12 +77,15 @@ public class ErrorLogRestController extends AuditableCollectedRestController<Err
     }
 
     @RequestMapping(value = "/query", method = RequestMethod.GET)
-    public EntityIterator<ErrorLog> getErrors(@RequestParam(value="resolutionStatus", required=false) String resolutionStatus,
-                                       @RequestParam(value="assignedTo", required=false) String assignedTo,
-                                       @RequestParam(value="fieldWorkerExtId", required=false) String fieldWorkerExtId,
-                                       @RequestParam(value="entityType", required=false) String entityType,
-                                       @RequestParam(value="minDate", required = false) ZonedDateTime minDate,
-                                       @RequestParam(value = "maxDate", required = false) ZonedDateTime maxDate) {
+    public PagedResources findErrorLogs(Pageable pageable, PagedResourcesAssembler assembler,
+                                        @RequestParam(value = "resolutionStatus", required = false) String resolutionStatus,
+                                        @RequestParam(value = "assignedTo", required = false) String assignedTo,
+                                        @RequestParam(value = "fieldWorkerId", required = false) String fieldWorkerId,
+                                        @RequestParam(value = "entityType", required = false) String entityType,
+                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                        @RequestParam(value = "minDate", required = false) ZonedDateTime minDate,
+                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                        @RequestParam(value = "maxDate", required = false) ZonedDateTime maxDate) {
 
         List<QueryValue> properties = new ArrayList<>();
 
@@ -93,10 +101,10 @@ public class ErrorLogRestController extends AuditableCollectedRestController<Err
             properties.add(new QueryValue("entityType", entityType));
         }
 
-        if (fieldWorkerExtId != null && !fieldWorkerExtId.isEmpty()) {
+        if (fieldWorkerId != null && !fieldWorkerId.isEmpty()) {
             EntityIterator<FieldWorker> fieldWorkers = fieldWorkerService.findByMultipleValues(
-                    null,
-                    new QueryValue("extId", fieldWorkerExtId));
+                    new Sort("fieldWorkerId"),
+                    new QueryValue("fieldWorkerId", fieldWorkerId));
             if (fieldWorkers.iterator().hasNext()) {
                 properties.add(new QueryValue("collectedBy", fieldWorkers.iterator().next()));
             }
@@ -104,7 +112,7 @@ public class ErrorLogRestController extends AuditableCollectedRestController<Err
 
         // default to errors up until now
         ZonedDateTime rangeMax = ZonedDateTime.now();
-        if (minDate != null) {
+        if (maxDate != null) {
             rangeMax = maxDate;
         }
 
@@ -115,9 +123,11 @@ public class ErrorLogRestController extends AuditableCollectedRestController<Err
         }
 
         QueryRange<ZonedDateTime> dateRange = new QueryRange<>("insertDate", rangeMin, rangeMax);
-        return errorLogService.findByMultipleValuesRanged(
-                new Sort("insertDate"),
+        Page<ErrorLog> errorLogs = errorLogService.findByMultipleValuesRanged(
+                pageable,
                 dateRange,
                 properties.toArray(new QueryValue[properties.size()]));
+
+        return assembler.toResource(errorLogs, entityLinkAssembler);
     }
 }
