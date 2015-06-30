@@ -26,7 +26,8 @@ public class Specifications {
     }
 
     // Query for a property in some range, and matching multiple other property values.
-    public static <T extends UuidIdentifiable> Specification<T> rangedMultiValue(final QueryRange queryRange, final QueryValue... queryValues) {
+    public static <T extends UuidIdentifiable, R extends Comparable> Specification<T> rangedMultiValue(
+            final QueryRange<R> queryRange, final QueryValue... queryValues) {
         return new Specification<T>() {
             @Override
             public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
