@@ -54,11 +54,13 @@ class LocationRestController extends AuditableExtIdRestController<Location, Loca
 
         // TODO: this should come from the authenticated Principal
         location.setInsertBy(userRepository.findAll().get(0));
+        location.setLastModifiedBy(userRepository.findAll().get(0));
 
         // fill in auditable fields
         location.setCollectedBy(fieldWorkerRepository.findOne(registration.getCollectedByUuid()));
         location.setLocationHierarchy(locationHierarchyRepository.findOne(registration.getLocationHierarchyUuid()));
         location.setInsertDate(ZonedDateTime.now());
+        location.setLastModifiedDate(ZonedDateTime.now());
 
         return locationRepository.save(location);
     }
