@@ -5,12 +5,14 @@ import org.openhds.events.model.Event;
 import org.openhds.repository.concrete.EventRepository;
 import org.openhds.service.contract.AbstractAuditableService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 /**
  * Created by bsh on 6/30/15.
  */
+@Component
 public class EventService extends AbstractAuditableService <Event, EventRepository> {
 
     @Autowired
