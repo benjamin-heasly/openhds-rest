@@ -35,17 +35,17 @@ public class Specifications {
         };
     }
 
-    public static <R extends java.lang.Comparable> Predicate inRange(Root<?> root, CriteriaBuilder cb, QueryRange<R> queryRange) {
+    public static <R extends java.lang.Comparable> Predicate inRange(Path<?> root, CriteriaBuilder cb, QueryRange<R> queryRange) {
         return cb.between(root.<R>get(queryRange.getPropertyName()), queryRange.getMin(), queryRange.getMax());
     }
 
-    public static <R extends java.lang.Comparable> Predicate inRangeOrNull(Root<?> root, CriteriaBuilder cb, QueryRange<R> queryRange) {
+    public static <R extends java.lang.Comparable> Predicate inRangeOrNull(Path<?> root, CriteriaBuilder cb, QueryRange<R> queryRange) {
         Path<R> path = root.<R>get(queryRange.getPropertyName());
         return cb.or(cb.isNull(path),
                 cb.between(path, queryRange.getMin(), queryRange.getMax()));
     }
 
-    public static Predicate allValuesEqual(Root<?> root, CriteriaBuilder cb, QueryValue... queryValues) {
+    public static Predicate allValuesEqual(Path<?> root, CriteriaBuilder cb, QueryValue... queryValues) {
         List<Predicate> predicates = new ArrayList<>();
         for (QueryValue queryValue : queryValues) {
             predicates.add(cb.equal(root.get(queryValue.getPropertyName()), queryValue.getValue()));
@@ -53,7 +53,7 @@ public class Specifications {
         return cb.and(predicates.toArray(new Predicate[predicates.size()]));
     }
 
-    public static Predicate allValuesEqualOrNull(Root<?> root, CriteriaBuilder cb, QueryValue... queryValues) {
+    public static Predicate allValuesEqualOrNull(Path<?> root, CriteriaBuilder cb, QueryValue... queryValues) {
         List<Predicate> predicates = new ArrayList<>();
         for (QueryValue queryValue : queryValues) {
             Path<?> path = root.get(queryValue.getPropertyName());

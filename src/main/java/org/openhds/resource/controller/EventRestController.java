@@ -73,7 +73,7 @@ public class EventRestController extends AuditableRestController<Event, EventReg
     }
 
     @RequestMapping(value = "query", method = RequestMethod.GET)
-    public EntityIterator<Event> findEvents(@RequestParam(value="system", required=false) String system,
+    public EntityIterator<Event> findEvents(@RequestParam(value="system", defaultValue = Event.DEFAULT_SYSTEM) String system,
                                             @RequestParam(value="status", required=false) String status,
                                             @RequestParam(value="actionType", required=false) String actionType,
                                             @RequestParam(value="entityType", required=false) String entityType,
@@ -83,28 +83,29 @@ public class EventRestController extends AuditableRestController<Event, EventReg
                                             @RequestParam(value = "maxDate", required = false) ZonedDateTime maxDate) {
 
         List<QueryValue> properties = new ArrayList<>();
-        addIfPresent(properties, "system", system, Event.DEFAULT_SYSTEM);
-        addIfPresent(properties, "status", status, Event.DEFAULT_STATUS);
-        addIfPresent(properties, "actionType", actionType, null);
-        addIfPresent(properties, "entityType", entityType, null);
+        addIfPresent(properties, "actionType", actionType);
+        addIfPresent(properties, "entityType", entityType);
+
+        List<QueryValue> metadataProperties = new ArrayList<>();
+        addIfPresent(metadataProperties, "system", system);
+        addIfPresent(metadataProperties, "status", status);
 
         QueryRange<ZonedDateTime> dateRange = dateQueryRange("lastModifiedDate", minDate, maxDate);
 
-        EntityIterator<Event> events = eventService.findByMultipleValuesRanged(
+        EntityIterator<Event> events = eventService.findBySystemAndStatus(
                 new Sort("lastModifiedDate"),
                 dateRange,
-                properties.toArray(new QueryValue[properties.size()]));
+                properties.toArray(new QueryValue[properties.size()]),
+                metadataProperties.toArray(new QueryValue[metadataProperties.size()]));
 
         // increment read counts as each event goes out the wire
-        return new UpdatingIterator<>(events, (event) -> eventService.incrementReadCount(event, system));
+        final String finalSystem = system;
+        return new UpdatingIterator<>(events, (event) -> eventService.incrementReadCountForSystem(event, finalSystem));
     }
 
-    private static void addIfPresent(Collection<QueryValue> properties, String propertyName, String value, String defaultValue) {
+    private static void addIfPresent(Collection<QueryValue> properties, String propertyName, String value) {
         if (value != null && !value.trim().isEmpty()) {
             properties.add(new QueryValue(propertyName, value));
-        } else if (null != defaultValue) {
-            properties.add(new QueryValue(propertyName, defaultValue));
         }
     }
-
 }

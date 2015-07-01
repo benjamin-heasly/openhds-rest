@@ -16,40 +16,31 @@ public class EventSpecifications {
 
     // Query events by actionType, entityType, date range, system, and status
     public static <R extends Comparable> Specification<Event> multiValueRangedBySystemAndStatus(
-            final String system,
-            final String status,
             final QueryRange<R> queryRange,
-            final QueryValue... queryValues) {
+            final QueryValue[] queryValues,
+            final QueryValue[] metadataQueryValues) {
 
         return new Specification<Event>() {
             @Override
             public Predicate toPredicate(Root<Event> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                Join<Event, EventMetadata> metadataJoin = root.join("eventMetadata");
-                return cb.and(Specifications.allValuesEqualOrNull(root, cb, queryValues),
-                        Specifications.inRangeOrNull(root, cb, queryRange),
-                        cb.or(noEventMetadataForSystem(metadataJoin, query, cb, system),
-                                eventMetadataForSystemWithStatus(metadataJoin, query, cb, system, status)));
+                query.distinct(true);
+                return cb.and(Specifications.allValuesEqual(root, cb, queryValues),
+                        Specifications.inRange(root, cb, queryRange),
+                        existingMetadataAllValuesEqual(root, query, cb, metadataQueryValues));
             }
         };
     }
 
-    public static Predicate noEventMetadataForSystem(Join<Event, EventMetadata> metadataJoin,
-                                                     CriteriaQuery<?> query,
-                                                     CriteriaBuilder cb,
-                                                     String system) {
-        Subquery<EventMetadata> subquery = query.subquery(EventMetadata.class);
-        subquery.where(cb.equal(metadataJoin.get("system"), system));
-        return cb.exists(subquery).not();
-    }
+    public static Predicate existingMetadataAllValuesEqual(Root<Event> root,
+                                                           CriteriaQuery<?> query,
+                                                           CriteriaBuilder cb,
+                                                           QueryValue[] metadataQueryValues) {
 
-    public static Predicate eventMetadataForSystemWithStatus(Join<Event, EventMetadata> metadataJoin,
-                                                             CriteriaQuery<?> query,
-                                                             CriteriaBuilder cb,
-                                                             String system,
-                                                             String status) {
+        Join<Event, EventMetadata> metadataJoin = root.join("eventMetadata");
         Subquery<EventMetadata> subquery = query.subquery(EventMetadata.class);
-        subquery.where(cb.and(cb.equal(metadataJoin.get("system"), system),
-                cb.equal(metadataJoin.get("status"), status)));
+        subquery.from(EventMetadata.class);
+        subquery.select(metadataJoin);
+        subquery.where(Specifications.allValuesEqual(metadataJoin, cb, metadataQueryValues));
         return cb.exists(subquery);
     }
 

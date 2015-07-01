@@ -6,8 +6,8 @@ import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.Location;
 import org.openhds.domain.model.LocationHierarchy;
 import org.openhds.domain.model.LocationHierarchyLevel;
-import org.openhds.errors.model.ErrorLog;
 import org.openhds.errors.model.Error;
+import org.openhds.errors.model.ErrorLog;
 import org.openhds.events.model.Event;
 import org.openhds.events.model.EventMetadata;
 import org.openhds.repository.concrete.*;
@@ -218,12 +218,15 @@ public class SampleDataGenerator {
     private void addEvent(String description, String system) {
         Event event = new Event();
         initAuditableFields(event);
+
+        event.setActionType(Event.DEFAULT_ACTION);
+        event.setEntityType(Event.DEFAULT_ENTITY);
         event.setEventData(description);
 
-        EventMetadata eventMetadata = new EventMetadata();
-        initAuditableFields(eventMetadata);
-        eventMetadata.setSystem(system);
-        event.getEventMetadata().add(eventMetadata);
+        EventMetadata defaultMetadata = new EventMetadata();
+        defaultMetadata.setSystem(Event.DEFAULT_SYSTEM);
+        defaultMetadata.setStatus(Event.DEFAULT_STATUS);
+        event.getEventMetadata().add(defaultMetadata);
 
         eventRepository.save(event);
     }

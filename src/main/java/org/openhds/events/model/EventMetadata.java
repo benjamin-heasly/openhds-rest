@@ -5,6 +5,7 @@ import org.openhds.domain.util.Description;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Description(description = "Metadata regarding an atomic event in OpenHDS")
 @Entity
@@ -13,11 +14,11 @@ public class EventMetadata extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;
 
+    @NotNull
     private String status;
 
+    @NotNull
     private String system;
-
-    private String result;
 
     private int numTimesRead;
 
@@ -35,14 +36,6 @@ public class EventMetadata extends AuditableEntity {
 
     public void setSystem(String system) {
         this.system = system;
-    }
-
-    public String getResult() {
-        return result;
-    }
-
-    public void setResult(String result) {
-        this.result = result;
     }
 
     public int getNumTimesRead() {

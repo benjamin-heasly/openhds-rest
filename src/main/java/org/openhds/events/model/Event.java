@@ -5,6 +5,7 @@ import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +15,16 @@ import java.util.List;
 @Table(name = "events")
 public class Event extends AuditableEntity implements Serializable {
 
-    public static final String DEFAULT_SYSTEM = "default";
+    public static final String DEFAULT_ACTION = "default-action";
+    public static final String DEFAULT_ENTITY = "default-entity";
+    public static final String DEFAULT_SYSTEM = "default-system";
     public static final String DEFAULT_STATUS = "unread";
     public static final String READ_STATUS = "read";
 
+    @NotNull
     private String actionType;
 
+    @NotNull
     private String entityType;
 
     @Column(length=65535)
@@ -29,7 +34,6 @@ public class Event extends AuditableEntity implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = EventMetadata.class)
     @JoinColumn(name = "event_uuid")
-    @JsonIgnore
     private List<EventMetadata> eventMetadata = new ArrayList<>();
 
     public Event() { }
