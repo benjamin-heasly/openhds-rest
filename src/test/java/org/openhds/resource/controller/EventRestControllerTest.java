@@ -104,6 +104,51 @@ public class EventRestControllerTest extends AuditableRestControllerTest
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[*].actionType").value(everyItem(is("action-1"))))
                 .andExpect(jsonPath("$[*].uuid").value(contains("A-id", "C-id")));
+
+        // should see B and C for entity-2
+        this.mockMvc.perform(get(getResourceUrl() + "query")
+                .param("entityType", "entity-2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[*].entityType").value(everyItem(is("entity-2"))))
+                .andExpect(jsonPath("$[*].uuid").value(contains("B-id", "C-id")));
+
+        // should see A action-1 entity-1
+        this.mockMvc.perform(get(getResourceUrl() + "query")
+                .param("actionType", "action-1")
+                .param("entityType", "entity-1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].actionType").value("action-1"))
+                .andExpect(jsonPath("$[0].entityType").value("entity-1"))
+                .andExpect(jsonPath("$[0].uuid").value("A-id"));
+
+        // should see B action-2 entity-2
+        this.mockMvc.perform(get(getResourceUrl() + "query")
+                .param("actionType", "action-2")
+                .param("entityType", "entity-2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].actionType").value("action-2"))
+                .andExpect(jsonPath("$[0].entityType").value("entity-2"))
+                .andExpect(jsonPath("$[0].uuid").value("B-id"));
+
+        // should see C for action-1 entity-2
+        this.mockMvc.perform(get(getResourceUrl() + "query")
+                .param("actionType", "action-1")
+                .param("entityType", "entity-2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].actionType").value("action-1"))
+                .andExpect(jsonPath("$[0].entityType").value("entity-2"))
+                .andExpect(jsonPath("$[0].uuid").value("C-id"));
+
+        // should see nothing for action-1 entity-1
+        this.mockMvc.perform(get(getResourceUrl() + "query")
+                .param("actionType", "action-2")
+                .param("entityType", "entity-1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 
 
