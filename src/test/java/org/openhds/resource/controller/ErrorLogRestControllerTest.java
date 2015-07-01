@@ -137,8 +137,8 @@ public class ErrorLogRestControllerTest extends AuditableCollectedRestController
                 .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(1)));
     }
 
-    private ErrorLog insertFancyAndReturn(String id,
-                                          String name,
+    private ErrorLog insertFancyAndReturn(String name,
+                                          String id,
                                           String resolutionStatus,
                                           String assignedTo,
                                           String entityType) throws Exception {
