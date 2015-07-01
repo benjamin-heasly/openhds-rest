@@ -14,6 +14,10 @@ import java.util.List;
 @Table(name = "events")
 public class Event extends AuditableEntity implements Serializable {
 
+    public static final String DEFAULT_SYSTEM = "default";
+    public static final String DEFAULT_STATUS = "unread";
+    public static final String READ_STATUS = "read";
+
     private String actionType;
 
     private String entityType;
