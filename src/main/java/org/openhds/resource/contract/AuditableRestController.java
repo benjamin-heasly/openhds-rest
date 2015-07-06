@@ -60,7 +60,8 @@ public abstract class AuditableRestController<T extends AuditableEntity, U exten
 
     // afterDate <= lastModifiedDate < beforeDate
     @RequestMapping(value = "/bydate", method = RequestMethod.GET)
-    public PagedResources readByDatePaged(Pageable pageable, PagedResourcesAssembler assembler,
+    public PagedResources readByDatePaged(Pageable pageable,
+                                          PagedResourcesAssembler assembler,
                                           @RequestParam(required = false)
                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                           ZonedDateTime afterDate,
