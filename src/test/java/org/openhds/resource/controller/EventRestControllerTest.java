@@ -9,6 +9,7 @@ import org.openhds.resource.registration.EventRegistration;
 import org.openhds.resource.registration.Registration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static org.hamcrest.Matchers.*;
@@ -68,7 +69,7 @@ public class EventRestControllerTest extends AuditableRestControllerTest
     }
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void queryIncrementsReadCount() throws Exception {
         Event event = postFancyAndReturn("test", "test-id", "test-action", "test-entity");
         for (EventMetadata eventMetadata : event.getEventMetadata()) {
@@ -89,7 +90,7 @@ public class EventRestControllerTest extends AuditableRestControllerTest
     }
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void queryBulk() throws Exception {
         Event event = postFancyAndReturn("test", "test-id", "test-action", "test-entity");
         for (EventMetadata eventMetadata : event.getEventMetadata()) {
@@ -111,7 +112,7 @@ public class EventRestControllerTest extends AuditableRestControllerTest
     }
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void queryByParameterValues() throws Exception {
         postFancyAndReturn("A", "A-id", "action-1", "entity-1");
         postFancyAndReturn("B", "B-id", "action-2", "entity-2");
@@ -172,7 +173,7 @@ public class EventRestControllerTest extends AuditableRestControllerTest
     }
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void queryBySystemAndStatus() throws Exception {
         postFancyAndReturn("A", "A-id", "action-1", "entity-1");
 
@@ -209,7 +210,7 @@ public class EventRestControllerTest extends AuditableRestControllerTest
     }
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void queryByDateRange() throws Exception {
         Event first = postFancyAndReturn("A", "A-id", "action-1", "entity-1");
         Event second = postFancyAndReturn("B", "B-id", "action-1", "entity-1");

@@ -3,6 +3,7 @@ package org.openhds.service;
 import org.junit.Test;
 import org.openhds.domain.contract.AuditableExtIdEntity;
 import org.openhds.service.contract.AbstractAuditableExtIdService;
+import org.springframework.security.test.context.support.WithUserDetails;
 
 import static org.junit.Assert.assertEquals;
 
@@ -18,6 +19,7 @@ public abstract class AuditableExtIdServiceTest
      */
 
     @Test
+    @WithUserDetails
     public void findByExtId() {
 
         String id = "testEntity";

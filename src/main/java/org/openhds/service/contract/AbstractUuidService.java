@@ -3,7 +3,6 @@ package org.openhds.service.contract;
 import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.errors.model.Error;
 import org.openhds.errors.model.ErrorLog;
-import org.openhds.errors.model.ErrorLogException;
 import org.openhds.errors.util.ErrorLogger;
 import org.openhds.repository.contract.UuidIdentifiableRepository;
 import org.openhds.repository.queries.QueryRange;

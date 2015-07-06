@@ -1,5 +1,6 @@
 package org.openhds.service;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +13,7 @@ import org.openhds.service.contract.AbstractUuidService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -56,8 +58,14 @@ public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends Abst
         sampleDataGenerator.generateSampleData();
     }
 
+    @After
+    public void tearDown() {
+        sampleDataGenerator.clearData();
+        sampleDataGenerator.generateSampleData();
+    }
 
     @Test
+    @WithUserDetails
     public void create() {
 
         int beforeCreationSize = service.findAll(null).toList().size();

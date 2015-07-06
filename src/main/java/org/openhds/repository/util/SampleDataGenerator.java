@@ -80,6 +80,7 @@ public class SampleDataGenerator {
         userRepository.deleteAllInBatch();
         roleRepository.deleteAllInBatch();
         privilegeRepository.deleteAllInBatch();
+
     }
 
     public void generateSampleData() {
@@ -88,8 +89,12 @@ public class SampleDataGenerator {
         addRole("user-role", Privilege.Grant.values());
         addUser("user", "password", "user-role");
 
+
         addRole("empty-role");
         addUser("non-user", "password", "empty-role");
+
+
+
 
         addFieldWorker("fieldworker", "password");
 
@@ -131,6 +136,7 @@ public class SampleDataGenerator {
 
     private void addUser(String name, String password, String roleName) {
         User user = new User();
+        user.setUuid(name);
         user.setFirstName(name);
         user.setLastName(name);
         user.setUsername(name);
