@@ -5,7 +5,9 @@ import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.contract.AuditableRepository;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.security.model.User;
+import org.openhds.security.model.UserDetailsWrapper;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.ZonedDateTime;
 
@@ -16,8 +18,32 @@ public abstract class AbstractAuditableService
         <T extends AuditableEntity, V extends AuditableRepository<T>>
         extends AbstractUuidService<T, V> {
 
+
     public AbstractAuditableService(V repository) {
         super(repository);
+    }
+
+    @Override
+    public T createOrUpdate(T entity){
+
+
+        UserDetailsWrapper wrapper = (UserDetailsWrapper) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = wrapper.getUser();
+        ZonedDateTime now = ZonedDateTime.now();
+
+        //Check to see if we're creating or updating the entity
+        if(null == entity.getInsertDate()){
+            entity.setInsertDate(now);
+        }
+
+        if(null == entity.getInsertBy()){
+            entity.setInsertBy(user);
+        }
+
+        entity.setLastModifiedDate(now);
+        entity.setLastModifiedBy(user);
+
+        return super.createOrUpdate(entity);
     }
 
     public T findOne(String id) {

@@ -3,7 +3,7 @@ package org.openhds.resource.contract;
 import org.junit.Test;
 import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.repository.contract.AuditableRepository;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.ZonedDateTime;
@@ -35,7 +35,7 @@ public abstract class AuditableRestControllerTest<T extends AuditableEntity,
     }
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void getByDate() throws Exception {
 
         ZonedDateTime beforeDate = ZonedDateTime.now();
@@ -113,7 +113,7 @@ public abstract class AuditableRestControllerTest<T extends AuditableEntity,
     }
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void getVoided() throws Exception {
         // make one
         T entity = insertNewAndReturn();

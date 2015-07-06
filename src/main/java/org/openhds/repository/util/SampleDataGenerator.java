@@ -6,8 +6,8 @@ import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.Location;
 import org.openhds.domain.model.LocationHierarchy;
 import org.openhds.domain.model.LocationHierarchyLevel;
-import org.openhds.errors.model.ErrorLog;
 import org.openhds.errors.model.Error;
+import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.*;
 import org.openhds.security.model.Privilege;
 import org.openhds.security.model.Role;
@@ -69,6 +69,7 @@ public class SampleDataGenerator {
         userRepository.deleteAllInBatch();
         roleRepository.deleteAllInBatch();
         privilegeRepository.deleteAllInBatch();
+
     }
 
     public void generateSampleData() {
@@ -77,8 +78,12 @@ public class SampleDataGenerator {
         addRole("user-role", Privilege.Grant.values());
         addUser("user", "password", "user-role");
 
+
         addRole("empty-role");
         addUser("non-user", "password", "empty-role");
+
+
+
 
         addFieldWorker("fieldworker", "password");
 
@@ -118,6 +123,7 @@ public class SampleDataGenerator {
 
     private void addUser(String name, String password, String roleName) {
         User user = new User();
+        user.setUuid(name);
         user.setFirstName(name);
         user.setLastName(name);
         user.setUsername(name);

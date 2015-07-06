@@ -1,7 +1,7 @@
 package org.openhds.resource.controller;
 
 import org.openhds.domain.model.FieldWorker;
-import org.openhds.errors.model.*;
+import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.ErrorLogRepository;
 import org.openhds.repository.concrete.UserRepository;
 import org.openhds.repository.queries.QueryRange;

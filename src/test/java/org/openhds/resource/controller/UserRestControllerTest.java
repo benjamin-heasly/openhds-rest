@@ -1,5 +1,6 @@
 package org.openhds.resource.controller;
 
+import org.junit.After;
 import org.openhds.repository.concrete.UserRepository;
 import org.openhds.resource.contract.UuidIdentifiableRestControllerTest;
 import org.openhds.resource.registration.Registration;
@@ -56,5 +57,6 @@ public class UserRestControllerTest extends UuidIdentifiableRestControllerTest<U
         registration.setUser(entity);
         return registration;
     }
+
 
 }

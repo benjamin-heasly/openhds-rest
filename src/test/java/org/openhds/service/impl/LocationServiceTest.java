@@ -3,7 +3,6 @@ package org.openhds.service.impl;
 
 import org.openhds.domain.model.Location;
 import org.openhds.service.AuditableExtIdServiceTest;
-import org.openhds.service.impl.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.ZonedDateTime;

@@ -6,7 +6,6 @@ import org.openhds.errors.model.ErrorLog;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class ErrorLogUtil {
