@@ -38,39 +38,73 @@ public class EventService extends AbstractAuditableService <Event, EventReposito
         return new Event();
     }
 
-    public EntityIterator<Event> findBySystemAndStatus(Sort sort,
-                                                       QueryRange<ZonedDateTime> queryRange,
-                                                       QueryValue[] queryValues,
-                                                       QueryValue[] metadataQueryValues) {
-        Specification<Event> specification = EventSpecifications.multiValueRangedBySystemAndStatus(queryRange,
+    public Page<Event> findWithoutSystem(Pageable pageable,
+                                         QueryRange<ZonedDateTime> queryRange,
+                                         List<QueryValue> eventProperties,
+                                         String system) {
+
+        QueryValue[] queryValues = eventProperties.toArray(new QueryValue[eventProperties.size()]);
+        Specification<Event> specification = EventSpecifications.multiValueRangedWithoutSystem(queryRange,
+                queryValues,
+                system);
+
+        return repository.findAll(specification, pageable);
+    }
+
+    public Page<Event> findByProperties(Pageable pageable,
+                                        QueryRange<ZonedDateTime> queryRange,
+                                        List<QueryValue> eventProperties,
+                                        List<QueryValue> metadataProperties) {
+
+        QueryValue[] queryValues = eventProperties.toArray(new QueryValue[eventProperties.size()]);
+        QueryValue[] metadataQueryValues = metadataProperties.toArray(new QueryValue[metadataProperties.size()]);
+
+        Specification<Event> specification = EventSpecifications.multiValueRangedMatchingValues(queryRange,
                 queryValues,
                 metadataQueryValues);
-        return iteratorFromPageable(pageable -> repository.findAll(specification, pageable), sort);
+        return repository.findAll(specification, pageable);
+    }
+
+    public Page<Event> findBySystemAndProperties(Pageable pageable,
+                                                 String system,
+                                                 QueryRange<ZonedDateTime> dateRange,
+                                                 List<QueryValue> eventProperties,
+                                                 List<QueryValue> metadataProperties) {
+
+        if (null == system) {
+            system = Event.DEFAULT_SYSTEM;
+        }
+
+        // find matching events that have not been seen by this system
+        //  add default metadata to them
+        Page<Event> unseenEvents = findWithoutSystem(pageable, dateRange, eventProperties, system);
+        for (Event event : unseenEvents) {
+            addSystemMetadata(event, system);
+        }
+        repository.save(unseenEvents);
+
+        // search by event and metadata properties
+        //  update them for read counts
+        Page<Event> matchingEvents = findByProperties(pageable, dateRange, eventProperties, metadataProperties);
+        incrementReadCountForSystem(matchingEvents, system);
+
+        // return a fresh page over the matching events
+        return findByProperties(pageable, dateRange, eventProperties, metadataProperties);
     }
 
     @Override
     public Event createOrUpdate(Event entity) {
-        addDefaultMetadata(entity);
+        addSystemMetadata(entity, Event.DEFAULT_SYSTEM);
         return super.createOrUpdate(entity);
     }
 
-    private void addDefaultMetadata(Event entity) {
-        if (null == entity.findMetadataForSystem(Event.DEFAULT_SYSTEM)) {
+    private void addSystemMetadata(Event entity, String system) {
+        if (null == entity.findMetadataForSystem(system)) {
             EventMetadata defaultMetadata = new EventMetadata();
-            defaultMetadata.setSystem(Event.DEFAULT_SYSTEM);
+            defaultMetadata.setSystem(system);
             defaultMetadata.setStatus(Event.DEFAULT_STATUS);
             entity.getEventMetadata().add(defaultMetadata);
         }
-    }
-
-    public Page<Event> findBySystemAndStatus(Pageable pageable,
-                                             QueryRange<ZonedDateTime> queryRange,
-                                             QueryValue[] queryValues,
-                                             QueryValue[] metadataQueryValues) {
-        Specification<Event> specification = EventSpecifications.multiValueRangedBySystemAndStatus(queryRange,
-                queryValues,
-                metadataQueryValues);
-        return repository.findAll(specification, pageable);
     }
 
     public void publishEvent(Event event) {
@@ -87,8 +121,10 @@ public class EventService extends AbstractAuditableService <Event, EventReposito
 
     public Event incrementReadCountForSystem(Event event, String system) {
 
+        addSystemMetadata(event, system);
+
         for (EventMetadata eventMetadata : event.getEventMetadata()) {
-            if (null == system || eventMetadata.getSystem().equals(system)) {
+            if (eventMetadata.getSystem().equals(system)) {
                 eventMetadata.setNumTimesRead(eventMetadata.getNumTimesRead() + 1);
                 eventMetadata.setStatus(Event.READ_STATUS);
             }

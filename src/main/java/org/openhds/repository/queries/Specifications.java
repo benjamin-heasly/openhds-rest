@@ -39,12 +39,6 @@ public class Specifications {
         return cb.between(root.<R>get(queryRange.getPropertyName()), queryRange.getMin(), queryRange.getMax());
     }
 
-    public static <R extends java.lang.Comparable> Predicate inRangeOrNull(Path<?> root, CriteriaBuilder cb, QueryRange<R> queryRange) {
-        Path<R> path = root.<R>get(queryRange.getPropertyName());
-        return cb.or(cb.isNull(path),
-                cb.between(path, queryRange.getMin(), queryRange.getMax()));
-    }
-
     public static Predicate allValuesEqual(Path<?> root, CriteriaBuilder cb, QueryValue... queryValues) {
         List<Predicate> predicates = new ArrayList<>();
         for (QueryValue queryValue : queryValues) {
@@ -52,15 +46,4 @@ public class Specifications {
         }
         return cb.and(predicates.toArray(new Predicate[predicates.size()]));
     }
-
-    public static Predicate allValuesEqualOrNull(Path<?> root, CriteriaBuilder cb, QueryValue... queryValues) {
-        List<Predicate> predicates = new ArrayList<>();
-        for (QueryValue queryValue : queryValues) {
-            Path<?> path = root.get(queryValue.getPropertyName());
-            predicates.add(cb.or(cb.isNull(path),
-                    cb.equal(path, queryValue.getValue())));
-        }
-        return cb.and(predicates.toArray(new Predicate[predicates.size()]));
-    }
-
 }

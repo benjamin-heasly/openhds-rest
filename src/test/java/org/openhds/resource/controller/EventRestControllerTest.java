@@ -16,9 +16,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 /**
@@ -81,13 +79,13 @@ public class EventRestControllerTest extends AuditableRestControllerTest
         final int totalCount = (int) repository.count();
         this.mockMvc.perform(get(getResourceUrl() + "query"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(totalCount)))
-                .andExpect(jsonPath("$[*].eventMetadata[*].numTimesRead").value(everyItem(is(1))));
+                .andExpect(jsonPath("$._embedded.events", hasSize(totalCount)))
+                .andExpect(jsonPath("$._embedded.events[*].eventMetadata[*].numTimesRead").value(everyItem(is(1))));
 
         this.mockMvc.perform(get(getResourceUrl() + "query"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(totalCount)))
-                .andExpect(jsonPath("$[*].eventMetadata[*].numTimesRead").value(everyItem(is(2))));
+                .andExpect(jsonPath("$._embedded.events", hasSize(totalCount)))
+                .andExpect(jsonPath("$._embedded.events[*].eventMetadata[*].numTimesRead").value(everyItem(is(2))));
     }
 
     @Test
@@ -101,119 +99,125 @@ public class EventRestControllerTest extends AuditableRestControllerTest
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("actionType", "action-1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[*].actionType").value(everyItem(is("action-1"))))
-                .andExpect(jsonPath("$[*].uuid").value(contains("A-id", "C-id")));
+                .andExpect(jsonPath("$._embedded.events", hasSize(2)))
+                .andExpect(jsonPath("$._embedded.events[*].actionType").value(everyItem(is("action-1"))))
+                .andExpect(jsonPath("$._embedded.events[*].uuid").value(containsInAnyOrder("A-id", "C-id")));
 
         // should see B and C for entity-2
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("entityType", "entity-2"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[*].entityType").value(everyItem(is("entity-2"))))
-                .andExpect(jsonPath("$[*].uuid").value(contains("B-id", "C-id")));
+                .andExpect(jsonPath("$._embedded.events", hasSize(2)))
+                .andExpect(jsonPath("$._embedded.events[*].entityType").value(everyItem(is("entity-2"))))
+                .andExpect(jsonPath("$._embedded.events[*].uuid").value(containsInAnyOrder("B-id", "C-id")));
 
         // should see A action-1 entity-1
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("actionType", "action-1")
                 .param("entityType", "entity-1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].actionType").value("action-1"))
-                .andExpect(jsonPath("$[0].entityType").value("entity-1"))
-                .andExpect(jsonPath("$[0].uuid").value("A-id"));
+                .andExpect(jsonPath("$._embedded.events", hasSize(1)))
+                .andExpect(jsonPath("$._embedded.events[0].actionType").value("action-1"))
+                .andExpect(jsonPath("$._embedded.events[0].entityType").value("entity-1"))
+                .andExpect(jsonPath("$._embedded.events[0].uuid").value("A-id"));
 
         // should see B action-2 entity-2
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("actionType", "action-2")
                 .param("entityType", "entity-2"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].actionType").value("action-2"))
-                .andExpect(jsonPath("$[0].entityType").value("entity-2"))
-                .andExpect(jsonPath("$[0].uuid").value("B-id"));
+                .andExpect(jsonPath("$._embedded.events", hasSize(1)))
+                .andExpect(jsonPath("$._embedded.events[0].actionType").value("action-2"))
+                .andExpect(jsonPath("$._embedded.events[0].entityType").value("entity-2"))
+                .andExpect(jsonPath("$._embedded.events[0].uuid").value("B-id"));
 
         // should see C for action-1 entity-2
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("actionType", "action-1")
                 .param("entityType", "entity-2"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].actionType").value("action-1"))
-                .andExpect(jsonPath("$[0].entityType").value("entity-2"))
-                .andExpect(jsonPath("$[0].uuid").value("C-id"));
+                .andExpect(jsonPath("$._embedded.events", hasSize(1)))
+                .andExpect(jsonPath("$._embedded.events[0].actionType").value("action-1"))
+                .andExpect(jsonPath("$._embedded.events[0].entityType").value("entity-2"))
+                .andExpect(jsonPath("$._embedded.events[0].uuid").value("C-id"));
 
         // should see nothing for action-1 entity-1
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("actionType", "action-2")
                 .param("entityType", "entity-1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(0)));
+                .andExpect(jsonPath("$.page.totalElements").value(0));
     }
 
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void queryBySystemAndStatus() throws Exception {
+        postFancyAndReturn("A", "A-id", "action-1", "entity-1");
 
-//    @Test
-//    @WithMockUser(username = username, password = password)
-//    public void query() throws Exception {
-//        ErrorLog first = postFancyAndReturn("first", "first-id", "first-status", "first-assigned", "first-entity");
-//        ErrorLog second = postFancyAndReturn("second", "second-id", "second-status", "second-assigned", "second-entity");
-//        ErrorLog third = postFancyAndReturn("third", "third-id", "third-status", "third-assigned", "third-entity");
-//
-//        // trivial query matches all
-//        final int totalCount = (int) repository.count();
-//        this.mockMvc.perform(get(getResourceUrl() + "query"))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(totalCount)));
-//
-//        // several queries to match only the second
-//        this.mockMvc.perform(get(getResourceUrl() + "query")
-//                .param("resolutionStatus", second.getResolutionStatus()))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(1)));
-//
-//        this.mockMvc.perform(get(getResourceUrl() + "query")
-//                .param("entityType", second.getEntityType()))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(1)));
-//
-//        this.mockMvc.perform(get(getResourceUrl() + "query")
-//                .param("assignedTo", second.getAssignedTo()))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(1)));
-//
-//        this.mockMvc.perform(get(getResourceUrl() + "query")
-//                .param("fieldWorkerId", second.getCollectedBy().getFieldWorkerId()))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(totalCount)));
-//
-//        // queries by date range
-//        this.mockMvc.perform(get(getResourceUrl() + "query")
-//                .param("minDate", second.getInsertDate().toString()))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(2)));
-//
-//        this.mockMvc.perform(get(getResourceUrl() + "query")
-//                .param("maxDate", second.getInsertDate().toString()))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(totalCount - 1)));
-//
-//        this.mockMvc.perform(get(getResourceUrl() + "query")
-//                .param("minDate", first.getInsertDate().toString())
-//                .param("maxDate", third.getInsertDate().toString()))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(3)));
-//
-//        // match only the second, emphatically!
-//        this.mockMvc.perform(get(getResourceUrl() + "query")
-//                .param("resolutionStatus", second.getResolutionStatus())
-//                .param("assignedTo", second.getAssignedTo())
-//                .param("entityType", second.getEntityType())
-//                .param("fieldWorkerId", second.getCollectedBy().getFieldWorkerId())
-//                .param("minDate", second.getInsertDate().toString())
-//                .param("maxDate", second.getInsertDate().toString()))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(1)));
-//    }
+        // query by new system "system-1" should return all events
+        final int totalCount = (int) repository.count();
+        this.mockMvc.perform(get(getResourceUrl() + "query")
+                .param("system", "system-1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded.events", hasSize(totalCount)))
+                .andExpect(jsonPath("$._embedded.events[*].eventMetadata[*].numTimesRead").value(everyItem(is(1))));
+
+        // another query from system-1 should increment read count
+        this.mockMvc.perform(get(getResourceUrl() + "query")
+                .param("system", "system-1")
+                .param("status", Event.READ_STATUS))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded.events", hasSize(totalCount)))
+                .andExpect(jsonPath("$._embedded.events[*].eventMetadata[*].numTimesRead").value(everyItem(is(2))));
+
+        // no events should be left unread by system-1
+        this.mockMvc.perform(get(getResourceUrl() + "query")
+                .param("system", "system-1")
+                .param("status", Event.DEFAULT_STATUS))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.page.totalElements").value(0));
+
+        // events should still look fresh for system-2
+        this.mockMvc.perform(get(getResourceUrl() + "query")
+                .param("system", "system-2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded.events", hasSize(totalCount)))
+                .andExpect(jsonPath("$._embedded.events[*].eventMetadata[*].numTimesRead").value(everyItem(is(1))));
+
+    }
+
+    @Test
+    @WithMockUser(username = username, password = password)
+    public void queryByDateRange() throws Exception {
+        Event first = postFancyAndReturn("A", "A-id", "action-1", "entity-1");
+        Event second = postFancyAndReturn("B", "B-id", "action-1", "entity-1");
+        Event third = postFancyAndReturn("C", "C-id", "action-1", "entity-1");
+
+        // two events since the second event
+        this.mockMvc.perform(get(getResourceUrl() + "query")
+                .param("minDate", second.getInsertDate().toString())
+                .accept(halJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded.events", hasSize(2)))
+                .andExpect(jsonPath("$._embedded.events[*].uuid").value(containsInAnyOrder("B-id", "C-id")));
+
+        // all but one event before second
+        final int totalCount = (int) repository.count();
+        this.mockMvc.perform(get(getResourceUrl() + "query")
+                .param("maxDate", second.getInsertDate().toString())
+                .accept(halJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded.events", hasSize(totalCount - 1)));
+
+        // three events between first and third
+        this.mockMvc.perform(get(getResourceUrl() + "query")
+                .param("minDate", first.getInsertDate().toString())
+                .param("maxDate", third.getInsertDate().toString())
+                .accept(halJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded.events", hasSize(3)))
+                .andExpect(jsonPath("$._embedded.events[*].uuid").value(containsInAnyOrder("A-id", "B-id", "C-id")));
+    }
 
     private Event postFancyAndReturn(String name,
                                      String id,

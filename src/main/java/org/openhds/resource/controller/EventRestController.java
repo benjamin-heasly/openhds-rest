@@ -11,9 +11,13 @@ import org.openhds.resource.contract.AuditableRestController;
 import org.openhds.resource.registration.EventRegistration;
 import org.openhds.service.impl.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.hateoas.ExposesResourceFor;
+import org.springframework.hateoas.PagedResources;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -73,7 +77,9 @@ public class EventRestController extends AuditableRestController<Event, EventReg
     }
 
     @RequestMapping(value = "query", method = RequestMethod.GET)
-    public EntityIterator<Event> findEvents(@RequestParam(value="system", defaultValue = Event.DEFAULT_SYSTEM) String system,
+    public PagedResources findEvents(Pageable pageable,
+                                            PagedResourcesAssembler assembler,
+                                            @RequestParam(value="system", defaultValue = Event.DEFAULT_SYSTEM) String system,
                                             @RequestParam(value="status", required=false) String status,
                                             @RequestParam(value="actionType", required=false) String actionType,
                                             @RequestParam(value="entityType", required=false) String entityType,
@@ -82,9 +88,9 @@ public class EventRestController extends AuditableRestController<Event, EventReg
                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                             @RequestParam(value = "maxDate", required = false) ZonedDateTime maxDate) {
 
-        List<QueryValue> properties = new ArrayList<>();
-        addIfPresent(properties, "actionType", actionType);
-        addIfPresent(properties, "entityType", entityType);
+        List<QueryValue> eventProperties = new ArrayList<>();
+        addIfPresent(eventProperties, "actionType", actionType);
+        addIfPresent(eventProperties, "entityType", entityType);
 
         List<QueryValue> metadataProperties = new ArrayList<>();
         addIfPresent(metadataProperties, "system", system);
@@ -92,15 +98,12 @@ public class EventRestController extends AuditableRestController<Event, EventReg
 
         QueryRange<ZonedDateTime> dateRange = dateQueryRange("lastModifiedDate", minDate, maxDate);
 
-        EntityIterator<Event> events = eventService.findBySystemAndStatus(
-                new Sort("lastModifiedDate"),
+        Page<Event> events = eventService.findBySystemAndProperties(pageable,
+                system,
                 dateRange,
-                properties.toArray(new QueryValue[properties.size()]),
-                metadataProperties.toArray(new QueryValue[metadataProperties.size()]));
-
-        // increment read counts as each event goes out the wire
-        final String finalSystem = system;
-        return new UpdatingIterator<>(events, (event) -> eventService.incrementReadCountForSystem(event, finalSystem));
+                eventProperties,
+                metadataProperties);
+        return assembler.toResource(events, entityLinkAssembler);
     }
 
     private static void addIfPresent(Collection<QueryValue> properties, String propertyName, String value) {
