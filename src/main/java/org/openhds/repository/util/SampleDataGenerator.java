@@ -168,7 +168,7 @@ public class SampleDataGenerator {
 
         locationHierarchy.setName(name);
         locationHierarchy.setExtId(name);
-        locationHierarchy.setLevel(locationHierarchyLevelRepository.findByName(levelName).get());
+        locationHierarchy.setLevel(locationHierarchyLevelRepository.findByDeletedFalseAndName(levelName).get());
 
         if (null != parentName) {
             locationHierarchy.setParent(locationHierarchyRepository.findByExtId(parentName).get(0));

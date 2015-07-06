@@ -10,6 +10,8 @@ import org.openhds.repository.contract.AuditableRepository;
 import java.util.Optional;
 
 public interface LocationHierarchyLevelRepository extends AuditableRepository<LocationHierarchyLevel> {
-    Optional<LocationHierarchyLevel> findByKeyIdentifier(int key);
-    Optional<LocationHierarchyLevel> findByName(String name);
+
+    Optional<LocationHierarchyLevel> findByDeletedFalseAndKeyIdentifier(int key);
+    Optional<LocationHierarchyLevel> findByDeletedFalseAndName(String name);
+
 }
