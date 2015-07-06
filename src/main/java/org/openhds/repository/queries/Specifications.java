@@ -3,10 +3,7 @@ package org.openhds.repository.queries;
 import org.openhds.domain.contract.UuidIdentifiable;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,16 +35,15 @@ public class Specifications {
         };
     }
 
-    private static <R extends java.lang.Comparable> Predicate inRange(Root<?> root, CriteriaBuilder cb, QueryRange<R> queryRange) {
+    public static <R extends java.lang.Comparable> Predicate inRange(Path<?> root, CriteriaBuilder cb, QueryRange<R> queryRange) {
         return cb.between(root.<R>get(queryRange.getPropertyName()), queryRange.getMin(), queryRange.getMax());
     }
 
-    private static Predicate allValuesEqual(Root<?> root, CriteriaBuilder cb, QueryValue... queryValues) {
+    public static Predicate allValuesEqual(Path<?> root, CriteriaBuilder cb, QueryValue... queryValues) {
         List<Predicate> predicates = new ArrayList<>();
         for (QueryValue queryValue : queryValues) {
             predicates.add(cb.equal(root.get(queryValue.getPropertyName()), queryValue.getValue()));
         }
         return cb.and(predicates.toArray(new Predicate[predicates.size()]));
     }
-
 }
