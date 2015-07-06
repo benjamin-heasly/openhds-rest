@@ -3,6 +3,8 @@ package org.openhds.service.contract;
 import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.errors.model.Error;
 import org.openhds.errors.model.ErrorLog;
+import org.openhds.errors.model.ErrorLogException;
+import org.openhds.errors.util.ErrorLogger;
 import org.openhds.repository.contract.UuidIdentifiableRepository;
 import org.openhds.repository.queries.QueryRange;
 import org.openhds.repository.queries.QueryValue;
@@ -10,6 +12,7 @@ import org.openhds.repository.queries.Specifications;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.repository.results.PageIterator;
 import org.openhds.repository.results.PagingEntityIterator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -30,6 +33,9 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
     public final static String UNKNOWN_ENTITY_UUID = "UNKNOWN";
 
     protected final V repository;
+
+    @Autowired
+    protected ErrorLogger errorLogger;
 
     public AbstractUuidService(V repository) {
         this.repository = repository;
@@ -72,8 +78,8 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
         validate(entity, errorLog);
 
         if (!errorLog.getErrors().isEmpty()) {
-            //TODO: Log errorLog
-            //throw new ErrorLogException(errorLog);
+            errorLogger.log(errorLog);
+            // TODO: throw new ErrorLogException(errorLog) :::: doing this requires handling the exception
         } else {
             repository.save(entity);
             //TODO: log event
