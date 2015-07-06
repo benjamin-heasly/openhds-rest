@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.time.ZonedDateTime;
+
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -45,6 +47,8 @@ public class ErrorLogRestControllerTest extends AuditableCollectedRestController
         Error error = new Error();
         error.setErrorMessage(name);
         errorLog.getErrors().add(error);
+
+        errorLog.setCollectionDateTime(ZonedDateTime.now());
 
         return errorLog;
     }

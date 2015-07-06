@@ -2,6 +2,7 @@ package org.openhds.service.contract;
 
 import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.model.FieldWorker;
+import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.contract.AuditableCollectedRepository;
 import org.openhds.repository.results.EntityIterator;
 import org.springframework.data.domain.Sort;
@@ -12,13 +13,13 @@ import java.time.ZonedDateTime;
  * Created by wolfe on 6/11/15.
  */
 public abstract class AbstractAuditableCollectedService<T extends AuditableCollectedEntity, V extends AuditableCollectedRepository<T>>
-        extends AbstractAuditableService<T,V> {
+        extends AbstractAuditableService<T, V> {
 
     public AbstractAuditableCollectedService(V repository) {
         super(repository);
     }
 
-    public EntityIterator<T> findByCollectedBy(Sort sort, FieldWorker fieldWorker){
+    public EntityIterator<T> findByCollectedBy(Sort sort, FieldWorker fieldWorker) {
         return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndCollectedBy(fieldWorker, pageable), sort);
     }
 
@@ -47,4 +48,12 @@ public abstract class AbstractAuditableCollectedService<T extends AuditableColle
 
     }
 
+    @Override
+    public void validate(T entity, ErrorLog errorLog) {
+        super.validate(entity, errorLog);
+        errorLog.setCollectedBy(entity.getCollectedBy());
+
+        //TODO: Manual validation for AuditableCollectedService
+
+    }
 }

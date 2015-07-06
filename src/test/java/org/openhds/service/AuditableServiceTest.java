@@ -21,6 +21,9 @@ public abstract class AuditableServiceTest
 
     private static final Sort UUID_SORT = new Sort("uuid");
 
+    /**
+     * Simply check that results are not null after a findAll call
+     */
     @Test
     public void findAll() {
 
@@ -28,6 +31,7 @@ public abstract class AuditableServiceTest
         assertNotNull(results.get(0));
 
     }
+
 
 
     @Test
@@ -45,6 +49,12 @@ public abstract class AuditableServiceTest
 
 
     }
+
+    /**
+     * Creates an entity with a late insertDate and an entity with an early insertDate
+     * checks that the results between those two times is exactly 2 and that everything before and after
+     * is not 0.
+     */
 
     @Test
     public void findByInsertDate() {

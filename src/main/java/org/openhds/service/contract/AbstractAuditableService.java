@@ -1,6 +1,7 @@
 package org.openhds.service.contract;
 
 import org.openhds.domain.contract.AuditableEntity;
+import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.contract.AuditableRepository;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.security.model.User;
@@ -93,10 +94,16 @@ public abstract class AbstractAuditableService
     public EntityIterator<T> findByInsertBy(Sort sort, User user) {
         return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndInsertBy(user, pageable), sort);
     }
+    
+    @Override
+    public void validate(T entity, ErrorLog errorLog) {
+        super.validate(entity, errorLog);
+
+        //TODO: Manual validation for AuditableService
+    }
 
     public EntityIterator<T> findByLastModifiedBy(Sort sort, User user) {
         return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndLastModifiedBy(user, pageable), sort);
     }
-
 
 }

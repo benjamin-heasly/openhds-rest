@@ -31,6 +31,7 @@ public class LocationServiceTest extends AuditableExtIdServiceTest<Location, Loc
         location.setName(name);
         location.setExtId(name);
         location.setCollectedBy(fieldWorkerService.findAll(null).toList().get(0));
+        location.setCollectionDateTime(ZonedDateTime.now());
         location.setLocationHierarchy(locationHierarchyService.findAll(null).toList().get(0));
         return location;
     }
