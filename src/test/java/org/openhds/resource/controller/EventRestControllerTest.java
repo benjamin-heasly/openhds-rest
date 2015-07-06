@@ -90,6 +90,28 @@ public class EventRestControllerTest extends AuditableRestControllerTest
 
     @Test
     @WithMockUser(username = username, password = password)
+    public void queryBulk() throws Exception {
+        Event event = postFancyAndReturn("test", "test-id", "test-action", "test-entity");
+        for (EventMetadata eventMetadata : event.getEventMetadata()) {
+            assertEquals(0, eventMetadata.getNumTimesRead());
+        }
+
+        // query with no params should return all events
+        final int totalCount = (int) repository.count();
+        this.mockMvc.perform(get(getResourceUrl() + "query/bulk")
+                .accept(regularJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(totalCount)))
+                .andExpect(jsonPath("$[*].eventMetadata[*].numTimesRead").value(everyItem(is(1))));
+
+        this.mockMvc.perform(get(getResourceUrl() + "query/bulk"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(totalCount)))
+                .andExpect(jsonPath("$[*].eventMetadata[*].numTimesRead").value(everyItem(is(2))));
+    }
+
+    @Test
+    @WithMockUser(username = username, password = password)
     public void queryByParameterValues() throws Exception {
         postFancyAndReturn("A", "A-id", "action-1", "entity-1");
         postFancyAndReturn("B", "B-id", "action-2", "entity-2");

@@ -6,7 +6,9 @@ import org.openhds.repository.concrete.UserRepository;
 import org.openhds.repository.queries.QueryRange;
 import org.openhds.repository.queries.QueryValue;
 import org.openhds.repository.results.EntityIterator;
-import org.openhds.repository.results.UpdatingIterator;
+import org.openhds.repository.results.PageIterator;
+import org.openhds.repository.results.PagingEntityIterator;
+import org.openhds.repository.results.ShallowCopyIterator;
 import org.openhds.resource.contract.AuditableRestController;
 import org.openhds.resource.registration.EventRegistration;
 import org.openhds.service.impl.EventService;
@@ -78,15 +80,15 @@ public class EventRestController extends AuditableRestController<Event, EventReg
 
     @RequestMapping(value = "query", method = RequestMethod.GET)
     public PagedResources findEvents(Pageable pageable,
-                                            PagedResourcesAssembler assembler,
-                                            @RequestParam(value="system", defaultValue = Event.DEFAULT_SYSTEM) String system,
-                                            @RequestParam(value="status", required=false) String status,
-                                            @RequestParam(value="actionType", required=false) String actionType,
-                                            @RequestParam(value="entityType", required=false) String entityType,
-                                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                            @RequestParam(value = "minDate", required = false) ZonedDateTime minDate,
-                                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                                            @RequestParam(value = "maxDate", required = false) ZonedDateTime maxDate) {
+                                     PagedResourcesAssembler assembler,
+                                     @RequestParam(value="system", defaultValue = Event.DEFAULT_SYSTEM) String system,
+                                     @RequestParam(value="status", required=false) String status,
+                                     @RequestParam(value="actionType", required=false) String actionType,
+                                     @RequestParam(value="entityType", required=false) String entityType,
+                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                     @RequestParam(value = "minDate", required = false) ZonedDateTime minDate,
+                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                     @RequestParam(value = "maxDate", required = false) ZonedDateTime maxDate) {
 
         List<QueryValue> eventProperties = new ArrayList<>();
         addIfPresent(eventProperties, "actionType", actionType);
@@ -104,6 +106,38 @@ public class EventRestController extends AuditableRestController<Event, EventReg
                 eventProperties,
                 metadataProperties);
         return assembler.toResource(events, entityLinkAssembler);
+    }
+
+    @RequestMapping(value = "query/bulk", method = RequestMethod.GET)
+    public EntityIterator<Event> findEventsBulk(Sort sort,
+                                                @RequestParam(value="system", defaultValue = Event.DEFAULT_SYSTEM) String system,
+                                                @RequestParam(value="status", required=false) String status,
+                                                @RequestParam(value="actionType", required=false) String actionType,
+                                                @RequestParam(value="entityType", required=false) String entityType,
+                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                @RequestParam(value = "minDate", required = false) ZonedDateTime minDate,
+                                                @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                @RequestParam(value = "maxDate", required = false) ZonedDateTime maxDate) {
+
+        List<QueryValue> eventProperties = new ArrayList<>();
+        addIfPresent(eventProperties, "actionType", actionType);
+        addIfPresent(eventProperties, "entityType", entityType);
+
+        List<QueryValue> metadataProperties = new ArrayList<>();
+        addIfPresent(metadataProperties, "system", system);
+        addIfPresent(metadataProperties, "status", status);
+
+        QueryRange<ZonedDateTime> dateRange = dateQueryRange("lastModifiedDate", minDate, maxDate);
+
+        PageIterator<Event> pageIterator = new PageIterator<>(
+                (pageable) -> eventService.findBySystemAndProperties(pageable,
+                        system,
+                        dateRange,
+                        eventProperties,
+                        metadataProperties), sort);
+        EntityIterator<Event> entityIterator = new PagingEntityIterator<>(pageIterator);
+        entityIterator.setCollectionName(getResourceName());
+        return new ShallowCopyIterator<>(entityIterator);
     }
 
     private static void addIfPresent(Collection<QueryValue> properties, String propertyName, String value) {
