@@ -130,6 +130,8 @@ public class SampleDataGenerator {
         User user = userRepository.findAll().get(0);
         auditableEntity.setInsertBy(user);
         auditableEntity.setInsertDate(ZonedDateTime.now());
+        auditableEntity.setLastModifiedBy(user);
+        auditableEntity.setLastModifiedDate(auditableEntity.getInsertDate());
         auditableEntity.setUuid(UUID.randomUUID().toString());
     }
 

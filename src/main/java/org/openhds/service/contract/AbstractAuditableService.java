@@ -55,25 +55,55 @@ public abstract class AbstractAuditableService
 
     }
 
-    public void delete(T entity, String reason){
+    public EntityIterator<T> findByLastModifiedDate(Sort sort, ZonedDateTime modifiedAfter, ZonedDateTime modifiedBefore) {
+
+        if (null != modifiedAfter && null != modifiedBefore) {
+
+            return iteratorFromPageable(
+                    pageable -> repository.findByDeletedFalseAndLastModifiedDateBetween(modifiedAfter, modifiedBefore, pageable), sort);
+
+        } else if (null != modifiedAfter) {
+
+            return iteratorFromPageable(
+                    pageable -> repository.findByDeletedFalseAndLastModifiedDateAfter(modifiedAfter, pageable), sort);
+
+        } else if (null != modifiedBefore) {
+
+            return iteratorFromPageable(
+                    pageable -> repository.findByDeletedFalseAndLastModifiedDateBefore(modifiedBefore, pageable), sort);
+
+        } else {
+
+            return findAll(sort);
+
+        }
+
+    }
+
+    public void delete(T entity, String reason) {
         entity.setDeleted(true);
         entity.setVoidReason(reason);
         //TODO: setVoidBy when global user is accessible
         repository.save(entity);
     }
 
-    public EntityIterator<T> findAllDeleted(Sort sort){
+    public EntityIterator<T> findAllDeleted(Sort sort) {
         return iteratorFromPageable(pageable -> repository.findByDeletedTrue(pageable), sort);
     }
 
-    public EntityIterator<T> findByInsertBy(Sort sort, User user){
+    public EntityIterator<T> findByInsertBy(Sort sort, User user) {
         return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndInsertBy(user, pageable), sort);
     }
-
+    
     @Override
     public void validate(T entity, ErrorLog errorLog) {
         super.validate(entity, errorLog);
 
         //TODO: Manual validation for AuditableService
     }
+
+    public EntityIterator<T> findByLastModifiedBy(Sort sort, User user) {
+        return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndLastModifiedBy(user, pageable), sort);
+    }
+
 }

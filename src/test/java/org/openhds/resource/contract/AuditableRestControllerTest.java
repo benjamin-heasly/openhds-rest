@@ -38,25 +38,25 @@ public abstract class AuditableRestControllerTest<T extends AuditableEntity,
     @WithMockUser(username = username, password = password)
     public void getByDate() throws Exception {
 
-        ZonedDateTime beforeInsert = ZonedDateTime.now();
+        ZonedDateTime beforeDate = ZonedDateTime.now();
 
         T entity = insertNewAndReturn();
-        ZonedDateTime insertDate = entity.getInsertDate();
+        ZonedDateTime modifiedDate = entity.getLastModifiedDate();
 
-        ZonedDateTime afterInsert = ZonedDateTime.now();
+        ZonedDateTime afterDate = ZonedDateTime.now();
 
         // sanity check time stamps
-        assertTrue(beforeInsert.compareTo(insertDate) < 0);
-        assertTrue(insertDate.compareTo(afterInsert) < 0);
+        assertTrue(beforeDate.compareTo(modifiedDate) < 0);
+        assertTrue(modifiedDate.compareTo(afterDate) < 0);
 
         int preexistingRecords = (int) repository.count() - 1;
         mockMvc.perform(get(getByDatePagedUrl())
-                .param("insertedBefore", beforeInsert.toString()))
+                .param("beforeDate", beforeDate.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
                 .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(preexistingRecords)));
         mockMvc.perform(get(getByDateBulkUrl())
-                .param("insertedBefore", beforeInsert.toString()))
+                .param("beforeDate", beforeDate.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(regularJson))
                 .andExpect(jsonPath("$", hasSize(preexistingRecords)));
@@ -64,49 +64,49 @@ public abstract class AuditableRestControllerTest<T extends AuditableEntity,
 
         int newRecords = 1;
         mockMvc.perform(get(getByDatePagedUrl())
-                .param("insertedAfter", beforeInsert.toString()))
+                .param("afterDate", beforeDate.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
                 .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(newRecords)));
         mockMvc.perform(get(getByDateBulkUrl())
-                .param("insertedAfter", beforeInsert.toString()))
+                .param("afterDate", beforeDate.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(regularJson))
                 .andExpect(jsonPath("$", hasSize(newRecords)));
 
         mockMvc.perform(get(getByDatePagedUrl())
-                .param("insertedAfter", beforeInsert.toString())
-                .param("insertedBefore", afterInsert.toString()))
+                .param("afterDate", beforeDate.toString())
+                .param("beforeDate", afterDate.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
                 .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(newRecords)));
         mockMvc.perform(get(getByDateBulkUrl())
-                .param("insertedAfter", beforeInsert.toString())
-                .param("insertedBefore", afterInsert.toString()))
+                .param("afterDate", beforeDate.toString())
+                .param("beforeDate", afterDate.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(regularJson))
                 .andExpect(jsonPath("$", hasSize(newRecords)));
 
         int allRecords = (int) repository.count();
         mockMvc.perform(get(getByDatePagedUrl())
-                .param("insertedBefore", afterInsert.toString()))
+                .param("beforeDate", afterDate.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
                 .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(allRecords)));
         mockMvc.perform(get(getByDateBulkUrl())
-                .param("insertedBefore", afterInsert.toString()))
+                .param("beforeDate", afterDate.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(regularJson))
                 .andExpect(jsonPath("$", hasSize(allRecords)));
 
         // no future records
         mockMvc.perform(get(getByDatePagedUrl())
-                .param("insertedAfter", afterInsert.toString()))
+                .param("afterDate", afterDate.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
                 .andExpect(jsonPath("$._embedded.", isEmptyOrNullString()));
         mockMvc.perform(get(getByDateBulkUrl())
-                .param("insertedAfter", afterInsert.toString()))
+                .param("afterDate", afterDate.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(regularJson))
                 .andExpect(jsonPath("$", hasSize(0)));
