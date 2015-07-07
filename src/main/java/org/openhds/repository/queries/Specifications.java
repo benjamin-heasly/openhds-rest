@@ -36,7 +36,24 @@ public class Specifications {
     }
 
     public static <R extends java.lang.Comparable> Predicate inRange(Path<?> root, CriteriaBuilder cb, QueryRange<R> queryRange) {
-        return cb.between(root.<R>get(queryRange.getPropertyName()), queryRange.getMin(), queryRange.getMax());
+
+        if(null != queryRange.getMax() && null != queryRange.getMin()){
+
+            return cb.between(root.<R>get(queryRange.getPropertyName()), queryRange.getMin(), queryRange.getMax());
+
+        } else if (null != queryRange.getMax()) {
+
+            return cb.lessThan(root.<R>get(queryRange.getPropertyName()), queryRange.getMax());
+
+        } else if (null != queryRange.getMin()) {
+
+            return cb.greaterThan(root.<R>get(queryRange.getPropertyName()), queryRange.getMin());
+
+        } else {
+
+            return cb.and();
+
+        }
     }
 
     public static Predicate allValuesEqual(Path<?> root, CriteriaBuilder cb, QueryValue... queryValues) {

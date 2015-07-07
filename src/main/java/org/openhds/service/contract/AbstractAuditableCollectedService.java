@@ -4,6 +4,7 @@ import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.contract.AuditableCollectedRepository;
+import org.openhds.repository.queries.QueryRange;
 import org.openhds.repository.results.EntityIterator;
 import org.springframework.data.domain.Sort;
 
@@ -25,26 +26,7 @@ public abstract class AbstractAuditableCollectedService<T extends AuditableColle
 
     public EntityIterator<T> findByCollectionDateTime(Sort sort, ZonedDateTime collectedAfter, ZonedDateTime collectedBefore) {
 
-        if (null != collectedAfter && null != collectedBefore) {
-
-            return iteratorFromPageable(
-                    pageable -> repository.findByDeletedFalseAndCollectionDateTimeBetween(collectedAfter, collectedBefore, pageable), sort);
-
-        } else if (null != collectedAfter) {
-
-            return iteratorFromPageable(
-                    pageable -> repository.findByDeletedFalseAndCollectionDateTimeAfter(collectedAfter, pageable), sort);
-
-        } else if (null != collectedBefore) {
-
-            return iteratorFromPageable(
-                    pageable -> repository.findByDeletedFalseAndCollectionDateTimeBefore(collectedBefore, pageable), sort);
-
-        } else {
-
-            return findAll(sort);
-
-        }
+        return findByMultipleValuesRanged(sort, new QueryRange<>("collectionDateTime", collectedAfter, collectedBefore));
 
     }
 

@@ -3,6 +3,7 @@ package org.openhds.service.contract;
 import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.contract.AuditableRepository;
+import org.openhds.repository.queries.QueryRange;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.security.model.User;
 import org.openhds.security.model.UserHelper;
@@ -18,6 +19,7 @@ public abstract class AbstractAuditableService
         <T extends AuditableEntity, V extends AuditableRepository<T>>
         extends AbstractUuidService<T, V> {
 
+    private enum DateType {INSERT,VOID,MODIFIED};
 
     public AbstractAuditableService(V repository) {
         super(repository);
@@ -60,51 +62,20 @@ public abstract class AbstractAuditableService
 
     public EntityIterator<T> findByInsertDate(Sort sort, ZonedDateTime insertedAfter, ZonedDateTime insertedBefore) {
 
-        if (null != insertedAfter && null != insertedBefore) {
+        return findByMultipleValuesRanged(sort, new QueryRange<>("insertDate", insertedAfter, insertedBefore));
 
-            return iteratorFromPageable(
-                    pageable -> repository.findByDeletedFalseAndInsertDateBetween(insertedAfter, insertedBefore, pageable), sort);
+    }
 
-        } else if (null != insertedAfter) {
+    public EntityIterator<T> findByVoidDate(Sort sort, ZonedDateTime voidedAfter, ZonedDateTime voidedBefore) {
 
-            return iteratorFromPageable(
-                    pageable -> repository.findByDeletedFalseAndInsertDateAfter(insertedAfter, pageable), sort);
-
-        } else if (null != insertedBefore) {
-
-            return iteratorFromPageable(
-                    pageable -> repository.findByDeletedFalseAndInsertDateBefore(insertedBefore, pageable), sort);
-
-        } else {
-
-            return findAll(sort);
-
-        }
+        return findByMultipleValuesRanged(sort, new QueryRange<>("voidDate", voidedAfter, voidedBefore));
 
     }
 
     public EntityIterator<T> findByLastModifiedDate(Sort sort, ZonedDateTime modifiedAfter, ZonedDateTime modifiedBefore) {
 
-        if (null != modifiedAfter && null != modifiedBefore) {
+        return findByMultipleValuesRanged(sort, new QueryRange<>("lastModifiedDate", modifiedAfter, modifiedBefore));
 
-            return iteratorFromPageable(
-                    pageable -> repository.findByDeletedFalseAndLastModifiedDateBetween(modifiedAfter, modifiedBefore, pageable), sort);
-
-        } else if (null != modifiedAfter) {
-
-            return iteratorFromPageable(
-                    pageable -> repository.findByDeletedFalseAndLastModifiedDateAfter(modifiedAfter, pageable), sort);
-
-        } else if (null != modifiedBefore) {
-
-            return iteratorFromPageable(
-                    pageable -> repository.findByDeletedFalseAndLastModifiedDateBefore(modifiedBefore, pageable), sort);
-
-        } else {
-
-            return findAll(sort);
-
-        }
 
     }
 
@@ -121,6 +92,10 @@ public abstract class AbstractAuditableService
 
     public EntityIterator<T> findByInsertBy(Sort sort, User user) {
         return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndInsertBy(user, pageable), sort);
+    }
+
+    public EntityIterator<T> findByVoidBy(Sort sort, User user) {
+        return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndVoidBy(user, pageable), sort);
     }
 
     @Override
