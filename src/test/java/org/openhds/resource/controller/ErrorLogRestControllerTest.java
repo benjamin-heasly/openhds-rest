@@ -3,11 +3,11 @@ package org.openhds.resource.controller;
 import org.junit.Test;
 import org.openhds.errors.model.Error;
 import org.openhds.errors.model.ErrorLog;
-import org.openhds.repository.concrete.ErrorLogRepository;
 import org.openhds.repository.concrete.FieldWorkerRepository;
 import org.openhds.resource.contract.AuditableCollectedRestControllerTest;
 import org.openhds.resource.registration.ErrorLogRegistration;
 import org.openhds.resource.registration.Registration;
+import org.openhds.service.impl.ErrorLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MvcResult;
@@ -26,15 +26,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by bsh on 6/29/15.
  */
 public class ErrorLogRestControllerTest extends AuditableCollectedRestControllerTest
-        <ErrorLog, ErrorLogRepository, ErrorLogRestController> {
+        <ErrorLog, ErrorLogService, ErrorLogRestController> {
 
     @Autowired
     FieldWorkerRepository fieldWorkerRepository;
 
     @Autowired
     @Override
-    protected void initialize(ErrorLogRepository repository, ErrorLogRestController controller) {
-        this.repository = repository;
+    protected void initialize(ErrorLogService service, ErrorLogRestController controller) {
+        this.service = service;
         this.controller = controller;
     }
 
@@ -62,7 +62,7 @@ public class ErrorLogRestControllerTest extends AuditableCollectedRestController
     protected void verifyEntityExistsWithNameAndId(ErrorLog entity, String name, String id) {
         assertNotNull(entity);
 
-        ErrorLog savedErrorLog = repository.findOne(id);
+        ErrorLog savedErrorLog = service.findOne(id);
         assertNotNull(savedErrorLog);
 
         assertEquals(id, savedErrorLog.getUuid());
@@ -86,7 +86,7 @@ public class ErrorLogRestControllerTest extends AuditableCollectedRestController
         ErrorLog third = insertFancyAndReturn("third", "third-id", "third-status", "third-assigned", "third-entity");
 
         // trivial query matches all
-        final int totalCount = (int) repository.count();
+        final int totalCount = (int) service.countAll();
         this.mockMvc.perform(get(getResourceUrl() + "query"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(totalCount)));

@@ -2,8 +2,6 @@ package org.openhds.resource.controller;
 
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.errors.model.ErrorLog;
-import org.openhds.repository.concrete.ErrorLogRepository;
-import org.openhds.repository.concrete.UserRepository;
 import org.openhds.repository.queries.QueryRange;
 import org.openhds.repository.queries.QueryValue;
 import org.openhds.repository.results.EntityIterator;
@@ -24,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.ConstraintViolationException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,40 +35,25 @@ import static org.openhds.repository.util.QueryUtil.dateQueryRange;
 @RestController
 @RequestMapping("/errorLogs")
 @ExposesResourceFor(ErrorLog.class)
-public class ErrorLogRestController extends AuditableCollectedRestController<ErrorLog, ErrorLogRegistration> {
+public class ErrorLogRestController extends AuditableCollectedRestController<
+        ErrorLog,
+        ErrorLogRegistration,
+        ErrorLogService> {
 
     private final ErrorLogService errorLogService;
 
     private final FieldWorkerService fieldWorkerService;
 
-    private final UserRepository userRepository;
-
     @Autowired
-    public ErrorLogRestController(ErrorLogRepository errorLogRepository,
-                                  ErrorLogService errorLogService,
-                                  FieldWorkerService fieldWorkerService,
-                                  UserRepository userRepository) {
-        super(errorLogRepository);
+    public ErrorLogRestController(ErrorLogService errorLogService,
+                                  FieldWorkerService fieldWorkerService) {
+        super(errorLogService);
         this.errorLogService = errorLogService;
         this.fieldWorkerService = fieldWorkerService;
-        this.userRepository = userRepository;
     }
 
     @Override
     protected ErrorLog register(ErrorLogRegistration registration) {
-        // TODO: this seems like service stuff
-        ErrorLog errorLog = registration.getErrorLog();
-
-        if (null == errorLog.getErrors() || errorLog.getErrors().isEmpty()) {
-            throw new ConstraintViolationException("ErrorLog Error list must not be null or empty.", null);
-        }
-
-        errorLog.setInsertBy(userRepository.findAll().get(0));
-        errorLog.setLastModifiedBy(userRepository.findAll().get(0));
-        errorLog.setCollectedBy(fieldWorkerService.findOne(registration.getCollectedByUuid()));
-        errorLog.setInsertDate(ZonedDateTime.now());
-        errorLog.setLastModifiedDate(ZonedDateTime.now());
-
         return errorLogService.createOrUpdate(registration.getErrorLog());
     }
 
@@ -98,9 +80,8 @@ public class ErrorLogRestController extends AuditableCollectedRestController<Err
         addIfPresent(properties, "entityType", entityType);
 
         if (fieldWorkerId != null && !fieldWorkerId.isEmpty()) {
-            EntityIterator<FieldWorker> fieldWorkers = fieldWorkerService.findByMultipleValues(
-                    new Sort("fieldWorkerId"),
-                    new QueryValue("fieldWorkerId", fieldWorkerId));
+            EntityIterator<FieldWorker> fieldWorkers =
+                    fieldWorkerService.findByFieldWorkerId(new Sort("fieldWorkerId"), fieldWorkerId);
             if (fieldWorkers.iterator().hasNext()) {
                 properties.add(new QueryValue("collectedBy", fieldWorkers.iterator().next()));
             }

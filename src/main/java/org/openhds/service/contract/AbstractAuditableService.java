@@ -8,6 +8,8 @@ import org.openhds.repository.results.EntityIterator;
 import org.openhds.security.model.User;
 import org.openhds.security.model.UserHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.time.ZonedDateTime;
@@ -30,7 +32,6 @@ public abstract class AbstractAuditableService
 
     @Override
     public T createOrUpdate(T entity) {
-
 
         User user = userHelper.getCurrentUser();
         ZonedDateTime now = ZonedDateTime.now();
@@ -60,9 +61,21 @@ public abstract class AbstractAuditableService
 
     }
 
+    public Page<T> findAll(Pageable pageable) {
+
+        return repository.findByDeletedFalse(pageable);
+
+    }
+
     public EntityIterator<T> findByInsertDate(Sort sort, ZonedDateTime insertedAfter, ZonedDateTime insertedBefore) {
 
         return findByMultipleValuesRanged(sort, new QueryRange<>("insertDate", insertedAfter, insertedBefore));
+
+    }
+
+    public Page<T> findByInsertDate(Pageable pageable, ZonedDateTime insertedAfter, ZonedDateTime insertedBefore) {
+
+        return findByMultipleValuesRanged(pageable, new QueryRange<>("insertDate", insertedAfter, insertedBefore));
 
     }
 
@@ -72,10 +85,21 @@ public abstract class AbstractAuditableService
 
     }
 
+    public Page<T> findByVoidDate(Pageable pageable, ZonedDateTime voidedAfter, ZonedDateTime voidedBefore) {
+
+        return findByMultipleValuesRanged(pageable, new QueryRange<>("voidDate", voidedAfter, voidedBefore));
+
+    }
+
     public EntityIterator<T> findByLastModifiedDate(Sort sort, ZonedDateTime modifiedAfter, ZonedDateTime modifiedBefore) {
 
         return findByMultipleValuesRanged(sort, new QueryRange<>("lastModifiedDate", modifiedAfter, modifiedBefore));
 
+    }
+
+    public Page<T> findByLastModifiedDate(Pageable pageable, ZonedDateTime modifiedAfter, ZonedDateTime modifiedBefore) {
+
+        return findByMultipleValuesRanged(pageable, new QueryRange<>("lastModifiedDate", modifiedAfter, modifiedBefore));
 
     }
 
@@ -86,8 +110,20 @@ public abstract class AbstractAuditableService
         repository.save(entity);
     }
 
+    public void delete(String id, String reason) {
+        T entity = findOne(id);
+        if (null == entity) {
+            return;
+        }
+        delete(entity, reason);
+    }
+
     public EntityIterator<T> findAllDeleted(Sort sort) {
         return iteratorFromPageable(pageable -> repository.findByDeletedTrue(pageable), sort);
+    }
+
+    public Page<T> findAllDeleted(Pageable pageable) {
+        return repository.findByDeletedTrue(pageable);
     }
 
     public EntityIterator<T> findByInsertBy(Sort sort, User user) {

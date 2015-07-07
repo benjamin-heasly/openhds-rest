@@ -63,8 +63,16 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
         return iteratorFromPageable(repository::findAll, sort);
     }
 
+    public Page<T> findAll(Pageable pageable) {
+        return repository.findAll(pageable);
+    }
+
     public void delete(T entity, String reason) {
         repository.delete(entity);
+    }
+
+    public void delete(String id, String reason) {
+        repository.delete(id);
     }
 
     public T findOne(String id) {

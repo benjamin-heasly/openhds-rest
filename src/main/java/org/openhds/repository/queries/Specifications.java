@@ -43,11 +43,11 @@ public class Specifications {
 
         } else if (null != queryRange.getMax()) {
 
-            return cb.lessThan(root.<R>get(queryRange.getPropertyName()), queryRange.getMax());
+            return cb.lessThanOrEqualTo(root.<R>get(queryRange.getPropertyName()), queryRange.getMax());
 
         } else if (null != queryRange.getMin()) {
 
-            return cb.greaterThan(root.<R>get(queryRange.getPropertyName()), queryRange.getMin());
+            return cb.greaterThanOrEqualTo(root.<R>get(queryRange.getPropertyName()), queryRange.getMin());
 
         } else {
 
