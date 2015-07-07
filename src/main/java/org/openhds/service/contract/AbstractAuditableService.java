@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.time.ZonedDateTime;
+import java.util.NoSuchElementException;
 
 /**
  * Created by wolfe on 6/11/15.
@@ -104,17 +105,15 @@ public abstract class AbstractAuditableService
     }
 
     public void delete(T entity, String reason) {
+        checkEntityExists(entity.getUuid());
         entity.setDeleted(true);
         entity.setVoidReason(reason);
-        //TODO: setVoidBy when global user is accessible
         repository.save(entity);
     }
 
     public void delete(String id, String reason) {
+        checkEntityExists(id);
         T entity = findOne(id);
-        if (null == entity) {
-            return;
-        }
         delete(entity, reason);
     }
 

@@ -21,10 +21,10 @@ public class Event extends AuditableEntity implements Serializable {
     public static final String DEFAULT_STATUS = "unread";
     public static final String READ_STATUS = "read";
 
-    @NotNull
+    @NotNull(message = "event action type may not be null")
     private String actionType;
 
-    @NotNull
+    @NotNull(message = "event entity type may not be null")
     private String entityType;
 
     @Column(length=65535)

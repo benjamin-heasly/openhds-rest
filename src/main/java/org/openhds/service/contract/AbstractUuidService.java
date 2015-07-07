@@ -23,6 +23,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 /**
@@ -69,11 +70,21 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
     }
 
     public void delete(T entity, String reason) {
+        checkEntityExists(entity.getUuid());
         repository.delete(entity);
     }
 
     public void delete(String id, String reason) {
+        checkEntityExists(id);
         repository.delete(id);
+    }
+
+    protected void checkEntityExists(String id) {
+        if (repository.exists(id)) {
+            return;
+        }
+        throw new NoSuchElementException("No such entity with uuid " + id
+                + " in repository " + getClass().getSimpleName());
     }
 
     public T findOne(String id) {
@@ -83,6 +94,8 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
     public T createOrUpdate(T entity) {
 
         ErrorLog errorLog = new ErrorLog();
+        errorLog.setEntityType(entity.getClass().getSimpleName());
+
         validate(entity, errorLog);
 
         if (!errorLog.getErrors().isEmpty()) {

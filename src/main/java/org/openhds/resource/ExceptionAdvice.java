@@ -50,7 +50,8 @@ class ExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public VndErrors errorLogException(ErrorLogException ex) {
         ErrorLog errorLog = ex.getErrorLog();
-        return new VndErrors("Validation Error", errorLog.getDetails());
+        String detailMessage = errorLog.getDetails();
+        return new VndErrors("Validation Error", detailMessage);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)

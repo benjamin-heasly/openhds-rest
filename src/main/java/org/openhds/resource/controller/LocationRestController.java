@@ -3,6 +3,7 @@ package org.openhds.resource.controller;
 import org.openhds.domain.model.Location;
 import org.openhds.resource.contract.AuditableExtIdRestController;
 import org.openhds.resource.registration.LocationRegistration;
+import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.LocationHierarchyService;
 import org.openhds.service.impl.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,18 +26,23 @@ class LocationRestController extends AuditableExtIdRestController<
 
     private final LocationHierarchyService locationHierarchyService;
 
+    private final FieldWorkerService fieldWorkerService;
+
     @Autowired
     public LocationRestController(LocationService locationService,
-                                  LocationHierarchyService locationHierarchyService) {
+                                  LocationHierarchyService locationHierarchyService,
+                                  FieldWorkerService fieldWorkerService) {
         super(locationService);
         this.locationService = locationService;
         this.locationHierarchyService = locationHierarchyService;
+        this.fieldWorkerService = fieldWorkerService;
     }
 
     @Override
     protected Location register(LocationRegistration registration) {
         Location location = registration.getLocation();
         location.setLocationHierarchy(locationHierarchyService.findOne(registration.getLocationHierarchyUuid()));
+        location.setCollectedBy(fieldWorkerService.findOne(registration.getCollectedByUuid()));
         return locationService.createOrUpdate(location);
     }
 

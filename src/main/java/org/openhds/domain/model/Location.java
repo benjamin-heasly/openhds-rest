@@ -23,7 +23,7 @@ public class Location extends AuditableExtIdEntity implements Serializable {
 
     public final static long serialVersionUID = 169551578162260199L;
 
-    @NotNull
+    @NotNull(message = "location name may not be null")
     @Size(min = 1)
     @Description(description = "Name of the location.")
     private String name;

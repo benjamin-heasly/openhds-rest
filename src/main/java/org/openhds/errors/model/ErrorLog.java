@@ -90,7 +90,9 @@ public class ErrorLog extends AuditableCollectedEntity implements Serializable {
         StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder.append(errors.size());
-        stringBuilder.append(" errors: [");
+        stringBuilder.append(" errors for entity type ");
+        stringBuilder.append(entityType);
+        stringBuilder.append(" : [");
         for (Error error : errors) {
             stringBuilder.append("\n  ");
             stringBuilder.append(error.getErrorMessage());

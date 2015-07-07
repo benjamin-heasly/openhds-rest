@@ -15,7 +15,7 @@ public abstract class AuditableExtIdEntity extends AuditableCollectedEntity impl
 
     private static final long serialVersionUID = 3558923575991767767L;
 
-    @NotNull
+    @NotNull(message = "entity extId may not be null")
     @Size(min = 1)
     @Description(description = "User-facing identifier for this entity.")
     protected String extId;
