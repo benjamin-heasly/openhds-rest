@@ -11,7 +11,6 @@ import java.util.Optional;
 
 public interface LocationHierarchyLevelRepository extends AuditableRepository<LocationHierarchyLevel> {
 
-    Optional<LocationHierarchyLevel> findByDeletedFalseAndKeyIdentifier(int key);
     Optional<LocationHierarchyLevel> findByDeletedFalseAndName(String name);
 
 }

@@ -12,6 +12,4 @@ import java.util.Optional;
 
 public interface UserRepository extends UuidIdentifiableRepository<User> {
     Optional<User> findByUsername(String name);
-    List<User> findByFirstName(String name);
-    List<User> findByLastName(String name);
 }

@@ -2,10 +2,13 @@ package org.openhds.service.contract;
 
 import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.errors.model.ErrorLog;
+import org.openhds.repository.concrete.UserRepository;
 import org.openhds.repository.contract.AuditableRepository;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.security.model.User;
 import org.openhds.security.model.UserDetailsWrapper;
+import org.openhds.service.impl.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -23,12 +26,14 @@ public abstract class AbstractAuditableService
         super(repository);
     }
 
+    @Autowired
+    private UserService userService;
+
     @Override
     public T createOrUpdate(T entity){
 
 
-        UserDetailsWrapper wrapper = (UserDetailsWrapper) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = wrapper.getUser();
+        User user = userService.getCurrentUser();
         ZonedDateTime now = ZonedDateTime.now();
 
         //Check to see if we're creating or updating the entity

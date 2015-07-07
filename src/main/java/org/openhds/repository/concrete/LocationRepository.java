@@ -12,7 +12,4 @@ import java.util.List;
 
 public interface LocationRepository extends AuditableExtIdRepository<Location> {
 
-    List<Location> findByName(String name);
-    List<Location> findByLocationHierarchy(LocationHierarchy parent);
-
 }
