@@ -9,8 +9,10 @@ import org.openhds.resource.contract.AuditableCollectedRestControllerTest;
 import org.openhds.resource.registration.ErrorLogRegistration;
 import org.openhds.resource.registration.Registration;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MvcResult;
+
+import java.time.ZonedDateTime;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
@@ -46,6 +48,8 @@ public class ErrorLogRestControllerTest extends AuditableCollectedRestController
         error.setErrorMessage(name);
         errorLog.getErrors().add(error);
 
+        errorLog.setCollectionDateTime(ZonedDateTime.now());
+
         return errorLog;
     }
 
@@ -75,7 +79,7 @@ public class ErrorLogRestControllerTest extends AuditableCollectedRestController
     }
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void query() throws Exception {
         ErrorLog first = insertFancyAndReturn("first", "first-id", "first-status", "first-assigned", "first-entity");
         ErrorLog second = insertFancyAndReturn("second", "second-id", "second-status", "second-assigned", "second-entity");
@@ -137,8 +141,8 @@ public class ErrorLogRestControllerTest extends AuditableCollectedRestController
                 .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(1)));
     }
 
-    private ErrorLog insertFancyAndReturn(String id,
-                                          String name,
+    private ErrorLog insertFancyAndReturn(String name,
+                                          String id,
                                           String resolutionStatus,
                                           String assignedTo,
                                           String entityType) throws Exception {

@@ -2,17 +2,18 @@ package org.openhds.service.impl;
 
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.errors.endpoint.ErrorServiceEndPoint;
-import org.openhds.errors.model.*;
+import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.ErrorLogRepository;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
-@Component
+@Service
 public class ErrorLogService extends AbstractAuditableCollectedService<ErrorLog, ErrorLogRepository> {
 
     @Autowired
@@ -29,22 +30,27 @@ public class ErrorLogService extends AbstractAuditableCollectedService<ErrorLog,
     @Override
     protected ErrorLog makeUnknownEntity() {
         ErrorLog errorLog = new ErrorLog();
+        errorLog.setCollectionDateTime(ZonedDateTime.now());
         errorLog.setCollectedBy(fieldWorkerService.getUnknownEntity());
         return errorLog;
     }
 
-    public ErrorLog logError(ErrorLog error) {
-        if (null == error.getCollectedBy()) {
-            error.setCollectedBy(fieldWorkerService.getUnknownEntity());
+    public ErrorLog logError(ErrorLog errorLog) {
+        if (null == errorLog.getCollectedBy()) {
+            errorLog.setCollectedBy(fieldWorkerService.getUnknownEntity());
+        }
+
+        if (null == errorLog.getCollectionDateTime()) {
+            errorLog.setCollectionDateTime(ZonedDateTime.now());
         }
 
         for (ErrorServiceEndPoint errorEndPoint : errorEndPoints) {
-            errorEndPoint.logError(error);
+            errorEndPoint.logError(errorLog);
         }
 
-        return error;
+        return errorLog;
     }
-    
+
     public EntityIterator<ErrorLog> findAllErrorsByEntityType(String entityType, Sort sort) {
         return iteratorFromPageable(pageable -> repository.findByEntityType(entityType, pageable), sort);
     }
@@ -68,4 +74,6 @@ public class ErrorLogService extends AbstractAuditableCollectedService<ErrorLog,
     public EntityIterator<ErrorLog> findAllErrorsByFieldWorker(FieldWorker fieldWorker, Sort sort) {
         return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndCollectedBy(fieldWorker, pageable), sort);
     }
+
+
 }

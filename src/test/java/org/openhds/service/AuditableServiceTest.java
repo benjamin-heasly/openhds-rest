@@ -4,7 +4,7 @@ import org.junit.Test;
 import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.security.model.User;
 import org.openhds.service.contract.AbstractAuditableService;
-import org.springframework.data.domain.Sort;
+import org.springframework.security.test.context.support.WithUserDetails;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -19,8 +19,9 @@ public abstract class AuditableServiceTest
         <T extends AuditableEntity, U extends AbstractAuditableService<T, ?>>
         extends UuidServiceTest<T, U> {
 
-    private static final Sort UUID_SORT = new Sort("uuid");
-
+    /**
+     * Simply check that results are not null after a findAll call
+     */
     @Test
     public void findAll() {
 
@@ -31,6 +32,7 @@ public abstract class AuditableServiceTest
 
 
     @Test
+    @WithUserDetails
     public void update() {
 
         String id = "testId";
@@ -46,19 +48,22 @@ public abstract class AuditableServiceTest
 
     }
 
+    /**
+     * Creates an entity with a late insertDate and an entity with an early insertDate
+     * checks that the results between those two times is exactly 2 and that everything before and after
+     * is not 0.
+     */
+
     @Test
+    @WithUserDetails
     public void findByInsertDate() {
 
-        ZonedDateTime earlyTime = ZonedDateTime.parse("2007-12-03T10:15:30+01:00[Europe/Paris]");
-        ZonedDateTime lateTime = ZonedDateTime.parse("2008-12-03T10:15:30+01:00[Europe/Paris]");
-
         T earlyEntity = makeValidEntity("earlyEntity", "earlyEntity");
-        earlyEntity.setInsertDate(earlyTime);
-        T lateEntity = makeValidEntity("lateEntity", "lateEntity");
-        lateEntity.setInsertDate(lateTime);
+        ZonedDateTime earlyTime = service.createOrUpdate(earlyEntity).getInsertDate();
 
-        service.createOrUpdate(earlyEntity);
-        service.createOrUpdate(lateEntity);
+        T lateEntity = makeValidEntity("lateEntity", "lateEntity");
+        ZonedDateTime lateTime = service.createOrUpdate(lateEntity).getInsertDate();
+
 
         List<T> betweenReslts = service.findByInsertDate(UUID_SORT, earlyTime, lateTime).toList();
         assertEquals(betweenReslts.size(), 2);
@@ -72,18 +77,15 @@ public abstract class AuditableServiceTest
     }
 
     @Test
+    @WithUserDetails
     public void findByLastModifiedDate() {
 
-        ZonedDateTime earlyTime = ZonedDateTime.parse("2007-12-03T10:15:30+01:00[Europe/Paris]");
-        ZonedDateTime lateTime = ZonedDateTime.parse("2008-12-03T10:15:30+01:00[Europe/Paris]");
-
         T earlyEntity = makeValidEntity("earlyEntity", "earlyEntity");
-        earlyEntity.setLastModifiedDate(earlyTime);
-        T lateEntity = makeValidEntity("lateEntity", "lateEntity");
-        lateEntity.setLastModifiedDate(lateTime);
+        ZonedDateTime earlyTime = service.createOrUpdate(earlyEntity).getLastModifiedDate();
 
-        service.createOrUpdate(earlyEntity);
-        service.createOrUpdate(lateEntity);
+        T lateEntity = makeValidEntity("lateEntity", "lateEntity");
+        ZonedDateTime lateTime = service.createOrUpdate(lateEntity).getLastModifiedDate();
+
 
         List<T> betweenReslts = service.findByLastModifiedDate(UUID_SORT, earlyTime, lateTime).toList();
         assertEquals(betweenReslts.size(), 2);
@@ -97,6 +99,7 @@ public abstract class AuditableServiceTest
     }
 
     @Test
+    @WithUserDetails
     public void delete() {
 
         int entityCount = service.findAll(UUID_SORT).toList().size();
@@ -115,28 +118,28 @@ public abstract class AuditableServiceTest
     }
 
     @Test
+    @WithUserDetails
     public void findByInsertBy() {
 
         T entity = makeValidEntity("testEntity", "testEntity");
-        User user = entity.getInsertBy();
+        User user = service.createOrUpdate(entity).getInsertBy();
 
         int entityCount = service.findByInsertBy(UUID_SORT, user).toList().size();
-
-        service.createOrUpdate(entity);
+        service.createOrUpdate(makeValidEntity("anotherTestEntity", "anotherTestEntity"));
 
         assertEquals(service.findByInsertBy(UUID_SORT, user).toList().size(), entityCount + 1);
 
     }
 
     @Test
+    @WithUserDetails
     public void findByLastModifiedBy() {
 
         T entity = makeValidEntity("testEntity", "testEntity");
-        User user = entity.getLastModifiedBy();
+        User user = service.createOrUpdate(entity).getLastModifiedBy();
 
         int entityCount = service.findByLastModifiedBy(UUID_SORT, user).toList().size();
-
-        service.createOrUpdate(entity);
+        service.createOrUpdate(makeValidEntity("anotherTestEntity", "anotherTestEntity"));
 
         assertEquals(service.findByLastModifiedBy(UUID_SORT, user).toList().size(), entityCount + 1);
 

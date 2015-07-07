@@ -1,7 +1,7 @@
 package org.openhds.resource.controller;
 
 import org.openhds.domain.model.FieldWorker;
-import org.openhds.errors.model.*;
+import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.ErrorLogRepository;
 import org.openhds.repository.concrete.UserRepository;
 import org.openhds.repository.queries.QueryRange;
@@ -27,7 +27,10 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.ConstraintViolationException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+
+import static org.openhds.repository.util.QueryUtil.dateQueryRange;
 
 /**
  * Created by bsh on 6/29/15.
@@ -90,18 +93,9 @@ public class ErrorLogRestController extends AuditableCollectedRestController<Err
                                         @RequestParam(value = "maxDate", required = false) ZonedDateTime maxDate) {
 
         List<QueryValue> properties = new ArrayList<>();
-
-        if (resolutionStatus != null && !resolutionStatus.isEmpty()) {
-            properties.add(new QueryValue("resolutionStatus", resolutionStatus));
-        }
-
-        if (assignedTo != null && !assignedTo.isEmpty()) {
-            properties.add(new QueryValue("assignedTo", assignedTo));
-        }
-
-        if (entityType != null && !entityType.isEmpty()) {
-            properties.add(new QueryValue("entityType", entityType));
-        }
+        addIfPresent(properties, "resolutionStatus", resolutionStatus);
+        addIfPresent(properties, "assignedTo", assignedTo);
+        addIfPresent(properties, "entityType", entityType);
 
         if (fieldWorkerId != null && !fieldWorkerId.isEmpty()) {
             EntityIterator<FieldWorker> fieldWorkers = fieldWorkerService.findByMultipleValues(
@@ -112,24 +106,18 @@ public class ErrorLogRestController extends AuditableCollectedRestController<Err
             }
         }
 
-        // default to errors up until now
-        ZonedDateTime rangeMax = ZonedDateTime.now();
-        if (maxDate != null) {
-            rangeMax = maxDate;
-        }
-
-        // default to date range of one week
-        ZonedDateTime rangeMin = rangeMax.minusDays(7);
-        if (minDate != null) {
-            rangeMin = minDate;
-        }
-
-        QueryRange<ZonedDateTime> dateRange = new QueryRange<>("insertDate", rangeMin, rangeMax);
+        QueryRange<ZonedDateTime> dateRange = dateQueryRange("insertDate", minDate, maxDate);
         Page<ErrorLog> errorLogs = errorLogService.findByMultipleValuesRanged(
                 pageable,
                 dateRange,
                 properties.toArray(new QueryValue[properties.size()]));
 
         return assembler.toResource(errorLogs, entityLinkAssembler);
+    }
+
+    private static void addIfPresent(Collection<QueryValue> properties, String propertyName, String property) {
+        if (property != null && !property.trim().isEmpty()) {
+            properties.add(new QueryValue(propertyName, property));
+        }
     }
 }

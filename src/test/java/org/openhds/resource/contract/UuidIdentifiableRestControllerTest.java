@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.http.MockHttpInputMessage;
 import org.springframework.mock.http.MockHttpOutputMessage;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.io.IOException;
@@ -100,7 +101,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
     // POST
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void postNewJson() throws Exception {
         T entity = makeValidEntity("test registration", "test id");
 
@@ -115,7 +116,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
     }
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void postNewXml() throws Exception {
         T entity = makeValidEntity("test registration", "test id");
 
@@ -131,7 +132,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
     }
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void postUpdate() throws Exception {
         T entity = makeUpdateEntity("test update");
 
@@ -146,7 +147,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
     }
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void postInvalid() throws Exception {
         this.mockMvc.perform(post(getResourceUrl())
                 .contentType(regularJson)
@@ -157,7 +158,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
     // PUT
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void putNew() throws Exception {
         final String uuid = UUID.randomUUID().toString();
         T entity = makeValidEntity("test registration", "ignored id");
@@ -173,7 +174,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
     }
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void putNewXml() throws Exception {
         final String uuid = UUID.randomUUID().toString();
         T entity = makeValidEntity("test registration", "ignored id");
@@ -190,7 +191,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
     }
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void putUpdate() throws Exception {
         T entity = makeUpdateEntity("test update");
 
@@ -205,7 +206,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
     }
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void putInvalid() throws Exception {
         final String uuid = UUID.randomUUID().toString();
 
@@ -218,7 +219,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
     // GET
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void getSingleValid() throws Exception {
         T entity = findAnyExisting();
         mockMvc.perform(get(getResourceUrl() + entity.getUuid())
@@ -229,7 +230,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
     }
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void getSingleValidXml() throws Exception {
         T entity = findAnyExisting();
         mockMvc.perform(get(getResourceUrl() + entity.getUuid())
@@ -240,14 +241,14 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
     }
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void getSingleInvalid() throws Exception {
         mockMvc.perform(get(getResourceUrl() + "invalid id"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void getAll() throws Exception {
         mockMvc.perform(get(getResourceUrl()))
                 .andExpect(status().isOk())
@@ -256,7 +257,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
     }
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void getPaged() throws Exception {
         // get the first page of size 1
         mockMvc.perform(get(getResourceUrl())
@@ -271,7 +272,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
     }
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void getBulkJson() throws Exception {
         mockMvc.perform(get(getResourceUrl() + "/bulk")
                 .param("sort", "uuid")
@@ -282,7 +283,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
     }
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void getBulkXml() throws Exception {
         mockMvc.perform(get(getResourceUrl() + "/bulk")
                 .param("sort", "uuid")
@@ -295,14 +296,14 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
     // DELETE
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void deleteCollection() throws Exception {
         mockMvc.perform(delete(getResourceUrl()))
                 .andExpect(status().isMethodNotAllowed());
     }
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void deleteInvalid() throws Exception {
         final String invalidId = "not an id";
         mockMvc.perform(delete(getResourceUrl() + invalidId))
@@ -310,7 +311,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
     }
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void deleteExisting() throws Exception {
         T entity = findAnyExisting();
         MvcResult mvcResult = mockMvc.perform(delete(getResourceUrl() + entity.getUuid()))
@@ -320,7 +321,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
     }
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void deleteNew() throws Exception {
         T entity = makeValidEntity("delete me", "test id");
         this.mockMvc.perform(post(getResourceUrl())

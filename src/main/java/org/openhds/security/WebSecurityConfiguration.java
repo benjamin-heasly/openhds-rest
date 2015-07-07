@@ -1,6 +1,7 @@
 package org.openhds.security;
 
 import org.openhds.repository.concrete.UserRepository;
+import org.openhds.security.model.UserDetailsWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -10,8 +11,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
@@ -40,11 +39,7 @@ public class WebSecurityConfiguration {
         @Bean
         public UserDetailsService userDetailsService() {
             return (username) -> userRepository.findByUsername(username)
-                    .map((org.openhds.security.model.User u) -> new User(
-                            u.getUsername(),
-                            u.getPassword(),
-                            true, true, true, true,
-                            AuthorityUtils.createAuthorityList(u.getPrivilegeNames().toArray(new String[0]))))
+                    .map((org.openhds.security.model.User u) -> new UserDetailsWrapper(u))
                     .orElseThrow(() -> new UsernameNotFoundException("No such user: " + username));
         }
     }

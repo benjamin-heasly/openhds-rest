@@ -3,7 +3,7 @@ package org.openhds.resource.contract;
 import org.junit.Test;
 import org.openhds.domain.contract.AuditableExtIdEntity;
 import org.openhds.repository.contract.AuditableExtIdRepository;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -22,7 +22,7 @@ public abstract class AuditableExtIdRestControllerTest<T extends AuditableExtIdE
     }
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void getExternalValid() throws Exception {
         T entity = findAnyExisting();
         mockMvc.perform(get(getExternalResourceUrl() + entity.getExtId()))
@@ -32,7 +32,7 @@ public abstract class AuditableExtIdRestControllerTest<T extends AuditableExtIdE
     }
 
     @Test
-    @WithMockUser(username = username, password = password)
+    @WithUserDetails
     public void getExternalInvalid() throws Exception {
         mockMvc.perform(get(getExternalResourceUrl() + "invalid id"))
                 .andExpect(status().isNotFound());

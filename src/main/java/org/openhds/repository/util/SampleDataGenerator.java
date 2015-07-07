@@ -6,8 +6,10 @@ import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.Location;
 import org.openhds.domain.model.LocationHierarchy;
 import org.openhds.domain.model.LocationHierarchyLevel;
-import org.openhds.errors.model.ErrorLog;
 import org.openhds.errors.model.Error;
+import org.openhds.errors.model.ErrorLog;
+import org.openhds.events.model.Event;
+import org.openhds.events.model.EventMetadata;
 import org.openhds.repository.concrete.*;
 import org.openhds.security.model.Privilege;
 import org.openhds.security.model.Role;
@@ -56,7 +58,16 @@ public class SampleDataGenerator {
     @Autowired
     private ErrorLogRepository errorLogRepository;
 
+    @Autowired
+    private EventMetadataRepository eventMetadataRepository;
+
+    @Autowired
+    private EventRepository eventRepository;
+
     public void clearData() {
+        eventMetadataRepository.deleteAllInBatch();
+        eventRepository.deleteAllInBatch();
+
         errorRepository.deleteAllInBatch();
         errorLogRepository.deleteAllInBatch();
 
@@ -69,6 +80,7 @@ public class SampleDataGenerator {
         userRepository.deleteAllInBatch();
         roleRepository.deleteAllInBatch();
         privilegeRepository.deleteAllInBatch();
+
     }
 
     public void generateSampleData() {
@@ -77,8 +89,12 @@ public class SampleDataGenerator {
         addRole("user-role", Privilege.Grant.values());
         addUser("user", "password", "user-role");
 
+
         addRole("empty-role");
         addUser("non-user", "password", "empty-role");
+
+
+
 
         addFieldWorker("fieldworker", "password");
 
@@ -98,6 +114,8 @@ public class SampleDataGenerator {
         addLocation("duplicated", "bottom-two");
 
         addErrorLog("sample error");
+
+        addEvent("sample event", "sample system");
     }
 
     private void addPrivileges(Privilege.Grant... grants) {
@@ -118,6 +136,7 @@ public class SampleDataGenerator {
 
     private void addUser(String name, String password, String roleName) {
         User user = new User();
+        user.setUuid(name);
         user.setFirstName(name);
         user.setLastName(name);
         user.setUsername(name);
@@ -138,6 +157,7 @@ public class SampleDataGenerator {
     private void initCollectedFields(AuditableCollectedEntity auditableCollectedEntity) {
         FieldWorker fieldWorker = fieldWorkerRepository.findAll().get(0);
         auditableCollectedEntity.setCollectedBy(fieldWorker);
+        auditableCollectedEntity.setCollectionDateTime(ZonedDateTime.now());
     }
 
     private void addFieldWorker(String name, String password) {
@@ -200,5 +220,21 @@ public class SampleDataGenerator {
         errorLog.getErrors().add(error);
 
         errorLogRepository.save(errorLog);
+    }
+
+    private void addEvent(String description, String system) {
+        Event event = new Event();
+        initAuditableFields(event);
+
+        event.setActionType(Event.DEFAULT_ACTION);
+        event.setEntityType(Event.DEFAULT_ENTITY);
+        event.setEventData(description);
+
+        EventMetadata defaultMetadata = new EventMetadata();
+        defaultMetadata.setSystem(Event.DEFAULT_SYSTEM);
+        defaultMetadata.setStatus(Event.DEFAULT_STATUS);
+        event.getEventMetadata().add(defaultMetadata);
+
+        eventRepository.save(event);
     }
 }
