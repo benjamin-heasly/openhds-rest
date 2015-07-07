@@ -80,8 +80,26 @@ public class ErrorLog extends AuditableCollectedEntity implements Serializable {
         this.dateOfResolution = dateOfResolution;
     }
 
+
     public void appendError(String errorMessage) {
         Error error = new Error(errorMessage);
         errors.add(error);
+    }
+
+    public String getDetails() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append(errors.size());
+        stringBuilder.append(" errors: [");
+        for (Error error : errors) {
+            stringBuilder.append("\n  ");
+            stringBuilder.append(error.getErrorMessage());
+        }
+        stringBuilder.append("]\n");
+
+        stringBuilder.append("See ErrorLog with uuid: ");
+        stringBuilder.append(uuid);
+
+        return stringBuilder.toString();
     }
 }

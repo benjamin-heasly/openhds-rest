@@ -3,6 +3,7 @@ package org.openhds.service.contract;
 import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.errors.model.Error;
 import org.openhds.errors.model.ErrorLog;
+import org.openhds.errors.model.ErrorLogException;
 import org.openhds.errors.util.ErrorLogger;
 import org.openhds.repository.contract.UuidIdentifiableRepository;
 import org.openhds.repository.queries.QueryRange;
@@ -86,7 +87,7 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
 
         if (!errorLog.getErrors().isEmpty()) {
             errorLogger.log(errorLog);
-            // TODO: throw new ErrorLogException(errorLog) :::: doing this requires handling the exception
+            throw new ErrorLogException(errorLog);
         } else {
             repository.save(entity);
             //TODO: log event
