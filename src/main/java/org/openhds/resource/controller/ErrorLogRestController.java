@@ -52,6 +52,12 @@ public class ErrorLogRestController extends AuditableCollectedRestController<
         this.fieldWorkerService = fieldWorkerService;
     }
 
+    private static void addIfPresent(Collection<QueryValue> properties, String propertyName, String property) {
+        if (property != null && !property.trim().isEmpty()) {
+            properties.add(new QueryValue(propertyName, property));
+        }
+    }
+
     @Override
     protected ErrorLog register(ErrorLogRegistration registration) {
         ErrorLog errorLog = registration.getErrorLog();
@@ -96,11 +102,5 @@ public class ErrorLogRestController extends AuditableCollectedRestController<
                 properties.toArray(new QueryValue[properties.size()]));
 
         return assembler.toResource(errorLogs, entityLinkAssembler);
-    }
-
-    private static void addIfPresent(Collection<QueryValue> properties, String propertyName, String property) {
-        if (property != null && !property.trim().isEmpty()) {
-            properties.add(new QueryValue(propertyName, property));
-        }
     }
 }

@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.ZonedDateTime;
-import java.util.NoSuchElementException;
 
 /**
  * Created by Ben on 6/16/15.
@@ -61,6 +60,7 @@ public abstract class AuditableRestController<
                                             @RequestParam(required = false)
                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                             ZonedDateTime beforeDate) {
+
         PageIterator<T> pageIterator = new PageIterator<>((pageable) -> service.findByLastModifiedDate(pageable, afterDate, beforeDate), sort);
         EntityIterator<T> entityIterator = new PagingEntityIterator<>(pageIterator);
         entityIterator.setCollectionName(getResourceName());

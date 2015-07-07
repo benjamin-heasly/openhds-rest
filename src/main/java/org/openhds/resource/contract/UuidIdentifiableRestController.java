@@ -36,13 +36,11 @@ public abstract class UuidIdentifiableRestController<
         U extends Registration<T>,
         V extends AbstractUuidService<T, ? extends UuidIdentifiableRepository<T>>> {
 
+    private final V service;
     @Autowired
     protected EntityLinkAssembler entityLinkAssembler;
-
     @Autowired
     protected ControllerRegistry controllerRegistry;
-
-    private final V service;
 
     public UuidIdentifiableRestController(V service) {
         this.service = service;
@@ -58,6 +56,7 @@ public abstract class UuidIdentifiableRestController<
 
     // templates to be implemented with entity services, etc.
     protected abstract T register(U registration);
+
     protected abstract T register(U registration, String id);
 
     // optionally add entity-specific links to a HATEOAS resource

@@ -7,7 +7,6 @@ import org.openhds.resource.links.EntityLinkAssembler;
 import org.openhds.resource.registration.Registration;
 import org.openhds.service.contract.AbstractAuditableExtIdService;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;

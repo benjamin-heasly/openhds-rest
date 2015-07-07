@@ -17,21 +17,13 @@ import java.util.Iterator;
  * Created by Ben on 6/17/15.
  * <p>
  * Wrap an existing message converter to iterate many results.
- *
+ * <p>
  * Article with method override advice.
  * https://www.airpair.com/java/posts/spring-streams-memory-efficiency
- *
  */
 public class EntityCollectionMessageWriter extends AbstractHttpMessageConverter<EntityIterator<?>> {
 
-    public interface Delimiter {
-        void writePrefix(OutputStream outputStream, EntityIterator<?> entityIterator) throws IOException;
-        void writeDelimiter(OutputStream outputStream, EntityIterator<?> entityIterator) throws IOException;
-        void writeSuffix(OutputStream outputStream, EntityIterator<?> entityIterator) throws IOException;
-    }
-
     private final AbstractJackson2HttpMessageConverter converter;
-
     private final Delimiter delimiter;
 
     public EntityCollectionMessageWriter(AbstractJackson2HttpMessageConverter converter, Delimiter delimiter) {
@@ -87,6 +79,14 @@ public class EntityCollectionMessageWriter extends AbstractHttpMessageConverter<
                 delimiter.writeSuffix(outputStream, entityIterator);
             }
         }
+    }
+
+    public interface Delimiter {
+        void writePrefix(OutputStream outputStream, EntityIterator<?> entityIterator) throws IOException;
+
+        void writeDelimiter(OutputStream outputStream, EntityIterator<?> entityIterator) throws IOException;
+
+        void writeSuffix(OutputStream outputStream, EntityIterator<?> entityIterator) throws IOException;
     }
 
 }

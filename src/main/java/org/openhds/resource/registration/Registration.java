@@ -6,18 +6,17 @@ import java.time.ZonedDateTime;
 
 /**
  * Created by Ben on 5/26/15.
- *
+ * <p>
  * Part of the contract for data coming into OpenHDS: entities may not be registered in "raw" form.  They must be
  * wrapped up in a Registration.
- *
+ * <p>
  * The Registration carries form-level metadata, like registrationVersion, which should be logged to aid auditing and
  * debugging.
- *
+ * <p>
  * The Registration also carries id information to link the registered entity with other entities that must be found
  * or created.  The client can work with this flat representation and it only has to fill in correct ids.   This avoids
  * asking the client to construct a complex object graph to represent a new entity with all its relationships.  This
  * would be brittle and it would expose too much implementation to the client.
- *
  */
 public abstract class Registration<T extends UuidIdentifiable> {
 

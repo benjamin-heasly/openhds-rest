@@ -51,6 +51,11 @@ public class EventRestController extends AuditableRestController<
         this.eventService = eventService;
     }
 
+    private static void addIfPresent(Collection<QueryValue> properties, String propertyName, String value) {
+        if (value != null && !value.trim().isEmpty()) {
+            properties.add(new QueryValue(propertyName, value));
+        }
+    }
 
     @Override
     protected Event register(EventRegistration registration) {
@@ -66,10 +71,10 @@ public class EventRestController extends AuditableRestController<
     @RequestMapping(value = "query", method = RequestMethod.GET)
     public PagedResources findEvents(Pageable pageable,
                                      PagedResourcesAssembler assembler,
-                                     @RequestParam(value="system", defaultValue = Event.DEFAULT_SYSTEM) String system,
-                                     @RequestParam(value="status", required=false) String status,
-                                     @RequestParam(value="actionType", required=false) String actionType,
-                                     @RequestParam(value="entityType", required=false) String entityType,
+                                     @RequestParam(value = "system", defaultValue = Event.DEFAULT_SYSTEM) String system,
+                                     @RequestParam(value = "status", required = false) String status,
+                                     @RequestParam(value = "actionType", required = false) String actionType,
+                                     @RequestParam(value = "entityType", required = false) String entityType,
                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                      @RequestParam(value = "minDate", required = false) ZonedDateTime minDate,
                                      @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
@@ -95,10 +100,10 @@ public class EventRestController extends AuditableRestController<
 
     @RequestMapping(value = "query/bulk", method = RequestMethod.GET)
     public EntityIterator<Event> findEventsBulk(Sort sort,
-                                                @RequestParam(value="system", defaultValue = Event.DEFAULT_SYSTEM) String system,
-                                                @RequestParam(value="status", required=false) String status,
-                                                @RequestParam(value="actionType", required=false) String actionType,
-                                                @RequestParam(value="entityType", required=false) String entityType,
+                                                @RequestParam(value = "system", defaultValue = Event.DEFAULT_SYSTEM) String system,
+                                                @RequestParam(value = "status", required = false) String status,
+                                                @RequestParam(value = "actionType", required = false) String actionType,
+                                                @RequestParam(value = "entityType", required = false) String entityType,
                                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                                 @RequestParam(value = "minDate", required = false) ZonedDateTime minDate,
                                                 @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
@@ -123,11 +128,5 @@ public class EventRestController extends AuditableRestController<
         EntityIterator<Event> entityIterator = new PagingEntityIterator<>(pageIterator);
         entityIterator.setCollectionName(getResourceName());
         return new ShallowCopyIterator<>(entityIterator);
-    }
-
-    private static void addIfPresent(Collection<QueryValue> properties, String propertyName, String value) {
-        if (value != null && !value.trim().isEmpty()) {
-            properties.add(new QueryValue(propertyName, value));
-        }
     }
 }
