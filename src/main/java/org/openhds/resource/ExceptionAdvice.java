@@ -1,5 +1,7 @@
 package org.openhds.resource;
 
+import org.openhds.errors.model.ErrorLog;
+import org.openhds.errors.model.ErrorLogException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.hateoas.VndErrors;
 import org.springframework.http.HttpStatus;
@@ -41,6 +43,14 @@ class ExceptionAdvice {
     @ResponseStatus(HttpStatus.CONFLICT)
     public VndErrors constraintException(DataIntegrityViolationException ex) {
         return new VndErrors("Data Conflict", ex.getMessage());
+    }
+
+    @ExceptionHandler(ErrorLogException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public VndErrors errorLogException(ErrorLogException ex) {
+        ErrorLog errorLog = ex.getErrorLog();
+        return new VndErrors("Validation Error", errorLog.getDetails());
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
