@@ -18,6 +18,7 @@ public abstract class AbstractAuditableService
         <T extends AuditableEntity, V extends AuditableRepository<T>>
         extends AbstractUuidService<T, V> {
 
+    private enum DateType {INSERT,VOID,MODIFIED};
 
     public AbstractAuditableService(V repository) {
         super(repository);
@@ -60,51 +61,20 @@ public abstract class AbstractAuditableService
 
     public EntityIterator<T> findByInsertDate(Sort sort, ZonedDateTime insertedAfter, ZonedDateTime insertedBefore) {
 
-        if (null != insertedAfter && null != insertedBefore) {
+        return findByDate(DateType.INSERT,sort,insertedAfter, insertedBefore);
 
-            return iteratorFromPageable(
-                    pageable -> repository.findByDeletedFalseAndInsertDateBetween(insertedAfter, insertedBefore, pageable), sort);
+    }
 
-        } else if (null != insertedAfter) {
+    public EntityIterator<T> findByVoidDate(Sort sort, ZonedDateTime voidedAfter, ZonedDateTime voidedBefore) {
 
-            return iteratorFromPageable(
-                    pageable -> repository.findByDeletedFalseAndInsertDateAfter(insertedAfter, pageable), sort);
-
-        } else if (null != insertedBefore) {
-
-            return iteratorFromPageable(
-                    pageable -> repository.findByDeletedFalseAndInsertDateBefore(insertedBefore, pageable), sort);
-
-        } else {
-
-            return findAll(sort);
-
-        }
+        return findByDate(DateType.VOID,sort,voidedAfter, voidedBefore);
 
     }
 
     public EntityIterator<T> findByLastModifiedDate(Sort sort, ZonedDateTime modifiedAfter, ZonedDateTime modifiedBefore) {
 
-        if (null != modifiedAfter && null != modifiedBefore) {
+        return findByDate(DateType.MODIFIED,sort,modifiedAfter, modifiedBefore);
 
-            return iteratorFromPageable(
-                    pageable -> repository.findByDeletedFalseAndLastModifiedDateBetween(modifiedAfter, modifiedBefore, pageable), sort);
-
-        } else if (null != modifiedAfter) {
-
-            return iteratorFromPageable(
-                    pageable -> repository.findByDeletedFalseAndLastModifiedDateAfter(modifiedAfter, pageable), sort);
-
-        } else if (null != modifiedBefore) {
-
-            return iteratorFromPageable(
-                    pageable -> repository.findByDeletedFalseAndLastModifiedDateBefore(modifiedBefore, pageable), sort);
-
-        } else {
-
-            return findAll(sort);
-
-        }
 
     }
 
@@ -123,6 +93,10 @@ public abstract class AbstractAuditableService
         return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndInsertBy(user, pageable), sort);
     }
 
+    public EntityIterator<T> findByVoidBy(Sort sort, User user) {
+        return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndVoidBy(user, pageable), sort);
+    }
+
     @Override
     public void validate(T entity, ErrorLog errorLog) {
         super.validate(entity, errorLog);
@@ -134,4 +108,49 @@ public abstract class AbstractAuditableService
         return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndLastModifiedBy(user, pageable), sort);
     }
 
+    private EntityIterator<T> findByDate(DateType dateType, Sort sort, ZonedDateTime after, ZonedDateTime before){
+
+        if (null != after && null != before) {
+            switch (dateType){
+                case VOID:
+                    return iteratorFromPageable(
+                            pageable -> repository.findByDeletedFalseAndVoidDateBetween(after, before, pageable), sort);
+                case INSERT:
+                    return iteratorFromPageable(
+                            pageable -> repository.findByDeletedFalseAndInsertDateBetween(after, before, pageable), sort);
+                case MODIFIED:
+                    return iteratorFromPageable(
+                            pageable -> repository.findByDeletedFalseAndLastModifiedDateBetween(after, before, pageable), sort);
+            }
+
+        } else if (null != after) {
+            switch (dateType){
+                case VOID:
+                    return iteratorFromPageable(
+                            pageable -> repository.findByDeletedFalseAndVoidDateAfter(after, pageable), sort);
+                case INSERT:
+                    return iteratorFromPageable(
+                            pageable -> repository.findByDeletedFalseAndInsertDateAfter(after, pageable), sort);
+                case MODIFIED:
+                    return iteratorFromPageable(
+                            pageable -> repository.findByDeletedFalseAndLastModifiedDateAfter(after, pageable), sort);
+            }
+
+        } else if (null != before) {
+            switch (dateType){
+                case VOID:
+                    return iteratorFromPageable(
+                            pageable -> repository.findByDeletedFalseAndVoidDateBefore(before, pageable), sort);
+                case INSERT:
+                    return iteratorFromPageable(
+                            pageable -> repository.findByDeletedFalseAndInsertDateBefore(before, pageable), sort);
+                case MODIFIED:
+                    return iteratorFromPageable(
+                            pageable -> repository.findByDeletedFalseAndLastModifiedDateBefore(before, pageable), sort);
+            }
+        }
+
+        return findAll(sort);
+
+    }
 }
