@@ -11,8 +11,5 @@ import org.openhds.repository.contract.AuditableExtIdRepository;
 import java.util.List;
 
 public interface LocationHierarchyRepository extends AuditableExtIdRepository<LocationHierarchy> {
-    List<LocationHierarchy> findByExtId(String extId);
-    List<LocationHierarchy> findByName(String name);
-    List<LocationHierarchy> findByParent(LocationHierarchy parent);
-    List<LocationHierarchy> findByLevel(LocationHierarchyLevel locationHierarchyLevel);
+
 }

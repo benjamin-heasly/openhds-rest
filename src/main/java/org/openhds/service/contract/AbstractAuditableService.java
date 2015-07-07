@@ -5,9 +5,9 @@ import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.contract.AuditableRepository;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.security.model.User;
-import org.openhds.security.model.UserDetailsWrapper;
+import org.openhds.security.model.UserHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.ZonedDateTime;
 
@@ -23,20 +23,22 @@ public abstract class AbstractAuditableService
         super(repository);
     }
 
+    @Autowired
+    private UserHelper userHelper;
+
     @Override
-    public T createOrUpdate(T entity){
+    public T createOrUpdate(T entity) {
 
 
-        UserDetailsWrapper wrapper = (UserDetailsWrapper) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = wrapper.getUser();
+        User user = userHelper.getCurrentUser();
         ZonedDateTime now = ZonedDateTime.now();
 
         //Check to see if we're creating or updating the entity
-        if(null == entity.getInsertDate()){
+        if (null == entity.getInsertDate()) {
             entity.setInsertDate(now);
         }
 
-        if(null == entity.getInsertBy()){
+        if (null == entity.getInsertBy()) {
             entity.setInsertBy(user);
         }
 
@@ -120,7 +122,7 @@ public abstract class AbstractAuditableService
     public EntityIterator<T> findByInsertBy(Sort sort, User user) {
         return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndInsertBy(user, pageable), sort);
     }
-    
+
     @Override
     public void validate(T entity, ErrorLog errorLog) {
         super.validate(entity, errorLog);
