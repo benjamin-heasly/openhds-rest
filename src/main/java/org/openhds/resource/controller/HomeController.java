@@ -15,9 +15,8 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
  * Created by Ben on 5/20/15.
- *
+ * <p>
  * Entry point for clients connecting to OpenHDS.  Points to known resources.
- *
  */
 @RestController
 public class HomeController {
@@ -43,7 +42,7 @@ public class HomeController {
         return resource;
     }
 
-    private String getNowString(){
+    private String getNowString() {
         ZonedDateTime now = ZonedDateTime.now(Clock.systemUTC());
         return now.toString();
     }

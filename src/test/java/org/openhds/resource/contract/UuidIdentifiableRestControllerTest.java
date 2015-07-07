@@ -5,6 +5,8 @@ import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.repository.contract.UuidIdentifiableRepository;
 import org.openhds.resource.controller.RestControllerTestSupport;
 import org.openhds.resource.registration.Registration;
+import org.openhds.service.contract.AbstractUuidService;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.http.MockHttpInputMessage;
@@ -25,12 +27,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 /**
  * Created by Ben on 5/4/15.
  */
-public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifiable,
-        U extends UuidIdentifiableRepository<T>,
-        V extends UuidIdentifiableRestController<T, ?>>
+public abstract class UuidIdentifiableRestControllerTest<
+        T extends UuidIdentifiable,
+        U extends AbstractUuidService<T, ? extends UuidIdentifiableRepository<T>>,
+        V extends UuidIdentifiableRestController<T, ? extends Registration<T>, U>>
         extends RestControllerTestSupport {
 
-    protected U repository;
+    protected U service;
 
     protected V controller;
 
@@ -49,7 +52,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
     }
 
     protected T findAnyExisting() {
-        return repository.findAll().get(0);
+        return service.findAll(new Sort("uuid")).toList().get(0);
     }
 
     protected T makeUpdateEntity(String name) {
@@ -253,7 +256,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
         mockMvc.perform(get(getResourceUrl()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize((int) repository.count())));
+                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize((int) service.countAll())));
     }
 
     @Test
@@ -279,7 +282,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
                 .accept(regularJson))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(regularJson))
-                .andExpect(jsonPath("$", hasSize((int) repository.count())));
+                .andExpect(jsonPath("$", hasSize((int) service.countAll())));
     }
 
     @Test
@@ -290,7 +293,7 @@ public abstract class UuidIdentifiableRestControllerTest<T extends UuidIdentifia
                 .accept(regularXml))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(regularXml))
-                .andExpect(xpath("/" + controller.getResourceName() + "/*").nodeCount((int) repository.count()));
+                .andExpect(xpath("/" + controller.getResourceName() + "/*").nodeCount((int) service.countAll()));
     }
 
     // DELETE

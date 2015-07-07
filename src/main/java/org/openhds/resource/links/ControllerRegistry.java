@@ -12,10 +12,9 @@ import java.util.*;
 
 /**
  * Created by Ben on 6/2/15.
- *
+ * <p>
  * Discover our REST controllers and which paths and entities they deal with.
  * Unlike Spring EntityLinks, expose this info for our own purposes.
- *
  */
 @Component
 public class ControllerRegistry {
@@ -30,6 +29,10 @@ public class ControllerRegistry {
     public ControllerRegistry(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
         discoverControllers();
+    }
+
+    private static String firstPathComponent(String[] paths) {
+        return Paths.get(paths[0]).subpath(0, 1).toString();
     }
 
     // Search the application context for entities and their controllers.
@@ -61,10 +64,6 @@ public class ControllerRegistry {
             }
         }
         return annotatedClasses;
-    }
-
-    private static String firstPathComponent(String[] paths) {
-        return Paths.get(paths[0]).subpath(0, 1).toString();
     }
 
     public Map<Class<?>, Class<?>> getEntitiesToControllers() {

@@ -9,6 +9,7 @@ import org.openhds.repository.results.ShallowCopyIterator;
 import org.openhds.resource.links.ControllerRegistry;
 import org.openhds.resource.links.EntityLinkAssembler;
 import org.openhds.resource.registration.Registration;
+import org.openhds.service.contract.AbstractUuidService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,18 +31,19 @@ import java.util.NoSuchElementException;
  * Common interface for REST controllers.
  */
 @RestController
-public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable, U extends Registration<T>> {
+public abstract class UuidIdentifiableRestController<
+        T extends UuidIdentifiable,
+        U extends Registration<T>,
+        V extends AbstractUuidService<T, ? extends UuidIdentifiableRepository<T>>> {
 
+    private final V service;
     @Autowired
     protected EntityLinkAssembler entityLinkAssembler;
-
     @Autowired
     protected ControllerRegistry controllerRegistry;
 
-    private final UuidIdentifiableRepository<T> repository;
-
-    public UuidIdentifiableRestController(UuidIdentifiableRepository<T> repository) {
-        this.repository = repository;
+    public UuidIdentifiableRestController(V service) {
+        this.service = service;
     }
 
     public String getResourceName() {
@@ -54,16 +56,8 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
 
     // templates to be implemented with entity services, etc.
     protected abstract T register(U registration);
+
     protected abstract T register(U registration, String id);
-    protected abstract void removeOneCanonical(String id, String reason);
-
-    protected Page<T> findAll(Pageable pageable) {
-        return repository.findAll(pageable);
-    }
-
-    protected T findOne(String id) {
-        return repository.findOne(id);
-    }
 
     // optionally add entity-specific links to a HATEOAS resource
     public void supplementResource(Resource resource) {
@@ -71,7 +65,7 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public Resource<?> readOneCanonical(@PathVariable String id) {
-        T entity = findOne(id);
+        T entity = service.findOne(id);
         if (null == entity) {
             throw new NoSuchElementException("No entity found with canonical id: " + id);
         }
@@ -80,13 +74,13 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
 
     @RequestMapping(method = RequestMethod.GET)
     public PagedResources readPaged(Pageable pageable, PagedResourcesAssembler assembler) {
-        Page<T> entities = findAll(pageable);
+        Page<T> entities = service.findAll(pageable);
         return assembler.toResource(entities, entityLinkAssembler);
     }
 
     @RequestMapping(value = "/bulk", method = RequestMethod.GET)
     public EntityIterator<T> readBulk(Sort sort) {
-        PageIterator<T> pageIterator = new PageIterator<>(repository::findAll, sort);
+        PageIterator<T> pageIterator = new PageIterator<>(service::findAll, sort);
         EntityIterator<T> entityIterator = new PagingEntityIterator<>(pageIterator);
         entityIterator.setCollectionName(getResourceName());
         return new ShallowCopyIterator<>(entityIterator);
@@ -110,7 +104,7 @@ public abstract class UuidIdentifiableRestController<T extends UuidIdentifiable,
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteOneCanonical(@PathVariable String id, @RequestParam(required = false) String reason) {
-        removeOneCanonical(id, reason);
+        service.delete(id, reason);
     }
 
     private void addLocationHeader(HttpServletResponse response, T entity) {

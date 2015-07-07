@@ -39,7 +39,7 @@ public class User implements Serializable, UuidIdentifiable {
     @Column(length = 36)
     private String uuid;
 
-    @NotNull
+    @NotNull(message = "user first name may not be null")
     @Size(min = 1)
     @Description(description = "User's first name")
     private String firstName;
@@ -50,7 +50,7 @@ public class User implements Serializable, UuidIdentifiable {
     @Description(description = "Description of the user.")
     private String description;
 
-    @NotNull
+    @NotNull(message = "user username may not be null")
     @Size(min = 1)
     @Description(description = "The name used for logging into the system.")
     private String username;

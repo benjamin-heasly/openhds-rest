@@ -5,9 +5,8 @@ import org.openhds.domain.util.Description;
 
 /**
  * Created by Ben on 5/26/15.
- *
+ * <p>
  * Register a Location at a known place in the location hierarchy.
- *
  */
 @Description(description = "Register a Location at a known place in the location hierarchy.")
 public class LocationRegistration extends Registration<Location> {

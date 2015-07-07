@@ -7,6 +7,7 @@ import org.openhds.repository.results.PageIterator;
 import org.openhds.repository.results.PagingEntityIterator;
 import org.openhds.repository.results.ShallowCopyIterator;
 import org.openhds.resource.registration.Registration;
+import org.openhds.service.contract.AbstractAuditableService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,44 +19,21 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.ZonedDateTime;
-import java.util.NoSuchElementException;
 
 /**
  * Created by Ben on 6/16/15.
  */
-public abstract class AuditableRestController<T extends AuditableEntity, U extends Registration<T>>
-        extends UuidIdentifiableRestController<T, U> {
+public abstract class AuditableRestController<
+        T extends AuditableEntity,
+        U extends Registration<T>,
+        V extends AbstractAuditableService<T, ? extends AuditableRepository<T>>>
+        extends UuidIdentifiableRestController<T, U, V> {
 
-    private final AuditableRepository<T> repository;
+    private final V service;
 
-    public AuditableRestController(AuditableRepository<T> repository) {
-        super(repository);
-        this.repository = repository;
-    }
-
-    @Override
-    protected Page<T> findAll(Pageable pageable) {
-        return repository.findByDeletedFalse(pageable);
-    }
-
-    @Override
-    protected T findOne(String id) {
-        return repository.findByDeletedFalseAndUuid(id);
-    }
-
-    @Override
-    protected void removeOneCanonical(String id, String voidReason) {
-        // TODO: this should be in Auditable Service
-        T entity = findOne(id);
-        if (null == entity) {
-            throw new NoSuchElementException("No entity found with id " + id);
-        }
-
-        entity.setDeleted(true);
-        entity.setVoidDate(ZonedDateTime.now());
-        entity.setVoidReason(voidReason);
-        // TODO: entity.setVoidBy( authenticated principal );
-        repository.save(entity);
+    public AuditableRestController(V service) {
+        super(service);
+        this.service = service;
     }
 
     // afterDate <= lastModifiedDate < beforeDate
@@ -69,7 +47,7 @@ public abstract class AuditableRestController<T extends AuditableEntity, U exten
                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                           ZonedDateTime beforeDate) {
 
-        Page<T> entities = findPagedByDate(pageable, afterDate, beforeDate);
+        Page<T> entities = service.findByLastModifiedDate(pageable, afterDate, beforeDate);
         return assembler.toResource(entities, entityLinkAssembler);
     }
 
@@ -82,7 +60,8 @@ public abstract class AuditableRestController<T extends AuditableEntity, U exten
                                             @RequestParam(required = false)
                                             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                                             ZonedDateTime beforeDate) {
-        PageIterator<T> pageIterator = new PageIterator<>((pageable) -> findPagedByDate(pageable, afterDate, beforeDate), sort);
+
+        PageIterator<T> pageIterator = new PageIterator<>((pageable) -> service.findByLastModifiedDate(pageable, afterDate, beforeDate), sort);
         EntityIterator<T> entityIterator = new PagingEntityIterator<>(pageIterator);
         entityIterator.setCollectionName(getResourceName());
         return new ShallowCopyIterator<>(entityIterator);
@@ -91,24 +70,8 @@ public abstract class AuditableRestController<T extends AuditableEntity, U exten
     // for auditing
     @RequestMapping(value = "/voided", method = RequestMethod.GET)
     public PagedResources readPagedByInertDate(Pageable pageable, PagedResourcesAssembler assembler) {
-        Page<T> entities = repository.findByDeletedTrue(pageable);
+        Page<T> entities = service.findAllDeleted(pageable);
         return assembler.toResource(entities, entityLinkAssembler);
     }
 
-    protected Page<T> findPagedByDate(Pageable pageable, ZonedDateTime afterDate, ZonedDateTime beforeDate) {
-        // TODO: this is probably a method of AuditableService
-        if (null == afterDate) {
-            if (null == beforeDate) {
-                return repository.findByDeletedFalse(pageable);
-            } else {
-                return repository.findByDeletedFalseAndLastModifiedDateBefore(beforeDate, pageable);
-            }
-        } else {
-            if (null == beforeDate) {
-                return repository.findByDeletedFalseAndLastModifiedDateAfter(afterDate, pageable);
-            } else {
-                return repository.findByDeletedFalseAndLastModifiedDateBetween(afterDate, beforeDate, pageable);
-            }
-        }
-    }
 }

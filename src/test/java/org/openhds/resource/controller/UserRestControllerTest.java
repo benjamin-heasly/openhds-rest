@@ -1,11 +1,10 @@
 package org.openhds.resource.controller;
 
-import org.junit.After;
-import org.openhds.repository.concrete.UserRepository;
 import org.openhds.resource.contract.UuidIdentifiableRestControllerTest;
 import org.openhds.resource.registration.Registration;
 import org.openhds.resource.registration.UserRegistration;
 import org.openhds.security.model.User;
+import org.openhds.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertEquals;
@@ -14,12 +13,13 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by Ben on 5/19/15.
  */
-public class UserRestControllerTest extends UuidIdentifiableRestControllerTest<User, UserRepository, UserRestController> {
+public class UserRestControllerTest extends UuidIdentifiableRestControllerTest
+        <User, UserService, UserRestController> {
 
     @Autowired
     @Override
-    protected void initialize(UserRepository repository, UserRestController controller) {
-        this.repository = repository;
+    protected void initialize(UserService service, UserRestController controller) {
+        this.service = service;
         this.controller = controller;
     }
 
@@ -43,7 +43,7 @@ public class UserRestControllerTest extends UuidIdentifiableRestControllerTest<U
     protected void verifyEntityExistsWithNameAndId(User entity, String name, String id) {
         assertNotNull(entity);
 
-        User savedUser = repository.findOne(id);
+        User savedUser = service.findOne(id);
         assertNotNull(savedUser);
 
         assertEquals(id, savedUser.getUuid());

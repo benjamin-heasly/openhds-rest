@@ -3,10 +3,10 @@ package org.openhds.resource.controller;
 import org.openhds.domain.model.Location;
 import org.openhds.repository.concrete.FieldWorkerRepository;
 import org.openhds.repository.concrete.LocationHierarchyRepository;
-import org.openhds.repository.concrete.LocationRepository;
 import org.openhds.resource.contract.AuditableExtIdRestControllerTest;
 import org.openhds.resource.registration.LocationRegistration;
 import org.openhds.resource.registration.Registration;
+import org.openhds.service.impl.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.ZonedDateTime;
@@ -18,7 +18,8 @@ import static org.junit.Assert.assertNotNull;
 /**
  * Created by Ben on 5/26/15.
  */
-public class LocationRestControllerTest extends AuditableExtIdRestControllerTest<Location, LocationRepository, LocationRestController> {
+public class LocationRestControllerTest extends AuditableExtIdRestControllerTest
+        <Location, LocationService, LocationRestController> {
 
     @Autowired
     private FieldWorkerRepository fieldWorkerRepository;
@@ -28,8 +29,8 @@ public class LocationRestControllerTest extends AuditableExtIdRestControllerTest
 
     @Autowired
     @Override
-    protected void initialize(LocationRepository repository, LocationRestController controller) {
-        this.repository = repository;
+    protected void initialize(LocationService service, LocationRestController controller) {
+        this.service = service;
         this.controller = controller;
     }
 
@@ -52,7 +53,7 @@ public class LocationRestControllerTest extends AuditableExtIdRestControllerTest
     protected void verifyEntityExistsWithNameAndId(Location entity, String name, String id) {
         assertNotNull(entity);
 
-        Location savedLocation = repository.findOne(id);
+        Location savedLocation = service.findOne(id);
         assertNotNull(savedLocation);
 
         assertEquals(id, savedLocation.getUuid());

@@ -26,11 +26,11 @@ public abstract class AuditableExtIdServiceTest
 
         T entity = makeValidEntity(id, id);
 
-        int entityCount = service.findByExtId(null, id).toList().size();
+        int entityCount = service.findByExtId(UUID_SORT, id).toList().size();
 
         service.createOrUpdate(entity);
 
-        assertEquals(service.findByExtId(null, id).toList().size(), entityCount + 1);
+        assertEquals(service.findByExtId(UUID_SORT, id).toList().size(), entityCount + 1);
 
 
     }

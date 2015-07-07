@@ -8,7 +8,7 @@ import java.io.OutputStream;
 /**
  * Created by Ben on 6/22/15.
  */
-public class JsonArrayDelimiter implements EntityCollectionMessageWriter.Delimiter{
+public class JsonArrayDelimiter implements EntityCollectionMessageWriter.Delimiter {
     @Override
     public void writePrefix(OutputStream outputStream, EntityIterator<?> entityIterator) throws IOException {
         outputStream.write("[".getBytes());

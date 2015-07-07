@@ -3,12 +3,11 @@ package org.openhds.resource.controller;
 import org.junit.Test;
 import org.openhds.events.model.Event;
 import org.openhds.events.model.EventMetadata;
-import org.openhds.repository.concrete.EventRepository;
 import org.openhds.resource.contract.AuditableRestControllerTest;
 import org.openhds.resource.registration.EventRegistration;
 import org.openhds.resource.registration.Registration;
+import org.openhds.service.impl.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MvcResult;
 
@@ -24,12 +23,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Created by bsh on 6/29/15.
  */
 public class EventRestControllerTest extends AuditableRestControllerTest
-        <Event, EventRepository, EventRestController> {
+        <Event, EventService, EventRestController> {
 
     @Autowired
     @Override
-    protected void initialize(EventRepository repository, EventRestController controller) {
-        this.repository = repository;
+    protected void initialize(EventService service, EventRestController controller) {
+        this.service = service;
         this.controller = controller;
     }
 
@@ -53,7 +52,7 @@ public class EventRestControllerTest extends AuditableRestControllerTest
     protected void verifyEntityExistsWithNameAndId(Event entity, String name, String id) {
         assertNotNull(entity);
 
-        Event savedEvent = repository.findOne(id);
+        Event savedEvent = service.findOne(id);
         assertNotNull(savedEvent);
 
         assertEquals(id, savedEvent.getUuid());
@@ -77,7 +76,7 @@ public class EventRestControllerTest extends AuditableRestControllerTest
         }
 
         // query with no params should return all events
-        final int totalCount = (int) repository.count();
+        final int totalCount = (int) service.countAll();
         this.mockMvc.perform(get(getResourceUrl() + "query"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.events", hasSize(totalCount)))
@@ -98,7 +97,7 @@ public class EventRestControllerTest extends AuditableRestControllerTest
         }
 
         // query with no params should return all events
-        final int totalCount = (int) repository.count();
+        final int totalCount = (int) service.countAll();
         this.mockMvc.perform(get(getResourceUrl() + "query/bulk")
                 .accept(regularJson))
                 .andExpect(status().isOk())
@@ -178,7 +177,7 @@ public class EventRestControllerTest extends AuditableRestControllerTest
         postFancyAndReturn("A", "A-id", "action-1", "entity-1");
 
         // query by new system "system-1" should return all events
-        final int totalCount = (int) repository.count();
+        final int totalCount = (int) service.countAll();
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("system", "system-1"))
                 .andExpect(status().isOk())
@@ -225,7 +224,7 @@ public class EventRestControllerTest extends AuditableRestControllerTest
                 .andExpect(jsonPath("$._embedded.events[*].uuid").value(containsInAnyOrder("B-id", "C-id")));
 
         // all but one event before second
-        final int totalCount = (int) repository.count();
+        final int totalCount = (int) service.countAll();
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("maxDate", second.getInsertDate().toString())
                 .accept(halJson))

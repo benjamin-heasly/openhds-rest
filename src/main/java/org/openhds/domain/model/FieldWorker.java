@@ -16,7 +16,7 @@ public class FieldWorker extends AuditableEntity implements Serializable {
 
     private static final long serialVersionUID = -7550088299362704483L;
 
-    @NotNull
+    @NotNull(message = "field worker fieldWorkerId may not be null")
     @Description(description = "User-facing Id of the field worker")
     String fieldWorkerId;
 
@@ -30,7 +30,7 @@ public class FieldWorker extends AuditableEntity implements Serializable {
     @Transient
     String password;
 
-    @NotNull
+    @NotNull(message = "field worker passwordHash may not be null")
     @Description(description = "Hashed version of a field worker's password.")
     String passwordHash;
 

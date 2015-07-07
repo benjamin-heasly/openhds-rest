@@ -68,11 +68,11 @@ public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends Abst
     @WithUserDetails
     public void create() {
 
-        int beforeCreationSize = service.findAll(null).toList().size();
+        int beforeCreationSize = service.findAll(UUID_SORT).toList().size();
 
         service.createOrUpdate(makeValidEntity("testEntity", "testEntity"));
 
-        assertEquals(service.findAll(null).toList().size(), beforeCreationSize + 1);
+        assertEquals(service.findAll(UUID_SORT).toList().size(), beforeCreationSize + 1);
 
     }
 
@@ -86,7 +86,7 @@ public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends Abst
     @Test
     public void findByMultipleValues() {
         // query for uuid like an existing entity
-        T entity = service.findAll(null).iterator().next();
+        T entity = service.findAll(UUID_SORT).iterator().next();
         QueryValue queryValue = new QueryValue("uuid", entity.getUuid());
 
         // reuse the same property multiple times in the query
@@ -98,7 +98,7 @@ public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends Abst
     @Test
     public void findByMultipleValuesImpossible() {
         // query for uuid like an existing entity
-        T entity = service.findAll(null).iterator().next();
+        T entity = service.findAll(UUID_SORT).iterator().next();
         QueryValue queryValue = new QueryValue("uuid", entity.getUuid());
         QueryValue impossibleValue = new QueryValue("uuid", "not an id");
 
@@ -110,7 +110,7 @@ public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends Abst
     @Test(expected = org.springframework.dao.DataAccessException.class)
     public void findByMultipleValuesInvalid() {
         // query for uuid like an existing entity
-        T entity = service.findAll(null).iterator().next();
+        T entity = service.findAll(UUID_SORT).iterator().next();
         QueryValue uuidValue = new QueryValue("uuid", entity.getUuid());
         QueryValue badValue = new QueryValue("notAProperty", entity.getUuid());
 
@@ -120,7 +120,7 @@ public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends Abst
     @Test
     public void findByMultipleValuesRanged() {
         // query for uuid like an existing entity
-        T entity = service.findAll(null).iterator().next();
+        T entity = service.findAll(UUID_SORT).iterator().next();
         QueryValue queryValue = new QueryValue("uuid", entity.getUuid());
 
         // range by a single value
@@ -135,7 +135,7 @@ public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends Abst
     @Test(expected = org.springframework.dao.DataAccessException.class)
     public void findByMultipleValuesRangedInvalid() {
         // query for uuid like an existing entity
-        T entity = service.findAll(null).iterator().next();
+        T entity = service.findAll(UUID_SORT).iterator().next();
         QueryValue queryValue = new QueryValue("uuid", entity.getUuid());
 
         // range by a nonexistent property
@@ -148,7 +148,7 @@ public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends Abst
     @Test()
     public void findByMultipleValuesRangedImpossible() {
         // query for uuid like an existing entity
-        T entity = service.findAll(null).iterator().next();
+        T entity = service.findAll(UUID_SORT).iterator().next();
         QueryValue queryValue = new QueryValue("uuid", entity.getUuid());
 
         // the range Z-A is impossible

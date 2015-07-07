@@ -21,7 +21,7 @@ public class LocationHierarchy extends AuditableExtIdEntity implements Serializa
     @ManyToOne(cascade = CascadeType.PERSIST)
     private LocationHierarchy parent;
 
-    @NotNull
+    @NotNull(message = "location hierarchy name may not be null")
     @Description(description = "The name of this location hierarchy record.")
     private String name;
 

@@ -18,7 +18,7 @@ public class LocationHierarchyLevel extends AuditableEntity implements Serializa
     @Description(description="A key to identify this level.")
     int keyIdentifier;
 
-    @NotNull
+    @NotNull(message = "location hierarchy level name may not be null")
     @Description(description="The name of this location hierarchy level.")
     String name;
 

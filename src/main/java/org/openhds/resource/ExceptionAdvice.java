@@ -19,9 +19,8 @@ import java.util.NoSuchElementException;
 
 /**
  * Created by Ben on 5/18/15.
- *
+ * <p>
  * Catch and handle exceptions thrown by REST resource controllers.
- *
  */
 @ControllerAdvice
 class ExceptionAdvice {
@@ -32,8 +31,8 @@ class ExceptionAdvice {
     public VndErrors generalException(Exception ex) {
         // print full stack trace for unexpected errors
         StringWriter writer = new StringWriter();
-        PrintWriter printWriter = new PrintWriter( writer );
-        ex.printStackTrace( printWriter );
+        PrintWriter printWriter = new PrintWriter(writer);
+        ex.printStackTrace(printWriter);
         printWriter.flush();
         return new VndErrors(ex.getClass().getSimpleName() + ": " + ex.getMessage(), writer.toString());
     }
@@ -50,7 +49,8 @@ class ExceptionAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public VndErrors errorLogException(ErrorLogException ex) {
         ErrorLog errorLog = ex.getErrorLog();
-        return new VndErrors("Validation Error", errorLog.getDetails());
+        String detailMessage = errorLog.getDetails();
+        return new VndErrors("Validation Error", detailMessage);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)

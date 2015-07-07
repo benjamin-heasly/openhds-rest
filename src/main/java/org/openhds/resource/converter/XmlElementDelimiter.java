@@ -7,7 +7,6 @@ import java.io.OutputStream;
 
 /**
  * Created by Ben on 6/22/15.
- *
  */
 public class XmlElementDelimiter implements EntityCollectionMessageWriter.Delimiter {
     @Override

@@ -14,10 +14,10 @@ public class EventMetadata extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @NotNull
+    @NotNull(message = "event metadata status may not be null")
     private String status;
 
-    @NotNull
+    @NotNull(message = "event metadata system may not be null")
     private String system;
 
     private int numTimesRead;
