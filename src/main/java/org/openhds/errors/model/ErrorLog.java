@@ -79,4 +79,21 @@ public class ErrorLog extends AuditableCollectedEntity implements Serializable {
     public void setDateOfResolution(ZonedDateTime dateOfResolution) {
         this.dateOfResolution = dateOfResolution;
     }
+
+    public String getDetails() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append(errors.size());
+        stringBuilder.append(" errors: [");
+        for (Error error : errors) {
+            stringBuilder.append("\n  ");
+            stringBuilder.append(error.getErrorMessage());
+        }
+        stringBuilder.append("]\n");
+
+        stringBuilder.append("See ErrorLog with uuid: ");
+        stringBuilder.append(uuid);
+
+        return stringBuilder.toString();
+    }
 }
