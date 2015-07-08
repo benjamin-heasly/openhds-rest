@@ -51,5 +51,4 @@ class LocationRestController extends AuditableExtIdRestController<
         registration.getLocation().setUuid(id);
         return register(registration);
     }
-
 }
