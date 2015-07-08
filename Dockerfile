@@ -6,7 +6,7 @@ FROM java:8
 MAINTAINER benjamin.heasly@gmail.com
 
 ## build the app
-RUN apt-add-repository ppa:cwchien/gradle \
+RUN add-apt-repository -y ppa:cwchien/gradle \
     && apt-get update \
     && apt-get install -y gradle
 
