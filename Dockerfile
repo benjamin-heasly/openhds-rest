@@ -5,15 +5,14 @@ FROM java:8
 
 MAINTAINER benjamin.heasly@gmail.com
 
-## install gradle
-RUN apt-get update \
-    && apt-get install -y software-properties-common python-software-properties \
-    && add-apt-repository -y ppa:cwchien/gradle \
-    && apt-get update \
-    && apt-get install -y gradle
+## get gradle
+RUN apt-get install -y unzip \
+    && wget https://services.gradle.org/distributions/gradle-2.5-bin.zip \
+    && unzip gradle-2.5-bin.zip -d gradle-2.5
+    && rm gradle-2.5-bin.zip
 
 ## build the app
-RUN gradle build \
+RUN ./gradle-2.5/bin/gradle build \
     && cp build/lib/openhds-rest-0.0.1-SNAPSHOT.jar app.jar
 
 # temp space for Tomcat
