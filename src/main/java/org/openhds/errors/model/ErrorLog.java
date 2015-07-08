@@ -4,6 +4,8 @@ import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -19,6 +21,7 @@ public class ErrorLog extends AuditableCollectedEntity implements Serializable {
     @Column(length=65535)
     private String dataPayload;
 
+    @Size(min = 1, message = "ErrorLog must have atleast 1 error.")
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = Error.class)
     @JoinColumn(name = "error_uuid")
     private List<Error> errors = new ArrayList<>();

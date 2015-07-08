@@ -1,18 +1,17 @@
 package org.openhds.service.impl;
 
-import org.openhds.events.endpoint.EventEndpoint;
+import org.openhds.errors.model.ErrorLog;
+import org.openhds.errors.model.ErrorLogException;
 import org.openhds.events.model.Event;
 import org.openhds.events.model.EventMetadata;
 import org.openhds.events.queries.EventSpecifications;
 import org.openhds.repository.concrete.EventRepository;
 import org.openhds.repository.queries.QueryRange;
 import org.openhds.repository.queries.QueryValue;
-import org.openhds.repository.results.EntityIterator;
 import org.openhds.service.contract.AbstractAuditableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -23,15 +22,12 @@ import java.util.List;
  * Created by bsh on 6/30/15.
  */
 @Component
-public class EventService extends AbstractAuditableService <Event, EventRepository> {
+public class EventService extends AbstractAuditableService<Event, EventRepository> {
 
     @Autowired
     public EventService(EventRepository repository) {
         super(repository);
     }
-
-    @Autowired
-    private List<EventEndpoint> eventEndpoints;
 
     @Override
     protected Event makeUnknownEntity() {
@@ -93,25 +89,28 @@ public class EventService extends AbstractAuditableService <Event, EventReposito
     }
 
     @Override
-    public Event createOrUpdate(Event entity) {
-        addSystemMetadata(entity, Event.DEFAULT_SYSTEM);
-        return super.createOrUpdate(entity);
+    public Event createOrUpdate(Event event) {
+        addSystemMetadata(event, Event.DEFAULT_SYSTEM);
+        setAuditableFields(event);
+
+        ErrorLog errorLog = new ErrorLog();
+        validate(event, errorLog);
+        if (!errorLog.getErrors().isEmpty()) {
+            throw new ErrorLogException(errorLog);
+        }
+
+        return repository.save(event);
     }
 
-    private void addSystemMetadata(Event entity, String system) {
-        if (null == entity.findMetadataForSystem(system)) {
+    private void addSystemMetadata(Event event, String system) {
+        if (null == event.findMetadataForSystem(system)) {
             EventMetadata defaultMetadata = new EventMetadata();
             defaultMetadata.setSystem(system);
             defaultMetadata.setStatus(Event.DEFAULT_STATUS);
-            entity.getEventMetadata().add(defaultMetadata);
+            event.getEventMetadata().add(defaultMetadata);
         }
     }
 
-    public void publishEvent(Event event) {
-        for (EventEndpoint endpoint : eventEndpoints) {
-            endpoint.publishEvent(event);
-        }
-    }
 
     public void incrementReadCountForSystem(Iterable<Event> events, String system) {
         for (Event event : events) {

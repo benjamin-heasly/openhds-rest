@@ -1,6 +1,5 @@
 package org.openhds.events.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.domain.util.Description;
 
@@ -18,6 +17,7 @@ public class Event extends AuditableEntity implements Serializable {
     public static final String DEFAULT_ACTION = "default-action";
     public static final String DEFAULT_ENTITY = "default-entity";
     public static final String DEFAULT_SYSTEM = "default-system";
+    public static final String PERSIST_ACTION = "persist-action";
     public static final String DEFAULT_STATUS = "unread";
     public static final String READ_STATUS = "read";
 

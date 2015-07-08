@@ -1,11 +1,8 @@
 package org.openhds.service.impl;
 
-import org.openhds.domain.contract.AuditableEntity;
-import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.domain.model.LocationHierarchyLevel;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.LocationHierarchyLevelRepository;
-import org.openhds.repository.contract.AuditableRepository;
 import org.openhds.service.contract.AbstractAuditableService;
 
 /**

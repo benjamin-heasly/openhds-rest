@@ -8,7 +8,9 @@ import org.springframework.stereotype.Component;
 /**
  * Created by Wolfe on 7/6/2015.
  *
- * Used to break the self-dependency cycle of ErrorLogService autowiring itself
+ * This class, like EventPublisher and UserHelper is necessary to break the self-depedency cycle created when
+ * ErrorLogService is autowired by its super type AbstractAuditableService. It will autowire this instead and avoid that
+ * problem.
  *
  */
 @Component
@@ -18,7 +20,7 @@ public class ErrorLogger {
     private ErrorLogService errorLogService;
 
     public ErrorLog log(ErrorLog errorLog){
-        return errorLogService.logError(errorLog);
+        return errorLogService.createOrUpdate(errorLog);
     }
 
 }

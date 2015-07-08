@@ -5,6 +5,8 @@ import org.openhds.errors.model.Error;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.errors.model.ErrorLogException;
 import org.openhds.errors.util.ErrorLogger;
+import org.openhds.events.model.Event;
+import org.openhds.events.util.EventPublisher;
 import org.openhds.repository.contract.UuidIdentifiableRepository;
 import org.openhds.repository.queries.QueryRange;
 import org.openhds.repository.queries.QueryValue;
@@ -37,6 +39,9 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
 
     @Autowired
     protected ErrorLogger errorLogger;
+
+    @Autowired
+    protected EventPublisher eventPublisher;
 
     public AbstractUuidService(V repository) {
         this.repository = repository;
@@ -103,7 +108,12 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
             throw new ErrorLogException(errorLog);
         } else {
             repository.save(entity);
-            //TODO: log event
+
+            Event event = new Event();
+            event.setActionType(Event.PERSIST_ACTION);
+            event.setEntityType(entity.getClass().getSimpleName());
+            event.setEventData("UUID: "+entity.getUuid()+" "+entity.toString());
+            eventPublisher.publish(event);
         }
 
         return entity;
