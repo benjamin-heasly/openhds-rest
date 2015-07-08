@@ -19,7 +19,6 @@ target/
 build/
 .gradle/
 gradle/
-gradle*
 
 # javac
 *.class
