@@ -13,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.time.ZonedDateTime;
-import java.util.NoSuchElementException;
 
 /**
  * Created by wolfe on 6/11/15.
@@ -34,20 +33,7 @@ public abstract class AbstractAuditableService
     @Override
     public T createOrUpdate(T entity) {
 
-        User user = userHelper.getCurrentUser();
-        ZonedDateTime now = ZonedDateTime.now();
-
-        //Check to see if we're creating or updating the entity
-        if (null == entity.getInsertDate()) {
-            entity.setInsertDate(now);
-        }
-
-        if (null == entity.getInsertBy()) {
-            entity.setInsertBy(user);
-        }
-
-        entity.setLastModifiedDate(now);
-        entity.setLastModifiedBy(user);
+        setAuditableFields(entity);
 
         return super.createOrUpdate(entity);
     }
@@ -142,6 +128,23 @@ public abstract class AbstractAuditableService
 
     public EntityIterator<T> findByLastModifiedBy(Sort sort, User user) {
         return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndLastModifiedBy(user, pageable), sort);
+    }
+
+    protected void setAuditableFields(T entity){
+        User user = userHelper.getCurrentUser();
+        ZonedDateTime now = ZonedDateTime.now();
+
+        //Check to see if we're creating or updating the entity
+        if (null == entity.getInsertDate()) {
+            entity.setInsertDate(now);
+        }
+
+        if (null == entity.getInsertBy()) {
+            entity.setInsertBy(user);
+        }
+
+        entity.setLastModifiedDate(now);
+        entity.setLastModifiedBy(user);
     }
 
 }

@@ -1,9 +1,11 @@
 package org.openhds.errors.model;
 
+import org.hibernate.validator.constraints.NotEmpty;
 import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -19,6 +21,7 @@ public class ErrorLog extends AuditableCollectedEntity implements Serializable {
     @Column(length=65535)
     private String dataPayload;
 
+    @NotEmpty
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = Error.class)
     @JoinColumn(name = "error_uuid")
     private List<Error> errors = new ArrayList<>();

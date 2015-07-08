@@ -18,7 +18,7 @@ public class ErrorLogger {
     private ErrorLogService errorLogService;
 
     public ErrorLog log(ErrorLog errorLog){
-        return errorLogService.logError(errorLog);
+        return errorLogService.createOrUpdate(errorLog);
     }
 
 }
