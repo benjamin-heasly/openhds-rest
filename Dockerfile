@@ -6,7 +6,8 @@ FROM java:8
 MAINTAINER benjamin.heasly@gmail.com
 
 ## install gradle
-RUN apt-get install -y software-properties-common python-software-properties \
+RUN apt-get-update \
+    && apt-get install -y software-properties-common python-software-properties \
     && add-apt-repository -y ppa:cwchien/gradle \
     && apt-get update \
     && apt-get install -y gradle
