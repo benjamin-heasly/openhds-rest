@@ -1,6 +1,5 @@
 package org.openhds.events.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.domain.util.Description;
 

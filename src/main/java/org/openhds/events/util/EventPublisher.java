@@ -8,7 +8,9 @@ import org.springframework.stereotype.Component;
 /**
  * Created by Wolfe on 7/8/2015.
  *
- * used to break the self dependency cycle
+ * This class, like ErrorLogger and UserHelper is necessary to break the self-depedency cycle created when
+ * EventService is autowired by its super type AbstractAuditableService. It will autowire this instead and avoid that
+ * problem.
  *
  */
 @Component

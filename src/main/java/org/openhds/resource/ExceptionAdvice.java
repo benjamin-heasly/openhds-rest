@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import javax.validation.ConstraintViolationException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.lang.reflect.InvocationTargetException;
 import java.util.NoSuchElementException;
 
 /**

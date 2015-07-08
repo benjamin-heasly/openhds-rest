@@ -1,7 +1,6 @@
 package org.openhds.repository.results;
 
 import org.openhds.domain.contract.UuidIdentifiable;
-import org.openhds.domain.util.ShallowCopier;
 
 import java.util.ArrayList;
 import java.util.Iterator;

@@ -7,7 +7,6 @@ package org.openhds.repository.concrete;
 import org.openhds.repository.contract.UuidIdentifiableRepository;
 import org.openhds.security.model.User;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends UuidIdentifiableRepository<User> {
