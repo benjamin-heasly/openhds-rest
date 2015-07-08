@@ -146,4 +146,18 @@ public class User implements Serializable, UuidIdentifiable {
                 .map(Privilege::toString)
                 .collect(toSet());
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "uuid='" + uuid + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", description='" + description + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", roles=" + roles +
+                ", deleted=" + deleted +
+                '}';
+    }
 }

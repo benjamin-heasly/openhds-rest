@@ -99,4 +99,15 @@ public class FieldWorker extends AuditableEntity implements Serializable {
         return null != uuid && null != otherUuid && uuid.equals(otherUuid);
     }
 
+    @Override
+    public String toString() {
+        return "FieldWorker{" +
+                "fieldWorkerId='" + fieldWorkerId + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", password='" + password + '\'' +
+                ", passwordHash='" + passwordHash + '\'' +
+                ", idPrefix=" + idPrefix +
+                "} " + super.toString();
+    }
 }

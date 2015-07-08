@@ -107,4 +107,16 @@ public class ErrorLog extends AuditableCollectedEntity implements Serializable {
 
         return stringBuilder.toString();
     }
+
+    @Override
+    public String toString() {
+        return "ErrorLog{" +
+                "dataPayload='" + dataPayload + '\'' +
+                ", errors=" + errors +
+                ", assignedTo='" + assignedTo + '\'' +
+                ", entityType='" + entityType + '\'' +
+                ", resolutionStatus='" + resolutionStatus + '\'' +
+                ", dateOfResolution=" + dateOfResolution +
+                "} " + super.toString();
+    }
 }

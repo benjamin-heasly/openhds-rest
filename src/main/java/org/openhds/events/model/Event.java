@@ -91,4 +91,14 @@ public class Event extends AuditableEntity implements Serializable {
 
         return null;
     }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "actionType='" + actionType + '\'' +
+                ", entityType='" + entityType + '\'' +
+                ", eventData='" + eventData + '\'' +
+                ", eventMetadata=" + eventMetadata +
+                "} " + super.toString();
+    }
 }

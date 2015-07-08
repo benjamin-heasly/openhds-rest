@@ -156,4 +156,15 @@ public abstract class AuditableEntity implements UuidIdentifiable, Serializable 
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "AuditableEntity{" +
+                "uuid='" + uuid + '\'' +
+                ", deleted=" + deleted +
+                ", voidReason='" + voidReason + '\'' +
+                ", voidDate=" + voidDate +
+                ", insertDate=" + insertDate +
+                ", lastModifiedDate=" + lastModifiedDate +
+                '}';
+    }
 }

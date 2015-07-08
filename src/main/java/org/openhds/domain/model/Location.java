@@ -260,4 +260,29 @@ public class Location extends AuditableExtIdEntity implements Serializable {
         final String otherUuid = ((Location) other).getUuid();
         return null != uuid && null != otherUuid && uuid.equals(otherUuid);
     }
+
+    @Override
+    public String toString() {
+        return "Location{" +
+                "name='" + name + '\'' +
+                ", locationHierarchy=" + locationHierarchy +
+                ", type='" + type + '\'' +
+                ", longitude='" + longitude + '\'' +
+                ", latitude='" + latitude + '\'' +
+                ", accuracy='" + accuracy + '\'' +
+                ", altitude='" + altitude + '\'' +
+                ", buildingNumber='" + buildingNumber + '\'' +
+                ", floorNumber='" + floorNumber + '\'' +
+                ", regionName='" + regionName + '\'' +
+                ", provinceName='" + provinceName + '\'' +
+                ", subDistrictName='" + subDistrictName + '\'' +
+                ", districtName='" + districtName + '\'' +
+                ", sectorName='" + sectorName + '\'' +
+                ", localityName='" + localityName + '\'' +
+                ", communityName='" + communityName + '\'' +
+                ", communityCode='" + communityCode + '\'' +
+                ", mapAreaName='" + mapAreaName + '\'' +
+                ", description='" + description + '\'' +
+                "} " + super.toString();
+    }
 }

@@ -112,7 +112,7 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
             Event event = new Event();
             event.setActionType(Event.PERSIST_ACTION);
             event.setEntityType(entity.getClass().getSimpleName());
-            event.setEventData("UUID: "+entity.getUuid()+" "+entity.toString());
+            event.setEventData(entity.toString());
             eventPublisher.publish(event);
         }
 

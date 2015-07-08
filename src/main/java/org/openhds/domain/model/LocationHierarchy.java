@@ -85,4 +85,12 @@ public class LocationHierarchy extends AuditableExtIdEntity implements Serializa
         return null != uuid && null != otherUuid && uuid.equals(otherUuid);
     }
 
+    @Override
+    public String toString() {
+        return "LocationHierarchy{" +
+                "parent=" + parent +
+                ", name='" + name + '\'' +
+                ", level=" + level +
+                "} " + super.toString();
+    }
 }
