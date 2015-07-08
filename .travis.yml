@@ -1,3 +1,10 @@
 language: java
 jdk:
-  - oraclejdk8
+- oraclejdk8
+deploy:
+  provider: heroku
+  api_key:
+    secure: ULZiQnVAUNZv6ckSel+t8neiuL9emmEUDdaDS8v9XGFRfdb5wq7ifH2PrEgaLRZNyILmYHFrhdQlfMQyvl9iY2ihUUUFDENiSPrNxgvuxsedyasj4VQ9rQUgbwvk/ncUbofTNBP3uvI48HLLEyazOLK9DZtGklseqUf25ahXmOKiZq44qq4849sLO2cYmjWwi9pnfiYol4NaIZgDBcp+gLYLP7iPF0etmPazRm+LSH0DsmWQY/FdauihF3b7X7VO3twnN5KiEHT3EwNMtzVEozW5IL/7EGDew/6VdyF0yGLwAI56k6vUNhrFLtsHvvfLXocCiZ3nT3FLKpnTczlpiyPAiTJRhI8/mkqfWzZULEHBkpSjuQNEUgE9SLr9AY3nP5zbwId4pfPeab8H2mip5lu1F9B17fjtYgJVmCNDLatUDIJyJqFhN8TfeDdCXmdDxBch+JMgiLgWHQKjQsFLNqzmTYTySJVL1/0obcGD0OOEBSCtTDMDJl0AknurAgG/K+5WaFXJb02JUEb4SQXhTArk3RAn4x/YXCdh7i0FkSZXbMfNPJLnB8kcw/IbmEX+9Y/UaA4DyhNPmgyvSQzUubiYOSzdrH55g38MORutRcanetrtBsxRL/5jAuzuNP6FsHCkz7NuQ12sBhm4ndWEKFU+6NEzlUNGMvgJhYe8fNk=
+  app: arcane-lake-8447
+  on:
+    repo: benjamin-heasly/openhds-rest
