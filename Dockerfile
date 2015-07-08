@@ -5,11 +5,13 @@ FROM java:8
 
 MAINTAINER benjamin.heasly@gmail.com
 
-## build the app
-RUN add-apt-repository -y ppa:cwchien/gradle \
+## install gradle
+RUN apt-get install -y software-properties-common python-software-properties \
+    && add-apt-repository -y ppa:cwchien/gradle \
     && apt-get update \
     && apt-get install -y gradle
 
+## build the app
 RUN gradle build \
     && cp build/lib/openhds-rest-0.0.1-SNAPSHOT.jar app.jar
 
