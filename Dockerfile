@@ -8,11 +8,11 @@ MAINTAINER benjamin.heasly@gmail.com
 ## get gradle
 RUN apt-get install -y unzip \
     && wget https://services.gradle.org/distributions/gradle-2.5-bin.zip \
-    && unzip gradle-2.5-bin.zip -d /gradle-2.5 \
+    && unzip gradle-2.5-bin.zip -d /gradle \
     && rm gradle-2.5-bin.zip
 
 ## build the app
-RUN /gradle-2.5/bin/gradle build \
+RUN /gradle/gradle-2.5/bin/gradle build \
     && cp build/lib/openhds-rest-0.0.1-SNAPSHOT.jar app.jar
 
 # temp space for Tomcat
