@@ -89,12 +89,8 @@ public class SampleDataGenerator {
         addRole("user-role", Privilege.Grant.values());
         addUser("user", "password", "user-role");
 
-
         addRole("empty-role");
         addUser("non-user", "password", "empty-role");
-
-
-
 
         addFieldWorker("fieldworker", "password");
 
