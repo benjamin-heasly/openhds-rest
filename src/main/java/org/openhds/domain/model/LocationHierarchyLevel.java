@@ -37,4 +37,12 @@ public class LocationHierarchyLevel extends AuditableEntity implements Serializa
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return "LocationHierarchyLevel{" +
+                "keyIdentifier=" + keyIdentifier +
+                ", name='" + name + '\'' +
+                "} " + super.toString();
+    }
 }

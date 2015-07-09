@@ -65,4 +65,13 @@ public abstract class AuditableCollectedEntity extends AuditableEntity implement
     public void setStatusMessage(String statusMessage) {
         this.statusMessage = statusMessage;
     }
+
+    @Override
+    public String toString() {
+        return "AuditableCollectedEntity{" +
+                "status='" + status + '\'' +
+                ", collectionDateTime=" + collectionDateTime +
+                ", statusMessage='" + statusMessage + '\'' +
+                "} " + super.toString();
+    }
 }

@@ -29,4 +29,11 @@ public abstract class AuditableExtIdEntity extends AuditableCollectedEntity impl
     public void setExtId(String extId) {
         this.extId = extId;
     }
+
+    @Override
+    public String toString() {
+        return "AuditableExtIdEntity{" +
+                "extId='" + extId + '\'' +
+                "} " + super.toString();
+    }
 }
