@@ -74,7 +74,7 @@ public class OpenHdsRestApplication {
         EntityCollectionMessageWriter xmlPagedMessageWriter() {
             return new EntityCollectionMessageWriter(xmlConverter(), new XmlElementDelimiter());
         }
-
+        
         @Override
         public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
             converters.add(jsonPagedMessageWriter());
