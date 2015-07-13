@@ -58,6 +58,8 @@ public abstract class AuditableServiceTest
     @WithUserDetails
     public void findByInsertDate() {
 
+        int initialCount = (int) service.countAll();
+
         T earlyEntity = makeValidEntity("earlyEntity", "earlyEntity");
         ZonedDateTime earlyTime = service.createOrUpdate(earlyEntity).getInsertDate();
 
@@ -66,14 +68,17 @@ public abstract class AuditableServiceTest
 
         assertTrue(earlyTime.compareTo(lateTime) < 0);
 
+        // exactly two records that we just inserted
         List<T> betweenReslts = service.findByInsertDate(UUID_SORT, earlyTime, lateTime).toList();
         assertEquals(betweenReslts.size(), 2);
 
+        // same two which we just inserted
         List<T> afterReslts = service.findByInsertDate(UUID_SORT, earlyTime, null).toList();
-        assertNotEquals(afterReslts.size(), 0);
+        assertEquals(2, afterReslts.size());
 
+        // pre-existing, plust two which we just inserted
         List<T> beforeReslts = service.findByInsertDate(UUID_SORT, null, lateTime).toList();
-        assertNotEquals(beforeReslts.size(), 0);
+        assertEquals(2 + initialCount, beforeReslts.size());
 
     }
 
@@ -81,21 +86,27 @@ public abstract class AuditableServiceTest
     @WithUserDetails
     public void findByLastModifiedDate() {
 
+        int initialCount = (int) service.countAll();
+
         T earlyEntity = makeValidEntity("earlyEntity", "earlyEntity");
         ZonedDateTime earlyTime = service.createOrUpdate(earlyEntity).getLastModifiedDate();
+
         T lateEntity = makeValidEntity("lateEntity", "lateEntity");
         ZonedDateTime lateTime = service.createOrUpdate(lateEntity).getLastModifiedDate();
 
         assertTrue(earlyTime.compareTo(lateTime) < 0);
 
-        List<T> betweenReslts = service.findByLastModifiedDate(UUID_SORT, earlyTime, lateTime).toList();
+        // exactly two records that we just inserted
+        List<T> betweenReslts = service.findByInsertDate(UUID_SORT, earlyTime, lateTime).toList();
         assertEquals(betweenReslts.size(), 2);
 
-        List<T> afterReslts = service.findByLastModifiedDate(UUID_SORT, earlyTime, null).toList();
-        assertNotEquals(afterReslts.size(), 0);
+        // same two which we just inserted
+        List<T> afterReslts = service.findByInsertDate(UUID_SORT, earlyTime, null).toList();
+        assertEquals(2, afterReslts.size());
 
-        List<T> beforeReslts = service.findByLastModifiedDate(UUID_SORT, null, lateTime).toList();
-        assertNotEquals(beforeReslts.size(), 0);
+        // pre-existing, plust two which we just inserted
+        List<T> beforeReslts = service.findByInsertDate(UUID_SORT, null, lateTime).toList();
+        assertEquals(2 + initialCount, beforeReslts.size());
 
     }
 
