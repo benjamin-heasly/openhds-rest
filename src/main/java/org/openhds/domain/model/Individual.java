@@ -66,8 +66,6 @@ public class Individual extends AuditableExtIdEntity implements Serializable {
     @Description(description = "The set of all relationships another individual may have with this individual.")
     private Set<Relationship> relationshipsAsIndividualB = new HashSet<Relationship>();
 
-
-
     public String getFirstName() {
         return firstName;
     }

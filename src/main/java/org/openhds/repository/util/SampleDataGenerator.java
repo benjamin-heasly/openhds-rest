@@ -70,6 +70,9 @@ public class SampleDataGenerator {
     @Autowired
     private ProjectCodeRepository projectCodeRepository;
 
+    @Autowired
+    private SocialGroupRepository socialGroupRepository;
+
     public void clearData() {
         eventMetadataRepository.deleteAllInBatch();
         eventRepository.deleteAllInBatch();
@@ -77,10 +80,17 @@ public class SampleDataGenerator {
         errorRepository.deleteAllInBatch();
         errorLogRepository.deleteAllInBatch();
 
+
         relationshipRepository.deleteAllInBatch();
 
         locationRepository.deleteAllInBatch();
+
+        socialGroupRepository.deleteAllInBatch();
+
+
         individualRepository.deleteAllInBatch();
+
+        locationRepository.deleteAllInBatch();
         locationHierarchyRepository.deleteAllInBatch();
         locationHierarchyLevelRepository.deleteAllInBatch();
 
@@ -123,9 +133,15 @@ public class SampleDataGenerator {
         addIndividual("individual-b");
         addIndividual("individual-c");
 
+
         addRelationship("individual-a", "individual-b");
         addRelationship("individual-c", "individual-a");
         addRelationship("individual-c", "individual-c");
+
+        addSocialGroup("social-group-a");
+        addSocialGroup("social-group-b");
+        addSocialGroup("social-group-c");
+
 
         addErrorLog("sample error");
 
@@ -285,5 +301,15 @@ public class SampleDataGenerator {
         projectCode.setCodeName(name);
         projectCode.setCodeValue(value);
         projectCodeRepository.save(projectCode);
+    }
+
+    private void addSocialGroup(String name) {
+        SocialGroup socialGroup = new SocialGroup();
+        initAuditableFields(socialGroup);
+        initCollectedFields(socialGroup);
+
+        socialGroup.setExtId(name);
+        socialGroup.setGroupName(name);
+        socialGroupRepository.save(socialGroup);
     }
 }

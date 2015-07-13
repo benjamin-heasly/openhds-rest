@@ -21,8 +21,9 @@ public class Residency extends AuditableCollectedEntity implements Serializable{
 
     @ManyToOne
     @JoinColumn(name = "individual")
-    @Description(description = "Individual who resides at this residency.")
+    @Description(description = "Individual who resides at the Location.")
     private Individual individual;
+
 
     @Override
     public boolean equals(Object other) {
@@ -37,5 +38,11 @@ public class Residency extends AuditableCollectedEntity implements Serializable{
         final String otherUuid = ((Residency) other).getUuid();
         return null != uuid && null != otherUuid && uuid.equals(otherUuid);
     }
+
+    @ManyToOne
+    @JoinColumn(name = "location")
+    @Description(description = "Location where the Individual resides.")
+    private Location location;
+
 
 }
