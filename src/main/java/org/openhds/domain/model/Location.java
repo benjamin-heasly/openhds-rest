@@ -4,13 +4,12 @@ package org.openhds.domain.model;
 import org.openhds.domain.contract.AuditableExtIdEntity;
 import org.openhds.domain.util.Description;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -46,9 +45,9 @@ public class Location extends AuditableExtIdEntity implements Serializable {
     @Description(description = "The altitude for the Location")
     private String altitude;
 
-    //@OneToMany(targetEntity = org.openhds.domain.model.Residency.class)
-    //@JoinColumn(name = "location_uuid")
-    //private List<Residency> residencies = new ArrayList<Residency>();
+    @OneToMany(targetEntity = org.openhds.domain.model.Residency.class)
+    @JoinColumn(name = "location_uuid")
+    private List<Residency> residencies = new ArrayList<Residency>();
 
     // Extensions for bioko island project
     @Description(description = "The number of this building within a sector")
@@ -151,13 +150,13 @@ public class Location extends AuditableExtIdEntity implements Serializable {
         altitude = alt;
     }
 
-    //public List<Residency> getResidencies() {
-    //    return residencies;
-    //}
+    public List<Residency> getResidencies() {
+        return residencies;
+    }
 
-    //public void setResidencies(List<Residency> list) {
-    //    residencies = list;
-    //}
+    public void setResidencies(List<Residency> list) {
+        residencies = list;
+    }
 
     public String getSectorName() {
         return sectorName;
