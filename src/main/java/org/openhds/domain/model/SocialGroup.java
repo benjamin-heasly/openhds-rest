@@ -1,5 +1,6 @@
 package org.openhds.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.openhds.domain.contract.AuditableExtIdEntity;
 import org.openhds.domain.util.Description;
 
@@ -28,6 +29,7 @@ public class SocialGroup extends AuditableExtIdEntity implements Serializable {
     @Description(description = "Type of the social group.")
     private String groupType;
 
+    @JsonIgnore
     @Description(description = "The set of all memberships that include this SocialGroup.")
     @OneToMany(mappedBy = "socialGroup", cascade = { CascadeType.ALL })
     private Set<Membership> memberships = new HashSet<>();

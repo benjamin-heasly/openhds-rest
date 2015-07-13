@@ -14,7 +14,7 @@ public abstract class AuditableCollectedRestController<
         V extends AbstractAuditableCollectedService<T, ? extends AuditableCollectedRepository<T>>>
         extends AuditableRestController<T, U, V> {
 
-    private final V service;
+    protected final V service;
 
     public AuditableCollectedRestController(V service) {
         super(service);
