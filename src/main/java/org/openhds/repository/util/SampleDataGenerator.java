@@ -50,6 +50,9 @@ public class SampleDataGenerator {
     private LocationRepository locationRepository;
 
     @Autowired
+    private IndividualRepository individualRepository;
+
+    @Autowired
     private ErrorRepository errorRepository;
 
     @Autowired
@@ -72,6 +75,7 @@ public class SampleDataGenerator {
         errorLogRepository.deleteAllInBatch();
 
         locationRepository.deleteAllInBatch();
+        individualRepository.deleteAllInBatch();
         locationHierarchyRepository.deleteAllInBatch();
         locationHierarchyLevelRepository.deleteAllInBatch();
 
@@ -109,6 +113,10 @@ public class SampleDataGenerator {
         addLocation("location-d", "bottom-two");
         addLocation("duplicated", "bottom-two");
         addLocation("duplicated", "bottom-two");
+
+        addIndividual("individual-a");
+        addIndividual("individual-b");
+        addIndividual("individual-c");
 
         addErrorLog("sample error");
 
@@ -236,6 +244,19 @@ public class SampleDataGenerator {
         event.getEventMetadata().add(defaultMetadata);
 
         eventRepository.save(event);
+    }
+
+    private void addIndividual (String name){
+        Individual individual = new Individual();
+        initAuditableFields(individual);
+        initCollectedFields(individual);
+        individual.setExtId(name);
+        individual.setFirstName(name);
+        individual.setMiddleName(name);
+        individual.setLastName(name);
+        individual.setDateOfBirth(ZonedDateTime.now().minusYears(1));
+
+        individualRepository.save(individual);
     }
 
     private void addProjectCode(String name, String value) {
