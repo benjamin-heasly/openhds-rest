@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Created by bsh on 7/13/15.
  */
 @RestController
-@RequestMapping("/projectcodes")
+@RequestMapping("/projectCodes")
 @ExposesResourceFor(ProjectCode.class)
 public class ProjectCodeResource extends UuidIdentifiableRestController<
         ProjectCode,
