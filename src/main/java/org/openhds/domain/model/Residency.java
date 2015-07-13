@@ -24,4 +24,18 @@ public class Residency extends AuditableCollectedEntity implements Serializable{
     @Description(description = "Individual who resides at this residency.")
     private Individual individual;
 
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+
+        if (!(other instanceof Residency)) {
+            return false;
+        }
+
+        final String otherUuid = ((Residency) other).getUuid();
+        return null != uuid && null != otherUuid && uuid.equals(otherUuid);
+    }
+
 }
