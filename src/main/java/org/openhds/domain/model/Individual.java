@@ -5,8 +5,10 @@ import org.openhds.domain.util.Description;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
+import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -15,7 +17,9 @@ import java.time.ZonedDateTime;
 @Description(description = "A distinct individual within the study area.")
 @Entity
 @Table(name = "individual")
-public class Individual extends AuditableExtIdEntity {
+public class Individual extends AuditableExtIdEntity implements Serializable {
+
+    private static final long serialVersionUID = 5226650143604788124L;
 
     @NotNull(message = "Individual must have a firstname.")
     @Description(description = "First name of the individual.")
@@ -41,20 +45,22 @@ public class Individual extends AuditableExtIdEntity {
     @Description(description = "The individual's father.")
     private Individual father;
 
+    @OneToMany(mappedBy = "individual", cascade = { CascadeType.ALL })
+    @Description(description = "The set of all residencies that the individual is a part of.")
+    private Set<Residency> residencies = new HashSet<Residency>();
 
-//    @OneToMany(mappedBy = "individual", cascade = { CascadeType.ALL })
-//    @OrderBy("startDate")
-//    @Description(description = "The set of all residencies that the individual may have.")
-//    private Set<Residency> allResidencies = new HashSet<Residency>();
-//    @OneToMany(mappedBy = "individualA", cascade = { CascadeType.ALL })
-//    @Description(description = "The set of all relationships that the individual may have with another individual.")
-//    private Set<Relationship> allRelationships1 = new HashSet<Relationship>();
-//    @OneToMany(mappedBy = "individualB", cascade = { CascadeType.ALL })
-//    @Description(description = "The set of all relationships where another individual may have with this individual.")
-//    private Set<Relationship> allRelationships2 = new HashSet<Relationship>();
-//    @OneToMany(mappedBy = "individual", cascade = { CascadeType.ALL })
-//    @Description(description = "The set of all memberships the individual is participating in.")
-//    private Set<Membership> allMemberships = new HashSet<Membership>();
+    @OneToMany(mappedBy = "individual", cascade = { CascadeType.ALL })
+    @Description(description = "The set of all memberships the individual is a part of.")
+    private Set<Membership> allMemberships = new HashSet<Membership>();
+
+    @OneToMany(mappedBy = "individualA", cascade = { CascadeType.ALL })
+    @Description(description = "The set of all relationships that the individual may have with another individual.")
+    private Set<Relationship> relationshipsAsIndividualA = new HashSet<Relationship>();
+
+    @OneToMany(mappedBy = "individualB", cascade = { CascadeType.ALL })
+    @Description(description = "The set of all relationships another individual may have with this individual.")
+    private Set<Relationship> relationshipsAsIndividualB = new HashSet<Relationship>();
+
 
 
     public String getFirstName() {
@@ -111,5 +117,68 @@ public class Individual extends AuditableExtIdEntity {
 
     public void setFather(Individual father) {
         this.father = father;
+    }
+
+    public Set<Residency> getResidencies() {
+        return residencies;
+    }
+
+    public void setResidencies(Set<Residency> residencies) {
+        this.residencies = residencies;
+    }
+
+    public Set<Membership> getAllMemberships() {
+        return allMemberships;
+    }
+
+    public void setAllMemberships(Set<Membership> allMemberships) {
+        this.allMemberships = allMemberships;
+    }
+
+    public Set<Relationship> getRelationshipsAsIndividualA() {
+        return relationshipsAsIndividualA;
+    }
+
+    public void setRelationshipsAsIndividualA(Set<Relationship> relationshipsAsIndividualA) {
+        this.relationshipsAsIndividualA = relationshipsAsIndividualA;
+    }
+
+    public Set<Relationship> getRelationshipsAsIndividualB() {
+        return relationshipsAsIndividualB;
+    }
+
+    public void setRelationshipsAsIndividualB(Set<Relationship> relationshipsAsIndividualB) {
+        this.relationshipsAsIndividualB = relationshipsAsIndividualB;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+
+        if (!(other instanceof Individual)) {
+            return false;
+        }
+
+        final String otherUuid = ((Individual) other).getUuid();
+        return null != uuid && null != otherUuid && uuid.equals(otherUuid);
+    }
+
+    @Override
+    public String toString() {
+        return "Individual{" +
+                "firstName='" + firstName + '\'' +
+                ", middleName='" + middleName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", gender='" + gender + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", mother=" + mother +
+                ", father=" + father +
+                ", residencies=" + residencies +
+                ", allMemberships=" + allMemberships +
+                ", relationshipsAsIndividualA=" + relationshipsAsIndividualA +
+                ", relationshipsAsIndividualB=" + relationshipsAsIndividualB +
+                "} " + super.toString();
     }
 }
