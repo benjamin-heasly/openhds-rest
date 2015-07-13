@@ -37,7 +37,7 @@ public abstract class UuidIdentifiableRestControllerTest<
 
     protected V controller;
 
-    protected abstract void initialize(U repository, V controller);
+    protected abstract void initialize(U service, V controller);
 
     protected abstract T makeValidEntity(String name, String id);
 
