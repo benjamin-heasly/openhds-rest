@@ -31,7 +31,10 @@ public class EventService extends AbstractAuditableService<Event, EventRepositor
 
     @Override
     protected Event makeUnknownEntity() {
-        return new Event();
+        Event event = new Event();
+        event.setEntityType("unknown");
+        event.setActionType("unknown");
+        return event;
     }
 
     public Page<Event> findWithoutSystem(Pageable pageable,

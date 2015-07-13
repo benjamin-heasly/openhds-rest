@@ -160,4 +160,18 @@ public class User implements Serializable, UuidIdentifiable {
                 ", deleted=" + deleted +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+
+        if (!(other instanceof User)) {
+            return false;
+        }
+
+        final String otherUuid = ((User) other).getUuid();
+        return null != uuid && null != otherUuid && uuid.equals(otherUuid);
+    }
 }
