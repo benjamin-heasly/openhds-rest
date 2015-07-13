@@ -44,8 +44,12 @@ public abstract class AuditableServiceTest
         service.createOrUpdate(makeValidEntity("updatedTestEntity", id));
 
         assertNotNull(service.findOne(id));
+    }
 
-
+    // Sleep some millis before creating an entity, to ensure a fresh timestamp.
+    private T makeValidEntityWithDelay(String name, String id) throws Exception {
+        Thread.sleep(100);
+        return makeValidEntity(name, id);
     }
 
     /**
@@ -53,17 +57,16 @@ public abstract class AuditableServiceTest
      * checks that the results between those two times is exactly 2 and that everything before and after
      * is not 0.
      */
-
     @Test
     @WithUserDetails
-    public void findByInsertDate() {
+    public void findByInsertDate() throws Exception {
 
         int initialCount = (int) service.countAll();
 
-        T earlyEntity = makeValidEntity("earlyEntity", "earlyEntity");
+        T earlyEntity = makeValidEntityWithDelay("earlyEntity", "earlyEntity");
         ZonedDateTime earlyTime = service.createOrUpdate(earlyEntity).getInsertDate();
 
-        T lateEntity = makeValidEntity("lateEntity", "lateEntity");
+        T lateEntity = makeValidEntityWithDelay("lateEntity", "lateEntity");
         ZonedDateTime lateTime = service.createOrUpdate(lateEntity).getInsertDate();
 
         assertTrue(earlyTime.compareTo(lateTime) < 0);
@@ -84,14 +87,14 @@ public abstract class AuditableServiceTest
 
     @Test
     @WithUserDetails
-    public void findByLastModifiedDate() {
+    public void findByLastModifiedDate() throws Exception {
 
         int initialCount = (int) service.countAll();
 
-        T earlyEntity = makeValidEntity("earlyEntity", "earlyEntity");
+        T earlyEntity = makeValidEntityWithDelay("earlyEntity", "earlyEntity");
         ZonedDateTime earlyTime = service.createOrUpdate(earlyEntity).getLastModifiedDate();
 
-        T lateEntity = makeValidEntity("lateEntity", "lateEntity");
+        T lateEntity = makeValidEntityWithDelay("lateEntity", "lateEntity");
         ZonedDateTime lateTime = service.createOrUpdate(lateEntity).getLastModifiedDate();
 
         assertTrue(earlyTime.compareTo(lateTime) < 0);
