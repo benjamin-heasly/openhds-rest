@@ -50,6 +50,7 @@ public class MembershipRestControllerTest extends AuditableCollectedRestControll
         membership.setSocialGroup(socialGroupRepository.findAll().get(0));
         membership.setIndividual(individualRepository.findAll().get(0));
         membership.setCollectedBy(fieldWorkerRepository.findAll().get(0));
+        membership.setbIsToA(name);
         membership.setStartType(name);
         membership.setStartDate(ZonedDateTime.now().minusYears(1));
         membership.setCollectionDateTime(ZonedDateTime.now());
