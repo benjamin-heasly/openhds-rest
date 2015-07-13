@@ -70,12 +70,17 @@ public class SampleDataGenerator {
     @Autowired
     private SocialGroupRepository socialGroupRepository;
 
+    @ Autowired
+    private MembershipRepository membershipRepository;
+
     public void clearData() {
         eventMetadataRepository.deleteAllInBatch();
         eventRepository.deleteAllInBatch();
 
         errorRepository.deleteAllInBatch();
         errorLogRepository.deleteAllInBatch();
+
+        membershipRepository.deleteAllInBatch();
 
         socialGroupRepository.deleteAllInBatch();
 
@@ -127,6 +132,10 @@ public class SampleDataGenerator {
         addSocialGroup("social-group-a");
         addSocialGroup("social-group-b");
         addSocialGroup("social-group-c");
+
+        addMembership("memberhip-type-a", "individual-a", "social-group-a");
+        addMembership("memberhip-type-b", "individual-b", "social-group-b");
+        addMembership("memberhip-type-c", "individual-c", "social-group-c");
 
         addErrorLog("sample error");
 
@@ -284,5 +293,19 @@ public class SampleDataGenerator {
         socialGroup.setExtId(name);
         socialGroup.setGroupName(name);
         socialGroupRepository.save(socialGroup);
+    }
+
+    private void addMembership(String type, String individualName, String socialGroupName) {
+        Membership membership = new Membership();
+        initAuditableFields(membership);
+        initCollectedFields(membership);
+
+        membership.setIndividual(individualRepository.findByExtId(individualName).get(0));
+        membership.setSocialGroup(socialGroupRepository.findByExtId(socialGroupName).get(0));
+        membership.setbIsToA(type);
+        membership.setStartDate(ZonedDateTime.now().minusYears(1));
+        membership.setStartType(type);
+
+        membershipRepository.save(membership);
     }
 }
