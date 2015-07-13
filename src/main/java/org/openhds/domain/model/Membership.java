@@ -30,6 +30,11 @@ public class Membership extends AuditableCollectedEntity {
     private SocialGroup socialGroup;
 
     @NotNull
+    @Size(min = 1)
+    @Description(description="Relationship between the individual and the SocialGroup head.")
+    String bIsToA;
+
+    @NotNull
     @Description(description="Start date of the membership.")
     ZonedDateTime startDate;
 
@@ -43,9 +48,6 @@ public class Membership extends AuditableCollectedEntity {
 
     @Description(description="End type of the membership.")
     String endType;
-
-    @Description(description="Relationship between the individual and the SocialGroup head.")
-    String bIsToA;
 
     public Individual getIndividual() {
         return individual;
