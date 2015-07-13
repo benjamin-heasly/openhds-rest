@@ -4,6 +4,8 @@ import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 /**
@@ -13,5 +15,10 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "membership")
 public class Membership extends AuditableCollectedEntity {
+
+    @ManyToOne
+    @JoinColumn(name = "individual")
+    @Description(description="Individual the membership is associated with, identified by external id.")
+    private Individual individual;
 
 }
