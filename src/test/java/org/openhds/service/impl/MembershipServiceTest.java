@@ -36,7 +36,7 @@ public class MembershipServiceTest extends AuditableCollectedServiceTest<Members
 
         membership.setIndividual(individualService.findAll(UUID_SORT).toList().get(0));
         membership.setSocialGroup(socialGroupService.findAll(UUID_SORT).toList().get(0));
-        membership.setbIsToA(name);
+        membership.setRelationshipToGroupHead(name);
         membership.setStartDate(ZonedDateTime.now().minusYears(1));
         membership.setStartType(name);
 

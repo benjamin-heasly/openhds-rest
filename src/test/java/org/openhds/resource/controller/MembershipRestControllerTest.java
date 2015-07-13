@@ -50,7 +50,7 @@ public class MembershipRestControllerTest extends AuditableCollectedRestControll
         membership.setSocialGroup(socialGroupRepository.findAll().get(0));
         membership.setIndividual(individualRepository.findAll().get(0));
         membership.setCollectedBy(fieldWorkerRepository.findAll().get(0));
-        membership.setbIsToA(name);
+        membership.setRelationshipToGroupHead(name);
         membership.setStartType(name);
         membership.setStartDate(ZonedDateTime.now().minusYears(1));
         membership.setCollectionDateTime(ZonedDateTime.now());
@@ -72,7 +72,7 @@ public class MembershipRestControllerTest extends AuditableCollectedRestControll
 
         assertEquals(id, savedMembership.getUuid());
         assertEquals(id, entity.getUuid());
-        assertEquals(entity.getbIsToA(), savedMembership.getbIsToA());
+        assertEquals(entity.getRelationshipToGroupHead(), savedMembership.getRelationshipToGroupHead());
 
     }
 

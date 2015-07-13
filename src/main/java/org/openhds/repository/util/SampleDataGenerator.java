@@ -325,7 +325,7 @@ public class SampleDataGenerator {
 
         membership.setIndividual(individualRepository.findByExtId(individualName).get(0));
         membership.setSocialGroup(socialGroupRepository.findByExtId(socialGroupName).get(0));
-        membership.setbIsToA(type);
+        membership.setRelationshipToGroupHead(type);
         membership.setStartDate(ZonedDateTime.now().minusYears(1));
         membership.setStartType(type);
 

@@ -31,8 +31,8 @@ public class Membership extends AuditableCollectedEntity {
 
     @NotNull
     @Size(min = 1)
-    @Description(description="Relationship between the individual and the SocialGroup head.")
-    String bIsToA;
+    @Description(description="Relationship from the individual to the SocialGroup head.")
+    String relationshipToGroupHead;
 
     @NotNull
     @Description(description="Start date of the membership.")
@@ -97,11 +97,11 @@ public class Membership extends AuditableCollectedEntity {
         this.endType = endType;
     }
 
-    public String getbIsToA() {
-        return bIsToA;
+    public String getRelationshipToGroupHead() {
+        return relationshipToGroupHead;
     }
 
-    public void setbIsToA(String bIsToA) {
-        this.bIsToA = bIsToA;
+    public void setRelationshipToGroupHead(String bIsToA) {
+        this.relationshipToGroupHead = bIsToA;
     }
 }

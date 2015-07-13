@@ -40,7 +40,7 @@ public class MembershipService extends AbstractAuditableCollectedService<Members
         membership.setIndividual(individualService.getUnknownEntity());
         membership.setStartDate(ZonedDateTime.now().minusYears(1));
         membership.setStartType("unknown");
-        membership.setbIsToA("unknown");
+        membership.setRelationshipToGroupHead("unknown");
 
         return membership;
     }
