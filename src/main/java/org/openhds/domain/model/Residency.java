@@ -18,7 +18,12 @@ public class Residency extends AuditableCollectedEntity {
 
     @ManyToOne
     @JoinColumn(name = "individual")
-    @Description(description = "Individual who resides at this residency.")
+    @Description(description = "Individual who resides at the Location.")
     private Individual individual;
+
+    @ManyToOne
+    @JoinColumn(name = "location")
+    @Description(description = "Location where the Individual resides.")
+    private Location location;
 
 }

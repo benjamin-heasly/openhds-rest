@@ -45,8 +45,8 @@ public class Location extends AuditableExtIdEntity implements Serializable {
     @Description(description = "The altitude for the Location")
     private String altitude;
 
-    @OneToMany(targetEntity = org.openhds.domain.model.Residency.class)
-    @JoinColumn(name = "location_uuid")
+    @Description(description = "The set of all residencies where this Individual lives or lived.")
+    @OneToMany(mappedBy = "location", cascade = { CascadeType.ALL })
     private Set<Residency> residencies = new HashSet<>();
 
     // Extensions for bioko island project
