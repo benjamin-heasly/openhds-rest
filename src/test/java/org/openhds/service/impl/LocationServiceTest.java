@@ -13,10 +13,10 @@ import java.time.ZonedDateTime;
 public class LocationServiceTest extends AuditableExtIdServiceTest<Location, LocationService> {
 
     @Autowired
-    FieldWorkerService fieldWorkerService;
+    private FieldWorkerService fieldWorkerService;
 
     @Autowired
-    LocationHierarchyService locationHierarchyService;
+    private LocationHierarchyService locationHierarchyService;
 
     @Override
     protected Location makeInvalidEntity() {
