@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.io.Serializable;
 
 /**
  * Created by bsh on 7/13/15.
@@ -14,7 +15,9 @@ import javax.persistence.Table;
 @Description(description = "A record of an Individual living at a Location for some time interval.")
 @Entity
 @Table(name = "residency")
-public class Residency extends AuditableCollectedEntity {
+public class Residency extends AuditableCollectedEntity implements Serializable{
+
+    private static final long serialVersionUID = -8660806978131352923L;
 
     @ManyToOne
     @JoinColumn(name = "individual")
