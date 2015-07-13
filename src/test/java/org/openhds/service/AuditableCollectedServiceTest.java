@@ -11,6 +11,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by wolfe on 6/17/15.
@@ -55,6 +56,7 @@ public abstract class AuditableCollectedServiceTest
         T lateEntity = makeValidEntity("lateEntity", "lateEntity");
         ZonedDateTime lateTime = service.createOrUpdate(lateEntity).getCollectionDateTime();
 
+        assertTrue(earlyTime.compareTo(lateTime) < 0);
 
         List<T> betweenReslts = service.findByCollectionDateTime(UUID_SORT, earlyTime, lateTime).toList();
         assertEquals(betweenReslts.size(), 2);

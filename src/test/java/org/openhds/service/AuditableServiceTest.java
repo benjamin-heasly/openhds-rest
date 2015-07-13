@@ -64,6 +64,7 @@ public abstract class AuditableServiceTest
         T lateEntity = makeValidEntity("lateEntity", "lateEntity");
         ZonedDateTime lateTime = service.createOrUpdate(lateEntity).getInsertDate();
 
+        assertTrue(earlyTime.compareTo(lateTime) < 0);
 
         List<T> betweenReslts = service.findByInsertDate(UUID_SORT, earlyTime, lateTime).toList();
         assertEquals(betweenReslts.size(), 2);
@@ -82,10 +83,10 @@ public abstract class AuditableServiceTest
 
         T earlyEntity = makeValidEntity("earlyEntity", "earlyEntity");
         ZonedDateTime earlyTime = service.createOrUpdate(earlyEntity).getLastModifiedDate();
-
         T lateEntity = makeValidEntity("lateEntity", "lateEntity");
         ZonedDateTime lateTime = service.createOrUpdate(lateEntity).getLastModifiedDate();
 
+        assertTrue(earlyTime.compareTo(lateTime) < 0);
 
         List<T> betweenReslts = service.findByLastModifiedDate(UUID_SORT, earlyTime, lateTime).toList();
         assertEquals(betweenReslts.size(), 2);
