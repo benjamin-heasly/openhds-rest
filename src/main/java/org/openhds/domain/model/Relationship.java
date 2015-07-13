@@ -19,12 +19,12 @@ public class Relationship extends AuditableCollectedEntity implements Serializab
 
     private static final long serialVersionUID = -2104326927087468148L;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "individualA")
     @Description(description = "One of the individuals participating in the relationship.")
     private Individual individualA;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "individualB")
     @Description(description = "One of the individuals participating in the relationship.")
     private Individual individualB;
@@ -108,8 +108,6 @@ public class Relationship extends AuditableCollectedEntity implements Serializab
     @Override
     public String toString() {
         return "Relationship{" +
-                "individualA=" + individualA +
-                ", individualB=" + individualB +
                 ", relationshipType='" + relationshipType + '\'' +
                 ", startDate=" + startDate +
                 ", endDate=" + endDate +

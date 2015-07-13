@@ -1,5 +1,6 @@
 package org.openhds.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.openhds.domain.contract.AuditableExtIdEntity;
 import org.openhds.domain.util.Description;
 
@@ -45,19 +46,23 @@ public class Individual extends AuditableExtIdEntity implements Serializable {
     @Description(description = "The individual's father.")
     private Individual father;
 
-    @OneToMany(mappedBy = "individual", cascade = { CascadeType.ALL })
+    @JsonIgnore
+    @OneToMany(mappedBy = "individual", fetch =  FetchType.LAZY)
     @Description(description = "The set of all residencies that the individual is a part of.")
     private Set<Residency> residencies = new HashSet<Residency>();
 
-    @OneToMany(mappedBy = "individual", cascade = { CascadeType.ALL })
+    @JsonIgnore
+    @OneToMany(mappedBy = "individual", fetch =  FetchType.LAZY)
     @Description(description = "The set of all memberships the individual is a part of.")
     private Set<Membership> allMemberships = new HashSet<Membership>();
 
-    @OneToMany(mappedBy = "individualA", cascade = { CascadeType.ALL })
+    @JsonIgnore
+    @OneToMany(mappedBy = "individualA", fetch =  FetchType.LAZY)
     @Description(description = "The set of all relationships that the individual may have with another individual.")
     private Set<Relationship> relationshipsAsIndividualA = new HashSet<Relationship>();
 
-    @OneToMany(mappedBy = "individualB", cascade = { CascadeType.ALL })
+    @JsonIgnore
+    @OneToMany(mappedBy = "individualB", fetch =  FetchType.LAZY)
     @Description(description = "The set of all relationships another individual may have with this individual.")
     private Set<Relationship> relationshipsAsIndividualB = new HashSet<Relationship>();
 
@@ -173,12 +178,6 @@ public class Individual extends AuditableExtIdEntity implements Serializable {
                 ", lastName='" + lastName + '\'' +
                 ", gender='" + gender + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
-                ", mother=" + mother +
-                ", father=" + father +
-                ", residencies=" + residencies +
-                ", allMemberships=" + allMemberships +
-                ", relationshipsAsIndividualA=" + relationshipsAsIndividualA +
-                ", relationshipsAsIndividualB=" + relationshipsAsIndividualB +
                 "} " + super.toString();
     }
 }
