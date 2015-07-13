@@ -5,10 +5,16 @@ import org.openhds.resource.contract.UuidIdentifiableRestController;
 import org.openhds.resource.registration.ProjectCodeRegistration;
 import org.openhds.service.impl.ProjectCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.ExposesResourceFor;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Created by bsh on 7/13/15.
  */
+@RestController
+@RequestMapping("/projectcodes")
+@ExposesResourceFor(ProjectCode.class)
 public class ProjectCodeResource extends UuidIdentifiableRestController<
         ProjectCode,
         ProjectCodeRegistration,
