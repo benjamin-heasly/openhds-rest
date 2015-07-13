@@ -26,6 +26,7 @@ public class ErrorLogService extends AbstractAuditableCollectedService<ErrorLog,
     @Override
     protected ErrorLog makeUnknownEntity() {
         ErrorLog errorLog = new ErrorLog();
+        errorLog.appendError("unknown");
         errorLog.setCollectionDateTime(ZonedDateTime.now());
         errorLog.setCollectedBy(fieldWorkerService.getUnknownEntity());
         return errorLog;
