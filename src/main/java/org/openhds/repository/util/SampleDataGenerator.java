@@ -2,10 +2,7 @@ package org.openhds.repository.util;
 
 import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.contract.AuditableEntity;
-import org.openhds.domain.model.FieldWorker;
-import org.openhds.domain.model.Location;
-import org.openhds.domain.model.LocationHierarchy;
-import org.openhds.domain.model.LocationHierarchyLevel;
+import org.openhds.domain.model.*;
 import org.openhds.errors.model.Error;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.events.model.Event;
@@ -64,6 +61,9 @@ public class SampleDataGenerator {
     @Autowired
     private EventRepository eventRepository;
 
+    @Autowired
+    private ProjectCodeRepository projectCodeRepository;
+
     public void clearData() {
         eventMetadataRepository.deleteAllInBatch();
         eventRepository.deleteAllInBatch();
@@ -81,6 +81,7 @@ public class SampleDataGenerator {
         roleRepository.deleteAllInBatch();
         privilegeRepository.deleteAllInBatch();
 
+        projectCodeRepository.deleteAllInBatch();
     }
 
     public void generateSampleData() {
@@ -112,6 +113,9 @@ public class SampleDataGenerator {
         addErrorLog("sample error");
 
         addEvent("sample event", "sample system");
+
+        addProjectCode("test-code-1", "value-1");
+        addProjectCode("test-code-2", "value-2");
     }
 
     private void addPrivileges(Privilege.Grant... grants) {
@@ -232,5 +236,12 @@ public class SampleDataGenerator {
         event.getEventMetadata().add(defaultMetadata);
 
         eventRepository.save(event);
+    }
+
+    private void addProjectCode(String name, String value) {
+        ProjectCode projectCode = new ProjectCode();
+        projectCode.setCodeName(name);
+        projectCode.setCodeValue(value);
+        projectCodeRepository.save(projectCode);
     }
 }

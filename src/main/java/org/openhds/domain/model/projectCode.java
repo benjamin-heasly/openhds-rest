@@ -1,12 +1,12 @@
 package org.openhds.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.hibernate.annotations.GenericGenerator;
 import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.domain.util.Description;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -14,6 +14,11 @@ import java.io.Serializable;
 /**
  * Created by bsh on 7/13/15.
  */
+@Description(description = "A data code with a consistent name and a value which projects can customize.")
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonIgnoreProperties(ignoreUnknown = true)
+@Entity
+@Table(name = "projectcode")
 public class ProjectCode implements UuidIdentifiable, Serializable {
 
     @Id
@@ -58,5 +63,30 @@ public class ProjectCode implements UuidIdentifiable, Serializable {
 
     public void setCodeValue(String codeValue) {
         this.codeValue = codeValue;
+    }
+
+    @Override
+    public int hashCode() {
+        if (null == uuid) {
+            return 0;
+        }
+        return uuid.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+
+        final ProjectCode other = (ProjectCode) obj;
+        if ((this.uuid == null) ? (other.uuid != null) : !this.uuid.equals(other.uuid)) {
+            return false;
+        }
+        return true;
     }
 }
