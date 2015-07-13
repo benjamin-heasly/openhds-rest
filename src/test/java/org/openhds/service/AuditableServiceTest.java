@@ -70,7 +70,7 @@ public abstract class AuditableServiceTest
 
         // exactly two records that we just inserted
         List<T> betweenReslts = service.findByInsertDate(UUID_SORT, earlyTime, lateTime).toList();
-        assertEquals(betweenReslts.size(), 2);
+        assertEquals(2, betweenReslts.size());
 
         // same two which we just inserted
         List<T> afterReslts = service.findByInsertDate(UUID_SORT, earlyTime, null).toList();
@@ -98,7 +98,7 @@ public abstract class AuditableServiceTest
 
         // exactly two records that we just inserted
         List<T> betweenReslts = service.findByInsertDate(UUID_SORT, earlyTime, lateTime).toList();
-        assertEquals(betweenReslts.size(), 2);
+        assertEquals(2, betweenReslts.size());
 
         // same two which we just inserted
         List<T> afterReslts = service.findByInsertDate(UUID_SORT, earlyTime, null).toList();
