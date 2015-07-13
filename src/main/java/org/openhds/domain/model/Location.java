@@ -8,8 +8,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -47,7 +47,7 @@ public class Location extends AuditableExtIdEntity implements Serializable {
 
     @OneToMany(targetEntity = org.openhds.domain.model.Residency.class)
     @JoinColumn(name = "location_uuid")
-    private List<Residency> residencies = new ArrayList<Residency>();
+    private Set<Residency> residencies = new HashSet<>();
 
     // Extensions for bioko island project
     @Description(description = "The number of this building within a sector")
@@ -150,11 +150,11 @@ public class Location extends AuditableExtIdEntity implements Serializable {
         altitude = alt;
     }
 
-    public List<Residency> getResidencies() {
+    public Set<Residency> getResidencies() {
         return residencies;
     }
 
-    public void setResidencies(List<Residency> list) {
+    public void setResidencies(Set<Residency> list) {
         residencies = list;
     }
 

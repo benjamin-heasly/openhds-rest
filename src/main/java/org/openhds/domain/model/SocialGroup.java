@@ -3,7 +3,10 @@ package org.openhds.domain.model;
 import org.openhds.domain.contract.AuditableExtIdEntity;
 import org.openhds.domain.util.Description;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -27,7 +30,31 @@ public class SocialGroup extends AuditableExtIdEntity implements Serializable {
     @Description(description = "Type of the social group.")
     private String groupType;
 
-//    @Description(description = "The set of all memberships for this social group.")
-//    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "socialGroup")
-//    private Set<Membership> memberships;
+    @Description(description = "The set of all memberships for this social group.")
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "socialGroup")
+    private Set<Membership> memberships;
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public String getGroupType() {
+        return groupType;
+    }
+
+    public void setGroupType(String groupType) {
+        this.groupType = groupType;
+    }
+
+    public Set<Membership> getMemberships() {
+        return memberships;
+    }
+
+    public void setMemberships(Set<Membership> memberships) {
+        this.memberships = memberships;
+    }
 }
