@@ -2,8 +2,10 @@ package org.openhds.repository.util;
 
 import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.contract.AuditableEntity;
-import org.openhds.domain.model.*;
+import org.openhds.domain.model.FieldWorker;
+import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.*;
+import org.openhds.domain.model.update.InMigration;
 import org.openhds.domain.model.update.Visit;
 import org.openhds.errors.model.Error;
 import org.openhds.errors.model.ErrorLog;
@@ -11,6 +13,7 @@ import org.openhds.events.model.Event;
 import org.openhds.events.model.EventMetadata;
 import org.openhds.repository.concrete.*;
 import org.openhds.repository.concrete.census.*;
+import org.openhds.repository.concrete.update.InMigationRepository;
 import org.openhds.repository.concrete.update.VisitRepository;
 import org.openhds.security.model.Privilege;
 import org.openhds.security.model.Role;
@@ -86,12 +89,17 @@ public class SampleDataGenerator {
     @Autowired
     private VisitRepository visitRepository;
 
+    @Autowired
+    private InMigationRepository inMigationRepository;
+
     public void clearData() {
         eventMetadataRepository.deleteAllInBatch();
         eventRepository.deleteAllInBatch();
 
         errorRepository.deleteAllInBatch();
         errorLogRepository.deleteAllInBatch();
+
+        inMigationRepository.deleteAllInBatch();
 
         visitRepository.deleteAllInBatch();
 
@@ -169,6 +177,9 @@ public class SampleDataGenerator {
         addResidency("resdoncy-toop-a", "individual-a", "location-a");
         addResidency("resdoncy-toop-b", "individual-b", "location-b");
         addResidency("resdoncy-toop-c","individual-c","location-c");
+
+        addInMigration("migration-a");
+        addInMigration("migration-b");
 
         addErrorLog("sample error");
 
@@ -378,5 +389,21 @@ public class SampleDataGenerator {
         visit.setVisitDate(ZonedDateTime.now());
 
         visitRepository.save(visit);
+    }
+
+    private void addInMigration(String name) {
+        InMigration inMigration = new InMigration();
+        initAuditableFields(inMigration);
+        initCollectedFields(inMigration);
+
+        inMigration.setVisit(visitRepository.findAll().get(0));
+        inMigration.setIndividual(individualRepository.findAll().get(0));
+        inMigration.setResidency(residencyRepository.findAll().get(0));
+        inMigration.setMigrationDate(ZonedDateTime.now().minusYears(1));
+        inMigration.setOrigin(name);
+        inMigration.setReason(name);
+        inMigration.setMigrationType(name);
+
+        inMigationRepository.save(inMigration);
     }
 }
