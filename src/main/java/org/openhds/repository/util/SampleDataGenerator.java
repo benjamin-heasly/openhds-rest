@@ -7,6 +7,7 @@ import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.*;
 import org.openhds.domain.model.update.Death;
 import org.openhds.domain.model.update.InMigration;
+import org.openhds.domain.model.update.OutMigration;
 import org.openhds.domain.model.update.Visit;
 import org.openhds.errors.model.Error;
 import org.openhds.errors.model.ErrorLog;
@@ -16,6 +17,7 @@ import org.openhds.repository.concrete.*;
 import org.openhds.repository.concrete.census.*;
 import org.openhds.repository.concrete.update.DeathRepository;
 import org.openhds.repository.concrete.update.InMigationRepository;
+import org.openhds.repository.concrete.update.OutMigationRepository;
 import org.openhds.repository.concrete.update.VisitRepository;
 import org.openhds.security.model.Privilege;
 import org.openhds.security.model.Role;
@@ -97,6 +99,9 @@ public class SampleDataGenerator {
     @Autowired
     private InMigationRepository inMigationRepository;
 
+    @Autowired
+    private OutMigationRepository outMigationRepository;
+
     public void clearData() {
         eventMetadataRepository.deleteAllInBatch();
         eventRepository.deleteAllInBatch();
@@ -107,6 +112,7 @@ public class SampleDataGenerator {
         deathRepository.deleteAllInBatch();
 
         inMigationRepository.deleteAllInBatch();
+        outMigationRepository.deleteAllInBatch();
 
         visitRepository.deleteAllInBatch();
 
@@ -190,6 +196,9 @@ public class SampleDataGenerator {
 
         addInMigration("migration-a");
         addInMigration("migration-b");
+
+        addOutMigration("migration-a");
+        addOutMigration("migration-b");
 
         addErrorLog("sample error");
 
@@ -429,5 +438,20 @@ public class SampleDataGenerator {
         inMigration.setMigrationType(name);
 
         inMigationRepository.save(inMigration);
+    }
+
+    private void addOutMigration(String name) {
+        OutMigration outMigration = new OutMigration();
+        initAuditableFields(outMigration);
+        initCollectedFields(outMigration);
+
+        outMigration.setVisit(visitRepository.findAll().get(0));
+        outMigration.setIndividual(individualRepository.findAll().get(0));
+        outMigration.setResidency(residencyRepository.findAll().get(0));
+        outMigration.setMigrationDate(ZonedDateTime.now().minusYears(1));
+        outMigration.setDestination(name);
+        outMigration.setReason(name);
+
+        outMigationRepository.save(outMigration);
     }
 }
