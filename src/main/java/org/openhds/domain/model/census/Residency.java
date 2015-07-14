@@ -108,4 +108,15 @@ public class Residency extends AuditableCollectedEntity implements Serializable{
         return null != uuid && null != otherUuid && uuid.equals(otherUuid);
     }
 
+    @Override
+    public String toString() {
+        return "Residency{" +
+                "individual=" + individual +
+                ", location=" + location +
+                ", startDate=" + startDate +
+                ", startType='" + startType + '\'' +
+                ", endDate=" + endDate +
+                ", endType='" + endType + '\'' +
+                "} " + super.toString();
+    }
 }
