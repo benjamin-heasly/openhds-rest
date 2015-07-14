@@ -49,7 +49,7 @@ public class ResidencyRestController extends AuditableCollectedRestController<
         residency.setIndividual(individualService.findOne(registration.getIndividualUuid()));
         residency.setLocation(locationService.findOne(registration.getLocationUuid()));
         residency.setCollectedBy(fieldWorkerService.findOne(registration.getCollectedByUuid()));
-        return residency;
+        return residencyService.createOrUpdate(residency);
     }
 
     @Override
