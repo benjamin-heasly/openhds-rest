@@ -1,5 +1,6 @@
 package org.openhds.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.domain.util.Description;
 
@@ -28,14 +29,12 @@ public class FieldWorker extends AuditableEntity implements Serializable {
 
     @Description(description = "Password entered for a new field worker.")
     @Transient
+    @JsonIgnore
     String password;
 
     @NotNull(message = "field worker passwordHash may not be null")
     @Description(description = "Hashed version of a field worker's password.")
     String passwordHash;
-
-    @Description(description = "The ID prefix used in individual extId generation.")
-    int idPrefix;
 
     public String getFieldWorkerId() {
         return fieldWorkerId;
@@ -43,14 +42,6 @@ public class FieldWorker extends AuditableEntity implements Serializable {
 
     public void setFieldWorkerId(String fieldWorkerId) {
         this.fieldWorkerId = fieldWorkerId;
-    }
-
-    public int getIdPrefix() {
-        return idPrefix;
-    }
-
-    public void setIdPrefix(int idPrefix) {
-        this.idPrefix = idPrefix;
     }
 
     public String getFirstName() {
@@ -107,7 +98,6 @@ public class FieldWorker extends AuditableEntity implements Serializable {
                 ", lastName='" + lastName + '\'' +
                 ", password='" + password + '\'' +
                 ", passwordHash='" + passwordHash + '\'' +
-                ", idPrefix=" + idPrefix +
                 "} " + super.toString();
     }
 }
