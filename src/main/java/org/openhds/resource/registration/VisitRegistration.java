@@ -1,7 +1,6 @@
 package org.openhds.resource.registration;
 
-import org.openhds.domain.model.SocialGroup;
-import org.openhds.domain.model.Visit;
+import org.openhds.domain.model.update.Visit;
 import org.openhds.domain.util.Description;
 
 /**

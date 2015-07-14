@@ -1,6 +1,6 @@
 package org.openhds.resource.registration;
 
-import org.openhds.domain.model.Residency;
+import org.openhds.domain.model.census.Residency;
 
 /**
  * Created by Wolfe on 7/14/2015.

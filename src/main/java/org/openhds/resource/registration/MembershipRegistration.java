@@ -1,6 +1,6 @@
 package org.openhds.resource.registration;
 
-import org.openhds.domain.model.Membership;
+import org.openhds.domain.model.census.Membership;
 import org.openhds.domain.util.Description;
 
 /**

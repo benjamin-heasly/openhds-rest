@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/users")
 @ExposesResourceFor(User.class)
-class UserRestController extends UuidIdentifiableRestController<
+public class UserRestController extends UuidIdentifiableRestController<
         User,
         UserRegistration,
         UserService> {
