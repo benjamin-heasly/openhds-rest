@@ -5,6 +5,7 @@ import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.*;
+import org.openhds.domain.model.update.Death;
 import org.openhds.domain.model.update.InMigration;
 import org.openhds.domain.model.update.Visit;
 import org.openhds.errors.model.Error;
@@ -13,6 +14,7 @@ import org.openhds.events.model.Event;
 import org.openhds.events.model.EventMetadata;
 import org.openhds.repository.concrete.*;
 import org.openhds.repository.concrete.census.*;
+import org.openhds.repository.concrete.update.DeathRepository;
 import org.openhds.repository.concrete.update.InMigationRepository;
 import org.openhds.repository.concrete.update.VisitRepository;
 import org.openhds.security.model.Privilege;
@@ -90,6 +92,9 @@ public class SampleDataGenerator {
     private VisitRepository visitRepository;
 
     @Autowired
+    private DeathRepository deathRepository;
+
+    @Autowired
     private InMigationRepository inMigationRepository;
 
     public void clearData() {
@@ -98,6 +103,8 @@ public class SampleDataGenerator {
 
         errorRepository.deleteAllInBatch();
         errorLogRepository.deleteAllInBatch();
+
+        deathRepository.deleteAllInBatch();
 
         inMigationRepository.deleteAllInBatch();
 
@@ -176,7 +183,10 @@ public class SampleDataGenerator {
 
         addResidency("resdoncy-toop-a", "individual-a", "location-a");
         addResidency("resdoncy-toop-b", "individual-b", "location-b");
-        addResidency("resdoncy-toop-c","individual-c","location-c");
+        addResidency("resdoncy-toop-c", "individual-c", "location-c");
+
+        addDeath("death-a", "individual-a", "visit-a");
+        addDeath("death-b", "individual-b", "visit-b");
 
         addInMigration("migration-a");
         addInMigration("migration-b");
@@ -389,6 +399,20 @@ public class SampleDataGenerator {
         visit.setVisitDate(ZonedDateTime.now());
 
         visitRepository.save(visit);
+    }
+
+    private void addDeath(String name, String individualName, String visitName) {
+        Death death = new Death();
+        initAuditableFields(death);
+        initCollectedFields(death);
+
+        death.setIndividual(individualRepository.findByExtId(individualName).get(0));
+        death.setDeathCause(name);
+        death.setDeathPlace(name);
+        death.setDeathDate(ZonedDateTime.now().minusYears(1));
+        death.setVisit(visitRepository.findByExtId(visitName).get(0));
+
+        deathRepository.save(death);
     }
 
     private void addInMigration(String name) {
