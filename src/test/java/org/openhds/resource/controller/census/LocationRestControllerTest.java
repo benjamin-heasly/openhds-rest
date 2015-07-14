@@ -4,7 +4,7 @@ import org.openhds.domain.model.census.Location;
 import org.openhds.repository.concrete.FieldWorkerRepository;
 import org.openhds.repository.concrete.census.LocationHierarchyRepository;
 import org.openhds.resource.contract.AuditableExtIdRestControllerTest;
-import org.openhds.resource.registration.LocationRegistration;
+import org.openhds.resource.registration.census.LocationRegistration;
 import org.openhds.resource.registration.Registration;
 import org.openhds.service.impl.census.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;

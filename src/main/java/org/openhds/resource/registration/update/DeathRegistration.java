@@ -1,6 +1,7 @@
-package org.openhds.resource.registration;
+package org.openhds.resource.registration.update;
 
 import org.openhds.domain.model.update.Death;
+import org.openhds.resource.registration.Registration;
 
 /**
  * Created by Wolfe on 7/14/2015.

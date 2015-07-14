@@ -2,7 +2,7 @@ package org.openhds.resource.controller.census;
 
 import org.openhds.domain.model.census.Residency;
 import org.openhds.resource.contract.AuditableCollectedRestController;
-import org.openhds.resource.registration.ResidencyRegistration;
+import org.openhds.resource.registration.census.ResidencyRegistration;
 import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.census.IndividualService;
 import org.openhds.service.impl.census.LocationService;

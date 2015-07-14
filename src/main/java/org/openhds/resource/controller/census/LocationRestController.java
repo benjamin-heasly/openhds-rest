@@ -2,7 +2,7 @@ package org.openhds.resource.controller.census;
 
 import org.openhds.domain.model.census.Location;
 import org.openhds.resource.contract.AuditableExtIdRestController;
-import org.openhds.resource.registration.LocationRegistration;
+import org.openhds.resource.registration.census.LocationRegistration;
 import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.census.LocationHierarchyService;
 import org.openhds.service.impl.census.LocationService;

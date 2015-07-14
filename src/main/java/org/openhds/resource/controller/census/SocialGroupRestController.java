@@ -2,7 +2,7 @@ package org.openhds.resource.controller.census;
 
 import org.openhds.domain.model.census.SocialGroup;
 import org.openhds.resource.contract.AuditableExtIdRestController;
-import org.openhds.resource.registration.SocialGroupRegistration;
+import org.openhds.resource.registration.census.SocialGroupRegistration;
 import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.census.SocialGroupService;
 import org.springframework.beans.factory.annotation.Autowired;

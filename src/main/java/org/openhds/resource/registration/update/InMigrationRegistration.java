@@ -1,8 +1,9 @@
-package org.openhds.resource.registration;
+package org.openhds.resource.registration.update;
 
 import org.openhds.domain.model.update.InMigration;
 import org.openhds.domain.model.update.Visit;
 import org.openhds.domain.util.Description;
+import org.openhds.resource.registration.Registration;
 
 /**
  * Created by Ben on 6/3/15.

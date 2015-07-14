@@ -6,7 +6,7 @@ import org.openhds.repository.concrete.census.IndividualRepository;
 import org.openhds.repository.concrete.census.ResidencyRepository;
 import org.openhds.repository.concrete.update.VisitRepository;
 import org.openhds.resource.contract.AuditableCollectedRestControllerTest;
-import org.openhds.resource.registration.InMigrationRegistration;
+import org.openhds.resource.registration.update.InMigrationRegistration;
 import org.openhds.resource.registration.Registration;
 import org.openhds.service.impl.update.InMigrationService;
 import org.springframework.beans.factory.annotation.Autowired;

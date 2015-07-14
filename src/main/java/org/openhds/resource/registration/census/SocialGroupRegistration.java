@@ -1,7 +1,8 @@
-package org.openhds.resource.registration;
+package org.openhds.resource.registration.census;
 
 import org.openhds.domain.model.census.SocialGroup;
 import org.openhds.domain.util.Description;
+import org.openhds.resource.registration.Registration;
 
 /**
  * Created by Ben on 6/3/15.

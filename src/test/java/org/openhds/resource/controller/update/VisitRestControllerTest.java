@@ -4,9 +4,8 @@ import org.openhds.domain.model.update.Visit;
 import org.openhds.repository.concrete.FieldWorkerRepository;
 import org.openhds.repository.concrete.census.LocationRepository;
 import org.openhds.resource.contract.AuditableExtIdRestControllerTest;
-import org.openhds.resource.controller.update.VisitRestController;
 import org.openhds.resource.registration.Registration;
-import org.openhds.resource.registration.VisitRegistration;
+import org.openhds.resource.registration.update.VisitRegistration;
 import org.openhds.service.impl.update.VisitService;
 import org.springframework.beans.factory.annotation.Autowired;
 

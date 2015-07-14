@@ -2,7 +2,7 @@ package org.openhds.resource.controller.update;
 
 import org.openhds.domain.model.update.InMigration;
 import org.openhds.resource.contract.AuditableCollectedRestController;
-import org.openhds.resource.registration.InMigrationRegistration;
+import org.openhds.resource.registration.update.InMigrationRegistration;
 import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.census.IndividualService;
 import org.openhds.service.impl.census.ResidencyService;

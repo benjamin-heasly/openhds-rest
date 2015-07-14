@@ -2,7 +2,7 @@ package org.openhds.resource.controller.update;
 
 import org.openhds.domain.model.update.Death;
 import org.openhds.resource.contract.AuditableCollectedRestController;
-import org.openhds.resource.registration.DeathRegistration;
+import org.openhds.resource.registration.update.DeathRegistration;
 import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.census.IndividualService;
 import org.openhds.service.impl.update.DeathService;

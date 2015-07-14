@@ -4,7 +4,7 @@ import org.openhds.domain.model.census.SocialGroup;
 import org.openhds.repository.concrete.FieldWorkerRepository;
 import org.openhds.resource.contract.AuditableExtIdRestControllerTest;
 import org.openhds.resource.registration.Registration;
-import org.openhds.resource.registration.SocialGroupRegistration;
+import org.openhds.resource.registration.census.SocialGroupRegistration;
 import org.openhds.service.impl.census.SocialGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 

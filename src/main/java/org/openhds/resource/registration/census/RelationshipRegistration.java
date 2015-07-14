@@ -1,6 +1,7 @@
-package org.openhds.resource.registration;
+package org.openhds.resource.registration.census;
 
 import org.openhds.domain.model.census.Relationship;
+import org.openhds.resource.registration.Registration;
 
 /**
  * Created by Wolfe on 7/13/2015.

@@ -2,7 +2,7 @@ package org.openhds.resource.controller.update;
 
 import org.openhds.domain.model.update.Visit;
 import org.openhds.resource.contract.AuditableExtIdRestController;
-import org.openhds.resource.registration.VisitRegistration;
+import org.openhds.resource.registration.update.VisitRegistration;
 import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.census.LocationService;
 import org.openhds.service.impl.update.VisitService;
