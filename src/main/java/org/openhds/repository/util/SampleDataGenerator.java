@@ -4,6 +4,7 @@ import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.domain.model.*;
 import org.openhds.domain.model.census.*;
+import org.openhds.domain.model.update.Death;
 import org.openhds.domain.model.update.Visit;
 import org.openhds.errors.model.Error;
 import org.openhds.errors.model.ErrorLog;
@@ -11,6 +12,7 @@ import org.openhds.events.model.Event;
 import org.openhds.events.model.EventMetadata;
 import org.openhds.repository.concrete.*;
 import org.openhds.repository.concrete.census.*;
+import org.openhds.repository.concrete.update.DeathRepository;
 import org.openhds.repository.concrete.update.VisitRepository;
 import org.openhds.security.model.Privilege;
 import org.openhds.security.model.Role;
@@ -85,6 +87,9 @@ public class SampleDataGenerator {
 
     @Autowired
     private VisitRepository visitRepository;
+
+    @Autowired
+    private DeathRepository deathRepository;
 
     public void clearData() {
         eventMetadataRepository.deleteAllInBatch();
@@ -378,5 +383,20 @@ public class SampleDataGenerator {
         visit.setVisitDate(ZonedDateTime.now());
 
         visitRepository.save(visit);
+    }
+
+    private void addDeath(String name, String individualName, String visitName){
+        Death death = new Death();
+        initAuditableFields(death);
+        initCollectedFields(death);
+
+        death.setIndividual(individualRepository.findByExtId(individualName).get(0));
+        death.setDeathCause(name);
+        death.setDeathPlace(name);
+        death.setDeathDate(ZonedDateTime.now().minusYears(1));
+        death.setVisit(visitRepository.findByExtId(visitName).get(0));
+
+        deathRepository.save(death);
+
     }
 }
