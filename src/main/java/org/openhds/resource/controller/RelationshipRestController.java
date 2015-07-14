@@ -1,6 +1,5 @@
 package org.openhds.resource.controller;
 
-import org.openhds.domain.model.Individual;
 import org.openhds.domain.model.Relationship;
 import org.openhds.resource.contract.AuditableCollectedRestController;
 import org.openhds.resource.registration.RelationshipRegistration;
@@ -23,11 +22,11 @@ public class RelationshipRestController extends AuditableCollectedRestController
         RelationshipRegistration,
         RelationshipService> {
 
-    private RelationshipService relationshipService;
+    private final RelationshipService relationshipService;
 
-    private IndividualService individualService;
+    private final IndividualService individualService;
 
-    private FieldWorkerService fieldWorkerService;
+    private final FieldWorkerService fieldWorkerService;
 
 
     @Autowired
@@ -43,8 +42,8 @@ public class RelationshipRestController extends AuditableCollectedRestController
     @Override
     protected Relationship register(RelationshipRegistration registration) {
         Relationship relationship = registration.getRelationship();
-        relationship.setIndividualA(individualService.findOne(registration.getIndividualAId()));
-        relationship.setIndividualB(individualService.findOne(registration.getIndividualBId()));
+        relationship.setIndividualA(individualService.findOne(registration.getIndividualAUuid()));
+        relationship.setIndividualB(individualService.findOne(registration.getIndividualBUuid()));
         relationship.setCollectedBy(fieldWorkerService.findOne(registration.getCollectedByUuid()));
         return relationshipService.createOrUpdate(relationship);
     }

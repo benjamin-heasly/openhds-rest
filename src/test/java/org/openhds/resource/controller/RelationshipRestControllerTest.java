@@ -68,8 +68,8 @@ public class RelationshipRestControllerTest extends AuditableCollectedRestContro
     protected Registration<Relationship> makeRegistration(Relationship entity) {
         RelationshipRegistration registration = new RelationshipRegistration();
         registration.setRelationship(entity);
-        registration.setIndividualAId(individualRepository.findAll().get(0).getUuid());
-        registration.setIndividualBId(individualRepository.findAll().get(0).getUuid());
+        registration.setIndividualAUuid(individualRepository.findAll().get(0).getUuid());
+        registration.setIndividualBUuid(individualRepository.findAll().get(0).getUuid());
         registration.setCollectedByUuid(fieldWorkerRepository.findAll().get(0).getUuid());
         return registration;
     }

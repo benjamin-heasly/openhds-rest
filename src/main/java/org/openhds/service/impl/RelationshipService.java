@@ -1,5 +1,6 @@
 package org.openhds.service.impl;
 
+import org.openhds.domain.model.Individual;
 import org.openhds.domain.model.Relationship;
 import org.openhds.repository.concrete.RelationshipRepository;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
@@ -15,6 +16,9 @@ import java.time.ZonedDateTime;
 public class RelationshipService extends AbstractAuditableCollectedService<Relationship, RelationshipRepository> {
 
     @Autowired
+    private IndividualService individualService;
+
+    @Autowired
     private FieldWorkerService fieldWorkerService;
 
     @Autowired
@@ -27,6 +31,8 @@ public class RelationshipService extends AbstractAuditableCollectedService<Relat
         Relationship relationship = new Relationship();
         relationship.setRelationshipType("unknown");
         relationship.setStartDate(ZonedDateTime.now());
+        relationship.setIndividualA(individualService.getUnknownEntity());
+        relationship.setIndividualB(individualService.getUnknownEntity());
         relationship.setCollectionDateTime(ZonedDateTime.now());
         relationship.setCollectedBy(fieldWorkerService.getUnknownEntity());
         return relationship;

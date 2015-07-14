@@ -9,9 +9,9 @@ public class RelationshipRegistration extends Registration<Relationship> {
 
     private Relationship relationship;
 
-    private String individualAId;
+    private String individualAUuid;
 
-    private String individualBId;
+    private String individualBUuid;
 
     public Relationship getRelationship() {
         return relationship;
@@ -21,19 +21,19 @@ public class RelationshipRegistration extends Registration<Relationship> {
         this.relationship = relationship;
     }
 
-    public String getIndividualAId() {
-        return individualAId;
+    public String getIndividualAUuid() {
+        return individualAUuid;
     }
 
-    public void setIndividualAId(String individualAId) {
-        this.individualAId = individualAId;
+    public void setIndividualAUuid(String individualAUuid) {
+        this.individualAUuid = individualAUuid;
     }
 
-    public String getIndividualBId() {
-        return individualBId;
+    public String getIndividualBUuid() {
+        return individualBUuid;
     }
 
-    public void setIndividualBId(String individualBId) {
-        this.individualBId = individualBId;
+    public void setIndividualBUuid(String individualBUuid) {
+        this.individualBUuid = individualBUuid;
     }
 }
