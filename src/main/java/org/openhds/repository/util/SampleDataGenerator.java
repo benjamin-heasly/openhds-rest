@@ -76,8 +76,11 @@ public class SampleDataGenerator {
     @Autowired
     private SocialGroupRepository socialGroupRepository;
 
-    @ Autowired
+    @Autowired
     private MembershipRepository membershipRepository;
+
+    @Autowired
+    private VisitRepository visitRepository;
 
     public void clearData() {
         eventMetadataRepository.deleteAllInBatch();
@@ -85,6 +88,8 @@ public class SampleDataGenerator {
 
         errorRepository.deleteAllInBatch();
         errorLogRepository.deleteAllInBatch();
+
+        visitRepository.deleteAllInBatch();
 
         residencyRepository.deleteAllInBatch();
 
@@ -136,6 +141,10 @@ public class SampleDataGenerator {
         addLocation("location-d", "bottom-two");
         addLocation("duplicated", "bottom-two");
         addLocation("duplicated", "bottom-two");
+
+        addVisit("visit-a", "location-a");
+        addVisit("visit-b", "location-b");
+        addVisit("visit-c", "location-c");
 
         addIndividual("individual-a");
         addIndividual("individual-b");
@@ -353,5 +362,17 @@ public class SampleDataGenerator {
         residency.setStartDate(ZonedDateTime.now().minusYears(1));
 
         residencyRepository.save(residency);
+    }
+
+    private void addVisit(String name, String locationName) {
+        Visit visit = new Visit();
+        initAuditableFields(visit);
+        initCollectedFields(visit);
+
+        visit.setExtId(name);
+        visit.setLocation(locationRepository.findByExtId(locationName).get(0));
+        visit.setVisitDate(ZonedDateTime.now());
+
+        visitRepository.save(visit);
     }
 }

@@ -6,7 +6,7 @@ import org.openhds.domain.util.Description;
 /**
  * Created by Ben on 6/3/15.
  * <p>
- * Register or update a project-specific data code.
+ * Register or update a Social Group.
  */
 @Description(description = "Register or update a SocialGroup.")
 public class SocialGroupRegistration extends Registration<SocialGroup> {
