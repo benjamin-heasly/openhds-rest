@@ -1,6 +1,7 @@
 package org.openhds.service.impl.update;
 
 import org.openhds.domain.model.update.Visit;
+import org.openhds.service.AuditableExtIdServiceTest;
 import org.openhds.service.UuidServiceTest;
 import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.census.LocationService;
@@ -12,7 +13,7 @@ import java.time.ZonedDateTime;
 /**
  * Created by bsh on 7/13/15.
  */
-public class VisitServiceTest extends UuidServiceTest<Visit, VisitService> {
+public class VisitServiceTest extends AuditableExtIdServiceTest<Visit, VisitService> {
 
     @Autowired
     FieldWorkerService fieldWorkerService;
