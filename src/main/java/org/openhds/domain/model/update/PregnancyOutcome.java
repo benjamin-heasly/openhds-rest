@@ -107,6 +107,8 @@ public class PregnancyOutcome extends AuditableCollectedEntity implements Serial
         this.pregnancyResults = pregnancyResults;
     }
 
+
+
     @Override
     public boolean equals(Object other) {
         if (this == other) {

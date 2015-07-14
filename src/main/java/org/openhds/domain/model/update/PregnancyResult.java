@@ -22,12 +22,10 @@ public class PregnancyResult extends AuditableCollectedEntity implements Seriali
     private String type;
 
     @OneToOne
-    @JoinColumn(name = "individual")
     @Description(description="The child that of the pregnancy.")
     private Individual child;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "individual")
     @Description(description = "The pregnancyOutcome that this pregnancy result came from.")
     private PregnancyOutcome pregnancyOutcome;
 
