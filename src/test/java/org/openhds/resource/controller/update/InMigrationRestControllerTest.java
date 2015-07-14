@@ -68,12 +68,12 @@ public class InMigrationRestControllerTest extends AuditableCollectedRestControl
     protected void verifyEntityExistsWithNameAndId(InMigration entity, String name, String id) {
         assertNotNull(entity);
 
-        InMigration savedVisit = service.findOne(id);
-        assertNotNull(savedVisit);
+        InMigration savedInMigration = service.findOne(id);
+        assertNotNull(savedInMigration);
 
-        assertEquals(id, savedVisit.getUuid());
+        assertEquals(id, savedInMigration.getUuid());
         assertEquals(id, entity.getUuid());
-        assertEquals(entity.getMigrationType(), savedVisit.getMigrationType());
+        assertEquals(entity.getMigrationType(), savedInMigration.getMigrationType());
     }
 
     @Override
