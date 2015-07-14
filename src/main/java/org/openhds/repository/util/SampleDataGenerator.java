@@ -141,9 +141,9 @@ public class SampleDataGenerator {
         addIndividual("individual-b");
         addIndividual("individual-c");
 
-        addRelationship("individual-a", "individual-b");
-        addRelationship("individual-c", "individual-a");
-        addRelationship("individual-c", "individual-c");
+        addRelationship("relationship-type-a", "individual-a", "individual-b");
+        addRelationship("relationship-type-b", "individual-c", "individual-a");
+        addRelationship("relationship-type-c", "individual-c", "individual-c");
 
         addSocialGroup("social-group-a");
         addSocialGroup("social-group-b");
@@ -153,8 +153,8 @@ public class SampleDataGenerator {
         addMembership("memberhip-type-b", "individual-b", "social-group-b");
         addMembership("memberhip-type-c", "individual-c", "social-group-c");
 
-        addResidency("resdoncy-toop-a","individual-a","location-a");
-        addResidency("resdoncy-toop-b","individual-b","location-b");
+        addResidency("resdoncy-toop-a", "individual-a", "location-a");
+        addResidency("resdoncy-toop-b", "individual-b", "location-b");
         addResidency("resdoncy-toop-c","individual-c","location-c");
 
         addErrorLog("sample error");
@@ -316,14 +316,14 @@ public class SampleDataGenerator {
     }
 
 
-    private void addRelationship (String individualAId, String individualBId){
+    private void addRelationship (String relationshipType, String individualAName, String individualBName){
         Relationship relationship = new Relationship();
         initAuditableFields(relationship);
         initCollectedFields(relationship);
         relationship.setStartDate(ZonedDateTime.now().minusYears(1));
-        relationship.setRelationshipType("surrogate-siamese-fathers-uncle");
-        relationship.setIndividualA(individualRepository.findOne(individualAId));
-        relationship.setIndividualB(individualRepository.findOne(individualBId));
+        relationship.setRelationshipType(relationshipType);
+        relationship.setIndividualA(individualRepository.findByExtId(individualAName).get(0));
+        relationship.setIndividualB(individualRepository.findByExtId(individualBName).get(0));
 
         relationshipRepository.save(relationship);
     }
@@ -342,13 +342,13 @@ public class SampleDataGenerator {
         membershipRepository.save(membership);
     }
 
-    private void addResidency(String type, String individualId, String locationId) {
+    private void addResidency(String type, String individualName, String locationName) {
         Residency residency = new Residency();
         initCollectedFields(residency);
         initAuditableFields(residency);
 
-        residency.setIndividual(individualRepository.findOne(individualId));
-        residency.setLocation(locationRepository.findOne(locationId));
+        residency.setIndividual(individualRepository.findByExtId(individualName).get(0));
+        residency.setLocation(locationRepository.findByExtId(locationName).get(0));
         residency.setStartType(type);
         residency.setStartDate(ZonedDateTime.now().minusYears(1));
 
