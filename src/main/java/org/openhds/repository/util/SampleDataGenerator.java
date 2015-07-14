@@ -5,20 +5,14 @@ import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.*;
-import org.openhds.domain.model.update.Death;
-import org.openhds.domain.model.update.InMigration;
-import org.openhds.domain.model.update.OutMigration;
-import org.openhds.domain.model.update.Visit;
+import org.openhds.domain.model.update.*;
 import org.openhds.errors.model.Error;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.events.model.Event;
 import org.openhds.events.model.EventMetadata;
 import org.openhds.repository.concrete.*;
 import org.openhds.repository.concrete.census.*;
-import org.openhds.repository.concrete.update.DeathRepository;
-import org.openhds.repository.concrete.update.InMigationRepository;
-import org.openhds.repository.concrete.update.OutMigationRepository;
-import org.openhds.repository.concrete.update.VisitRepository;
+import org.openhds.repository.concrete.update.*;
 import org.openhds.security.model.Privilege;
 import org.openhds.security.model.Role;
 import org.openhds.security.model.User;
@@ -102,6 +96,9 @@ public class SampleDataGenerator {
     @Autowired
     private OutMigationRepository outMigationRepository;
 
+    @Autowired
+    private PregnancyObservationRepository pregnancyObservationRepository;
+
     public void clearData() {
         eventMetadataRepository.deleteAllInBatch();
         eventRepository.deleteAllInBatch();
@@ -113,6 +110,8 @@ public class SampleDataGenerator {
 
         inMigationRepository.deleteAllInBatch();
         outMigationRepository.deleteAllInBatch();
+
+        pregnancyObservationRepository.deleteAllInBatch();
 
         visitRepository.deleteAllInBatch();
 
@@ -199,6 +198,8 @@ public class SampleDataGenerator {
 
         addOutMigration("migration-a");
         addOutMigration("migration-b");
+
+        addPregnancyObservation("individual-a");
 
         addErrorLog("sample error");
 
@@ -453,5 +454,18 @@ public class SampleDataGenerator {
         outMigration.setReason(name);
 
         outMigationRepository.save(outMigration);
+    }
+
+    private void addPregnancyObservation(String motherName) {
+        PregnancyObservation pregnancyObservation = new PregnancyObservation();
+        initAuditableFields(pregnancyObservation);
+        initCollectedFields(pregnancyObservation);
+
+        pregnancyObservation.setVisit(visitRepository.findAll().get(0));
+        pregnancyObservation.setMother(individualRepository.findByExtId(motherName).get(0));
+        pregnancyObservation.setExpectedDeliveryDate(ZonedDateTime.now().plusMonths(5));
+        pregnancyObservation.setPregnancyDate(ZonedDateTime.now().minusMonths(5));
+
+        pregnancyObservationRepository.save(pregnancyObservation);
     }
 }
