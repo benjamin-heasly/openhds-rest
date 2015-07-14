@@ -7,6 +7,7 @@ import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.census.IndividualService;
 import org.openhds.service.impl.update.DeathService;
 import org.openhds.service.impl.update.VisitService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,6 +32,7 @@ public class DeathRestController extends AuditableCollectedRestController<
     private final DeathService deathService;
 
 
+    @Autowired
     public DeathRestController(DeathService deathService,
                                FieldWorkerService fieldWorkerService,
                                VisitService visitService,
