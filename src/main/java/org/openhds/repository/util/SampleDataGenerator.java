@@ -98,6 +98,8 @@ public class SampleDataGenerator {
         errorRepository.deleteAllInBatch();
         errorLogRepository.deleteAllInBatch();
 
+        deathRepository.deleteAllInBatch();
+
         visitRepository.deleteAllInBatch();
 
         residencyRepository.deleteAllInBatch();
@@ -174,6 +176,9 @@ public class SampleDataGenerator {
         addResidency("resdoncy-toop-a", "individual-a", "location-a");
         addResidency("resdoncy-toop-b", "individual-b", "location-b");
         addResidency("resdoncy-toop-c","individual-c","location-c");
+
+        addDeath("death-a", "individual-a", "visit-a");
+        addDeath("death-b", "individual-b", "visit-b");
 
         addErrorLog("sample error");
 

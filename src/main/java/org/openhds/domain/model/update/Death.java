@@ -5,7 +5,9 @@ import org.openhds.domain.model.census.Individual;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -13,6 +15,9 @@ import java.time.ZonedDateTime;
 /**
  * Created by Wolfe on 7/14/2015.
  */
+@Description(description = "A death registered for an individual.")
+@Entity
+@Table(name = "death")
 public class Death extends AuditableCollectedEntity implements Serializable {
 
     private static final long serialVersionUID = 7893269184667369629L;
