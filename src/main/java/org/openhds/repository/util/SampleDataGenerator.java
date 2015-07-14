@@ -56,6 +56,9 @@ public class SampleDataGenerator {
     private RelationshipRepository relationshipRepository;
 
     @Autowired
+    private ResidencyRepository residencyRepository;
+
+    @Autowired
     private ErrorRepository errorRepository;
 
     @Autowired
@@ -82,6 +85,8 @@ public class SampleDataGenerator {
 
         errorRepository.deleteAllInBatch();
         errorLogRepository.deleteAllInBatch();
+
+        residencyRepository.deleteAllInBatch();
 
         membershipRepository.deleteAllInBatch();
 
@@ -147,6 +152,10 @@ public class SampleDataGenerator {
         addMembership("memberhip-type-a", "individual-a", "social-group-a");
         addMembership("memberhip-type-b", "individual-b", "social-group-b");
         addMembership("memberhip-type-c", "individual-c", "social-group-c");
+
+        addResidency("resdoncy-toop-a","individual-a","location-a");
+        addResidency("resdoncy-toop-b","individual-b","location-b");
+        addResidency("resdoncy-toop-c","individual-c","location-c");
 
         addErrorLog("sample error");
 
@@ -289,18 +298,6 @@ public class SampleDataGenerator {
         individualRepository.save(individual);
     }
 
-    private void addRelationship (String individualAId, String individualBId){
-        Relationship relationship = new Relationship();
-        initAuditableFields(relationship);
-        initCollectedFields(relationship);
-        relationship.setStartDate(ZonedDateTime.now().minusYears(1));
-        relationship.setRelationshipType("surrogate-siamese-fathers-uncle");
-        relationship.setIndividualA(individualRepository.findOne(individualAId));
-        relationship.setIndividualB(individualRepository.findOne(individualBId));
-
-        relationshipRepository.save(relationship);
-    }
-
     private void addProjectCode(String name, String value) {
         ProjectCode projectCode = new ProjectCode();
         projectCode.setCodeName(name);
@@ -318,6 +315,19 @@ public class SampleDataGenerator {
         socialGroupRepository.save(socialGroup);
     }
 
+
+    private void addRelationship (String individualAId, String individualBId){
+        Relationship relationship = new Relationship();
+        initAuditableFields(relationship);
+        initCollectedFields(relationship);
+        relationship.setStartDate(ZonedDateTime.now().minusYears(1));
+        relationship.setRelationshipType("surrogate-siamese-fathers-uncle");
+        relationship.setIndividualA(individualRepository.findOne(individualAId));
+        relationship.setIndividualB(individualRepository.findOne(individualBId));
+
+        relationshipRepository.save(relationship);
+    }
+
     private void addMembership(String type, String individualName, String socialGroupName) {
         Membership membership = new Membership();
         initAuditableFields(membership);
@@ -330,5 +340,18 @@ public class SampleDataGenerator {
         membership.setStartType(type);
 
         membershipRepository.save(membership);
+    }
+
+    private void addResidency(String type, String individualId, String locationId) {
+        Residency residency = new Residency();
+        initCollectedFields(residency);
+        initAuditableFields(residency);
+
+        residency.setIndividual(individualRepository.findOne(individualId));
+        residency.setLocation(locationRepository.findOne(locationId));
+        residency.setStartType(type);
+        residency.setStartDate(ZonedDateTime.now().minusYears(1));
+
+        residencyRepository.save(residency);
     }
 }
