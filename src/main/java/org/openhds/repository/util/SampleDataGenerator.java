@@ -414,7 +414,7 @@ public class SampleDataGenerator {
 
         deathRepository.save(death);
     }
-    
+
     private void addInMigration(String name) {
         InMigration inMigration = new InMigration();
         initAuditableFields(inMigration);
