@@ -5,7 +5,7 @@ import org.openhds.domain.model.Residency;
 /**
  * Created by Wolfe on 7/14/2015.
  */
-public class ResidencyRegistration {
+public class ResidencyRegistration extends Registration<Residency> {
 
     private Residency residency;
 

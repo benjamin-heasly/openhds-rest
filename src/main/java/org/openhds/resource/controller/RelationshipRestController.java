@@ -22,11 +22,11 @@ public class RelationshipRestController extends AuditableCollectedRestController
         RelationshipRegistration,
         RelationshipService> {
 
-    private RelationshipService relationshipService;
+    private final RelationshipService relationshipService;
 
-    private IndividualService individualService;
+    private final IndividualService individualService;
 
-    private FieldWorkerService fieldWorkerService;
+    private final FieldWorkerService fieldWorkerService;
 
 
     @Autowired

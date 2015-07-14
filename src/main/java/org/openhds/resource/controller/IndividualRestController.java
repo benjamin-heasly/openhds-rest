@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 @ExposesResourceFor(Individual.class)
 public class IndividualRestController extends AuditableExtIdRestController<Individual,IndividualRegistration, IndividualService>{
 
-    private FieldWorkerService fieldWorkerService;
+    private final FieldWorkerService fieldWorkerService;
 
-    private IndividualService individualService;
+    private final IndividualService individualService;
 
     @Autowired
     public IndividualRestController(IndividualService individualService, FieldWorkerService fieldWorkerService) {
