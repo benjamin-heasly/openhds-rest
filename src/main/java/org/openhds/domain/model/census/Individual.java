@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.openhds.domain.contract.AuditableExtIdEntity;
 import org.openhds.domain.util.Description;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -38,31 +41,32 @@ public class Individual extends AuditableExtIdEntity implements Serializable {
     @Description(description = "Birth date of the individual.")
     private ZonedDateTime dateOfBirth;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Individual.class)
+
+    @ManyToOne
     @Description(description = "The individual's mother.")
     private Individual mother;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Individual.class)
+    @ManyToOne
     @Description(description = "The individual's father.")
     private Individual father;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "individual", fetch =  FetchType.LAZY)
+    @OneToMany(mappedBy = "individual")
     @Description(description = "The set of all residencies that the individual is a part of.")
     private Set<Residency> residencies = new HashSet<Residency>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "individual", fetch =  FetchType.LAZY)
+    @OneToMany(mappedBy = "individual")
     @Description(description = "The set of all memberships the individual is a part of.")
     private Set<Membership> allMemberships = new HashSet<Membership>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "individualA", fetch =  FetchType.LAZY)
+    @OneToMany(mappedBy = "individualA")
     @Description(description = "The set of all relationships that the individual may have with another individual.")
     private Set<Relationship> relationshipsAsIndividualA = new HashSet<Relationship>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "individualB", fetch =  FetchType.LAZY)
+    @OneToMany(mappedBy = "individualB")
     @Description(description = "The set of all relationships another individual may have with this individual.")
     private Set<Relationship> relationshipsAsIndividualB = new HashSet<Relationship>();
 
@@ -154,7 +158,7 @@ public class Individual extends AuditableExtIdEntity implements Serializable {
         this.relationshipsAsIndividualB = relationshipsAsIndividualB;
     }
 
-    @Override
+        @Override
     public String toString() {
         return "Individual{" +
                 "firstName='" + firstName + '\'' +

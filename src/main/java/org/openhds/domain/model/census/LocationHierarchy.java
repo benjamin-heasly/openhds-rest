@@ -3,7 +3,6 @@ package org.openhds.domain.model.census;
 import org.openhds.domain.contract.AuditableExtIdEntity;
 import org.openhds.domain.util.Description;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -17,13 +16,13 @@ public class LocationHierarchy extends AuditableExtIdEntity implements Serializa
 
     private static final long serialVersionUID = -5334850119671675888L;
 
-    @Description(description = "Parent location's name.")
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    private LocationHierarchy parent;
-
     @NotNull(message = "location hierarchy name may not be null")
     @Description(description = "The name of this location hierarchy record.")
     private String name;
+
+    @Description(description = "Parent location's name.")
+    @ManyToOne
+    private LocationHierarchy parent;
 
     @Description(description = "Level of the location hierarchy.")
     @ManyToOne

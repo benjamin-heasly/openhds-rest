@@ -4,7 +4,6 @@ import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.model.census.Individual;
 import org.openhds.domain.util.Description;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -22,11 +21,6 @@ public class Death extends AuditableCollectedEntity implements Serializable {
 
     private static final long serialVersionUID = 7893269184667369629L;
 
-    @NotNull(message = "Individual may not be null in a death.")
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @Description(description = "Individual who has died.")
-    private Individual individual;
-
     @Description(description = "Place where the death occurred.")
     private String deathPlace;
 
@@ -37,20 +31,17 @@ public class Death extends AuditableCollectedEntity implements Serializable {
     @Description(description = "Date of the Death.")
     private ZonedDateTime deathDate;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @Description(description = "Visit associated with the death, identified by external id.")
-    private Visit visit;
-
     @Description(description = "Age of death in number of data.")
     private int ageAtDeath;
 
-    public Individual getIndividual() {
-        return individual;
-    }
+    @ManyToOne
+    @Description(description = "Visit associated with the death, identified by external id.")
+    private Visit visit;
 
-    public void setIndividual(Individual individual) {
-        this.individual = individual;
-    }
+    @NotNull(message = "Individual may not be null in a death.")
+    @ManyToOne
+    @Description(description = "Individual who has died.")
+    private Individual individual;
 
     public String getDeathPlace() {
         return deathPlace;
@@ -76,14 +67,6 @@ public class Death extends AuditableCollectedEntity implements Serializable {
         this.deathDate = deathDate;
     }
 
-    public Visit getVisit() {
-        return visit;
-    }
-
-    public void setVisit(Visit visit) {
-        this.visit = visit;
-    }
-
     public int getAgeAtDeath() {
         return ageAtDeath;
     }
@@ -92,18 +75,20 @@ public class Death extends AuditableCollectedEntity implements Serializable {
         this.ageAtDeath = ageAtDeath;
     }
 
-    @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
+    public Visit getVisit() {
+        return visit;
+    }
 
-        if (!(other instanceof Death)) {
-            return false;
-        }
+    public void setVisit(Visit visit) {
+        this.visit = visit;
+    }
 
-        final String otherUuid = ((Death) other).getUuid();
-        return null != uuid && null != otherUuid && uuid.equals(otherUuid);
+    public Individual getIndividual() {
+        return individual;
+    }
+
+    public void setIndividual(Individual individual) {
+        this.individual = individual;
     }
 
     @Override

@@ -3,20 +3,12 @@ package org.openhds.service.impl.census;
 
 import org.openhds.domain.model.census.Location;
 import org.openhds.service.AuditableExtIdServiceTest;
-import org.openhds.service.impl.FieldWorkerService;
-import org.openhds.service.impl.census.LocationHierarchyService;
-import org.openhds.service.impl.census.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.time.ZonedDateTime;
 
 /**
  * Created by wolfe on 6/17/15.
  */
 public class LocationServiceTest extends AuditableExtIdServiceTest<Location, LocationService> {
-
-    @Autowired
-    private FieldWorkerService fieldWorkerService;
 
     @Autowired
     private LocationHierarchyService locationHierarchyService;
@@ -32,9 +24,10 @@ public class LocationServiceTest extends AuditableExtIdServiceTest<Location, Loc
         location.setUuid(id);
         location.setName(name);
         location.setExtId(name);
-        location.setCollectedBy(fieldWorkerService.findAll(UUID_SORT).toList().get(0));
-        location.setCollectionDateTime(ZonedDateTime.now());
         location.setLocationHierarchy(locationHierarchyService.findAll(UUID_SORT).toList().get(0));
+
+        initCollectedFields(location);
+
         return location;
     }
 

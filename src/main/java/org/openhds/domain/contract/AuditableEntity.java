@@ -32,7 +32,7 @@ public abstract class AuditableEntity implements UuidIdentifiable, Serializable 
     @Description(description = "Marker for soft delete / void of the record.")
     protected boolean deleted = false;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @Description(description = "The User who voided the record.")
     protected User voidBy;
 
@@ -42,14 +42,14 @@ public abstract class AuditableEntity implements UuidIdentifiable, Serializable 
     @Description(description = "Date that the record was voided.")
     protected ZonedDateTime voidDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @Description(description = "User who first inserted the record.")
     protected User insertBy;
 
     @Description(description = "Date of insertion.")
     protected ZonedDateTime insertDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @Description(description = "User who last updated inserted the record.")
     protected User lastModifiedBy;
 

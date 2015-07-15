@@ -3,7 +3,6 @@ package org.openhds.service.impl.census;
 import org.openhds.domain.model.census.Residency;
 import org.openhds.repository.concrete.census.ResidencyRepository;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
-import org.openhds.service.impl.FieldWorkerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +13,6 @@ import java.time.ZonedDateTime;
  */
 @Service
 public class ResidencyService extends AbstractAuditableCollectedService<Residency, ResidencyRepository> {
-
-    @Autowired
-    private FieldWorkerService fieldWorkerService;
 
     @Autowired
     private IndividualService individualService;

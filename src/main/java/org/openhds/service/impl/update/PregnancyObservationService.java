@@ -3,22 +3,18 @@ package org.openhds.service.impl.update;
 import org.openhds.domain.model.update.PregnancyObservation;
 import org.openhds.repository.concrete.update.PregnancyObservationRepository;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
-import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.census.IndividualService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 
 /**
  * Created by bsh on 7/13/15.
  */
-@Component
+@Service
 public class PregnancyObservationService extends AbstractAuditableCollectedService<
         PregnancyObservation, PregnancyObservationRepository> {
-
-    @Autowired
-    FieldWorkerService fieldWorkerService;
 
     @Autowired
     VisitService visitService;

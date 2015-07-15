@@ -2,7 +2,6 @@ package org.openhds.service.impl.update;
 
 import org.openhds.domain.model.update.PregnancyOutcome;
 import org.openhds.service.AuditableCollectedServiceTest;
-import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.census.IndividualService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,9 +14,6 @@ public class PregnancyOutcomeServiceTest extends AuditableCollectedServiceTest<P
 
     @Autowired
     private IndividualService individualService;
-
-    @Autowired
-    private FieldWorkerService fieldWorkerService;
 
     @Autowired
     private VisitService visitService;
@@ -35,15 +31,12 @@ public class PregnancyOutcomeServiceTest extends AuditableCollectedServiceTest<P
         PregnancyOutcome pregnancyOutcome = new PregnancyOutcome();
         pregnancyOutcome.setUuid(id);
         pregnancyOutcome.setOutcomeDate(ZonedDateTime.now().minusYears(1));
-
         pregnancyOutcome.setPregnancyResults(pregnancyResultService.findAll(UUID_SORT).toList());
         pregnancyOutcome.setMother(individualService.findAll(UUID_SORT).toList().get(0));
         pregnancyOutcome.setFather(individualService.findAll(UUID_SORT).toList().get(0));
-
         pregnancyOutcome.setVisit(visitService.findAll(UUID_SORT).toList().get(0));
 
-        pregnancyOutcome.setCollectedBy(fieldWorkerService.findAll(UUID_SORT).toList().get(0));
-        pregnancyOutcome.setCollectionDateTime(ZonedDateTime.now());
+        initCollectedFields(pregnancyOutcome);
 
         return pregnancyOutcome;
     }

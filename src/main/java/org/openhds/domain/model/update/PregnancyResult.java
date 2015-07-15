@@ -4,7 +4,10 @@ import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.model.census.Individual;
 import org.openhds.domain.util.Description;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -28,7 +31,7 @@ public class PregnancyResult extends AuditableCollectedEntity implements Seriali
     private Individual child;
 
     @NotNull(message = "A PregnancyResult must not have a null PregnancyOutome.")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @Description(description = "The pregnancyOutcome that this pregnancy result came from.")
     private PregnancyOutcome pregnancyOutcome;
 

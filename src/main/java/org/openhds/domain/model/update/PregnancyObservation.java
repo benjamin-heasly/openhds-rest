@@ -22,11 +22,6 @@ public class PregnancyObservation extends AuditableCollectedEntity implements Se
     public final static long serialVersionUID = -4737117368371754337L;
 
     @NotNull
-    @ManyToOne
-    @Description(description = "The mother who is pregnant.")
-    private Individual mother;
-
-    @NotNull
     @Description(description = "Expected delivery date.")
     private ZonedDateTime expectedDeliveryDate;
 
@@ -39,13 +34,10 @@ public class PregnancyObservation extends AuditableCollectedEntity implements Se
     @Description(description = "The visit when and where this pregnancy was observed.")
     private Visit visit;
 
-    public Individual getMother() {
-        return mother;
-    }
-
-    public void setMother(Individual mother) {
-        this.mother = mother;
-    }
+    @NotNull
+    @ManyToOne
+    @Description(description = "The mother who is pregnant.")
+    private Individual mother;
 
     public ZonedDateTime getExpectedDeliveryDate() {
         return expectedDeliveryDate;
@@ -69,5 +61,23 @@ public class PregnancyObservation extends AuditableCollectedEntity implements Se
 
     public void setVisit(Visit visit) {
         this.visit = visit;
+    }
+
+    public Individual getMother() {
+        return mother;
+    }
+
+    public void setMother(Individual mother) {
+        this.mother = mother;
+    }
+
+    @Override
+    public String toString() {
+        return "PregnancyObservation{" +
+                "expectedDeliveryDate=" + expectedDeliveryDate +
+                ", pregnancyDate=" + pregnancyDate +
+                ", visit=" + visit +
+                ", mother=" + mother +
+                "} " + super.toString();
     }
 }

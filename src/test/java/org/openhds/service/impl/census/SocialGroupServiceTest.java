@@ -1,20 +1,13 @@
 package org.openhds.service.impl.census;
 
 import org.openhds.domain.model.census.SocialGroup;
-import org.openhds.service.UuidServiceTest;
-import org.openhds.service.impl.FieldWorkerService;
-import org.openhds.service.impl.census.SocialGroupService;
+import org.openhds.service.AuditableExtIdServiceTest;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.time.ZonedDateTime;
 
 /**
  * Created by bsh on 7/13/15.
  */
-public class SocialGroupServiceTest extends UuidServiceTest<SocialGroup, SocialGroupService> {
-
-    @Autowired
-    FieldWorkerService fieldWorkerService;
+public class SocialGroupServiceTest extends AuditableExtIdServiceTest<SocialGroup, SocialGroupService> {
 
     @Autowired
     @Override
@@ -34,8 +27,7 @@ public class SocialGroupServiceTest extends UuidServiceTest<SocialGroup, SocialG
         socialGroup.setGroupName(name);
         socialGroup.setExtId(name);
 
-        socialGroup.setCollectedBy(fieldWorkerService.findAll(UUID_SORT).toList().get(0));
-        socialGroup.setCollectionDateTime(ZonedDateTime.now());
+        initCollectedFields(socialGroup);
 
         return socialGroup;
     }

@@ -2,8 +2,6 @@ package org.openhds.service.impl.census;
 
 import org.openhds.domain.model.census.Individual;
 import org.openhds.service.AuditableExtIdServiceTest;
-import org.openhds.service.impl.FieldWorkerService;
-import org.openhds.service.impl.census.IndividualService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.ZonedDateTime;
@@ -12,9 +10,6 @@ import java.time.ZonedDateTime;
  * Created by Wolfe on 7/13/2015.
  */
 public class IndividualServiceTest extends AuditableExtIdServiceTest<Individual, IndividualService> {
-
-    @Autowired
-    private FieldWorkerService fieldWorkerService;
 
     @Override
     protected Individual makeInvalidEntity() {
@@ -28,8 +23,8 @@ public class IndividualServiceTest extends AuditableExtIdServiceTest<Individual,
         individual.setExtId(name);
         individual.setFirstName(name);
         individual.setDateOfBirth(ZonedDateTime.now().minusYears(1));
-        individual.setCollectedBy(fieldWorkerService.findAll(UUID_SORT).toList().get(0));
-        individual.setCollectionDateTime(ZonedDateTime.now());
+
+        initCollectedFields(individual);
 
         return individual;
     }

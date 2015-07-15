@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Created by Wolfe on 7/13/2015.
  */
-public class UserServiceTest extends UuidServiceTest<User, UserService>{
+public class UserServiceTest extends UuidServiceTest<User, UserService> {
     @Override
     protected User makeInvalidEntity() {
         return new User();

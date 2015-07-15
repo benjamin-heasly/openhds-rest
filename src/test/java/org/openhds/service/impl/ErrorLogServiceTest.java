@@ -9,10 +9,10 @@ import java.time.ZonedDateTime;
 /**
  * Created by Wolfe on 7/13/2015.
  */
-public class ErrorLogServiceTest extends AuditableCollectedServiceTest<ErrorLog, ErrorLogService>{
+public class ErrorLogServiceTest extends AuditableCollectedServiceTest<ErrorLog, ErrorLogService> {
 
     @Autowired
-    private  FieldWorkerService fieldWorkerService;
+    private FieldWorkerService fieldWorkerService;
 
     @Override
     protected ErrorLog makeInvalidEntity() {

@@ -5,7 +5,10 @@ import org.openhds.domain.model.census.Individual;
 import org.openhds.domain.model.census.Residency;
 import org.openhds.domain.util.Description;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -20,6 +23,25 @@ public class InMigration extends AuditableCollectedEntity implements Serializabl
 
     public final static long serialVersionUID = 7889700709284952892L;
 
+    @Description(description = "Name for where the individual came from.")
+    private String origin;
+
+    @Description(description = "Reason why the individual in-migrated.")
+    private String reason;
+
+    @NotNull
+    @Description(description = "The type of in-migration, like internal vs external.")
+    private String migrationType;
+
+    @NotNull
+    @Description(description = "Date of the in-migration.")
+    private ZonedDateTime migrationDate;
+
+    @NotNull
+    @ManyToOne
+    @Description(description = "The visit when and where the in-migration was recorded.")
+    private Visit visit;
+
     @NotNull
     @ManyToOne
     @Description(description = "Individual who is migrating in/into the study area.")
@@ -29,41 +51,6 @@ public class InMigration extends AuditableCollectedEntity implements Serializabl
     @NotNull
     @Description(description = "The residency the individual is in-migrating to.")
     private Residency residency = new Residency();
-
-    @Description(description = "Name for where the individual came from.")
-    private String origin;
-
-    @Description(description = "Reason why the individual in-migrated.")
-    private String reason;
-
-    @NotNull
-    @Description(description = "Date of the in-migration.")
-    private ZonedDateTime migrationDate;
-
-    @NotNull
-    @ManyToOne(cascade = CascadeType.ALL)
-    @Description(description = "The visit when and where the in-migration was recorded.")
-    private Visit visit;
-
-    @NotNull
-    @Description(description = "The type of in-migration, like internal vs external.")
-    private String migrationType;
-
-    public Individual getIndividual() {
-        return individual;
-    }
-
-    public void setIndividual(Individual individual) {
-        this.individual = individual;
-    }
-
-    public Residency getResidency() {
-        return residency;
-    }
-
-    public void setResidency(Residency residency) {
-        this.residency = residency;
-    }
 
     public String getOrigin() {
         return origin;
@@ -79,6 +66,14 @@ public class InMigration extends AuditableCollectedEntity implements Serializabl
 
     public void setReason(String reason) {
         this.reason = reason;
+    }
+
+    public String getMigrationType() {
+        return migrationType;
+    }
+
+    public void setMigrationType(String migrationType) {
+        this.migrationType = migrationType;
     }
 
     public ZonedDateTime getMigrationDate() {
@@ -97,11 +92,32 @@ public class InMigration extends AuditableCollectedEntity implements Serializabl
         this.visit = visit;
     }
 
-    public String getMigrationType() {
-        return migrationType;
+    public Individual getIndividual() {
+        return individual;
     }
 
-    public void setMigrationType(String migrationType) {
-        this.migrationType = migrationType;
+    public void setIndividual(Individual individual) {
+        this.individual = individual;
+    }
+
+    public Residency getResidency() {
+        return residency;
+    }
+
+    public void setResidency(Residency residency) {
+        this.residency = residency;
+    }
+
+    @Override
+    public String toString() {
+        return "InMigration{" +
+                "origin='" + origin + '\'' +
+                ", reason='" + reason + '\'' +
+                ", migrationType='" + migrationType + '\'' +
+                ", migrationDate=" + migrationDate +
+                ", visit=" + visit +
+                ", individual=" + individual +
+                ", residency=" + residency +
+                "} " + super.toString();
     }
 }

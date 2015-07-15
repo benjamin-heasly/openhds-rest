@@ -5,7 +5,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.openhds.domain.contract.AuditableExtIdEntity;
 import org.openhds.domain.util.Description;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -28,9 +31,6 @@ public class Location extends AuditableExtIdEntity implements Serializable {
     @Description(description = "Name of the location.")
     private String name;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
-    private LocationHierarchy locationHierarchy = new LocationHierarchy();
-
     @Description(description = "The type of Location.")
     private String type;
 
@@ -46,10 +46,14 @@ public class Location extends AuditableExtIdEntity implements Serializable {
     @Description(description = "The altitude for the Location")
     private String altitude;
 
+    @ManyToOne
+    private LocationHierarchy locationHierarchy = new LocationHierarchy();
+
     @JsonIgnore
     @Description(description = "The set of all residencies where this Individual lives or lived.")
-    @OneToMany(mappedBy = "location", cascade = { CascadeType.ALL })
+    @OneToMany(mappedBy = "location")
     private Set<Residency> residencies = new HashSet<>();
+
 
     // Extensions for bioko island project
     @Description(description = "The number of this building within a sector")
@@ -88,28 +92,12 @@ public class Location extends AuditableExtIdEntity implements Serializable {
     @Description(description = "A description of the observable features of a location")
     private String description;
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public LocationHierarchy getLocationHierarchy() {
-        return locationHierarchy;
-    }
-
-    public void setLocationHierarchy(LocationHierarchy hierarchy) {
-        locationHierarchy = hierarchy;
     }
 
     public String getType() {
@@ -124,80 +112,48 @@ public class Location extends AuditableExtIdEntity implements Serializable {
         return longitude;
     }
 
-    public void setLongitude(String longi) {
-        longitude = longi;
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
     }
 
     public String getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(String lat) {
-        latitude = lat;
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
     }
 
     public String getAccuracy() {
         return accuracy;
     }
 
-    public void setAccuracy(String acc) {
-        accuracy = acc;
+    public void setAccuracy(String accuracy) {
+        this.accuracy = accuracy;
     }
 
     public String getAltitude() {
         return altitude;
     }
 
-    public void setAltitude(String alt) {
-        altitude = alt;
+    public void setAltitude(String altitude) {
+        this.altitude = altitude;
+    }
+
+    public LocationHierarchy getLocationHierarchy() {
+        return locationHierarchy;
+    }
+
+    public void setLocationHierarchy(LocationHierarchy locationHierarchy) {
+        this.locationHierarchy = locationHierarchy;
     }
 
     public Set<Residency> getResidencies() {
         return residencies;
     }
 
-    public void setResidencies(Set<Residency> list) {
-        residencies = list;
-    }
-
-    public String getSectorName() {
-        return sectorName;
-    }
-
-    public void setSectorName(String sectorName) {
-        this.sectorName = sectorName;
-    }
-
-    public String getLocalityName() {
-        return localityName;
-    }
-
-    public void setLocalityName(String localityName) {
-        this.localityName = localityName;
-    }
-
-    public String getCommunityName() {
-        return communityName;
-    }
-
-    public void setCommunityName(String communityName) {
-        this.communityName = communityName;
-    }
-
-    public String getCommunityCode() {
-        return communityCode;
-    }
-
-    public void setCommunityCode(String communityCode) {
-        this.communityCode = communityCode;
-    }
-
-    public String getMapAreaName() {
-        return mapAreaName;
-    }
-
-    public void setMapAreaName(String mapAreaName) {
-        this.mapAreaName = mapAreaName;
+    public void setResidencies(Set<Residency> residencies) {
+        this.residencies = residencies;
     }
 
     public String getBuildingNumber() {
@@ -248,18 +204,52 @@ public class Location extends AuditableExtIdEntity implements Serializable {
         this.districtName = districtName;
     }
 
-    @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
+    public String getSectorName() {
+        return sectorName;
+    }
 
-        if (!(other instanceof Location)) {
-            return false;
-        }
+    public void setSectorName(String sectorName) {
+        this.sectorName = sectorName;
+    }
 
-        final String otherUuid = ((Location) other).getUuid();
-        return null != uuid && null != otherUuid && uuid.equals(otherUuid);
+    public String getLocalityName() {
+        return localityName;
+    }
+
+    public void setLocalityName(String localityName) {
+        this.localityName = localityName;
+    }
+
+    public String getCommunityName() {
+        return communityName;
+    }
+
+    public void setCommunityName(String communityName) {
+        this.communityName = communityName;
+    }
+
+    public String getCommunityCode() {
+        return communityCode;
+    }
+
+    public void setCommunityCode(String communityCode) {
+        this.communityCode = communityCode;
+    }
+
+    public String getMapAreaName() {
+        return mapAreaName;
+    }
+
+    public void setMapAreaName(String mapAreaName) {
+        this.mapAreaName = mapAreaName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override

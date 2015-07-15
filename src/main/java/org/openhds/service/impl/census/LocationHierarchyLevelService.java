@@ -5,12 +5,12 @@ import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.census.LocationHierarchyLevelRepository;
 import org.openhds.service.contract.AbstractAuditableService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 /**
  * Created by Wolfe on 7/1/2015.
  */
-@Component
+@Service
 public class LocationHierarchyLevelService extends AbstractAuditableService<LocationHierarchyLevel, LocationHierarchyLevelRepository> {
 
     @Autowired

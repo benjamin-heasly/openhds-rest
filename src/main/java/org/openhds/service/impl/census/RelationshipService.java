@@ -3,7 +3,6 @@ package org.openhds.service.impl.census;
 import org.openhds.domain.model.census.Relationship;
 import org.openhds.repository.concrete.census.RelationshipRepository;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
-import org.openhds.service.impl.FieldWorkerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,9 +16,6 @@ public class RelationshipService extends AbstractAuditableCollectedService<Relat
 
     @Autowired
     private IndividualService individualService;
-
-    @Autowired
-    private FieldWorkerService fieldWorkerService;
 
     @Autowired
     public RelationshipService(RelationshipRepository repository) {

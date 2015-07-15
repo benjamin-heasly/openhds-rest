@@ -2,9 +2,6 @@ package org.openhds.service.impl.census;
 
 import org.openhds.domain.model.census.Relationship;
 import org.openhds.service.AuditableCollectedServiceTest;
-import org.openhds.service.impl.FieldWorkerService;
-import org.openhds.service.impl.census.IndividualService;
-import org.openhds.service.impl.census.RelationshipService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.ZonedDateTime;
@@ -13,9 +10,6 @@ import java.time.ZonedDateTime;
  * Created by Wolfe on 7/13/2015.
  */
 public class RelationshipServiceTest extends AuditableCollectedServiceTest<Relationship, RelationshipService> {
-
-    @Autowired
-    private FieldWorkerService fieldWorkerService;
 
     @Autowired
     private IndividualService individualService;
@@ -33,8 +27,9 @@ public class RelationshipServiceTest extends AuditableCollectedServiceTest<Relat
         relationship.setStartDate(ZonedDateTime.now().minusYears(1));
         relationship.setIndividualA(individualService.findAll(UUID_SORT).toList().get(0));
         relationship.setIndividualB(individualService.findAll(UUID_SORT).toList().get(0));
-        relationship.setCollectedBy(fieldWorkerService.getUnknownEntity());
-        relationship.setCollectionDateTime(ZonedDateTime.now());
+
+        initCollectedFields(relationship);
+
         return relationship;
     }
 

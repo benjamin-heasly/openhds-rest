@@ -4,11 +4,11 @@ import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 
 /**
@@ -17,37 +17,37 @@ import java.time.ZonedDateTime;
 @Description(description = "A record of an Individual belonging to a SocialGroup for some time interval.")
 @Entity
 @Table(name = "membership")
-public class Membership extends AuditableCollectedEntity {
+public class Membership extends AuditableCollectedEntity implements Serializable {
 
-    @ManyToOne
-    @JoinColumn(name = "individual")
-    @Description(description="Individual the membership is associated with.")
-    private Individual individual;
-
-    @ManyToOne
-    @JoinColumn(name = "socialgroup")
-    @Description(description="SocialGroup the membership is associated with.")
-    private SocialGroup socialGroup;
+    private static final long serialVersionUID = 3668816399895850928L;
 
     @NotNull
     @Size(min = 1)
-    @Description(description="Relationship from the individual to the SocialGroup head.")
+    @Description(description = "Relationship from the individual to the SocialGroup head.")
     String relationshipToGroupHead;
 
     @NotNull
-    @Description(description="Start date of the membership.")
+    @Description(description = "Start date of the membership.")
     ZonedDateTime startDate;
 
     @NotNull
     @Size(min = 1)
-    @Description(description="Start type of the membership.")
+    @Description(description = "Start type of the membership.")
     String startType;
 
-    @Description(description="End date of the membership.")
+    @Description(description = "End date of the membership.")
     ZonedDateTime endDate;
 
-    @Description(description="End type of the membership.")
+    @Description(description = "End type of the membership.")
     String endType;
+
+    @ManyToOne
+    @Description(description = "Individual the membership is associated with.")
+    private Individual individual;
+
+    @ManyToOne
+    @Description(description = "SocialGroup the membership is associated with.")
+    private SocialGroup socialGroup;
 
     public Individual getIndividual() {
         return individual;
@@ -103,5 +103,18 @@ public class Membership extends AuditableCollectedEntity {
 
     public void setRelationshipToGroupHead(String bIsToA) {
         this.relationshipToGroupHead = bIsToA;
+    }
+
+    @Override
+    public String toString() {
+        return "Membership{" +
+                "relationshipToGroupHead='" + relationshipToGroupHead + '\'' +
+                ", startDate=" + startDate +
+                ", startType='" + startType + '\'' +
+                ", endDate=" + endDate +
+                ", endType='" + endType + '\'' +
+                ", individual=" + individual +
+                ", socialGroup=" + socialGroup +
+                "} " + super.toString();
     }
 }

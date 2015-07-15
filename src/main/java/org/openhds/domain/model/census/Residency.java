@@ -4,7 +4,6 @@ import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -17,21 +16,9 @@ import java.time.ZonedDateTime;
 @Description(description = "A record of an Individual living at a Location for some time interval.")
 @Entity
 @Table(name = "residency")
-public class Residency extends AuditableCollectedEntity implements Serializable{
+public class Residency extends AuditableCollectedEntity implements Serializable {
 
     private static final long serialVersionUID = -8660806978131352923L;
-
-    @NotNull(message = "Residency cannot have a null individual.")
-    @ManyToOne
-    @JoinColumn(name = "individual")
-    @Description(description = "Individual who resides at the Location.")
-    private Individual individual;
-
-    @NotNull(message = "Residency cannot have a null Location.")
-    @ManyToOne
-    @JoinColumn(name = "location")
-    @Description(description = "Location where the Individual resides.")
-    private Location location;
 
     @NotNull(message = "Residency cannot have a null startdate.")
     @Description(description = "Residency start date.")
@@ -45,6 +32,16 @@ public class Residency extends AuditableCollectedEntity implements Serializable{
 
     @Description(description = "Residency end type.")
     String endType;
+
+    @NotNull(message = "Residency cannot have a null individual.")
+    @ManyToOne
+    @Description(description = "Individual who resides at the Location.")
+    private Individual individual;
+
+    @NotNull(message = "Residency cannot have a null Location.")
+    @ManyToOne
+    @Description(description = "Location where the Individual resides.")
+    private Location location;
 
     public Individual getIndividual() {
         return individual;
@@ -93,5 +90,16 @@ public class Residency extends AuditableCollectedEntity implements Serializable{
     public void setEndType(String endType) {
         this.endType = endType;
     }
-    
+
+    @Override
+    public String toString() {
+        return "Residency{" +
+                "individual=" + individual +
+                ", location=" + location +
+                ", startDate=" + startDate +
+                ", startType='" + startType + '\'' +
+                ", endDate=" + endDate +
+                ", endType='" + endType + '\'' +
+                "} " + super.toString();
+    }
 }
