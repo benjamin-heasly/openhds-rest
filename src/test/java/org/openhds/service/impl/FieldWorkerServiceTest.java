@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Created by Wolfe on 7/13/2015.
  */
-public class FieldWorkerServiceTest extends AuditableServiceTest<FieldWorker, FieldWorkerService>{
+public class FieldWorkerServiceTest extends AuditableServiceTest<FieldWorker, FieldWorkerService> {
 
     @Override
     protected FieldWorker makeInvalidEntity() {

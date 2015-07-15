@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Created by Wolfe on 7/13/2015.
  */
-public class EventServiceTest extends AuditableServiceTest<Event, EventService>{
+public class EventServiceTest extends AuditableServiceTest<Event, EventService> {
 
     @Override
     protected Event makeInvalidEntity() {

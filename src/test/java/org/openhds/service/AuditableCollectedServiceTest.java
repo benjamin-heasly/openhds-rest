@@ -4,6 +4,8 @@ import org.junit.Test;
 import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
+import org.openhds.service.impl.FieldWorkerService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithUserDetails;
 
 import java.time.ZonedDateTime;
@@ -19,6 +21,10 @@ import static org.junit.Assert.assertTrue;
 public abstract class AuditableCollectedServiceTest
         <T extends AuditableCollectedEntity, U extends AbstractAuditableCollectedService<T, ?>>
         extends AuditableServiceTest<T, U> {
+
+
+    @Autowired
+    protected FieldWorkerService fieldWorkerService;
 
     /**
      * Create an entity and save a reference to its collectedBy fieldworker, after creation check that
@@ -66,5 +72,10 @@ public abstract class AuditableCollectedServiceTest
 
         List<T> beforeReslts = service.findByCollectionDateTime(UUID_SORT, null, lateTime).toList();
         assertNotEquals(beforeReslts.size(), 0);
+    }
+
+    protected void initCollectedFields(T entity){
+        entity.setCollectedBy(fieldWorkerService.findAll(UUID_SORT).toList().get(0));
+        entity.setCollectionDateTime(ZonedDateTime.now());
     }
 }
