@@ -23,13 +23,11 @@ public class Residency extends AuditableCollectedEntity implements Serializable{
 
     @NotNull(message = "Residency cannot have a null individual.")
     @ManyToOne
-    @JoinColumn(name = "individual")
     @Description(description = "Individual who resides at the Location.")
     private Individual individual;
 
     @NotNull(message = "Residency cannot have a null Location.")
     @ManyToOne
-    @JoinColumn(name = "location")
     @Description(description = "Location where the Individual resides.")
     private Location location;
 

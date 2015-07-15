@@ -20,14 +20,12 @@ public class Relationship extends AuditableCollectedEntity implements Serializab
     private static final long serialVersionUID = -2104326927087468148L;
 
     @NotNull(message = "Relationship cannot have a null individual A.")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "individualA")
+    @ManyToOne
     @Description(description = "One of the individuals participating in the relationship.")
     private Individual individualA;
 
     @NotNull(message = "Relationship cannot have a null individual B.")
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "individualB")
+    @ManyToOne
     @Description(description = "One of the individuals participating in the relationship.")
     private Individual individualB;
 

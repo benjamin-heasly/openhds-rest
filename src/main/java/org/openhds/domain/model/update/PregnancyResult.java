@@ -28,7 +28,7 @@ public class PregnancyResult extends AuditableCollectedEntity implements Seriali
     private Individual child;
 
     @NotNull(message = "A PregnancyResult must not have a null PregnancyOutome.")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @Description(description = "The pregnancyOutcome that this pregnancy result came from.")
     private PregnancyOutcome pregnancyOutcome;
 

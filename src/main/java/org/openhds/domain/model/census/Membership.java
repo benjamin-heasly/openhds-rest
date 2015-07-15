@@ -20,12 +20,10 @@ import java.time.ZonedDateTime;
 public class Membership extends AuditableCollectedEntity {
 
     @ManyToOne
-    @JoinColumn(name = "individual")
     @Description(description="Individual the membership is associated with.")
     private Individual individual;
 
     @ManyToOne
-    @JoinColumn(name = "socialgroup")
     @Description(description="SocialGroup the membership is associated with.")
     private SocialGroup socialGroup;
 

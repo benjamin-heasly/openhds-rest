@@ -28,7 +28,7 @@ public class Location extends AuditableExtIdEntity implements Serializable {
     @Description(description = "Name of the location.")
     private String name;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     private LocationHierarchy locationHierarchy = new LocationHierarchy();
 
     @Description(description = "The type of Location.")
@@ -48,7 +48,7 @@ public class Location extends AuditableExtIdEntity implements Serializable {
 
     @JsonIgnore
     @Description(description = "The set of all residencies where this Individual lives or lived.")
-    @OneToMany(mappedBy = "location", cascade = { CascadeType.ALL })
+    @OneToMany(mappedBy = "location")
     private Set<Residency> residencies = new HashSet<>();
 
     // Extensions for bioko island project

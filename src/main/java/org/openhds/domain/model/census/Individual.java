@@ -38,31 +38,31 @@ public class Individual extends AuditableExtIdEntity implements Serializable {
     @Description(description = "Birth date of the individual.")
     private ZonedDateTime dateOfBirth;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Individual.class)
+    @ManyToOne
     @Description(description = "The individual's mother.")
     private Individual mother;
 
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = Individual.class)
+    @ManyToOne
     @Description(description = "The individual's father.")
     private Individual father;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "individual", fetch =  FetchType.LAZY)
+    @OneToMany(mappedBy = "individual")
     @Description(description = "The set of all residencies that the individual is a part of.")
     private Set<Residency> residencies = new HashSet<Residency>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "individual", fetch =  FetchType.LAZY)
+    @OneToMany(mappedBy = "individual")
     @Description(description = "The set of all memberships the individual is a part of.")
     private Set<Membership> allMemberships = new HashSet<Membership>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "individualA", fetch =  FetchType.LAZY)
+    @OneToMany(mappedBy = "individualA")
     @Description(description = "The set of all relationships that the individual may have with another individual.")
     private Set<Relationship> relationshipsAsIndividualA = new HashSet<Relationship>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "individualB", fetch =  FetchType.LAZY)
+    @OneToMany(mappedBy = "individualB")
     @Description(description = "The set of all relationships another individual may have with this individual.")
     private Set<Relationship> relationshipsAsIndividualB = new HashSet<Relationship>();
 

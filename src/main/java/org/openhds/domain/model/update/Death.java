@@ -23,7 +23,7 @@ public class Death extends AuditableCollectedEntity implements Serializable {
     private static final long serialVersionUID = 7893269184667369629L;
 
     @NotNull(message = "Individual may not be null in a death.")
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
     @Description(description = "Individual who has died.")
     private Individual individual;
 

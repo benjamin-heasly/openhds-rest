@@ -22,7 +22,7 @@ public class PregnancyOutcome extends AuditableCollectedEntity implements Serial
 
     private static final long serialVersionUID = 5179378759539398625L;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
+    @ManyToOne
     @Description(description="Visit that is associated with the pregnancy outcome.")
     private Visit visit;
 
@@ -36,18 +36,16 @@ public class PregnancyOutcome extends AuditableCollectedEntity implements Serial
     private ZonedDateTime outcomeDate;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mother")
+    @ManyToOne
     @Description(description="Mother of the pregnancy outcome.")
     private Individual mother;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "father")
+    @ManyToOne
     @Description(description="Father of the pregnancy outcome.")
     private Individual father;
 
     @JsonIgnore
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "pregnancyOutcome")
+    @OneToMany(mappedBy = "pregnancyOutcome")
     @Description(description="List of all outcomes for the pregnancy.")
     private List<PregnancyResult> pregnancyResults = new ArrayList<>();
 

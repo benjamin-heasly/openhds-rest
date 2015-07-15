@@ -16,7 +16,7 @@ import java.util.Set;
  */
 @Description(description = "A distinct group of people like a family or other organization.")
 @Entity
-@Table(name = "socialgroup")
+@Table(name = "socialGroup")
 public class SocialGroup extends AuditableExtIdEntity implements Serializable {
 
     public final static long serialVersionUID = -5592935530217622317L;
@@ -25,7 +25,7 @@ public class SocialGroup extends AuditableExtIdEntity implements Serializable {
     private String groupName;
 
     @Description(description = "One individual who is head of the social group.")
-    @ManyToOne(cascade = {CascadeType.ALL})
+    @ManyToOne
     private Individual groupHead;
 
     @Description(description = "Type of the social group.")
@@ -33,7 +33,7 @@ public class SocialGroup extends AuditableExtIdEntity implements Serializable {
 
     @JsonIgnore
     @Description(description = "The set of all memberships that include this SocialGroup.")
-    @OneToMany(mappedBy = "socialGroup", cascade = { CascadeType.ALL })
+    @OneToMany(mappedBy = "socialGroup")
     private Set<Membership> memberships = new HashSet<>();
 
     public String getGroupName() {

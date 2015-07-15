@@ -18,16 +18,16 @@ public class LocationHierarchy extends AuditableExtIdEntity implements Serializa
     private static final long serialVersionUID = -5334850119671675888L;
 
     @Description(description = "Parent location's name.")
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     private LocationHierarchy parent;
-
-    @NotNull(message = "location hierarchy name may not be null")
-    @Description(description = "The name of this location hierarchy record.")
-    private String name;
 
     @Description(description = "Level of the location hierarchy.")
     @ManyToOne
     private LocationHierarchyLevel level;
+
+    @NotNull(message = "location hierarchy name may not be null")
+    @Description(description = "The name of this location hierarchy record.")
+    private String name;
 
     @Override
     public String getExtId() {
