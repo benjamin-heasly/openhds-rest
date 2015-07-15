@@ -1,0 +1,7 @@
+codes:
+    gender:
+        - MALE
+        - FEMALE
+    fish:
+        - bass
+        - salmon
