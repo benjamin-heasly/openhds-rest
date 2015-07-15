@@ -93,5 +93,5 @@ public class Residency extends AuditableCollectedEntity implements Serializable{
     public void setEndType(String endType) {
         this.endType = endType;
     }
-
+    
 }

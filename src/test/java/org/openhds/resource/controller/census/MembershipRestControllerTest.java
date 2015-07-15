@@ -20,7 +20,9 @@ import static org.junit.Assert.assertNotNull;
  * Created by Ben on 5/26/15.
  */
 public class MembershipRestControllerTest extends AuditableCollectedRestControllerTest<
-        Membership, MembershipService, MembershipRestController> {
+        Membership,
+        MembershipService,
+        MembershipRestController> {
 
     @Autowired
     private IndividualRepository individualRepository;
@@ -47,6 +49,7 @@ public class MembershipRestControllerTest extends AuditableCollectedRestControll
         membership.setSocialGroup(socialGroupRepository.findAll().get(0));
         membership.setIndividual(individualRepository.findAll().get(0));
         membership.setCollectedBy(fieldWorkerRepository.findAll().get(0));
+
         membership.setRelationshipToGroupHead(name);
         membership.setStartType(name);
         membership.setStartDate(ZonedDateTime.now().minusYears(1));
