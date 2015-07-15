@@ -7,6 +7,8 @@ import org.openhds.service.contract.AbstractUuidService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * Created by bsh on 7/1/2015.
  */
@@ -23,6 +25,7 @@ public class ProjectCodeService extends AbstractUuidService<ProjectCode, Project
         ProjectCode projectCode = new ProjectCode();
         projectCode.setCodeName("unknown");
         projectCode.setCodeValue("unknown");
+        projectCode.setCodeGroup("unknown");
         return projectCode;
     }
 
@@ -31,8 +34,35 @@ public class ProjectCodeService extends AbstractUuidService<ProjectCode, Project
         super.validate(projectCode, errorLog);
     }
 
+    public ProjectCode createCode(String name, String value, String group, String description) {
+        ProjectCode projectCode = new ProjectCode();
+        projectCode.setCodeName(name);
+        projectCode.setCodeValue(value);
+        projectCode.setCodeGroup(group);
+        projectCode.setDescription(description);
+        return createOrUpdate(projectCode);
+    }
+
+    public ProjectCode createCode(String name, String value, String group) {
+        return createCode(name, value, group, null);
+    }
+
     public ProjectCode findByCodeName(String codeName) {
         return repository.findByCodeName(codeName).get();
+    }
+
+    public List<ProjectCode> findByCodeGroup(String codeGroup) {
+        return repository.findByCodeGroup(codeGroup);
+    }
+
+    public String getValueForCodeName(String codeName) {
+        ProjectCode projectCode = findByCodeName(codeName);
+        return projectCode.getCodeValue();
+    }
+
+    public boolean isValueInCodeGroup(String value, String codeGroup) {
+        List<ProjectCode> matches = repository.findByCodeGroupAndCodeValue(codeGroup, value);
+        return !matches.isEmpty();
     }
 
 }
