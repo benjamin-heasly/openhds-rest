@@ -51,6 +51,10 @@ public class ProjectCodeService extends AbstractUuidService<ProjectCode, Project
         return repository.findByCodeName(codeName).get();
     }
 
+    public boolean codeNameExists(String codeName) {
+        return repository.findByCodeName(codeName).isPresent();
+    }
+
     public List<ProjectCode> findByCodeGroup(String codeGroup) {
         return repository.findByCodeGroup(codeGroup);
     }

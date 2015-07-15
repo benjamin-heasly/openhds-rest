@@ -1,7 +1,78 @@
-codes:
-    gender:
-        - MALE
-        - FEMALE
-    fish:
-        - bass
-        - salmon
+# Default ProjectCodes which are required for the application to work
+# See ProjectCodeLoader
+# Clients can modify these via ProjectCodeRestController
+
+gender:
+  male: {codeValue : "MALE", description : "male gender" }
+  female: {codeValue : "FEMALE", description : "female gender" }
+
+socialGroupType:
+  family: {codeValue : "FAMILY", description : "a family" }
+  cohort: {codeValue : "COHORT", description : "a non-family group" }
+
+dateOfBirthType:
+  exact: {codeValue : "EXACT", description : "date of birth known exactly" }
+  approximate: {codeValue : "APPROXIMATE", description : "date of birth known only approximately" }
+
+locationType:
+  rural: {codeValue : "RURAL", description : "a rural location" }
+  urban: {codeValue : "URBAN", description : "an urban location" }
+
+yesNo:
+  yes: {codeValue : "YES", description : "affirmative response" }
+  no: {codeValue : "NO", description : "negative response" }
+
+maritalStatus:
+  neverMarried: {codeValue : "NEVER_MARRIED", description : "couple were never married" }
+  married: {codeValue : "MARRIED", description : "couple is currently married" }
+  separatedOrDivorced: {codeValue : "SEPARATED_OR_DIVORCED", description : "couple is divorced or separated" }
+  widowed: {codeValue : "WIDOWED", description : "spouse was widowed" }
+  livingTogether: {codeValue : "LIVING_TOGETHER", description : "couple is not married by is living together" }
+
+membershipType:
+  head: {codeValue : "HEAD", description : "head of a social group" }
+  spouse: {codeValue : "SPOUSE", description : "married to group head" }
+  sonOrDaughter: {codeValue : "SON_OR_DAUGHTER", description : "child of group head" }
+  brotherOrSister: {codeValue : "BROTHER_OR_SISTER", description : "sibling of group head" }
+  parent: {codeValue : "PARENT", description : "parent of group head" }
+  grandchild: {codeValue : "GRANDCHILD", description : "grandchild of group head" }
+  notRelated: {codeValue : "NOT_RELATED", description : "not related to group head" }
+  otherRelative: {codeValue : "OTHER_RELATIVE", description : "other relative of group head" }
+  unknown: {codeValue : "UNKNOWN", description : "unknown relationship to group head" }
+
+relationshipType:
+  self: {codeValue : "SELF", description : "individual's relationship to self" }
+  spouse: {codeValue : "SPOUSE", description : "spouse of individual" }
+  sonOrDaughter: {codeValue : "SON_OR_DAUGHTER", description : "child of individual" }
+  brotherOrSister: {codeValue : "BROTHER_OR_SISTER", description : "sibling of individual" }
+  parent: {codeValue : "PARENT", description : "parent of individual" }
+  grandchild: {codeValue : "GRANDCHILD", description : "grandchild of individual" }
+  notRelated: {codeValue : "NOT_RELATED", description : "not related to individual" }
+  otherRelative: {codeValue : "OTHER_RELATIVE", description : "other relative of individual" }
+  unknown: {codeValue : "UNKNOWN", description : "unknown relationship to individual" }
+
+dataStatus:
+  closed: {codeValue : "CLOSED", description : "closed data" }
+  warning: {codeValue : "WARNING", description : "data has a warning" }
+  error: {codeValue : "ERROR", description : "data has a fatal error" }
+  void: {codeValue : "VOID", description : "data were voided / soft-deleted" }
+  valid: {codeValue : "VALID", description : "valid data" }
+  pending: {codeValue : "PENDING", description : "data is pending or incomplete" }
+
+ageConstraints:
+  minAgeOfMarriage: {codeValue : "12", description : "minimum age to be married" }
+  minAgeOfGroupHead: {codeValue : "14", description : "minimum age to be head of a social group" }
+  minAgeOfParenthood: {codeValue : "12", description : "minimum age to be a parent" }
+  minAgeOfPregnancy: {codeValue : "12", description : "minimum age to be pregnant" }
+
+pregnancyResultType:
+  liveBirth: {codeValue : "LIVE_BIRTH", description : "live birth -- a new individual" }
+  stillBirth: {codeValue : "STILL_BIRTH", description : "still birth" }
+  miscarriage: {codeValue : "MISCARRIAGE", description : "spontaneous miscarriage" }
+  abortion: {codeValue : "ABORTION", description : "abortion" }
+
+migrationType:
+  birthMigration: {codeValue : "BIRTH_MIGRATION", description : "born into a residency" }
+  internalMigration: {codeValue : "INTERNAL_MIGRATION", description : "migrated between locations in the study area" }
+  externalMigration: {codeValue : "EXTERNAL_MIGRATION", description : "migrated from a location outside the study area" }
+  deathMigration: {codeValue : "DEATH_MIGRATION", description : "died while living at a residency" }
