@@ -31,6 +31,7 @@ public class ProjectCodeRestControllerTest extends UuidIdentifiableRestControlle
         projectCode.setUuid(id);
         projectCode.setCodeName(name);
         projectCode.setCodeValue(name);
+        projectCode.setCodeGroup(name);
         return projectCode;
     }
 
