@@ -91,4 +91,30 @@ public class Death extends AuditableCollectedEntity implements Serializable {
     public void setAgeAtDeath(int ageAtDeath) {
         this.ageAtDeath = ageAtDeath;
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+
+        if (!(other instanceof Death)) {
+            return false;
+        }
+
+        final String otherUuid = ((Death) other).getUuid();
+        return null != uuid && null != otherUuid && uuid.equals(otherUuid);
+    }
+
+    @Override
+    public String toString() {
+        return "Death{" +
+                "individual=" + individual +
+                ", deathPlace='" + deathPlace + '\'' +
+                ", deathCause='" + deathCause + '\'' +
+                ", deathDate=" + deathDate +
+                ", visit=" + visit +
+                ", ageAtDeath=" + ageAtDeath +
+                "} " + super.toString();
+    }
 }

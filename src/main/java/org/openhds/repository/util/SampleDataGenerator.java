@@ -99,6 +99,12 @@ public class SampleDataGenerator {
     @Autowired
     private PregnancyObservationRepository pregnancyObservationRepository;
 
+    @Autowired
+    private PregnancyOutcomeRepository pregnancyOutcomeRepository;
+
+    @Autowired
+    private PregnancyResultRepository pregnancyResultRepository;
+
     public void clearData() {
         eventMetadataRepository.deleteAllInBatch();
         eventRepository.deleteAllInBatch();
@@ -110,6 +116,10 @@ public class SampleDataGenerator {
 
         inMigationRepository.deleteAllInBatch();
         outMigationRepository.deleteAllInBatch();
+
+        pregnancyResultRepository.deleteAllInBatch();
+
+        pregnancyOutcomeRepository.deleteAllInBatch();
 
         pregnancyObservationRepository.deleteAllInBatch();
 
@@ -200,6 +210,12 @@ public class SampleDataGenerator {
         addOutMigration("migration-b");
 
         addPregnancyObservation("individual-a");
+
+        addPregnancyOutcome("individual-a", "individual-b", "visit-a");
+
+        addPregnancyResult("birth", "individual-c");
+
+        addPregnancyResult("stillborn", null);
 
         addErrorLog("sample error");
 
@@ -362,7 +378,6 @@ public class SampleDataGenerator {
         socialGroupRepository.save(socialGroup);
     }
 
-
     private void addRelationship (String relationshipType, String individualAName, String individualBName){
         Relationship relationship = new Relationship();
         initAuditableFields(relationship);
@@ -470,5 +485,32 @@ public class SampleDataGenerator {
         pregnancyObservation.setPregnancyDate(ZonedDateTime.now().minusMonths(5));
 
         pregnancyObservationRepository.save(pregnancyObservation);
+    }
+
+    private void addPregnancyOutcome(String motherName, String fatherName, String visitName){
+        PregnancyOutcome pregnancyOutcome = new PregnancyOutcome();
+        initAuditableFields(pregnancyOutcome);
+        initCollectedFields(pregnancyOutcome);
+
+        pregnancyOutcome.setVisit(visitRepository.findAll().get(0));
+        pregnancyOutcome.setMother(individualRepository.findByExtId(motherName).get(0));
+        pregnancyOutcome.setFather(individualRepository.findByExtId(fatherName).get(0));
+        pregnancyOutcome.setChildrenBorn(1);
+        pregnancyOutcome.setOutcomeDate(ZonedDateTime.now().minusYears(1));
+        pregnancyOutcomeRepository.save(pregnancyOutcome);
+    }
+
+    private void addPregnancyResult(String type, String individualName){
+        PregnancyResult pregnancyResult = new PregnancyResult();
+        initAuditableFields(pregnancyResult);
+        initCollectedFields(pregnancyResult);
+
+        if(null != individualName)
+            pregnancyResult.setChild(individualRepository.findByExtId(individualName).get(0));
+
+        pregnancyResult.setType(type);
+        pregnancyResult.setPregnancyOutcome(pregnancyOutcomeRepository.findAll().get(0));
+
+        pregnancyResultRepository.save(pregnancyResult);
     }
 }
