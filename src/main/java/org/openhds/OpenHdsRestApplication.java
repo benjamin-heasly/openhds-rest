@@ -3,6 +3,7 @@ package org.openhds;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import org.openhds.repository.util.ProjectCodeLoader;
 import org.openhds.repository.util.SampleDataGenerator;
 import org.openhds.resource.converter.EntityCollectionMessageWriter;
 import org.openhds.resource.converter.JsonArrayDelimiter;
@@ -11,10 +12,8 @@ import org.springframework.beans.factory.config.YamlMapFactoryBean;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.env.YamlPropertySourceLoader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
@@ -25,7 +24,6 @@ import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConve
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -42,19 +40,20 @@ public class OpenHdsRestApplication {
     }
 
     @Bean
-    public CommandLineRunner initWithSampleData(SampleDataGenerator sampleDataGenerator) {
+    public CommandLineRunner initWithSampleData(SampleDataGenerator sampleDataGenerator,
+                                                ProjectCodeLoader projectCodeLoader) {
         return (args) -> {
             sampleDataGenerator.clearData();
+            projectCodeLoader.loadAllCodes();
             sampleDataGenerator.generateSampleData();
         };
     }
 
-    @Bean
-    public PropertySource<?> yamlPropertySourceLoader() throws IOException {
-        YamlPropertySourceLoader loader = new YamlPropertySourceLoader();
-        PropertySource<?> applicationYamlPropertySource = loader.load(
-                "project-codes.yml", new ClassPathResource("project-codes.yml"), null);
-        return applicationYamlPropertySource;
+    @Bean(name = "projectCodeMap")
+    public YamlMapFactoryBean yamlMapFactoryBean() {
+        YamlMapFactoryBean yamlMapFactoryBean = new YamlMapFactoryBean();
+        yamlMapFactoryBean.setResources(new ClassPathResource("project-codes.yml"));
+        return yamlMapFactoryBean;
     }
 
     @EnableWebMvc

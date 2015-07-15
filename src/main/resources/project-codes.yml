@@ -1,7 +1,11 @@
-codes:
-    gender:
-        - MALE
-        - FEMALE
-    fish:
-        - bass
-        - salmon
+# Default ProjectCodes which are required for the application to work
+# See ProjectCodeLoader
+# Clients can modify these via ProjectCodeRestController
+
+gender:
+  male: {codeValue : "MALE", description : "code value for male gender" }
+  female: {codeValue : "FEMALE", description : "code value for female gender" }
+
+socialGroupType:
+  family: {codeValue : "FAMILY", description : "code value for families" }
+  cohort: {codeValue : "COHORT", description : "code value for non-families" }
