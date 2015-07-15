@@ -3,7 +3,9 @@ package org.openhds.domain.model.census;
 import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.util.Description;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -14,20 +16,9 @@ import java.time.ZonedDateTime;
 @Description(description = "A record of two Individuals having some relationship for some time interval.")
 @Entity
 @Table(name = "relationship")
-public class Relationship extends AuditableCollectedEntity implements Serializable{
-
+public class Relationship extends AuditableCollectedEntity implements Serializable {
 
     private static final long serialVersionUID = -2104326927087468148L;
-
-    @NotNull(message = "Relationship cannot have a null individual A.")
-    @ManyToOne
-    @Description(description = "One of the individuals participating in the relationship.")
-    private Individual individualA;
-
-    @NotNull(message = "Relationship cannot have a null individual B.")
-    @ManyToOne
-    @Description(description = "One of the individuals participating in the relationship.")
-    private Individual individualB;
 
     @NotNull(message = "relationship type must not be null.")
     @Description(description = "The type of the relationship from individual a to individual b.")
@@ -42,6 +33,16 @@ public class Relationship extends AuditableCollectedEntity implements Serializab
 
     @Description(description = "End type of the relationship.")
     String endType;
+
+    @NotNull(message = "Relationship cannot have a null individual A.")
+    @ManyToOne
+    @Description(description = "One of the individuals participating in the relationship.")
+    private Individual individualA;
+
+    @NotNull(message = "Relationship cannot have a null individual B.")
+    @ManyToOne
+    @Description(description = "One of the individuals participating in the relationship.")
+    private Individual individualB;
 
     public Individual getIndividualA() {
         return individualA;

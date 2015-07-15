@@ -5,7 +5,10 @@ import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.model.census.Individual;
 import org.openhds.domain.util.Description;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -22,40 +25,32 @@ public class PregnancyOutcome extends AuditableCollectedEntity implements Serial
 
     private static final long serialVersionUID = 5179378759539398625L;
 
-    @ManyToOne
-    @Description(description="Visit that is associated with the pregnancy outcome.")
-    private Visit visit;
-
-    @Description(description="Total number of children born, including live and still births.")
+    @Description(description = "Total number of children born, including live and still births.")
     private int childrenBorn;
 
-    @Description(description="Total number of live births.")
+    @Description(description = "Total number of live births.")
     private int numberOfLiveBirths;
 
-    @Description(description="Date of the pregnancy outcome.")
+    @Description(description = "Date of the pregnancy outcome.")
     private ZonedDateTime outcomeDate;
+
+    @ManyToOne
+    @Description(description = "Visit that is associated with the pregnancy outcome.")
+    private Visit visit;
 
     @NotNull
     @ManyToOne
-    @Description(description="Mother of the pregnancy outcome.")
+    @Description(description = "Mother of the pregnancy outcome.")
     private Individual mother;
 
     @ManyToOne
-    @Description(description="Father of the pregnancy outcome.")
+    @Description(description = "Father of the pregnancy outcome.")
     private Individual father;
 
     @JsonIgnore
     @OneToMany(mappedBy = "pregnancyOutcome")
-    @Description(description="List of all outcomes for the pregnancy.")
+    @Description(description = "List of all outcomes for the pregnancy.")
     private List<PregnancyResult> pregnancyResults = new ArrayList<>();
-
-    public Visit getVisit() {
-        return visit;
-    }
-
-    public void setVisit(Visit visit) {
-        this.visit = visit;
-    }
 
     public int getChildrenBorn() {
         return childrenBorn;
@@ -81,6 +76,14 @@ public class PregnancyOutcome extends AuditableCollectedEntity implements Serial
         this.outcomeDate = outcomeDate;
     }
 
+    public Visit getVisit() {
+        return visit;
+    }
+
+    public void setVisit(Visit visit) {
+        this.visit = visit;
+    }
+
     public Individual getMother() {
         return mother;
     }
@@ -103,22 +106,6 @@ public class PregnancyOutcome extends AuditableCollectedEntity implements Serial
 
     public void setPregnancyResults(List<PregnancyResult> pregnancyResults) {
         this.pregnancyResults = pregnancyResults;
-    }
-
-
-
-    @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
-
-        if (!(other instanceof PregnancyOutcome)) {
-            return false;
-        }
-
-        final String otherUuid = ((PregnancyOutcome) other).getUuid();
-        return null != uuid && null != otherUuid && uuid.equals(otherUuid);
     }
 
     @Override

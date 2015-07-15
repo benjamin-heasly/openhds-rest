@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.openhds.domain.contract.AuditableExtIdEntity;
 import org.openhds.domain.util.Description;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -37,6 +40,7 @@ public class Individual extends AuditableExtIdEntity implements Serializable {
 
     @Description(description = "Birth date of the individual.")
     private ZonedDateTime dateOfBirth;
+
 
     @ManyToOne
     @Description(description = "The individual's mother.")
@@ -154,7 +158,7 @@ public class Individual extends AuditableExtIdEntity implements Serializable {
         this.relationshipsAsIndividualB = relationshipsAsIndividualB;
     }
 
-    @Override
+        @Override
     public String toString() {
         return "Individual{" +
                 "firstName='" + firstName + '\'' +

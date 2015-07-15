@@ -45,4 +45,12 @@ public class Visit  extends AuditableExtIdEntity implements Serializable {
     public void setVisitDate(ZonedDateTime visitDate) {
         this.visitDate = visitDate;
     }
+
+    @Override
+    public String toString() {
+        return "Visit{" +
+                "location=" + location +
+                ", visitDate=" + visitDate +
+                "} " + super.toString();
+    }
 }

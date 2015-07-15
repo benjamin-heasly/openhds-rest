@@ -2,11 +2,11 @@ package org.openhds.domain.model.census;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.openhds.domain.contract.AuditableExtIdEntity;
-import org.openhds.domain.model.census.Individual;
-import org.openhds.domain.model.census.Membership;
 import org.openhds.domain.util.Description;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,10 +23,6 @@ public class SocialGroup extends AuditableExtIdEntity implements Serializable {
 
     @Description(description = "Name of the social group.")
     private String groupName;
-
-    @Description(description = "One individual who is head of the social group.")
-    @ManyToOne
-    private Individual groupHead;
 
     @Description(description = "Type of the social group.")
     private String groupType;
@@ -58,5 +54,13 @@ public class SocialGroup extends AuditableExtIdEntity implements Serializable {
 
     public void setMemberships(Set<Membership> memberships) {
         this.memberships = memberships;
+    }
+
+    @Override
+    public String toString() {
+        return "SocialGroup{" +
+                "groupName='" + groupName + '\'' +
+                ", groupType='" + groupType + '\'' +
+                "} " + super.toString();
     }
 }
