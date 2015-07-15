@@ -77,20 +77,6 @@ public class FieldWorker extends AuditableEntity implements Serializable {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
-
-        if (!(other instanceof FieldWorker)) {
-            return false;
-        }
-
-        final String otherUuid = ((FieldWorker) other).getUuid();
-        return null != uuid && null != otherUuid && uuid.equals(otherUuid);
-    }
-
-    @Override
     public String toString() {
         return "FieldWorker{" +
                 "fieldWorkerId='" + fieldWorkerId + '\'' +

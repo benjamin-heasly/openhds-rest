@@ -140,25 +140,22 @@ public abstract class AuditableEntity implements UuidIdentifiable, Serializable 
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
+    public boolean equals(Object other) {
+        if (other == null) {
             return false;
         }
 
-        if (getClass() != obj.getClass()) {
+        if (getClass() != other.getClass()) {
             return false;
         }
 
-        final AuditableEntity other = (AuditableEntity) obj;
-        if ((this.uuid == null) ? (other.uuid != null) : !this.uuid.equals(other.uuid)) {
-            return false;
-        }
-        return true;
+        final String otherUuid = ((UuidIdentifiable) other).getUuid();
+        return null != uuid && null != otherUuid && uuid.equals(otherUuid);
     }
 
     @Override
     public String toString() {
-        return "AuditableEntity{" +
+        return getClass().getSimpleName() + "{" +
                 "uuid='" + uuid + '\'' +
                 ", deleted=" + deleted +
                 ", voidReason='" + voidReason + '\'' +
