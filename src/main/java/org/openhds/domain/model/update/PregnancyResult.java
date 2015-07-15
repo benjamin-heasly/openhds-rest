@@ -5,6 +5,7 @@ import org.openhds.domain.model.census.Individual;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 /**
@@ -18,6 +19,7 @@ public class PregnancyResult extends AuditableCollectedEntity implements Seriali
 
     private static final long serialVersionUID = -3113139461022105832L;
 
+    @NotNull(message = "PregnancyResult must not have a null type.")
     @Description(description="Pregnancy outcome type.")
     private String type;
 
@@ -25,6 +27,7 @@ public class PregnancyResult extends AuditableCollectedEntity implements Seriali
     @Description(description="The child that of the pregnancy.")
     private Individual child;
 
+    @NotNull(message = "A PregnancyResult must not have a null PregnancyOutome.")
     @ManyToOne(fetch = FetchType.LAZY)
     @Description(description = "The pregnancyOutcome that this pregnancy result came from.")
     private PregnancyOutcome pregnancyOutcome;

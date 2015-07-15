@@ -6,12 +6,14 @@ import org.openhds.service.contract.AbstractAuditableCollectedService;
 import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.census.IndividualService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 
 /**
  * Created by Wolfe on 7/15/2015.
  */
+@Service
 public class PregnancyResultService extends AbstractAuditableCollectedService<PregnancyResult, PregnancyResultRepository>{
 
     @Autowired
@@ -38,7 +40,7 @@ public class PregnancyResultService extends AbstractAuditableCollectedService<Pr
         pregnancyResult.setCollectionDateTime(ZonedDateTime.now());
         pregnancyResult.setCollectedBy(fieldWorkerService.getUnknownEntity());
 
-        return null;
+        return pregnancyResult;
     }
 
 }

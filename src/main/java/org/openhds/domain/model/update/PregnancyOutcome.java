@@ -130,8 +130,6 @@ public class PregnancyOutcome extends AuditableCollectedEntity implements Serial
                 ", childrenBorn=" + childrenBorn +
                 ", numberOfLiveBirths=" + numberOfLiveBirths +
                 ", outcomeDate=" + outcomeDate +
-                ", mother=" + mother +
-                ", father=" + father +
                 "} " + super.toString();
     }
 
