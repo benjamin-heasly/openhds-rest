@@ -3,7 +3,6 @@ package org.openhds.service.impl.update;
 import org.openhds.domain.model.update.PregnancyOutcome;
 import org.openhds.repository.concrete.update.PregnancyOutcomeRepository;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
-import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.census.IndividualService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,9 +20,6 @@ public class PregnancyOutcomeService extends AbstractAuditableCollectedService<P
 
     @Autowired
     private VisitService visitService;
-
-    @Autowired
-    private FieldWorkerService fieldWorkerService;
 
     @Autowired
     public PregnancyOutcomeService(PregnancyOutcomeRepository pregnancyOutcomeRepository) {

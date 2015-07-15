@@ -20,9 +20,6 @@ public class ErrorLogService extends AbstractAuditableCollectedService<ErrorLog,
         super(repository);
     }
 
-    @Autowired
-    private FieldWorkerService fieldWorkerService;
-
     @Override
     protected ErrorLog makeUnknownEntity() {
         ErrorLog errorLog = new ErrorLog();

@@ -6,6 +6,8 @@ import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.contract.AuditableCollectedRepository;
 import org.openhds.repository.queries.QueryRange;
 import org.openhds.repository.results.EntityIterator;
+import org.openhds.service.impl.FieldWorkerService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 
 import java.time.ZonedDateTime;
@@ -15,6 +17,9 @@ import java.time.ZonedDateTime;
  */
 public abstract class AbstractAuditableCollectedService<T extends AuditableCollectedEntity, V extends AuditableCollectedRepository<T>>
         extends AbstractAuditableService<T, V> {
+
+    @Autowired
+    protected FieldWorkerService fieldWorkerService;
 
     public AbstractAuditableCollectedService(V repository) {
         super(repository);

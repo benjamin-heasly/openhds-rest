@@ -4,7 +4,6 @@ import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.census.LocationHierarchyRepository;
 import org.openhds.service.contract.AbstractAuditableExtIdService;
-import org.openhds.service.impl.FieldWorkerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +14,6 @@ import java.time.ZonedDateTime;
  */
 @Service
 public class LocationHierarchyService extends AbstractAuditableExtIdService<LocationHierarchy, LocationHierarchyRepository>{
-
-    @Autowired
-    FieldWorkerService fieldWorkerService;
 
     @Autowired
     public LocationHierarchyService(LocationHierarchyRepository repository) {

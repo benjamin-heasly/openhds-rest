@@ -1,26 +1,20 @@
 package org.openhds.service.impl.update;
 
-import org.openhds.domain.model.update.InMigration;
 import org.openhds.domain.model.update.OutMigration;
-import org.openhds.repository.concrete.update.InMigationRepository;
 import org.openhds.repository.concrete.update.OutMigationRepository;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
-import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.census.IndividualService;
 import org.openhds.service.impl.census.ResidencyService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 
 /**
  * Created by bsh on 7/13/15.
  */
-@Component
+@Service
 public class OutMigrationService extends AbstractAuditableCollectedService<OutMigration, OutMigationRepository> {
-
-    @Autowired
-    FieldWorkerService fieldWorkerService;
 
     @Autowired
     VisitService visitService;
