@@ -34,10 +34,18 @@ public class ProjectCode implements UuidIdentifiable, Serializable {
     @Column(unique = true)
     private String codeName;
 
+    @Description(description = "The group this code belongs to, which does not change between projects.")
+    @NotNull
+    @Size(min = 1)
+    private String codeGroup;
+
     @Description(description = "The value assigned to this code, which may change between projects.")
     @NotNull
     @Size(min = 1)
     private String codeValue;
+
+    @Description(description = "A description of this code.")
+    private String description;
 
     @Override
     public String getUuid() {
@@ -63,6 +71,22 @@ public class ProjectCode implements UuidIdentifiable, Serializable {
 
     public void setCodeValue(String codeValue) {
         this.codeValue = codeValue;
+    }
+
+    public String getCodeGroup() {
+        return codeGroup;
+    }
+
+    public void setCodeGroup(String codeGroup) {
+        this.codeGroup = codeGroup;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
