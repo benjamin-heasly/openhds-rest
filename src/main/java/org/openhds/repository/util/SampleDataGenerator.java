@@ -221,8 +221,10 @@ public class SampleDataGenerator {
 
         addEvent("sample event", "sample system");
 
-        addProjectCode("test-code-1", "value-1");
-        addProjectCode("test-code-2", "value-2");
+        addProjectCode("test-code-1", "value-1", "group-1");
+        addProjectCode("test-code-2", "value-2", "group-1");
+        addProjectCode("test-code-3", "value-3", "group-2");
+        addProjectCode("test-code-4", "value-4", "group-2");
     }
 
     private void addPrivileges(Privilege.Grant... grants) {
@@ -358,10 +360,11 @@ public class SampleDataGenerator {
         individualRepository.save(individual);
     }
 
-    private void addProjectCode(String name, String value) {
+    private void addProjectCode(String name, String value, String group) {
         ProjectCode projectCode = new ProjectCode();
         projectCode.setCodeName(name);
         projectCode.setCodeValue(value);
+        projectCode.setCodeGroup(value);
         projectCodeRepository.save(projectCode);
     }
 

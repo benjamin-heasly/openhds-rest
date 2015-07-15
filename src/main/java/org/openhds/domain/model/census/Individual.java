@@ -155,20 +155,6 @@ public class Individual extends AuditableExtIdEntity implements Serializable {
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
-
-        if (!(other instanceof Individual)) {
-            return false;
-        }
-
-        final String otherUuid = ((Individual) other).getUuid();
-        return null != uuid && null != otherUuid && uuid.equals(otherUuid);
-    }
-
-    @Override
     public String toString() {
         return "Individual{" +
                 "firstName='" + firstName + '\'' +

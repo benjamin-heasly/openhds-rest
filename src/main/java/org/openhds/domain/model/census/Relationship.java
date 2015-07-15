@@ -94,20 +94,6 @@ public class Relationship extends AuditableCollectedEntity implements Serializab
     }
 
     @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
-
-        if (!(other instanceof Relationship)) {
-            return false;
-        }
-
-        final String otherUuid = ((Relationship) other).getUuid();
-        return null != uuid && null != otherUuid && uuid.equals(otherUuid);
-    }
-
-    @Override
     public String toString() {
         return "Relationship{" +
                 ", relationshipType='" + relationshipType + '\'' +

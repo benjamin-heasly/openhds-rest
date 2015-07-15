@@ -64,28 +64,6 @@ public class LocationHierarchy extends AuditableExtIdEntity implements Serializa
     }
 
     @Override
-    public int hashCode() {
-        if (null == uuid) {
-            return 0;
-        }
-        return uuid.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
-
-        if (!(other instanceof LocationHierarchy)) {
-            return false;
-        }
-
-        final String otherUuid = ((LocationHierarchy) other).getUuid();
-        return null != uuid && null != otherUuid && uuid.equals(otherUuid);
-    }
-
-    @Override
     public String toString() {
         return "LocationHierarchy{" +
                 "parent=" + parent +
