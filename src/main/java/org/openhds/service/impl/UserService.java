@@ -10,6 +10,8 @@ import org.openhds.security.model.User;
 import org.openhds.security.model.UserDetailsWrapper;
 import org.openhds.service.contract.AbstractUuidService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -56,7 +58,14 @@ public class UserService extends AbstractUuidService<User, UserRepository> {
     }
 
     public User getCurrentUser() {
-        UserDetailsWrapper wrapper = (UserDetailsWrapper) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+
+        if (null == authentication) {
+            return getUnknownEntity();
+        }
+
+        UserDetailsWrapper wrapper = (UserDetailsWrapper) authentication.getPrincipal();
         return wrapper.getUser();
     }
 }
