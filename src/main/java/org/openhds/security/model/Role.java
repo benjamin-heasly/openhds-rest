@@ -57,27 +57,26 @@ public class Role implements Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
+    public int hashCode() {
+        if (null == name) {
+            return 0;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Role other = (Role) obj;
-        if ((this.name == null) ? (other.name!= null) : !this.name.equals(other.name)) {
-            return false;
-        }
-        return true;
+        return name.hashCode();
     }
 
     @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 37 * hash + (this.name != null ? this.name.hashCode() : 0);
-        return hash;
-    }
+    public boolean equals(Object other) {
+        if (other == null) {
+            return false;
+        }
 
+        if (getClass() != other.getClass()) {
+            return false;
+        }
+
+        final String otherName = ((Role) other).getName();
+        return null != name && null != otherName && name.equals(otherName);
+    }
 
     @Override
     public String toString() {

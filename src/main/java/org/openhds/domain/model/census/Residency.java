@@ -94,18 +94,4 @@ public class Residency extends AuditableCollectedEntity implements Serializable{
         this.endType = endType;
     }
 
-    @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
-
-        if (!(other instanceof Residency)) {
-            return false;
-        }
-
-        final String otherUuid = ((Residency) other).getUuid();
-        return null != uuid && null != otherUuid && uuid.equals(otherUuid);
-    }
-
 }

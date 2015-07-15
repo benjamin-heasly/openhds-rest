@@ -74,19 +74,16 @@ public class ProjectCode implements UuidIdentifiable, Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
+    public boolean equals(Object other) {
+        if (other == null) {
             return false;
         }
 
-        if (getClass() != obj.getClass()) {
+        if (getClass() != other.getClass()) {
             return false;
         }
 
-        final ProjectCode other = (ProjectCode) obj;
-        if ((this.uuid == null) ? (other.uuid != null) : !this.uuid.equals(other.uuid)) {
-            return false;
-        }
-        return true;
+        final String otherUuid = ((UuidIdentifiable) other).getUuid();
+        return null != uuid && null != otherUuid && uuid.equals(otherUuid);
     }
 }

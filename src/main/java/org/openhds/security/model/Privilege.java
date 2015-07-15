@@ -47,20 +47,25 @@ public class Privilege implements Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null || !(obj instanceof Privilege)) {
-            return false;
+    public int hashCode() {
+        if (null == grant) {
+            return 0;
         }
-
-        return grant.equals(((Privilege) obj).grant);
+        return grant.hashCode();
     }
 
     @Override
-    public int hashCode() {
-        if (grant == null) {
-            return super.hashCode();
+    public boolean equals(Object other) {
+        if (other == null) {
+            return false;
         }
-        return grant.hashCode();
+
+        if (getClass() != other.getClass()) {
+            return false;
+        }
+
+        final Grant otherGrant = ((Privilege) other).getGrant();
+        return null != grant && null != otherGrant && grant.equals(otherGrant);
     }
 
     @Override
