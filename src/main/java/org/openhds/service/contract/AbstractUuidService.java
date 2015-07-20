@@ -99,7 +99,7 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
     public T findOrMakePlaceHolder(String uuid){
         T entity = findOne(uuid);
         if (null == entity){
-            entity = getUnknownEntity();
+            entity = makeUnknownEntity();
             entity.setUuid(uuid);
             createOrUpdate(entity);
         }
