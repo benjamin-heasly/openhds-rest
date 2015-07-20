@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Created by Ben on 5/18/15.
  */
 @RestController
-@RequestMapping("/locationHierarchyLevel")
+@RequestMapping("/locationHierarchyLevels")
 @ExposesResourceFor(LocationHierarchyLevel.class)
 public class LocationHierarchyLevelRestController extends AuditableRestController<
         LocationHierarchyLevel,
