@@ -48,7 +48,7 @@ public class SocialGroupServiceTest extends AuditableExtIdServiceTest<SocialGrou
         socialGroup.setCollectedBy(null);
 
         // pass it all into the record method
-        socialGroup = service.createOrUpdate(socialGroup, fieldWorker.getUuid());
+        socialGroup = service.recordSocialGroup(socialGroup, fieldWorker.getUuid());
 
 
         //Check that the originals match the ones pulled out from findOrMakePlaceholder()
