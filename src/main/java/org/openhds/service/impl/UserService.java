@@ -53,6 +53,22 @@ public class UserService extends AbstractUuidService<User, UserRepository> {
         return roleRepository.findByName(name).get();
     }
 
+    public Privilege createOrUpdate (Privilege privilege) {
+        return privilegeRepository.save(privilege);
+    }
+
+    public Role createOrUpdate(Role role) {
+        return roleRepository.save(role);
+    }
+
+    public long countPrivileges() {
+        return privilegeRepository.count();
+    }
+
+    public long countRoles() {
+        return roleRepository.count();
+    }
+
     public Privilege findPrivilegeByGrant(Privilege.Grant grant) {
         return privilegeRepository.findByGrant(grant).get();
     }
