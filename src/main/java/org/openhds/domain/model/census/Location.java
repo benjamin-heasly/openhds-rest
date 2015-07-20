@@ -54,7 +54,6 @@ public class Location extends AuditableExtIdEntity implements Serializable {
     @OneToMany(mappedBy = "location")
     private Set<Residency> residencies = new HashSet<>();
 
-
     // Extensions for bioko island project
     @Description(description = "The number of this building within a sector")
     private String buildingNumber;

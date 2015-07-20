@@ -13,7 +13,12 @@ import java.time.ZonedDateTime;
  * Created by wolfe on 6/23/15.
  */
 @Service
-public class LocationHierarchyService extends AbstractAuditableExtIdService<LocationHierarchy, LocationHierarchyRepository>{
+public class LocationHierarchyService extends AbstractAuditableExtIdService<
+        LocationHierarchy,
+        LocationHierarchyRepository>{
+
+    public static final String ROOT_UUID = "HIERARCHY_ROOT";
+    public static final String ROOT_EXT_ID = "hierarchy-root";
 
     @Autowired
     public LocationHierarchyService(LocationHierarchyRepository repository) {
@@ -33,5 +38,22 @@ public class LocationHierarchyService extends AbstractAuditableExtIdService<Loca
     @Override
     public void validate(LocationHierarchy entity, ErrorLog errorLog) {
         super.validate(entity, errorLog);
+    }
+
+    private LocationHierarchy createHierarchyRoot() {
+        LocationHierarchy root = new LocationHierarchy();
+        root.setUuid(ROOT_UUID);
+        root.setName(ROOT_EXT_ID);
+        root.setExtId(ROOT_EXT_ID);
+        root.setCollectionDateTime(ZonedDateTime.now());
+        root.setCollectedBy(fieldWorkerService.getUnknownEntity());
+        return createOrUpdate(root);
+    }
+
+    public LocationHierarchy getHierarchyRoot() {
+        if (!repository.exists(ROOT_UUID)) {
+            return createHierarchyRoot();
+        }
+        return repository.findOne(ROOT_UUID);
     }
 }
