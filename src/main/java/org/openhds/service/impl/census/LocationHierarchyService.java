@@ -56,4 +56,9 @@ public class LocationHierarchyService extends AbstractAuditableExtIdService<
         }
         return repository.findOne(ROOT_UUID);
     }
+
+    public LocationHierarchy recordLocationHierarchy(LocationHierarchy locationHierarchy, String fieldWorkerId){
+        locationHierarchy.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
+        return createOrUpdate(locationHierarchy);
+    }
 }
