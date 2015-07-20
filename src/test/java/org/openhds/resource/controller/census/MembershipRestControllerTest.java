@@ -5,8 +5,8 @@ import org.openhds.repository.concrete.FieldWorkerRepository;
 import org.openhds.repository.concrete.census.IndividualRepository;
 import org.openhds.repository.concrete.census.SocialGroupRepository;
 import org.openhds.resource.contract.AuditableCollectedRestControllerTest;
-import org.openhds.resource.registration.census.MembershipRegistration;
 import org.openhds.resource.registration.Registration;
+import org.openhds.resource.registration.census.MembershipRegistration;
 import org.openhds.service.impl.census.MembershipService;
 import org.springframework.beans.factory.annotation.Autowired;
 

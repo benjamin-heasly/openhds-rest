@@ -37,4 +37,11 @@ public class ResidencyService extends AbstractAuditableCollectedService<Residenc
 
         return residency;
     }
+
+    public Residency recordResidency (Residency residency, String individualId, String locationId, String fieldWorkerId){
+        residency.setIndividual(individualService.findOrMakePlaceHolder(individualId));
+        residency.setLocation(locationService.findOrMakePlaceHolder(locationId));
+        residency.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
+        return createOrUpdate(residency);
+    }
 }

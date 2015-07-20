@@ -28,4 +28,9 @@ public class IndividualService extends AbstractAuditableExtIdService<Individual,
         individual.setCollectionDateTime(ZonedDateTime.now());
         return individual;
     }
+
+    public Individual recordIndividual(Individual individual, String fieldWorkerId){
+        individual.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
+        return createOrUpdate(individual);
+    }
 }

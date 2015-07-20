@@ -5,8 +5,8 @@ import org.openhds.repository.concrete.FieldWorkerRepository;
 import org.openhds.repository.concrete.census.IndividualRepository;
 import org.openhds.repository.concrete.update.VisitRepository;
 import org.openhds.resource.contract.AuditableCollectedRestControllerTest;
-import org.openhds.resource.registration.update.DeathRegistration;
 import org.openhds.resource.registration.Registration;
+import org.openhds.resource.registration.update.DeathRegistration;
 import org.openhds.service.impl.update.DeathService;
 import org.springframework.beans.factory.annotation.Autowired;
 

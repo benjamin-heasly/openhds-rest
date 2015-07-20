@@ -3,8 +3,8 @@ package org.openhds.resource.controller.census;
 import org.openhds.domain.model.census.Individual;
 import org.openhds.repository.concrete.FieldWorkerRepository;
 import org.openhds.resource.contract.AuditableExtIdRestControllerTest;
-import org.openhds.resource.registration.census.IndividualRegistration;
 import org.openhds.resource.registration.Registration;
+import org.openhds.resource.registration.census.IndividualRegistration;
 import org.openhds.service.impl.census.IndividualService;
 import org.springframework.beans.factory.annotation.Autowired;
 

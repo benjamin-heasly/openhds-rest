@@ -33,4 +33,11 @@ public class RelationshipService extends AbstractAuditableCollectedService<Relat
         relationship.setCollectedBy(fieldWorkerService.getUnknownEntity());
         return relationship;
     }
+
+    public Relationship recordRelationship(Relationship relationship, String individualAId, String individualBId, String fieldWorkerId){
+        relationship.setIndividualA(individualService.findOrMakePlaceHolder(individualAId));
+        relationship.setIndividualB(individualService.findOrMakePlaceHolder(individualBId));
+        relationship.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
+        return createOrUpdate(relationship);
+    }
 }
