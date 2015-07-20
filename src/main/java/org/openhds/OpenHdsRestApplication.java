@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.openhds.repository.util.ProjectCodeLoader;
-import org.openhds.repository.util.SampleDataGenerator;
+import org.openhds.repository.generator.SampleDataGenerator;
 import org.openhds.resource.converter.EntityCollectionMessageWriter;
 import org.openhds.resource.converter.JsonArrayDelimiter;
 import org.openhds.resource.converter.XmlElementDelimiter;

@@ -1,4 +1,4 @@
-package org.openhds.repository.util;
+package org.openhds.repository.generator;
 
 import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.contract.AuditableEntity;
