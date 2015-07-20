@@ -47,4 +47,13 @@ public class InMigrationService extends AbstractAuditableCollectedService<InMigr
 
         return inMigration;
     }
+
+    public InMigration recordInMigration(InMigration inMigration, String individualId, String residencyId, String visitId, String fieldWorkerId){
+        inMigration.setIndividual(individualService.findOrMakePlaceHolder(individualId));
+        inMigration.setResidency(residencyService.findOrMakePlaceHolder(residencyId));
+        inMigration.setVisit(visitService.findOrMakePlaceHolder(visitId));
+        inMigration.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
+
+        return createOrUpdate(inMigration);
+    }
 }

@@ -39,4 +39,16 @@ public class PregnancyResultService extends AbstractAuditableCollectedService<Pr
         return pregnancyResult;
     }
 
+    public PregnancyResult recordPregnancyResult(PregnancyResult pregnancyResult,
+                           String pregnancyOutcomeId,
+                           String childId,
+                           String fieldWorkerId){
+
+        pregnancyResult.setPregnancyOutcome(pregnancyOutcomeService.findOrMakePlaceHolder(pregnancyOutcomeId));
+        pregnancyResult.setChild(individualService.findOrMakePlaceHolder(childId));
+        pregnancyResult.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
+
+        return createOrUpdate(pregnancyResult);
+
+    }
 }
