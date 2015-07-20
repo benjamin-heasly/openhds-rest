@@ -104,4 +104,31 @@ public class MembershipServiceTest extends AuditableCollectedServiceTest<Members
 
     }
 
+    @Test
+    public void correctEntityReferenceOnUpdate(){
+
+        //Make a new entity with no references
+        Membership membership = makeValidEntity("validName", "validId");
+        membership.setCollectedBy(null);
+        membership.setIndividual(null);
+        membership.setSocialGroup(null);
+
+        //Pass it in with new reference uuids
+        membership = service.recordMembership(membership, "induvudual", "suciulGroup", "feldwarker");
+
+        //make the "real" entity to overwrite the old one.
+        Individual individual = individualService.makeUnknownEntity();
+        individual.setFirstName("Billy");
+        individual.setUuid("induvudual");
+
+        individualService.createOrUpdate(individual);
+
+        //Get the service with the updated reference
+        membership = service.findOne("validId");
+
+        //cheggerout
+        assertEquals(membership.getIndividual().getFirstName(), "Billy");
+
+    }
+
 }
