@@ -42,7 +42,7 @@ public class LocationServiceTest extends AuditableExtIdServiceTest<Location, Loc
     }
 
     @Test
-    public void recordLocationWithExistingReferences() {
+    public void recordWithExistingReferences() {
 
         //Grab a valid entity
         Location location = makeValidEntity("validName", "validId");
@@ -68,7 +68,7 @@ public class LocationServiceTest extends AuditableExtIdServiceTest<Location, Loc
     }
 
     @Test
-    public void recordLocationWithNonexistentReferences(){
+    public void recordWithNonexistentReferences(){
 
         //Make a new entity with no references
         Location location = makeValidEntity("validName", "validId");

@@ -43,7 +43,7 @@ public class IndividualServiceTest extends AuditableExtIdServiceTest<Individual,
     }
 
     @Test
-    public void recordLocationWithExistingReferences() {
+    public void recordWithExistingReferences() {
 
         //Grab a valid entity
         Individual individual = makeValidEntity("validName", "validId");
@@ -62,7 +62,7 @@ public class IndividualServiceTest extends AuditableExtIdServiceTest<Individual,
     }
 
     @Test
-    public void recordLocationWithNonexistentReferences(){
+    public void recordWithNonexistentReferences(){
 
         //Make a new entity with no references
         Individual individual = makeValidEntity("validName", "validId");
