@@ -53,7 +53,7 @@ public class UserService extends AbstractUuidService<User, UserRepository> {
         return roleRepository.findByName(name).get();
     }
 
-    public Privilege findPrivledgeByGrant(Privilege.Grant grant) {
+    public Privilege findPrivilegeByGrant(Privilege.Grant grant) {
         return privilegeRepository.findByGrant(grant).get();
     }
 
