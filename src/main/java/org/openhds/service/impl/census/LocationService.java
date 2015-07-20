@@ -1,6 +1,8 @@
 package org.openhds.service.impl.census;
 
+import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.census.Location;
+import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.census.LocationRepository;
 import org.openhds.service.contract.AbstractAuditableExtIdService;
@@ -39,5 +41,15 @@ public class LocationService extends AbstractAuditableExtIdService<Location, Loc
     public void validate(Location entity, ErrorLog errorLog) {
         super.validate(entity, errorLog);
 
+    }
+
+    public Location recordLocation(Location location, String locationHierarchyId, String fieldWorkerId){
+
+        LocationHierarchy locationHierarchy = locationHierarchyService.findOrMakePlaceHolder(locationHierarchyId);
+        FieldWorker fieldWorker = fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId);
+
+        location.setLocationHierarchy(locationHierarchy);
+        location.setCollectedBy(fieldWorker);
+        return createOrUpdate(location);
     }
 }
