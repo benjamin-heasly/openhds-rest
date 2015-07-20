@@ -44,12 +44,8 @@ public class LocationService extends AbstractAuditableExtIdService<Location, Loc
     }
 
     public Location recordLocation(Location location, String locationHierarchyId, String fieldWorkerId){
-
-        LocationHierarchy locationHierarchy = locationHierarchyService.findOrMakePlaceHolder(locationHierarchyId);
-        FieldWorker fieldWorker = fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId);
-
-        location.setLocationHierarchy(locationHierarchy);
-        location.setCollectedBy(fieldWorker);
+        location.setLocationHierarchy(locationHierarchyService.findOrMakePlaceHolder(locationHierarchyId));
+        location.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
         return createOrUpdate(location);
     }
 }

@@ -44,8 +44,8 @@ public class LocationServiceTest extends AuditableExtIdServiceTest<Location, Loc
     @Test
     public void recordLocationWithExistingReferences() {
 
-        //Grab a valid location
-        Location location = makeValidEntity("validLocation", "validLocationId");
+        //Grab a valid entity
+        Location location = makeValidEntity("validName", "validId");
 
         //Remember the references and clear them
         LocationHierarchy locationHierarchy = location.getLocationHierarchy();
@@ -70,8 +70,8 @@ public class LocationServiceTest extends AuditableExtIdServiceTest<Location, Loc
     @Test
     public void recordLocationWithNonexistentReferences(){
 
-        //Make a new fieldworker with no references
-        Location location = makeValidEntity("validLocation", "validLocationId");
+        //Make a new entity with no references
+        Location location = makeValidEntity("validName", "validId");
         location.setLocationHierarchy(null);
         location.setCollectedBy(null);
 
