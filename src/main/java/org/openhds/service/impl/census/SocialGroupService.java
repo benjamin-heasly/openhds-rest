@@ -28,4 +28,9 @@ public class SocialGroupService extends AbstractAuditableExtIdService<SocialGrou
         socialGroup.setCollectionDateTime(ZonedDateTime.now());
         return socialGroup;
     }
+
+    public SocialGroup recordSocialGroup(SocialGroup socialGroup, String fieldWorkerId){
+        socialGroup.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
+        return createOrUpdate(socialGroup);
+    }
 }
