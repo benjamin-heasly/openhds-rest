@@ -2,7 +2,6 @@ package org.openhds.resource.registration;
 
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.util.Description;
-import org.openhds.security.model.User;
 
 /**
  * Created by Ben on 6/3/15.

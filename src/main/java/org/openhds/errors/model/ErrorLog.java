@@ -4,7 +4,6 @@ import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.*;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.ZonedDateTime;

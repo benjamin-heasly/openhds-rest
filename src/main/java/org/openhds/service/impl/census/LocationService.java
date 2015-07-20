@@ -1,8 +1,6 @@
 package org.openhds.service.impl.census;
 
-import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.census.Location;
-import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.census.LocationRepository;
 import org.openhds.service.contract.AbstractAuditableExtIdService;

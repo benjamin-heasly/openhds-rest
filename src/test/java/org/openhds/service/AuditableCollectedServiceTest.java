@@ -11,9 +11,7 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by wolfe on 6/17/15.

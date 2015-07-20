@@ -1,6 +1,5 @@
 package org.openhds.resource.registration.update;
 
-import org.openhds.domain.model.update.InMigration;
 import org.openhds.domain.model.update.OutMigration;
 import org.openhds.domain.util.Description;
 import org.openhds.resource.registration.Registration;

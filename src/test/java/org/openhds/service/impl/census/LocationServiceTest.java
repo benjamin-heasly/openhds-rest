@@ -7,6 +7,7 @@ import org.openhds.domain.model.census.Location;
 import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.service.AuditableExtIdServiceTest;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 /**

@@ -2,7 +2,9 @@ package org.openhds.service.impl.census;
 
 import org.junit.Test;
 import org.openhds.domain.model.FieldWorker;
-import org.openhds.domain.model.census.*;
+import org.openhds.domain.model.census.Individual;
+import org.openhds.domain.model.census.Location;
+import org.openhds.domain.model.census.Residency;
 import org.openhds.service.AuditableCollectedServiceTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
