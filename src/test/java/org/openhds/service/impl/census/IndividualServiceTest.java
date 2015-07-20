@@ -71,7 +71,7 @@ public class IndividualServiceTest extends AuditableExtIdServiceTest<Individual,
 
         //check that they were persisted
         assertNotNull(individual.getCollectedBy());
-        assertEquals(individual.getCollectedBy(), "feldwarker");
+        assertEquals(individual.getCollectedBy().getUuid(), "feldwarker");
 
     }
 }
