@@ -81,7 +81,9 @@ public class LocationServiceTest extends AuditableExtIdServiceTest<Location, Loc
 
         //check that they were persisted
         assertNotNull(location.getLocationHierarchy());
+        assertEquals(location.getLocationHierarchy().getUuid(), "lucutiunHiararchy");
         assertNotNull(location.getCollectedBy());
+        assertEquals(location.getCollectedBy().getUuid(), "feldwarker");
 
     }
 

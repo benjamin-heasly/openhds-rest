@@ -89,8 +89,11 @@ public class RelationshipServiceTest extends AuditableCollectedServiceTest<Relat
 
         //check that they were persisted
         assertNotNull(relationship.getCollectedBy());
+        assertEquals(relationship.getCollectedBy().getUuid(), "feldwarker");
         assertNotNull(relationship.getIndividualA());
+        assertEquals(relationship.getIndividualA().getUuid(), "induvudualA");
         assertNotNull(relationship.getIndividualB());
+        assertEquals(relationship.getIndividualB().getUuid(), "induvudualB");
 
     }
 }

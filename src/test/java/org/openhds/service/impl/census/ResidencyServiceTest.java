@@ -94,8 +94,11 @@ public class ResidencyServiceTest extends AuditableCollectedServiceTest<Residenc
 
         //check that they were persisted
         assertNotNull(residency.getCollectedBy());
+        assertEquals(residency.getCollectedBy().getUuid(), "feldwarker");
         assertNotNull(residency.getIndividual());
+        assertEquals(residency.getIndividual().getUuid(), "induvudual");
         assertNotNull(residency.getLocation());
+        assertEquals(residency.getLocation().getUuid(), "lucutiun");
 
     }
 }

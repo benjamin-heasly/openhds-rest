@@ -96,8 +96,11 @@ public class MembershipServiceTest extends AuditableCollectedServiceTest<Members
 
         //check that they were persisted
         assertNotNull(membership.getCollectedBy());
+        assertEquals(membership.getCollectedBy().getUuid(), "feldwarker");
         assertNotNull(membership.getIndividual());
+        assertEquals(membership.getIndividual().getUuid(), "induvudual");
         assertNotNull(membership.getSocialGroup());
+        assertEquals(membership.getSocialGroup().getUuid(), "suciulGroup");
 
     }
 

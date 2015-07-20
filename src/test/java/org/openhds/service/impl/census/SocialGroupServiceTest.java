@@ -69,6 +69,7 @@ public class SocialGroupServiceTest extends AuditableExtIdServiceTest<SocialGrou
 
         //check that they were persisted
         assertNotNull(socialGroup.getCollectedBy());
+        assertEquals(socialGroup.getCollectedBy().getUuid(), "feldwarker");
 
     }
 }
