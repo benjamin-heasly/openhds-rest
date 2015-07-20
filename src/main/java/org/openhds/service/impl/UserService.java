@@ -65,7 +65,12 @@ public class UserService extends AbstractUuidService<User, UserRepository> {
             return getUnknownEntity();
         }
 
-        UserDetailsWrapper wrapper = (UserDetailsWrapper) authentication.getPrincipal();
+        Object principal = authentication.getPrincipal();
+        if (null == principal || !(principal instanceof UserDetailsWrapper)) {
+            return getUnknownEntity();
+        }
+
+        UserDetailsWrapper wrapper = (UserDetailsWrapper) principal;
         return wrapper.getUser();
     }
 }

@@ -49,15 +49,15 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
 
     protected abstract T makeUnknownEntity();
 
-    private void persistUnknownEntity() {
+    private T persistUnknownEntity() {
         T unknownEntity = makeUnknownEntity();
         unknownEntity.setUuid(UNKNOWN_ENTITY_UUID);
-        repository.save(unknownEntity);
+        return createOrUpdate(unknownEntity);
     }
 
     public T getUnknownEntity() {
         if (!repository.exists(UNKNOWN_ENTITY_UUID)) {
-            persistUnknownEntity();
+            return persistUnknownEntity();
         }
         return repository.findOne(UNKNOWN_ENTITY_UUID);
     }

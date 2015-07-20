@@ -16,6 +16,7 @@ import org.openhds.repository.concrete.update.*;
 import org.openhds.security.model.Privilege;
 import org.openhds.security.model.Role;
 import org.openhds.security.model.User;
+import org.openhds.service.impl.census.LocationHierarchyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -50,6 +51,9 @@ public class SampleDataGenerator {
 
     @Autowired
     private LocationHierarchyRepository locationHierarchyRepository;
+
+    @Autowired
+    private LocationHierarchyService locationHierarchyService;
 
     @Autowired
     private LocationRepository locationRepository;
@@ -165,9 +169,9 @@ public class SampleDataGenerator {
         addLocationHierarchyLevel(1, "top-level");
         addLocationHierarchyLevel(2, "bottom-level");
 
-        addLocationHierarchy("top", null, "top-level");
-        addLocationHierarchy("bottom-one", "top", "bottom-level");
-        addLocationHierarchy("bottom-two", "top", "bottom-level");
+        LocationHierarchy root = locationHierarchyService.getHierarchyRoot();
+        addLocationHierarchy("bottom-one", root.getExtId(), "bottom-level");
+        addLocationHierarchy("bottom-two", root.getExtId(), "bottom-level");
 
         addLocation("location-a", "bottom-one");
         addLocation("location-b", "bottom-one");
