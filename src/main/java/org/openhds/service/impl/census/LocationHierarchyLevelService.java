@@ -35,4 +35,8 @@ public class LocationHierarchyLevelService extends AbstractAuditableService<Loca
         return repository.findByDeletedFalseAndName(name).get();
     }
 
+    public LocationHierarchyLevel recordLocationHierarchyLevel(LocationHierarchyLevel locationHierarchyLevel){
+        return createOrUpdate(locationHierarchyLevel);
+    }
+
 }

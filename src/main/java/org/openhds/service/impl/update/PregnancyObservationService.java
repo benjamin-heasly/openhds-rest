@@ -40,4 +40,16 @@ public class PregnancyObservationService extends AbstractAuditableCollectedServi
 
         return pregnancyObservation;
     }
+
+    public PregnancyObservation recordPregnancyObservation(PregnancyObservation pregnancyObservation,
+                                                           String motherId,
+                                                           String visitId,
+                                                           String fieldWorkerId) {
+
+        pregnancyObservation.setMother(individualService.findOrMakePlaceHolder(motherId));
+        pregnancyObservation.setVisit(visitService.findOrMakePlaceHolder(visitId));
+        pregnancyObservation.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
+
+        return createOrUpdate(pregnancyObservation);
+    }
 }

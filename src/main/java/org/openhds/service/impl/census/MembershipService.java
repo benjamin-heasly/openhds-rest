@@ -47,4 +47,11 @@ public class MembershipService extends AbstractAuditableCollectedService<Members
         super.validate(membership, errorLog);
     }
 
+    public Membership recordMembership(Membership membership, String individualId, String socialGroupId, String fieldWorkerId){
+        membership.setIndividual(individualService.findOrMakePlaceHolder(individualId));
+        membership.setSocialGroup(socialGroupService.findOrMakePlaceHolder(socialGroupId));
+        membership.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
+        return createOrUpdate(membership);
+    }
+
 }

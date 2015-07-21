@@ -39,4 +39,11 @@ public class DeathService extends AbstractAuditableCollectedService<Death, Death
 
         return death;
     }
+
+    public Death recordDeath(Death death, String individualId, String visitId, String fieldWorkerId){
+        death.setIndividual(individualService.findOrMakePlaceHolder(individualId));
+        death.setVisit(visitService.findOrMakePlaceHolder(visitId));
+        death.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
+        return createOrUpdate(death);
+    }
 }

@@ -101,6 +101,16 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
         return repository.findOne(id);
     }
 
+    public T findOrMakePlaceHolder(String uuid){
+        T entity = findOne(uuid);
+        if (null == entity){
+            entity = makeUnknownEntity();
+            entity.setUuid(uuid);
+            createOrUpdate(entity);
+        }
+        return entity;
+    }
+
     public T createOrUpdate(T entity) {
 
         ErrorLog errorLog = new ErrorLog();

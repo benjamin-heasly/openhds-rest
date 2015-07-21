@@ -40,4 +40,10 @@ public class LocationService extends AbstractAuditableExtIdService<Location, Loc
         super.validate(entity, errorLog);
 
     }
+
+    public Location recordLocation(Location location, String locationHierarchyId, String fieldWorkerId){
+        location.setLocationHierarchy(locationHierarchyService.findOrMakePlaceHolder(locationHierarchyId));
+        location.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
+        return createOrUpdate(location);
+    }
 }
