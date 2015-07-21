@@ -33,4 +33,10 @@ public class VisitService extends AbstractAuditableExtIdService<Visit, VisitRepo
         visit.setVisitDate(ZonedDateTime.now().minusYears(1));
         return visit;
     }
+
+    public Visit recordVisit(Visit visit, String locationId, String fieldWorkerId){
+        visit.setLocation(locationService.findOrMakePlaceHolder(locationId));
+        visit.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
+        return createOrUpdate(visit);
+    }
 }

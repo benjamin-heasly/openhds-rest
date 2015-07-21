@@ -46,4 +46,13 @@ public class OutMigrationService extends AbstractAuditableCollectedService<OutMi
 
         return outMigration;
     }
-}
+
+    public OutMigration recordOutMigration(OutMigration outMigration, String individualId, String residencyId, String visitId, String fieldWorkerId) {
+        outMigration.setIndividual(individualService.findOrMakePlaceHolder(individualId));
+        outMigration.setResidency(residencyService.findOrMakePlaceHolder(residencyId));
+        outMigration.setVisit(visitService.findOrMakePlaceHolder(visitId));
+        outMigration.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
+
+        return createOrUpdate(outMigration);
+    }
+    }

@@ -1,5 +1,6 @@
 package org.openhds.service.impl.update;
 
+import org.openhds.domain.model.update.PregnancyObservation;
 import org.openhds.domain.model.update.PregnancyOutcome;
 import org.openhds.repository.concrete.update.PregnancyOutcomeRepository;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
@@ -40,6 +41,20 @@ public class PregnancyOutcomeService extends AbstractAuditableCollectedService<P
         pregnancyOutcome.setOutcomeDate(ZonedDateTime.now().minusYears(1));
 
         return pregnancyOutcome;
+    }
+
+    public PregnancyOutcome recordPregnancyOutcome(PregnancyOutcome pregnancyOutcome,
+                                                   String motherId,
+                                                   String fatherId,
+                                                   String visitId,
+                                                   String fieldWorkerId){
+
+        pregnancyOutcome.setMother(individualService.findOrMakePlaceHolder(motherId));
+        pregnancyOutcome.setFather(individualService.findOrMakePlaceHolder(fatherId));
+        pregnancyOutcome.setVisit(visitService.findOrMakePlaceHolder(visitId));
+        pregnancyOutcome.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
+
+        return createOrUpdate(pregnancyOutcome);
     }
 
 }
