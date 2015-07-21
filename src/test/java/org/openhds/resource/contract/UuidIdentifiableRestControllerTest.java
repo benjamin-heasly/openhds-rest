@@ -256,7 +256,7 @@ public abstract class UuidIdentifiableRestControllerTest<
         mockMvc.perform(get(getResourceUrl()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize((int) service.countAll())));
+                .andExpect(jsonPath("$.page.totalElements", is((int) service.countAll())));
     }
 
     @Test

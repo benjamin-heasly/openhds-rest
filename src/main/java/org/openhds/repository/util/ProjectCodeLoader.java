@@ -35,8 +35,15 @@ public class ProjectCodeLoader {
     }
 
     // iterate the code groups at the top level
-    public void loadAllCodes() throws Exception {
-        Map<String, Object> topMap = mapFactoryBean.getObject();
+    public void loadAllCodes() {
+
+        Map<String, Object> topMap = null;
+        try {
+            topMap = mapFactoryBean.getObject();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
         for (Map.Entry<String, Object> entry : topMap.entrySet()) {
             loadGroup(entry.getKey(), (Map<String, Object>) entry.getValue());
         }

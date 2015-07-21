@@ -21,8 +21,6 @@ public abstract class AbstractAuditableService
         <T extends AuditableEntity, V extends AuditableRepository<T>>
         extends AbstractUuidService<T, V> {
 
-    private enum DateType {INSERT,VOID,MODIFIED};
-
     public AbstractAuditableService(V repository) {
         super(repository);
     }

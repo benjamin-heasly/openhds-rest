@@ -1,6 +1,7 @@
 package org.openhds.service.impl;
 
 import org.openhds.errors.model.ErrorLog;
+import org.openhds.errors.model.ErrorLogException;
 import org.openhds.repository.concrete.PrivilegeRepository;
 import org.openhds.repository.concrete.RoleRepository;
 import org.openhds.repository.concrete.UserRepository;

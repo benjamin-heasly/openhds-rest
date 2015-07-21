@@ -1,11 +1,12 @@
 package org.openhds.repository.generator;
 
 import org.openhds.domain.model.FieldWorker;
+import org.openhds.repository.concrete.*;
+import org.openhds.repository.util.ProjectCodeLoader;
 import org.openhds.security.model.Privilege;
 import org.openhds.security.model.Role;
 import org.openhds.security.model.User;
 import org.openhds.service.impl.FieldWorkerService;
-import org.openhds.service.impl.ProjectCodeService;
 import org.openhds.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,23 +28,61 @@ import static java.util.stream.Collectors.toSet;
 @Component
 public class RequiredDataGenerator {
 
+    private static final String DEFAULT_USER_UUID = "DEFAULT_USER";
+    private static final String DEFAULT_USER_USERNAME = "user";
+    private static final String DEFAULT_USER_PASSWORD = "password";
+
     private final UserService userService;
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PrivilegeRepository privilegeRepository;
 
     private final FieldWorkerService fieldWorkerService;
+    private final FieldWorkerRepository fieldWorkerRepository;
 
-    private final ProjectCodeService projectCodeService;
+    private final ProjectCodeLoader projectCodeLoader;
+    private final ProjectCodeRepository projectCodeRepository;
 
     @Autowired
     public RequiredDataGenerator(UserService userService,
+                                 UserRepository userRepository,
+                                 RoleRepository roleRepository,
+                                 PrivilegeRepository privilegeRepository,
                                  FieldWorkerService fieldWorkerService,
-                                 ProjectCodeService projectCodeService) {
+                                 FieldWorkerRepository fieldWorkerRepository,
+                                 ProjectCodeLoader projectCodeLoader,
+                                 ProjectCodeRepository projectCodeRepository) {
+
         this.userService = userService;
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.privilegeRepository = privilegeRepository;
         this.fieldWorkerService = fieldWorkerService;
-        this.projectCodeService = projectCodeService;
+        this.fieldWorkerRepository = fieldWorkerRepository;
+        this.projectCodeLoader = projectCodeLoader;
+        this.projectCodeRepository = projectCodeRepository;
     }
 
-    private void 
+    public void generateData() {
+        generatePrivileges();
+        generateRoles();
+        generateUsers();
+        generateProjectCodes();
+        generateFieldWorkers();
+    }
 
+    public void clearData() {
+        fieldWorkerRepository.deleteAllInBatch();
+        projectCodeRepository.deleteAllInBatch();
+        userRepository.deleteAllInBatch();
+        roleRepository.deleteAllInBatch();
+        privilegeRepository.deleteAllInBatch();
+    }
+
+    private void generateProjectCodes() {
+        // code loader checks internally which codes need to be loaded
+        projectCodeLoader.loadAllCodes();
+    }
 
     private void generatePrivileges() {
         if (0 < userService.countPrivileges()) {
@@ -70,21 +109,27 @@ public class RequiredDataGenerator {
     }
 
     private void generateUsers() {
-        if (0 < userService.countAll()) {
+        if (userService.hasRecords()) {
             return;
         }
 
-        User root = new User();
-        root.setUsername("user");
-        root.setFirstName("default user");
-        root.setLastName("default user");
-        root.setDescription("default user with root role (all privileges)");
-        root.setPassword("password");
-        root.getRoles().add(userService.findRoleByName("root-role"));
-        userService.createOrUpdate(root);
+        User user = new User();
+        user.setUuid(DEFAULT_USER_UUID);
+        user.setUsername(DEFAULT_USER_USERNAME);
+        user.setPassword(DEFAULT_USER_PASSWORD);
+        user.setFirstName("default user");
+        user.setLastName("default user");
+        user.setDescription("default user with root role (all privileges)");
+        user.getRoles().add(userService.findRoleByName("root-role"));
+
+        userService.createOrUpdate(user);
     }
 
     private void generateFieldWorkers() {
+        if (fieldWorkerService.hasRecords()) {
+            return;
+        }
+
         FieldWorker fieldWorker = new FieldWorker();
         fieldWorker.setFirstName("default fieldworker");
         fieldWorker.setLastName("default fieldworker");

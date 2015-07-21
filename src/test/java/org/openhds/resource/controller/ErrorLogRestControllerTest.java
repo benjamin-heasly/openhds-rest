@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.time.ZonedDateTime;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -89,45 +90,45 @@ public class ErrorLogRestControllerTest extends AuditableCollectedRestController
         final int totalCount = (int) service.countAll();
         this.mockMvc.perform(get(getResourceUrl() + "query"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(totalCount)));
+                .andExpect(jsonPath("$.page.totalElements", is(totalCount)));
 
         // several queries to match only the second
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("resolutionStatus", second.getResolutionStatus()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(1)));
+                .andExpect(jsonPath("$.page.totalElements", is(1)));
 
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("entityType", second.getEntityType()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(1)));
+                .andExpect(jsonPath("$.page.totalElements", is(1)));
 
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("assignedTo", second.getAssignedTo()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(1)));
+                .andExpect(jsonPath("$.page.totalElements", is(1)));
 
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("fieldWorkerId", second.getCollectedBy().getFieldWorkerId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(totalCount)));
+                .andExpect(jsonPath("$.page.totalElements", is(totalCount)));
 
         // queries by date range
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("minDate", second.getInsertDate().toString()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(2)));
+                .andExpect(jsonPath("$.page.totalElements", is(2)));
 
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("maxDate", second.getInsertDate().toString()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(totalCount - 1)));
+                .andExpect(jsonPath("$.page.totalElements", is(totalCount - 1)));
 
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("minDate", first.getInsertDate().toString())
                 .param("maxDate", third.getInsertDate().toString()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(3)));
+                .andExpect(jsonPath("$.page.totalElements", is(3)));
 
         // match only the second, emphatically!
         this.mockMvc.perform(get(getResourceUrl() + "query")
@@ -138,7 +139,7 @@ public class ErrorLogRestControllerTest extends AuditableCollectedRestController
                 .param("minDate", second.getInsertDate().toString())
                 .param("maxDate", second.getInsertDate().toString()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(1)));
+                .andExpect(jsonPath("$.page.totalElements", is(1)));
     }
 
     private ErrorLog insertFancyAndReturn(String name,

@@ -3,7 +3,6 @@ package org.openhds.repository.generator;
 import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.domain.model.FieldWorker;
-import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.*;
 import org.openhds.domain.model.update.*;
 import org.openhds.errors.model.Error;
@@ -13,18 +12,13 @@ import org.openhds.events.model.EventMetadata;
 import org.openhds.repository.concrete.*;
 import org.openhds.repository.concrete.census.*;
 import org.openhds.repository.concrete.update.*;
-import org.openhds.security.model.Privilege;
-import org.openhds.security.model.Role;
 import org.openhds.security.model.User;
 import org.openhds.service.impl.census.LocationHierarchyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.UUID;
-
-import static java.util.stream.Collectors.toSet;
 
 /**
  * Created by Ben on 5/18/15.
@@ -35,10 +29,7 @@ import static java.util.stream.Collectors.toSet;
 public class SampleDataGenerator {
 
     @Autowired
-    private PrivilegeRepository privilegeRepository;
-
-    @Autowired
-    private RoleRepository roleRepository;
+    RequiredDataGenerator requiredDataGenerator;
 
     @Autowired
     private UserRepository userRepository;
@@ -78,9 +69,6 @@ public class SampleDataGenerator {
 
     @Autowired
     private EventRepository eventRepository;
-
-    @Autowired
-    private ProjectCodeRepository projectCodeRepository;
 
     @Autowired
     private SocialGroupRepository socialGroupRepository;
@@ -145,25 +133,11 @@ public class SampleDataGenerator {
         locationHierarchyRepository.deleteAllInBatch();
         locationHierarchyLevelRepository.deleteAllInBatch();
 
-        fieldWorkerRepository.deleteAllInBatch();
-
-        userRepository.deleteAllInBatch();
-        roleRepository.deleteAllInBatch();
-        privilegeRepository.deleteAllInBatch();
-
-        projectCodeRepository.deleteAllInBatch();
+        requiredDataGenerator.clearData();
     }
 
     public void generateSampleData() {
-        addPrivileges(Privilege.Grant.values());
-
-        addRole("user-role", Privilege.Grant.values());
-        addUser("user", "password", "user-role");
-
-        addRole("empty-role");
-        addUser("non-user", "password", "empty-role");
-
-        addFieldWorker("fieldworker", "password");
+        requiredDataGenerator.generateData();
 
         addLocationHierarchyLevel(0, "root-level");
         addLocationHierarchyLevel(1, "top-level");
@@ -224,38 +198,6 @@ public class SampleDataGenerator {
         addErrorLog("sample error");
 
         addEvent("sample event", "sample system");
-
-        addProjectCode("test-code-1", "value-1", "group-1");
-        addProjectCode("test-code-2", "value-2", "group-1");
-        addProjectCode("test-code-3", "value-3", "group-2");
-        addProjectCode("test-code-4", "value-4", "group-2");
-    }
-
-    private void addPrivileges(Privilege.Grant... grants) {
-        Arrays.stream(grants)
-                .map(Privilege::new)
-                .forEach(privilegeRepository::save);
-    }
-
-    private void addRole(String name, Privilege.Grant... grants) {
-        Role role = new Role();
-        role.setName(name);
-        role.setDescription(name);
-        role.setPrivileges(Arrays.stream(grants)
-                .map(Privilege::new)
-                .collect(toSet()));
-        roleRepository.save(role);
-    }
-
-    private void addUser(String name, String password, String roleName) {
-        User user = new User();
-        user.setUuid(name);
-        user.setFirstName(name);
-        user.setLastName(name);
-        user.setUsername(name);
-        user.setPassword(password);
-        user.getRoles().add(roleRepository.findByName(roleName).get());
-        userRepository.save(user);
     }
 
     private void initAuditableFields(AuditableEntity auditableEntity) {
@@ -362,14 +304,6 @@ public class SampleDataGenerator {
         individual.setDateOfBirth(ZonedDateTime.now().minusYears(1));
 
         individualRepository.save(individual);
-    }
-
-    private void addProjectCode(String name, String value, String group) {
-        ProjectCode projectCode = new ProjectCode();
-        projectCode.setCodeName(name);
-        projectCode.setCodeValue(value);
-        projectCode.setCodeGroup(value);
-        projectCodeRepository.save(projectCode);
     }
 
     private void addSocialGroup(String name) {

@@ -101,6 +101,7 @@ public class RestControllerTestSupport {
 
     @After
     public void tearDown() {
+        // TODO: all we really need is to re-create the default user
         sampleDataGenerator.clearData();
         sampleDataGenerator.generateSampleData();
     }

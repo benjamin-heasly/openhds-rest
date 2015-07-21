@@ -8,6 +8,7 @@ import org.openhds.events.queries.EventSpecifications;
 import org.openhds.repository.concrete.EventRepository;
 import org.openhds.repository.queries.QueryRange;
 import org.openhds.repository.queries.QueryValue;
+import org.openhds.repository.results.EntityIterator;
 import org.openhds.service.contract.AbstractAuditableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -76,7 +77,10 @@ public class EventService extends AbstractAuditableService<Event, EventRepositor
 
         // find matching events that have not been seen by this system
         //  add default metadata to them
-        Page<Event> unseenEvents = findWithoutSystem(pageable, dateRange, eventProperties, system);
+        final String finalSystem = system;
+        EntityIterator<Event> unseenEvents = iteratorFromPageable(
+                p -> findWithoutSystem(p, dateRange, eventProperties, finalSystem),
+                pageable.getSort());
         for (Event event : unseenEvents) {
             addSystemMetadata(event, system);
         }
@@ -84,7 +88,9 @@ public class EventService extends AbstractAuditableService<Event, EventRepositor
 
         // search by event and metadata properties
         //  update them for read counts
-        Page<Event> matchingEvents = findByProperties(pageable, dateRange, eventProperties, metadataProperties);
+        EntityIterator<Event> matchingEvents = iteratorFromPageable(
+                p -> findByProperties(p, dateRange, eventProperties, metadataProperties),
+                pageable.getSort());
         incrementReadCountForSystem(matchingEvents, system);
 
         // return a fresh page over the matching events

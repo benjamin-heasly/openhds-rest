@@ -3,7 +3,6 @@ package org.openhds;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import org.openhds.repository.util.ProjectCodeLoader;
 import org.openhds.repository.generator.SampleDataGenerator;
 import org.openhds.resource.converter.EntityCollectionMessageWriter;
 import org.openhds.resource.converter.JsonArrayDelimiter;
@@ -40,11 +39,9 @@ public class OpenHdsRestApplication {
     }
 
     @Bean
-    public CommandLineRunner initWithSampleData(SampleDataGenerator sampleDataGenerator,
-                                                ProjectCodeLoader projectCodeLoader) {
+    public CommandLineRunner initWithSampleData(SampleDataGenerator sampleDataGenerator) {
         return (args) -> {
             sampleDataGenerator.clearData();
-            projectCodeLoader.loadAllCodes();
             sampleDataGenerator.generateSampleData();
         };
     }
