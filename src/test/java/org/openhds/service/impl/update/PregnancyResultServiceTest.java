@@ -129,7 +129,7 @@ public class PregnancyResultServiceTest extends AuditableCollectedServiceTest<Pr
 
         pregnancyOutcomeService.createOrUpdate(pregnancyOutcome);
 
-        //Get the service with the updated reference
+        //Get the entity with the updated reference
         pregnancyResult = service.findOne("validId");
 
         //cheggerout
