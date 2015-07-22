@@ -7,6 +7,7 @@ import org.openhds.security.model.Privilege;
 import org.openhds.security.model.Role;
 import org.openhds.security.model.User;
 import org.openhds.service.impl.FieldWorkerService;
+import org.openhds.service.impl.ProjectCodeService;
 import org.openhds.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -41,6 +42,7 @@ public class RequiredDataGenerator {
     private final FieldWorkerService fieldWorkerService;
     private final FieldWorkerRepository fieldWorkerRepository;
 
+    private final ProjectCodeService projectCodeService;
     private final ProjectCodeLoader projectCodeLoader;
     private final ProjectCodeRepository projectCodeRepository;
 
@@ -51,6 +53,7 @@ public class RequiredDataGenerator {
                                  PrivilegeRepository privilegeRepository,
                                  FieldWorkerService fieldWorkerService,
                                  FieldWorkerRepository fieldWorkerRepository,
+                                 ProjectCodeService projectCodeService,
                                  ProjectCodeLoader projectCodeLoader,
                                  ProjectCodeRepository projectCodeRepository) {
 
@@ -60,6 +63,7 @@ public class RequiredDataGenerator {
         this.privilegeRepository = privilegeRepository;
         this.fieldWorkerService = fieldWorkerService;
         this.fieldWorkerRepository = fieldWorkerRepository;
+        this.projectCodeService = projectCodeService;
         this.projectCodeLoader = projectCodeLoader;
         this.projectCodeRepository = projectCodeRepository;
     }
@@ -70,6 +74,7 @@ public class RequiredDataGenerator {
         generateUsers();
         generateProjectCodes();
         generateFieldWorkers();
+        generateUnknowns();
     }
 
     public void clearData() {
@@ -78,6 +83,13 @@ public class RequiredDataGenerator {
         userRepository.deleteAllInBatch();
         roleRepository.deleteAllInBatch();
         privilegeRepository.deleteAllInBatch();
+    }
+
+    // trigger services to create unknown entities ahead of time, for predictable entity counts
+    private void generateUnknowns() {
+        fieldWorkerService.getUnknownEntity();
+        projectCodeService.getUnknownEntity();
+        userService.getUnknownEntity();
     }
 
     private void generateProjectCodes() {

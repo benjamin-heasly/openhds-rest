@@ -77,6 +77,7 @@ public class LocationDataGenerator {
         generateLevels(h);
         generateHierarchies(h);
         generateLocations(h);
+        generateUnknowns();
     }
 
     public void clearData() {
@@ -84,6 +85,14 @@ public class LocationDataGenerator {
         locationHierarchyRepository.deleteAllInBatch();
         locationHierarchyLevelRepository.deleteAllInBatch();
     }
+
+    // trigger services to create unknown entities ahead of time, for predictable entity counts
+    private void generateUnknowns() {
+        locationHierarchyLevelService.getUnknownEntity();
+        locationHierarchyService.getUnknownEntity();
+        locationService.getUnknownEntity();
+    }
+
 
     private void generateLevels(int h) {
         if (locationHierarchyLevelService.hasRecords()) {
