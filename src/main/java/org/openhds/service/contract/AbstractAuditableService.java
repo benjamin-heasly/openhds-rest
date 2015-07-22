@@ -36,8 +36,14 @@ public abstract class AbstractAuditableService
         return super.createOrUpdate(entity);
     }
 
+    @Override
     public T findOne(String id) {
         return repository.findByDeletedFalseAndUuid(id);
+    }
+
+    @Override
+    public boolean exists(String id) {
+        return repository.exists(id) && null != findOne(id);
     }
 
     public EntityIterator<T> findAll(Sort sort) {

@@ -112,14 +112,18 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
         return repository.findOne(id);
     }
 
-    public T findOrMakePlaceHolder(String uuid){
-        T entity = findOne(uuid);
-        if (null == entity){
-            entity = makeUnknownEntity();
-            entity.setUuid(uuid);
-            createOrUpdate(entity);
+    public boolean exists(String id) {
+        return repository.exists(id);
+    }
+
+    public T findOrMakePlaceHolder(String id){
+        if (exists(id)) {
+            return findOne(id);
         }
-        return entity;
+
+        T entity = makePlaceHolder(id);
+        entity.setUuid(id);
+        return createOrUpdate(entity);
     }
 
     public T createOrUpdate(T entity) {

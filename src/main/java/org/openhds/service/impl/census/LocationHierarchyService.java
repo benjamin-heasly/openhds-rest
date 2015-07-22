@@ -34,7 +34,7 @@ public class LocationHierarchyService extends AbstractAuditableExtIdService<
     public LocationHierarchy makePlaceHolder(String id, String name) {
         LocationHierarchy locationHierarchy = new LocationHierarchy();
         locationHierarchy.setLevel(locationHierarchyLevelService.getUnknownEntity());
-        locationHierarchy.setParent(getUnknownEntity());
+        locationHierarchy.setParent(getHierarchyRoot());
         locationHierarchy.setUuid(id);
         locationHierarchy.setName(name);
         locationHierarchy.setExtId(name);
