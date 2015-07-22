@@ -1,11 +1,10 @@
 package org.openhds.resource.controller.census;
 
 import org.openhds.domain.model.census.Relationship;
-import org.openhds.repository.concrete.FieldWorkerRepository;
-import org.openhds.repository.concrete.census.IndividualRepository;
 import org.openhds.resource.contract.AuditableCollectedRestControllerTest;
 import org.openhds.resource.registration.Registration;
 import org.openhds.resource.registration.census.RelationshipRegistration;
+import org.openhds.service.impl.census.IndividualService;
 import org.openhds.service.impl.census.RelationshipService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -23,10 +22,7 @@ public class RelationshipRestControllerTest extends AuditableCollectedRestContro
         RelationshipRestController> {
 
     @Autowired
-    private FieldWorkerRepository fieldWorkerRepository;
-
-    @Autowired
-    private IndividualRepository individualRepository;
+    private IndividualService individualService;
 
     @Override
     @Autowired
@@ -40,8 +36,8 @@ public class RelationshipRestControllerTest extends AuditableCollectedRestContro
         Relationship relationship = new Relationship();
         relationship.setUuid(id);
         relationship.setRelationshipType(name);
-        relationship.setIndividualB(individualRepository.findAll().get(0));
-        relationship.setIndividualA(individualRepository.findAll().get(0));
+        relationship.setIndividualB(individualService.findAll(UUID_SORT).toList().get(0));
+        relationship.setIndividualA(individualService.findAll(UUID_SORT).toList().get(0));
         relationship.setStartDate(ZonedDateTime.now().minusYears(1));
         relationship.setCollectionDateTime(ZonedDateTime.now());
         return relationship;
@@ -68,9 +64,9 @@ public class RelationshipRestControllerTest extends AuditableCollectedRestContro
     protected Registration<Relationship> makeRegistration(Relationship entity) {
         RelationshipRegistration registration = new RelationshipRegistration();
         registration.setRelationship(entity);
-        registration.setIndividualAUuid(individualRepository.findAll().get(0).getUuid());
-        registration.setIndividualBUuid(individualRepository.findAll().get(0).getUuid());
-        registration.setCollectedByUuid(fieldWorkerRepository.findAll().get(0).getUuid());
+        registration.setIndividualAUuid(individualService.findAll(UUID_SORT).toList().get(0).getUuid());
+        registration.setIndividualBUuid(individualService.findAll(UUID_SORT).toList().get(0).getUuid());
+        registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
         return registration;
     }
 }

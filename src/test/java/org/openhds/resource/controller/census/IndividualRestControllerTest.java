@@ -1,7 +1,6 @@
 package org.openhds.resource.controller.census;
 
 import org.openhds.domain.model.census.Individual;
-import org.openhds.repository.concrete.FieldWorkerRepository;
 import org.openhds.resource.contract.AuditableExtIdRestControllerTest;
 import org.openhds.resource.registration.Registration;
 import org.openhds.resource.registration.census.IndividualRegistration;
@@ -17,9 +16,6 @@ import static org.junit.Assert.assertNotNull;
  * Created by Wolfe on 7/13/2015.
  */
 public class IndividualRestControllerTest extends AuditableExtIdRestControllerTest<Individual, IndividualService, IndividualRestController> {
-
-    @Autowired
-    private FieldWorkerRepository fieldWorkerRepository;
 
     @Override
     @Autowired
@@ -61,7 +57,7 @@ public class IndividualRestControllerTest extends AuditableExtIdRestControllerTe
     protected Registration<Individual> makeRegistration(Individual entity) {
         IndividualRegistration registration = new IndividualRegistration();
         registration.setIndividual(entity);
-        registration.setCollectedByUuid(fieldWorkerRepository.findAll().get(0).getUuid());
+        registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
         return registration;
     }
 }

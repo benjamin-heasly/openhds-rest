@@ -1,14 +1,12 @@
 package org.openhds.resource.controller.census;
 
 import org.openhds.domain.model.census.LocationHierarchy;
-import org.openhds.repository.concrete.FieldWorkerRepository;
-import org.openhds.repository.concrete.census.LocationHierarchyLevelRepository;
 import org.openhds.resource.contract.AuditableExtIdRestControllerTest;
 import org.openhds.resource.registration.Registration;
 import org.openhds.resource.registration.census.LocationHierarchyRegistration;
+import org.openhds.service.impl.census.LocationHierarchyLevelService;
 import org.openhds.service.impl.census.LocationHierarchyService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 
 import java.time.ZonedDateTime;
 
@@ -24,13 +22,8 @@ public class LocationHierarchyRestControllerTest extends AuditableExtIdRestContr
         LocationHierarchyService,
         LocationHierarchyRestController> {
 
-    private static final Sort UUID_SORT = new Sort("uuid");
-
     @Autowired
-    private LocationHierarchyLevelRepository locationHierarchyLevelRepository;
-
-    @Autowired
-    private FieldWorkerRepository fieldWorkerRepository;
+    private LocationHierarchyLevelService locationHierarchyLevelService;
 
     @Autowired
     @Override
@@ -45,9 +38,9 @@ public class LocationHierarchyRestControllerTest extends AuditableExtIdRestContr
         locationHierarchy.setUuid(id);
         locationHierarchy.setName(name);
         locationHierarchy.setExtId(name);
-        locationHierarchy.setLevel(locationHierarchyLevelRepository.findAll().get(0));
+        locationHierarchy.setLevel(locationHierarchyLevelService.findAll(UUID_SORT).toList().get(0));
         locationHierarchy.setCollectionDateTime(ZonedDateTime.now());
-        locationHierarchy.setCollectedBy(fieldWorkerRepository.findAll().get(0));
+        locationHierarchy.setCollectedBy(fieldWorkerService.findAll(UUID_SORT).toList().get(0));
         return locationHierarchy;
     }
 
@@ -73,8 +66,8 @@ public class LocationHierarchyRestControllerTest extends AuditableExtIdRestContr
     protected Registration<LocationHierarchy> makeRegistration(LocationHierarchy entity) {
         LocationHierarchyRegistration registration = new LocationHierarchyRegistration();
         registration.setLocationHierarchy(entity);
-        registration.setLevelUuid(locationHierarchyLevelRepository.findAll().get(0).getUuid());
-        registration.setCollectedByUuid(fieldWorkerRepository.findAll().get(0).getUuid());
+        registration.setLevelUuid(locationHierarchyLevelService.findAll(UUID_SORT).toList().get(0).getUuid());
+        registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
         return registration;
     }
 }

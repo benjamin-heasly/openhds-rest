@@ -4,6 +4,8 @@ import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.repository.contract.AuditableCollectedRepository;
 import org.openhds.resource.registration.Registration;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
+import org.openhds.service.impl.FieldWorkerService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Created by Ben on 6/16/15.
@@ -13,4 +15,8 @@ public abstract class AuditableCollectedRestControllerTest <
         U extends AbstractAuditableCollectedService<T, ? extends AuditableCollectedRepository<T>>,
         V extends AuditableCollectedRestController<T, ? extends Registration<T>, U>>
         extends AuditableRestControllerTest<T, U, V> {
+
+        @Autowired
+        protected
+        FieldWorkerService fieldWorkerService;
 }

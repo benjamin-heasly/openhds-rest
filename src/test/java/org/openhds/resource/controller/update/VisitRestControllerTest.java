@@ -1,11 +1,10 @@
 package org.openhds.resource.controller.update;
 
 import org.openhds.domain.model.update.Visit;
-import org.openhds.repository.concrete.FieldWorkerRepository;
-import org.openhds.repository.concrete.census.LocationRepository;
 import org.openhds.resource.contract.AuditableExtIdRestControllerTest;
 import org.openhds.resource.registration.Registration;
 import org.openhds.resource.registration.update.VisitRegistration;
+import org.openhds.service.impl.census.LocationService;
 import org.openhds.service.impl.update.VisitService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,10 +21,7 @@ public class VisitRestControllerTest extends AuditableExtIdRestControllerTest
         <Visit, VisitService, VisitRestController> {
 
     @Autowired
-    private FieldWorkerRepository fieldWorkerRepository;
-
-    @Autowired
-    private LocationRepository locationRepository;
+    private LocationService locationService;
 
     @Autowired
     @Override
@@ -40,10 +36,10 @@ public class VisitRestControllerTest extends AuditableExtIdRestControllerTest
         visit.setUuid(id);
 
         visit.setExtId(name);
-        visit.setCollectedBy(fieldWorkerRepository.findAll().get(0));
+        visit.setCollectedBy(fieldWorkerService.findAll(UUID_SORT).toList().get(0));
         visit.setCollectionDateTime(ZonedDateTime.now());
 
-        visit.setLocation(locationRepository.findAll().get(0));
+        visit.setLocation(locationService.findAll(UUID_SORT).toList().get(0));
         visit.setVisitDate(ZonedDateTime.now().minusYears(1));
 
         return visit;
@@ -70,8 +66,8 @@ public class VisitRestControllerTest extends AuditableExtIdRestControllerTest
     protected Registration<Visit> makeRegistration(Visit entity) {
         VisitRegistration registration = new VisitRegistration();
         registration.setVisit(entity);
-        registration.setCollectedByUuid(fieldWorkerRepository.findAll().get(0).getUuid());
-        registration.setLocationUuid(locationRepository.findAll().get(0).getUuid());
+        registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
+        registration.setLocationUuid(locationService.findAll(UUID_SORT).toList().get(0).getUuid());
         return registration;
     }
 }

@@ -37,6 +37,8 @@ public abstract class UuidIdentifiableRestControllerTest<
 
     protected V controller;
 
+    protected final Sort UUID_SORT = new Sort("uuid");
+
     protected abstract void initialize(U service, V controller);
 
     protected abstract T makeValidEntity(String name, String id);
@@ -52,7 +54,7 @@ public abstract class UuidIdentifiableRestControllerTest<
     }
 
     protected T findAnyExisting() {
-        return service.findAll(new Sort("uuid")).toList().get(0);
+        return service.findAll(UUID_SORT).toList().get(0);
     }
 
     protected T makeUpdateEntity(String name) {
