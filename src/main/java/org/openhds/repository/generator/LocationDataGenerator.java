@@ -1,5 +1,7 @@
 package org.openhds.repository.generator;
 
+import org.openhds.domain.contract.AuditableCollectedEntity;
+import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.census.Location;
 import org.openhds.domain.model.census.LocationHierarchy;
@@ -7,7 +9,9 @@ import org.openhds.domain.model.census.LocationHierarchyLevel;
 import org.openhds.repository.concrete.census.LocationHierarchyLevelRepository;
 import org.openhds.repository.concrete.census.LocationHierarchyRepository;
 import org.openhds.repository.concrete.census.LocationRepository;
+import org.openhds.security.model.User;
 import org.openhds.service.impl.FieldWorkerService;
+import org.openhds.service.impl.UserService;
 import org.openhds.service.impl.census.LocationHierarchyLevelService;
 import org.openhds.service.impl.census.LocationHierarchyService;
 import org.openhds.service.impl.census.LocationService;
@@ -55,6 +59,8 @@ public class LocationDataGenerator {
 
     private final FieldWorkerService fieldWorkerService;
 
+    private final UserService userService;
+
     @Autowired
     public LocationDataGenerator(LocationHierarchyLevelService locationHierarchyLevelService,
                                  LocationHierarchyLevelRepository locationHierarchyLevelRepository,
@@ -62,7 +68,8 @@ public class LocationDataGenerator {
                                  LocationHierarchyRepository locationHierarchyRepository,
                                  LocationService locationService,
                                  LocationRepository locationRepository,
-                                 FieldWorkerService fieldWorkerService) {
+                                 FieldWorkerService fieldWorkerService,
+                                 UserService userService) {
 
         this.locationHierarchyLevelService = locationHierarchyLevelService;
         this.locationHierarchyLevelRepository = locationHierarchyLevelRepository;
@@ -71,6 +78,7 @@ public class LocationDataGenerator {
         this.locationService = locationService;
         this.locationRepository = locationRepository;
         this.fieldWorkerService = fieldWorkerService;
+        this.userService = userService;
     }
 
     public void generateData(int h) {
@@ -111,12 +119,11 @@ public class LocationDataGenerator {
     private void generateHierarchies(int h) {
         LocationHierarchy root = locationHierarchyService.getHierarchyRoot();
         LocationHierarchyLevel level = locationHierarchyLevelService.findByKeyIdentifier(1);
-        FieldWorker fieldWorker = fieldWorkerService.getUnknownEntity();
-        generateChildHierarchies(root, level, fieldWorker);
+        generateChildHierarchies(root, level);
     }
 
     // recursively build the ARITY-ary tree
-    private void generateChildHierarchies(LocationHierarchy parent, LocationHierarchyLevel level, FieldWorker fieldWorker) {
+    private void generateChildHierarchies(LocationHierarchy parent, LocationHierarchyLevel level) {
 
         int levelId = level.getKeyIdentifier();
 
@@ -131,12 +138,13 @@ public class LocationDataGenerator {
             String extId = parent.getExtId() + "-" + i;
             child.setExtId(extId);
             child.setName(extId);
-            child.setCollectionDateTime(ZonedDateTime.now());
+            child.setParent(parent);
+            child.setLevel(level);
 
-            locationHierarchyService.recordLocationHierarchy(child,
-                    parent.getUuid(),
-                    level.getUuid(),
-                    fieldWorker.getUuid());
+            // save using repository, not service, for performance
+            setAuditableFields(child);
+            setCollectedFields(child);
+            locationHierarchyRepository.save(child);
 
             // base case: bottom of the tree
             if (null == nextLevel) {
@@ -144,7 +152,7 @@ public class LocationDataGenerator {
             }
 
             // keep adding grandchildren
-            generateChildHierarchies(child, nextLevel, fieldWorker);
+            generateChildHierarchies(child, nextLevel);
         }
 
     }
@@ -154,8 +162,6 @@ public class LocationDataGenerator {
         LocationHierarchyLevel bottomLevel = locationHierarchyLevelService.findByKeyIdentifier(h);
         List<LocationHierarchy> leafNodes = locationHierarchyService.findByLevel(bottomLevel);
 
-        FieldWorker fieldWorker = fieldWorkerService.getUnknownEntity();
-
         for (LocationHierarchy leaf : leafNodes) {
             for (int i = 1; i <= ARITY; i++) {
                 Location location = new Location();
@@ -164,11 +170,36 @@ public class LocationDataGenerator {
                 location.setExtId(extId);
                 location.setName(extId);
                 location.setDescription("sample location");
-                location.setCollectionDateTime(ZonedDateTime.now());
+                location.setLocationHierarchy(leaf);
 
-                locationService.recordLocation(location, leaf.getUuid(), fieldWorker.getUuid());
+                // save using repository, not service, for performance
+                setAuditableFields(location);
+                setCollectedFields(location);
+                locationRepository.save(location);
             }
         }
+    }
+
+    private void setAuditableFields(AuditableEntity entity) {
+        User user = userService.getUnknownEntity();
+        ZonedDateTime now = ZonedDateTime.now();
+
+        //Check to see if we're creating or updating the entity
+        if (null == entity.getInsertDate()) {
+            entity.setInsertDate(now);
+        }
+
+        if (null == entity.getInsertBy()) {
+            entity.setInsertBy(user);
+        }
+
+        entity.setLastModifiedDate(now);
+        entity.setLastModifiedBy(user);
+    }
+
+    private void setCollectedFields(AuditableCollectedEntity entity) {
+        entity.setCollectedBy(fieldWorkerService.getUnknownEntity());
+        entity.setCollectionDateTime(ZonedDateTime.now());
     }
 
 }
