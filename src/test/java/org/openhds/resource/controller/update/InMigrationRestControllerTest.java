@@ -1,14 +1,13 @@
 package org.openhds.resource.controller.update;
 
 import org.openhds.domain.model.update.InMigration;
-import org.openhds.repository.concrete.FieldWorkerRepository;
-import org.openhds.repository.concrete.census.IndividualRepository;
-import org.openhds.repository.concrete.census.ResidencyRepository;
-import org.openhds.repository.concrete.update.VisitRepository;
 import org.openhds.resource.contract.AuditableCollectedRestControllerTest;
 import org.openhds.resource.registration.Registration;
 import org.openhds.resource.registration.update.InMigrationRegistration;
+import org.openhds.service.impl.census.IndividualService;
+import org.openhds.service.impl.census.ResidencyService;
 import org.openhds.service.impl.update.InMigrationService;
+import org.openhds.service.impl.update.VisitService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.ZonedDateTime;
@@ -24,16 +23,13 @@ public class InMigrationRestControllerTest extends AuditableCollectedRestControl
         InMigration, InMigrationService, InMigrationRestController> {
 
     @Autowired
-    private FieldWorkerRepository fieldWorkerRepository;
+    private IndividualService individualService;
 
     @Autowired
-    private IndividualRepository individualRepository;
+    private VisitService visitService;
 
     @Autowired
-    private VisitRepository visitRepository;
-
-    @Autowired
-    private ResidencyRepository residencyRepository;
+    private ResidencyService residencyService;
 
     @Autowired
     @Override
@@ -47,12 +43,12 @@ public class InMigrationRestControllerTest extends AuditableCollectedRestControl
         InMigration inMigration = new InMigration();
         inMigration.setUuid(id);
 
-        inMigration.setCollectedBy(fieldWorkerRepository.findAll().get(0));
+        inMigration.setCollectedBy(fieldWorkerService.findAll(UUID_SORT).toList().get(0));
         inMigration.setCollectionDateTime(ZonedDateTime.now());
 
-        inMigration.setVisit(visitRepository.findAll().get(0));
-        inMigration.setIndividual(individualRepository.findAll().get(0));
-        inMigration.setResidency(residencyRepository.findAll().get(0));
+        inMigration.setVisit(visitService.findAll(UUID_SORT).toList().get(0));
+        inMigration.setIndividual(individualService.findAll(UUID_SORT).toList().get(0));
+        inMigration.setResidency(residencyService.findAll(UUID_SORT).toList().get(0));
         inMigration.setMigrationDate(ZonedDateTime.now().minusYears(1));
         inMigration.setMigrationType(name);
 
@@ -81,10 +77,10 @@ public class InMigrationRestControllerTest extends AuditableCollectedRestControl
         InMigrationRegistration registration = new InMigrationRegistration();
         registration.setInMigration(entity);
 
-        registration.setCollectedByUuid(fieldWorkerRepository.findAll().get(0).getUuid());
-        registration.setVisitUuid(visitRepository.findAll().get(0).getUuid());
-        registration.setIndividualUuid(individualRepository.findAll().get(0).getUuid());
-        registration.setResidencyUuid(residencyRepository.findAll().get(0).getUuid());
+        registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
+        registration.setVisitUuid(visitService.findAll(UUID_SORT).toList().get(0).getUuid());
+        registration.setIndividualUuid(individualService.findAll(UUID_SORT).toList().get(0).getUuid());
+        registration.setResidencyUuid(residencyService.findAll(UUID_SORT).toList().get(0).getUuid());
 
         return registration;
     }

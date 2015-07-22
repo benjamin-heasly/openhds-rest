@@ -3,7 +3,6 @@ package org.openhds.service.impl.update;
 import org.junit.Test;
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.census.Individual;
-import org.openhds.domain.model.update.Death;
 import org.openhds.domain.model.update.PregnancyObservation;
 import org.openhds.domain.model.update.Visit;
 import org.openhds.service.AuditableCollectedServiceTest;

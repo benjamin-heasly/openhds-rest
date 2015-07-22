@@ -1,11 +1,10 @@
 package org.openhds.resource.controller.census;
 
 import org.openhds.domain.model.census.Location;
-import org.openhds.repository.concrete.FieldWorkerRepository;
-import org.openhds.repository.concrete.census.LocationHierarchyRepository;
 import org.openhds.resource.contract.AuditableExtIdRestControllerTest;
 import org.openhds.resource.registration.Registration;
 import org.openhds.resource.registration.census.LocationRegistration;
+import org.openhds.service.impl.census.LocationHierarchyService;
 import org.openhds.service.impl.census.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,10 +21,7 @@ public class LocationRestControllerTest extends AuditableExtIdRestControllerTest
         <Location, LocationService, LocationRestController> {
 
     @Autowired
-    private FieldWorkerRepository fieldWorkerRepository;
-
-    @Autowired
-    private LocationHierarchyRepository locationHierarchyRepository;
+    private LocationHierarchyService locationHierarchyService;
 
     @Autowired
     @Override
@@ -66,8 +62,8 @@ public class LocationRestControllerTest extends AuditableExtIdRestControllerTest
     protected Registration<Location> makeRegistration(Location entity) {
         LocationRegistration registration = new LocationRegistration();
         registration.setLocation(entity);
-        registration.setLocationHierarchyUuid(locationHierarchyRepository.findAll().get(0).getUuid());
-        registration.setCollectedByUuid(fieldWorkerRepository.findAll().get(0).getUuid());
+        registration.setLocationHierarchyUuid(locationHierarchyService.findAll(UUID_SORT).toList().get(0).getUuid());
+        registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
         return registration;
     }
 }

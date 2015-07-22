@@ -3,7 +3,6 @@ package org.openhds.service.impl.update;
 import org.junit.Test;
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.census.Location;
-import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.domain.model.update.Visit;
 import org.openhds.service.AuditableExtIdServiceTest;
 import org.openhds.service.impl.census.LocationService;
