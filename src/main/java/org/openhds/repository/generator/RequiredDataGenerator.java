@@ -85,6 +85,20 @@ public class RequiredDataGenerator {
         privilegeRepository.deleteAllInBatch();
     }
 
+    public void createDefaultUser() {
+        User user = new User();
+        user.setUuid(DEFAULT_USER_UUID);
+        user.setUsername(DEFAULT_USER_USERNAME);
+        user.setPassword(DEFAULT_USER_PASSWORD);
+        user.setFirstName("default user");
+        user.setLastName("default user");
+        user.setDescription("default user with root role (all privileges)");
+        user.getRoles().add(userService.findRoleByName("root-role"));
+
+        userService.createOrUpdate(user);
+
+    }
+
     // trigger services to create unknown entities ahead of time, for predictable entity counts
     private void generateUnknowns() {
         fieldWorkerService.getUnknownEntity();
@@ -125,17 +139,7 @@ public class RequiredDataGenerator {
         if (userService.hasRecords()) {
             return;
         }
-
-        User user = new User();
-        user.setUuid(DEFAULT_USER_UUID);
-        user.setUsername(DEFAULT_USER_USERNAME);
-        user.setPassword(DEFAULT_USER_PASSWORD);
-        user.setFirstName("default user");
-        user.setLastName("default user");
-        user.setDescription("default user with root role (all privileges)");
-        user.getRoles().add(userService.findRoleByName("root-role"));
-
-        userService.createOrUpdate(user);
+        createDefaultUser();
     }
 
     private void generateFieldWorkers() {

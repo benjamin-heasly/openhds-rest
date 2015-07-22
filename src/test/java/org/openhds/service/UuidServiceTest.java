@@ -1,6 +1,5 @@
 package org.openhds.service;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -59,13 +58,6 @@ public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends Abst
 
         // make sure the unknown entity already exists, to avoid test surprises
         service.getUnknownEntity();
-    }
-
-    @After
-    public void tearDown() {
-        // TODO: all we really need is to re-create the default user
-        //sampleDataGenerator.clearData();
-        //sampleDataGenerator.generateSampleData();
     }
 
     @Test

@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openhds.OpenHdsRestApplication;
+import org.openhds.repository.generator.RequiredDataGenerator;
 import org.openhds.repository.generator.SampleDataGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -66,6 +67,9 @@ public class RestControllerTestSupport {
     protected SampleDataGenerator sampleDataGenerator;
 
     @Autowired
+    protected RequiredDataGenerator requiredDataGenerator;
+
+    @Autowired
     protected MappingJackson2HttpMessageConverter jsonMessageConverter;
 
     @Autowired
@@ -101,9 +105,9 @@ public class RestControllerTestSupport {
 
     @After
     public void tearDown() {
-        // TODO: all we really need is to re-create the default user
-        sampleDataGenerator.clearData();
-        sampleDataGenerator.generateSampleData();
+        // make sure the default user still exists after tests
+        // this is required for @WithUserDetails, which executes before @Before
+        requiredDataGenerator.createDefaultUser();
     }
 
     @Test
