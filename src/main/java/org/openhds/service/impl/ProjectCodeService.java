@@ -21,11 +21,12 @@ public class ProjectCodeService extends AbstractUuidService<ProjectCode, Project
     }
 
     @Override
-    protected ProjectCode makeUnknownEntity() {
+    public ProjectCode makePlaceHolder(String id, String name) {
         ProjectCode projectCode = new ProjectCode();
-        projectCode.setCodeName("unknown");
-        projectCode.setCodeValue("unknown");
-        projectCode.setCodeGroup("unknown");
+        projectCode.setUuid(id);
+        projectCode.setCodeName(name);
+        projectCode.setCodeValue(name);
+        projectCode.setCodeGroup(name);
         return projectCode;
     }
 

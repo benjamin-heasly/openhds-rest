@@ -27,17 +27,16 @@ public class MembershipService extends AbstractAuditableCollectedService<Members
     }
 
     @Override
-    protected Membership makeUnknownEntity() {
+    public Membership makePlaceHolder(String id, String name) {
         Membership membership = new Membership();
-
-        membership.setCollectedBy(fieldWorkerService.getUnknownEntity());
-        membership.setCollectionDateTime(ZonedDateTime.now());
-
+        membership.setUuid(id);
         membership.setSocialGroup(socialGroupService.getUnknownEntity());
         membership.setIndividual(individualService.getUnknownEntity());
         membership.setStartDate(ZonedDateTime.now().minusYears(1));
-        membership.setStartType("unknown");
-        membership.setRelationshipToGroupHead("unknown");
+        membership.setStartType(name);
+        membership.setRelationshipToGroupHead(name);
+
+        initPlaceHolderCollectedFields(membership);
 
         return membership;
     }

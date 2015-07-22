@@ -117,9 +117,7 @@ public class MembershipServiceTest extends AuditableCollectedServiceTest<Members
         membership = service.recordMembership(membership, "induvudual", "suciulGroup", "feldwarker");
 
         //make the "real" entity to overwrite the old one.
-        Individual individual = individualService.makeUnknownEntity();
-        individual.setFirstName("Billy");
-        individual.setUuid("induvudual");
+        Individual individual = individualService.makePlaceHolder("induvudual", "Billy");
 
         individualService.createOrUpdate(individual);
 

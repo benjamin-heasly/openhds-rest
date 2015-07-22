@@ -19,9 +19,10 @@ public class LocationHierarchyLevelService extends AbstractAuditableService<Loca
     }
 
     @Override
-    protected LocationHierarchyLevel makeUnknownEntity() {
+    public LocationHierarchyLevel makePlaceHolder(String id, String name) {
         LocationHierarchyLevel locationHierarchyLevel = new LocationHierarchyLevel();
-        locationHierarchyLevel.setName("unknown");
+        locationHierarchyLevel.setUuid(id);
+        locationHierarchyLevel.setName(name);
         locationHierarchyLevel.setKeyIdentifier(-1);
         return locationHierarchyLevel;
     }

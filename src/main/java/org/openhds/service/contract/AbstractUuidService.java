@@ -33,6 +33,9 @@ import java.util.Set;
  */
 public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends UuidIdentifiableRepository<T>> {
 
+    public final static String PLACEHOLDER_NAME = "PLACEHOLDER_NAME";
+
+    public final static String UNKNOWN_NAME = "UNKNOWN_NAME";
     public final static String UNKNOWN_ENTITY_UUID = "UNKNOWN";
 
     protected final V repository;
@@ -47,11 +50,18 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
         this.repository = repository;
     }
 
-    protected abstract T makeUnknownEntity();
+    public abstract T makePlaceHolder(String id, String name);
+
+    public T makePlaceHolder(String id){
+        return makePlaceHolder(id, PLACEHOLDER_NAME);
+    }
+
+    protected T makeUnknownEntity(){
+        return makePlaceHolder(UNKNOWN_ENTITY_UUID, UNKNOWN_NAME);
+    }
 
     private T persistUnknownEntity() {
         T unknownEntity = makeUnknownEntity();
-        unknownEntity.setUuid(UNKNOWN_ENTITY_UUID);
         return createOrUpdate(unknownEntity);
     }
 

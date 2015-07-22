@@ -33,10 +33,11 @@ public class UserService extends AbstractUuidService<User, UserRepository> {
     }
 
     @Override
-    protected User makeUnknownEntity() {
+    public User makePlaceHolder(String id, String name) {
         User user = new User();
-        user.setUsername("unknown");
-        user.setFirstName("unknown");
+        user.setUuid(id);
+        user.setUsername(name);
+        user.setFirstName(name);
         return user;
     }
 

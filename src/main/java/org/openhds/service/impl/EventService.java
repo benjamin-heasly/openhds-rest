@@ -30,10 +30,11 @@ public class EventService extends AbstractAuditableService<Event, EventRepositor
     }
 
     @Override
-    protected Event makeUnknownEntity() {
+    public Event makePlaceHolder(String id, String name) {
         Event event = new Event();
-        event.setEntityType("unknown");
-        event.setActionType("unknown");
+        event.setUuid(id);
+        event.setEntityType(name);
+        event.setActionType(name);
         return event;
     }
 

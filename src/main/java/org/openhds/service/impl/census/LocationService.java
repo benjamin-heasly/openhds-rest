@@ -25,13 +25,15 @@ public class LocationService extends AbstractAuditableExtIdService<Location, Loc
     }
 
     @Override
-    protected Location makeUnknownEntity() {
+    public Location makePlaceHolder(String id, String name) {
         Location location = new Location();
-        location.setName("unknown");
-        location.setExtId("unknown");
-        location.setCollectedBy(fieldWorkerService.getUnknownEntity());
-        location.setCollectionDateTime(ZonedDateTime.now());
+        location.setUuid(id);
+        location.setName(name);
+        location.setExtId(name);
         location.setLocationHierarchy(locationHierarchyService.getUnknownEntity());
+
+        initPlaceHolderCollectedFields(location);
+
         return location;
     }
 

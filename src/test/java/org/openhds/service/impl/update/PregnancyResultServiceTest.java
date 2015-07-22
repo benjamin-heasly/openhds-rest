@@ -123,9 +123,8 @@ public class PregnancyResultServiceTest extends AuditableCollectedServiceTest<Pr
         pregnancyResult = service.recordPregnancyResult(pregnancyResult, "prugnuncyOotkum", "chuld", "feldwarker");
 
         //make the "real" entity to overwrite the old one.
-        PregnancyOutcome pregnancyOutcome = pregnancyOutcomeService.makeUnknownEntity();
+        PregnancyOutcome pregnancyOutcome = pregnancyOutcomeService.makePlaceHolder("prugnuncyOotkum");
         pregnancyOutcome.setChildrenBorn(11);
-        pregnancyOutcome.setUuid("prugnuncyOotkum");
 
         pregnancyOutcomeService.createOrUpdate(pregnancyOutcome);
 

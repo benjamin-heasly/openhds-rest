@@ -28,17 +28,15 @@ public class PregnancyOutcomeService extends AbstractAuditableCollectedService<P
     }
 
     @Override
-    protected PregnancyOutcome makeUnknownEntity() {
+    public PregnancyOutcome makePlaceHolder(String id, String name) {
         PregnancyOutcome pregnancyOutcome = new PregnancyOutcome();
-
-        pregnancyOutcome.setCollectedBy(fieldWorkerService.getUnknownEntity());
-        pregnancyOutcome.setCollectionDateTime(ZonedDateTime.now());
-
+        pregnancyOutcome.setUuid(id);
         pregnancyOutcome.setFather(individualService.getUnknownEntity());
         pregnancyOutcome.setMother(individualService.getUnknownEntity());
         pregnancyOutcome.setVisit(visitService.getUnknownEntity());
-
         pregnancyOutcome.setOutcomeDate(ZonedDateTime.now().minusYears(1));
+
+        initPlaceHolderCollectedFields(pregnancyOutcome);
 
         return pregnancyOutcome;
     }
