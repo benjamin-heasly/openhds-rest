@@ -10,8 +10,6 @@ import org.openhds.service.impl.update.OutMigrationService;
 import org.openhds.service.impl.update.VisitService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.ZonedDateTime;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -36,23 +34,6 @@ public class OutMigrationRestControllerTest extends AuditableCollectedRestContro
     protected void initialize(OutMigrationService service, OutMigrationRestController controller) {
         this.service = service;
         this.controller = controller;
-    }
-
-    @Override
-    protected OutMigration makeValidEntity(String name, String id) {
-        OutMigration outMigration = new OutMigration();
-        outMigration.setUuid(id);
-
-        outMigration.setCollectedBy(fieldWorkerService.findAll(UUID_SORT).toList().get(0));
-        outMigration.setCollectionDateTime(ZonedDateTime.now());
-
-        outMigration.setVisit(visitService.findAll(UUID_SORT).toList().get(0));
-        outMigration.setIndividual(individualService.findAll(UUID_SORT).toList().get(0));
-        outMigration.setResidency(residencyService.findAll(UUID_SORT).toList().get(0));
-        outMigration.setMigrationDate(ZonedDateTime.now().minusYears(1));
-        outMigration.setReason(name);
-
-        return outMigration;
     }
 
     @Override

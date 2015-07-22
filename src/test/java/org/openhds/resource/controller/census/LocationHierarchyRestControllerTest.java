@@ -8,8 +8,6 @@ import org.openhds.service.impl.census.LocationHierarchyLevelService;
 import org.openhds.service.impl.census.LocationHierarchyService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.ZonedDateTime;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -30,18 +28,6 @@ public class LocationHierarchyRestControllerTest extends AuditableExtIdRestContr
     protected void initialize(LocationHierarchyService service, LocationHierarchyRestController controller) {
         this.service = service;
         this.controller = controller;
-    }
-
-    @Override
-    protected LocationHierarchy makeValidEntity(String name, String id) {
-        LocationHierarchy locationHierarchy = new LocationHierarchy();
-        locationHierarchy.setUuid(id);
-        locationHierarchy.setName(name);
-        locationHierarchy.setExtId(name);
-        locationHierarchy.setLevel(locationHierarchyLevelService.findAll(UUID_SORT).toList().get(0));
-        locationHierarchy.setCollectionDateTime(ZonedDateTime.now());
-        locationHierarchy.setCollectedBy(fieldWorkerService.findAll(UUID_SORT).toList().get(0));
-        return locationHierarchy;
     }
 
     @Override

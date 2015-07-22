@@ -1,7 +1,6 @@
 package org.openhds.resource.controller;
 
 import org.junit.Test;
-import org.openhds.errors.model.Error;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.resource.contract.AuditableCollectedRestControllerTest;
 import org.openhds.resource.registration.ErrorLogRegistration;
@@ -10,8 +9,6 @@ import org.openhds.service.impl.ErrorLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MvcResult;
-
-import java.time.ZonedDateTime;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
@@ -32,21 +29,6 @@ public class ErrorLogRestControllerTest extends AuditableCollectedRestController
     protected void initialize(ErrorLogService service, ErrorLogRestController controller) {
         this.service = service;
         this.controller = controller;
-    }
-
-    @Override
-    protected ErrorLog makeValidEntity(String name, String id) {
-        ErrorLog errorLog = new ErrorLog();
-        errorLog.setUuid(id);
-        errorLog.setDataPayload(name);
-
-        Error error = new Error();
-        error.setErrorMessage(name);
-        errorLog.getErrors().add(error);
-
-        errorLog.setCollectionDateTime(ZonedDateTime.now());
-
-        return errorLog;
     }
 
     @Override

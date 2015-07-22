@@ -9,8 +9,6 @@ import org.openhds.service.impl.update.PregnancyObservationService;
 import org.openhds.service.impl.update.VisitService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.ZonedDateTime;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -32,24 +30,6 @@ public class PregnancyObservationRestControllerTest extends AuditableCollectedRe
     protected void initialize(PregnancyObservationService service, PregnancyObservationRestController controller) {
         this.service = service;
         this.controller = controller;
-    }
-
-    @Override
-    protected PregnancyObservation makeValidEntity(String name, String id) {
-        PregnancyObservation pregnancyObservation = new PregnancyObservation();
-        pregnancyObservation.setUuid(id);
-
-        pregnancyObservation.setCollectedBy(fieldWorkerService.findAll(UUID_SORT).toList().get(0));
-        pregnancyObservation.setCollectionDateTime(ZonedDateTime.now());
-
-        pregnancyObservation.setVisit(visitService.findAll(UUID_SORT).toList().get(0));
-        pregnancyObservation.setMother(individualService.findAll(UUID_SORT).toList().get(0));
-        pregnancyObservation.setPregnancyDate(ZonedDateTime.now().minusMonths(5));
-        pregnancyObservation.setExpectedDeliveryDate(ZonedDateTime.now().plusMonths(5));
-
-        pregnancyObservation.setStatusMessage(name);
-
-        return pregnancyObservation;
     }
 
     @Override

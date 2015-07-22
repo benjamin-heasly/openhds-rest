@@ -8,8 +8,6 @@ import org.openhds.service.impl.census.IndividualService;
 import org.openhds.service.impl.census.RelationshipService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.ZonedDateTime;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -29,18 +27,6 @@ public class RelationshipRestControllerTest extends AuditableCollectedRestContro
     protected void initialize(RelationshipService service, RelationshipRestController controller) {
         this.service = service;
         this.controller = controller;
-    }
-
-    @Override
-    protected Relationship makeValidEntity(String name, String id) {
-        Relationship relationship = new Relationship();
-        relationship.setUuid(id);
-        relationship.setRelationshipType(name);
-        relationship.setIndividualB(individualService.findAll(UUID_SORT).toList().get(0));
-        relationship.setIndividualA(individualService.findAll(UUID_SORT).toList().get(0));
-        relationship.setStartDate(ZonedDateTime.now().minusYears(1));
-        relationship.setCollectionDateTime(ZonedDateTime.now());
-        return relationship;
     }
 
     @Override

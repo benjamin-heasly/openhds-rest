@@ -8,8 +8,6 @@ import org.openhds.domain.model.census.Residency;
 import org.openhds.service.AuditableCollectedServiceTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.ZonedDateTime;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 

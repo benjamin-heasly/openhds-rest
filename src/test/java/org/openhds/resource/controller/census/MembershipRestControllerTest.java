@@ -9,8 +9,6 @@ import org.openhds.service.impl.census.MembershipService;
 import org.openhds.service.impl.census.SocialGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.ZonedDateTime;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -35,23 +33,6 @@ public class MembershipRestControllerTest extends AuditableCollectedRestControll
     protected void initialize(MembershipService service, MembershipRestController controller) {
         this.service = service;
         this.controller = controller;
-    }
-
-    @Override
-    protected Membership makeValidEntity(String name, String id) {
-        Membership membership = new Membership();
-        membership.setUuid(id);
-
-        membership.setSocialGroup(socialGroupService.findAll(UUID_SORT).toList().get(0));
-        membership.setIndividual(individualService.findAll(UUID_SORT).toList().get(0));
-        membership.setCollectedBy(fieldWorkerService.findAll(UUID_SORT).toList().get(0));
-
-        membership.setRelationshipToGroupHead(name);
-        membership.setStartType(name);
-        membership.setStartDate(ZonedDateTime.now().minusYears(1));
-        membership.setCollectionDateTime(ZonedDateTime.now());
-
-        return membership;
     }
 
     @Override

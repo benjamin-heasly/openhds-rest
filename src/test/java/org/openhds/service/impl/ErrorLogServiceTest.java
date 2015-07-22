@@ -4,8 +4,6 @@ import org.openhds.errors.model.ErrorLog;
 import org.openhds.service.AuditableCollectedServiceTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.ZonedDateTime;
-
 /**
  * Created by Wolfe on 7/13/2015.
  */
