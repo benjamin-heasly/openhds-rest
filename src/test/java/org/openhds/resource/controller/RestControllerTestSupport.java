@@ -106,7 +106,7 @@ public class RestControllerTestSupport {
     @After
     public void tearDown() {
         // make sure the default user still exists after tests
-        // this is required for @WithUserDetails, which executes before @Before
+        // this is required for @WithUserDetails, which executes *before* the @Before method
         requiredDataGenerator.createDefaultUser();
     }
 

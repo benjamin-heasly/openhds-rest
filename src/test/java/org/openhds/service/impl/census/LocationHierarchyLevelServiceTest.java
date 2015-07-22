@@ -9,29 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class LocationHierarchyLevelServiceTest extends AuditableServiceTest<LocationHierarchyLevel, LocationHierarchyLevelService> {
 
-    @Override
-    protected LocationHierarchyLevel makeInvalidEntity() {
-        return new LocationHierarchyLevel();
-    }
-
-    @Override
-<<<<<<< HEAD
-    protected LocationHierarchyLevel makeValidEntity(String name, String id) {
-        LocationHierarchyLevel locationHierarchyLevel = new LocationHierarchyLevel();
-        locationHierarchyLevel.setUuid(id);
-        locationHierarchyLevel.setName(name);
-
-        // keyIdentifier must be unique, like id.  So try to make them vary together.
-        locationHierarchyLevel.setKeyIdentifier(id.hashCode());
-
-        return locationHierarchyLevel;
-    }
-
-    @Override
-=======
->>>>>>> master
     @Autowired
     protected void initialize(LocationHierarchyLevelService service) {
         this.service = service;
+    }
+
+    @Override
+    protected LocationHierarchyLevel makeInvalidEntity() {
+        return new LocationHierarchyLevel();
     }
 }

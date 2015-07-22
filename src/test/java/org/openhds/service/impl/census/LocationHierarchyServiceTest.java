@@ -28,20 +28,6 @@ public class LocationHierarchyServiceTest extends AuditableExtIdServiceTest<Loca
         return new LocationHierarchy();
     }
 
-    @Override
-    protected LocationHierarchy makeValidEntity(String name, String id) {
-        LocationHierarchy locationHierarchy = new LocationHierarchy();
-        locationHierarchy.setParent(service.getHierarchyRoot());
-        locationHierarchy.setUuid(id);
-        locationHierarchy.setName(name);
-        locationHierarchy.setExtId(name);
-        locationHierarchy.setLevel(locationHierarchyLevelService.getUnknownEntity());
-
-        initCollectedFields(locationHierarchy);
-
-        return locationHierarchy;
-    }
-
     @Test
     public void recordWithExistingReferences() {
 
