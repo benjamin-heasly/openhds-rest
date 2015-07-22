@@ -24,17 +24,6 @@ public class UserRestControllerTest extends UuidIdentifiableRestControllerTest
     }
 
     @Override
-    protected User makeValidEntity(String name, String id) {
-        User user = new User();
-        user.setUuid(id);
-        user.setFirstName(name);
-        user.setLastName(name);
-        user.setUsername(name);
-        user.setPassword("password");
-        return user;
-    }
-
-    @Override
     protected User makeInvalidEntity() {
         return new User();
     }

@@ -7,8 +7,6 @@ import org.openhds.resource.registration.census.SocialGroupRegistration;
 import org.openhds.service.impl.census.SocialGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.ZonedDateTime;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -24,16 +22,6 @@ public class SocialGroupRestControllerTest extends AuditableExtIdRestControllerT
     protected void initialize(SocialGroupService service, SocialGroupRestController controller) {
         this.service = service;
         this.controller = controller;
-    }
-
-    @Override
-    protected SocialGroup makeValidEntity(String name, String id) {
-        SocialGroup socialGroup = new SocialGroup();
-        socialGroup.setUuid(id);
-        socialGroup.setGroupName(name);
-        socialGroup.setExtId(name);
-        socialGroup.setCollectionDateTime(ZonedDateTime.now());
-        return socialGroup;
     }
 
     @Override

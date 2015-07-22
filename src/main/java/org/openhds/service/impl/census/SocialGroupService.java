@@ -20,12 +20,14 @@ public class SocialGroupService extends AbstractAuditableExtIdService<SocialGrou
     }
 
     @Override
-    protected SocialGroup makeUnknownEntity() {
+    public SocialGroup makePlaceHolder(String id, String name) {
         SocialGroup socialGroup = new SocialGroup();
-        socialGroup.setGroupName("unknown");
-        socialGroup.setExtId("unknown");
-        socialGroup.setCollectedBy(fieldWorkerService.getUnknownEntity());
-        socialGroup.setCollectionDateTime(ZonedDateTime.now());
+        socialGroup.setUuid(id);
+        socialGroup.setGroupName(name);
+        socialGroup.setExtId(name);
+
+        initPlaceHolderCollectedFields(socialGroup);
+
         return socialGroup;
     }
 

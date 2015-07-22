@@ -25,18 +25,6 @@ public class SocialGroupServiceTest extends AuditableExtIdServiceTest<SocialGrou
         return new SocialGroup();
     }
 
-    @Override
-    protected SocialGroup makeValidEntity(String name, String id) {
-        SocialGroup socialGroup = new SocialGroup();
-        socialGroup.setUuid(id);
-        socialGroup.setGroupName(name);
-        socialGroup.setExtId(name);
-
-        initCollectedFields(socialGroup);
-
-        return socialGroup;
-    }
-
     @Test
     public void recordWithExistingReferences() {
 

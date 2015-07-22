@@ -26,16 +26,6 @@ public class ProjectCodeRestControllerTest extends UuidIdentifiableRestControlle
     }
 
     @Override
-    protected ProjectCode makeValidEntity(String name, String id) {
-        ProjectCode projectCode = new ProjectCode();
-        projectCode.setUuid(id);
-        projectCode.setCodeName(name);
-        projectCode.setCodeValue(name);
-        projectCode.setCodeGroup(name);
-        return projectCode;
-    }
-
-    @Override
     protected ProjectCode makeInvalidEntity() {
         return new ProjectCode();
     }

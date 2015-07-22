@@ -6,8 +6,6 @@ import org.openhds.domain.model.census.Individual;
 import org.openhds.service.AuditableExtIdServiceTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.ZonedDateTime;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -19,19 +17,6 @@ public class IndividualServiceTest extends AuditableExtIdServiceTest<Individual,
     @Override
     protected Individual makeInvalidEntity() {
         return new Individual();
-    }
-
-    @Override
-    protected Individual makeValidEntity(String name, String id) {
-        Individual individual = new Individual();
-        individual.setUuid(id);
-        individual.setExtId(name);
-        individual.setFirstName(name);
-        individual.setDateOfBirth(ZonedDateTime.now().minusYears(1));
-
-        initCollectedFields(individual);
-
-        return individual;
     }
 
     @Override

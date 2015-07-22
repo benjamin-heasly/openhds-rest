@@ -9,8 +9,6 @@ import org.openhds.service.impl.update.DeathService;
 import org.openhds.service.impl.update.VisitService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.ZonedDateTime;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -30,23 +28,6 @@ public class DeathRestControllerTest extends AuditableCollectedRestControllerTes
     protected void initialize(DeathService service, DeathRestController controller) {
         this.service = service;
         this.controller = controller;
-    }
-
-    @Override
-    protected Death makeValidEntity(String name, String id) {
-        Death death = new Death();
-        death.setUuid(id);
-        death.setDeathDate(ZonedDateTime.now().minusYears(1));
-        death.setDeathCause(name);
-        death.setDeathPlace(name);
-
-        death.setCollectedBy(fieldWorkerService.findAll(UUID_SORT).toList().get(0));
-        death.setCollectionDateTime(ZonedDateTime.now());
-
-        death.setIndividual(individualService.findAll(UUID_SORT).toList().get(0));
-        death.setVisit(visitService.findAll(UUID_SORT).toList().get(0));
-
-        return death;
     }
 
     @Override

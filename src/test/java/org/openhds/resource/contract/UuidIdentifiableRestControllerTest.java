@@ -41,7 +41,9 @@ public abstract class UuidIdentifiableRestControllerTest<
 
     protected abstract void initialize(U service, V controller);
 
-    protected abstract T makeValidEntity(String name, String id);
+    protected T makeValidEntity(String name, String id){
+        return service.makePlaceHolder(id, name);
+    }
 
     protected abstract T makeInvalidEntity();
 

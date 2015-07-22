@@ -45,7 +45,9 @@ public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends Abst
 
     protected abstract T makeInvalidEntity();
 
-    protected abstract T makeValidEntity(String name, String id);
+    protected T makeValidEntity(String name, String id){
+        return service.makePlaceHolder(id, name);
+    }
 
     protected abstract void initialize(U service);
 

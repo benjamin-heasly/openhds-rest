@@ -9,8 +9,6 @@ import org.openhds.service.impl.census.LocationService;
 import org.openhds.service.impl.census.ResidencyService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.ZonedDateTime;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -31,22 +29,6 @@ public class ResidencyRestControllerTest extends AuditableCollectedRestControlle
     protected void initialize(ResidencyService service, ResidencyRestController controller) {
         this.service = service;
         this.controller = controller;
-    }
-
-    @Override
-    protected Residency makeValidEntity(String name, String id) {
-        Residency residency = new Residency();
-        residency.setUuid(id);
-
-        residency.setCollectedBy(fieldWorkerService.findAll(UUID_SORT).toList().get(0));
-        residency.setCollectionDateTime(ZonedDateTime.now());
-
-        residency.setIndividual(individualService.findAll(UUID_SORT).toList().get(0));
-        residency.setLocation(locationService.findAll(UUID_SORT).toList().get(0));
-        residency.setStartDate(ZonedDateTime.now().minusYears(1));
-        residency.setStartType(name);
-
-        return residency;
     }
 
     @Override

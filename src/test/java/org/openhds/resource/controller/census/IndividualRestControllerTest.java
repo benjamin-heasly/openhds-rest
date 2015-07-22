@@ -7,8 +7,6 @@ import org.openhds.resource.registration.census.IndividualRegistration;
 import org.openhds.service.impl.census.IndividualService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.ZonedDateTime;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -22,18 +20,6 @@ public class IndividualRestControllerTest extends AuditableExtIdRestControllerTe
     protected void initialize(IndividualService service, IndividualRestController controller) {
         this.service = service;
         this.controller = controller;
-    }
-
-    @Override
-    protected Individual makeValidEntity(String name, String id) {
-        Individual individual = new Individual();
-        individual.setUuid(id);
-        individual.setExtId(name);
-        individual.setFirstName(name);
-        individual.setDateOfBirth(ZonedDateTime.now().minusYears(1));
-        individual.setCollectionDateTime(ZonedDateTime.now());
-
-        return individual;
     }
 
     @Override

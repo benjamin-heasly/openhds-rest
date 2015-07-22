@@ -31,19 +31,18 @@ public class InMigrationService extends AbstractAuditableCollectedService<InMigr
     }
 
     @Override
-    protected InMigration makeUnknownEntity() {
+    public InMigration makePlaceHolder(String id, String name) {
         InMigration inMigration = new InMigration();
-        inMigration.setCollectedBy(fieldWorkerService.getUnknownEntity());
-        inMigration.setCollectionDateTime(ZonedDateTime.now());
-
+        inMigration.setUuid(id);
         inMigration.setVisit(visitService.getUnknownEntity());
         inMigration.setIndividual(individualService.getUnknownEntity());
         inMigration.setResidency(residencyService.getUnknownEntity());
-
         inMigration.setMigrationDate(ZonedDateTime.now().minusYears(1));
-        inMigration.setMigrationType("unknown");
-        inMigration.setReason("unknown");
-        inMigration.setOrigin("unknown");
+        inMigration.setMigrationType(name);
+        inMigration.setReason(name);
+        inMigration.setOrigin(name);
+
+        initPlaceHolderCollectedFields(inMigration);
 
         return inMigration;
     }

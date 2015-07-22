@@ -27,15 +27,16 @@ public class DeathService extends AbstractAuditableCollectedService<Death, Death
     }
 
     @Override
-    protected Death makeUnknownEntity() {
+    public Death makePlaceHolder(String id, String name) {
         Death death = new Death();
+        death.setUuid(id);
         death.setIndividual(individualService.getUnknownEntity());
         death.setVisit(visitService.getUnknownEntity());
-        death.setCollectedBy(fieldWorkerService.getUnknownEntity());
-        death.setCollectionDateTime(ZonedDateTime.now());
         death.setDeathDate(ZonedDateTime.now().minusYears(1));
-        death.setDeathPlace("unknown");
-        death.setDeathCause("unknown");
+        death.setDeathPlace(name);
+        death.setDeathCause(name);
+
+        initPlaceHolderCollectedFields(death);
 
         return death;
     }

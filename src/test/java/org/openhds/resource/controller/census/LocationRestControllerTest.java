@@ -8,8 +8,6 @@ import org.openhds.service.impl.census.LocationHierarchyService;
 import org.openhds.service.impl.census.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.ZonedDateTime;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -28,16 +26,6 @@ public class LocationRestControllerTest extends AuditableExtIdRestControllerTest
     protected void initialize(LocationService service, LocationRestController controller) {
         this.service = service;
         this.controller = controller;
-    }
-
-    @Override
-    protected Location makeValidEntity(String name, String id) {
-        Location location = new Location();
-        location.setUuid(id);
-        location.setName(name);
-        location.setExtId(name);
-        location.setCollectionDateTime(ZonedDateTime.now());
-        return location;
     }
 
     @Override
