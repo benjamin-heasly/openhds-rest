@@ -73,7 +73,7 @@ public abstract class AuditableCollectedServiceTest
     }
 
     protected void initCollectedFields(T entity){
-        entity.setCollectedBy(fieldWorkerService.findAll(UUID_SORT).toList().get(0));
+        entity.setCollectedBy(fieldWorkerService.getUnknownEntity());
         entity.setCollectionDateTime(ZonedDateTime.now());
     }
 }
