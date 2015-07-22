@@ -9,8 +9,6 @@ import org.openhds.domain.model.census.SocialGroup;
 import org.openhds.service.AuditableCollectedServiceTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.ZonedDateTime;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -28,21 +26,6 @@ public class MembershipServiceTest extends AuditableCollectedServiceTest<Members
     @Override
     protected Membership makeInvalidEntity() {
         return new Membership();
-    }
-
-    @Override
-    protected Membership makeValidEntity(String name, String id) {
-        Membership membership = new Membership();
-        membership.setUuid(id);
-        membership.setIndividual(individualService.findAll(UUID_SORT).toList().get(0));
-        membership.setSocialGroup(socialGroupService.findAll(UUID_SORT).toList().get(0));
-        membership.setRelationshipToGroupHead(name);
-        membership.setStartDate(ZonedDateTime.now().minusYears(1));
-        membership.setStartType(name);
-
-        initCollectedFields(membership);
-
-        return membership;
     }
 
     @Override
@@ -117,9 +100,7 @@ public class MembershipServiceTest extends AuditableCollectedServiceTest<Members
         membership = service.recordMembership(membership, "induvudual", "suciulGroup", "feldwarker");
 
         //make the "real" entity to overwrite the old one.
-        Individual individual = individualService.makeUnknownEntity();
-        individual.setFirstName("Billy");
-        individual.setUuid("induvudual");
+        Individual individual = individualService.makePlaceHolder("induvudual", "Billy");
 
         individualService.createOrUpdate(individual);
 

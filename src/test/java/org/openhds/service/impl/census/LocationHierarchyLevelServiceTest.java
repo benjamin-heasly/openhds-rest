@@ -15,6 +15,7 @@ public class LocationHierarchyLevelServiceTest extends AuditableServiceTest<Loca
     }
 
     @Override
+<<<<<<< HEAD
     protected LocationHierarchyLevel makeValidEntity(String name, String id) {
         LocationHierarchyLevel locationHierarchyLevel = new LocationHierarchyLevel();
         locationHierarchyLevel.setUuid(id);
@@ -27,6 +28,8 @@ public class LocationHierarchyLevelServiceTest extends AuditableServiceTest<Loca
     }
 
     @Override
+=======
+>>>>>>> master
     @Autowired
     protected void initialize(LocationHierarchyLevelService service) {
         this.service = service;

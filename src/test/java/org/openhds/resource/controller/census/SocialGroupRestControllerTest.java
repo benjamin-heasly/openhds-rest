@@ -1,14 +1,11 @@
 package org.openhds.resource.controller.census;
 
 import org.openhds.domain.model.census.SocialGroup;
-import org.openhds.repository.concrete.FieldWorkerRepository;
 import org.openhds.resource.contract.AuditableExtIdRestControllerTest;
 import org.openhds.resource.registration.Registration;
 import org.openhds.resource.registration.census.SocialGroupRegistration;
 import org.openhds.service.impl.census.SocialGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.time.ZonedDateTime;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -21,23 +18,10 @@ public class SocialGroupRestControllerTest extends AuditableExtIdRestControllerT
         <SocialGroup, SocialGroupService, SocialGroupRestController> {
 
     @Autowired
-    private FieldWorkerRepository fieldWorkerRepository;
-
-    @Autowired
     @Override
     protected void initialize(SocialGroupService service, SocialGroupRestController controller) {
         this.service = service;
         this.controller = controller;
-    }
-
-    @Override
-    protected SocialGroup makeValidEntity(String name, String id) {
-        SocialGroup socialGroup = new SocialGroup();
-        socialGroup.setUuid(id);
-        socialGroup.setGroupName(name);
-        socialGroup.setExtId(name);
-        socialGroup.setCollectionDateTime(ZonedDateTime.now());
-        return socialGroup;
     }
 
     @Override
@@ -61,7 +45,7 @@ public class SocialGroupRestControllerTest extends AuditableExtIdRestControllerT
     protected Registration<SocialGroup> makeRegistration(SocialGroup entity) {
         SocialGroupRegistration registration = new SocialGroupRegistration();
         registration.setSocialGroup(entity);
-        registration.setCollectedByUuid(fieldWorkerRepository.findAll().get(0).getUuid());
+        registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
         return registration;
     }
 }

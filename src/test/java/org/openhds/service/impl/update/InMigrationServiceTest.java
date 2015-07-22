@@ -4,15 +4,12 @@ import org.junit.Test;
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.census.Individual;
 import org.openhds.domain.model.census.Residency;
-import org.openhds.domain.model.update.Death;
 import org.openhds.domain.model.update.InMigration;
 import org.openhds.domain.model.update.Visit;
 import org.openhds.service.AuditableCollectedServiceTest;
 import org.openhds.service.impl.census.IndividualService;
 import org.openhds.service.impl.census.ResidencyService;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.time.ZonedDateTime;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -40,21 +37,6 @@ public class InMigrationServiceTest extends AuditableCollectedServiceTest<InMigr
     @Override
     protected InMigration makeInvalidEntity() {
         return new InMigration();
-    }
-
-    @Override
-    protected InMigration makeValidEntity(String name, String id) {
-        InMigration inMigration = new InMigration();
-        inMigration.setUuid(id);
-        inMigration.setVisit(visitService.findAll(UUID_SORT).toList().get(0));
-        inMigration.setIndividual(individualService.findAll(UUID_SORT).toList().get(0));
-        inMigration.setResidency(residencyService.findAll(UUID_SORT).toList().get(0));
-        inMigration.setMigrationDate(ZonedDateTime.now().minusYears(1));
-        inMigration.setMigrationType(name);
-
-        initCollectedFields(inMigration);
-
-        return inMigration;
     }
 
     @Test

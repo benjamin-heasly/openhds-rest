@@ -31,18 +31,17 @@ public class OutMigrationService extends AbstractAuditableCollectedService<OutMi
     }
 
     @Override
-    protected OutMigration makeUnknownEntity() {
+    public OutMigration makePlaceHolder(String id, String name) {
         OutMigration outMigration = new OutMigration();
-        outMigration.setCollectedBy(fieldWorkerService.getUnknownEntity());
-        outMigration.setCollectionDateTime(ZonedDateTime.now());
-
+        outMigration.setUuid(id);
         outMigration.setVisit(visitService.getUnknownEntity());
         outMigration.setIndividual(individualService.getUnknownEntity());
         outMigration.setResidency(residencyService.getUnknownEntity());
-
         outMigration.setMigrationDate(ZonedDateTime.now().minusYears(1));
-        outMigration.setReason("unknown");
-        outMigration.setDestination("unknown");
+        outMigration.setReason(name);
+        outMigration.setDestination(name);
+
+        initPlaceHolderCollectedFields(outMigration);
 
         return outMigration;
     }

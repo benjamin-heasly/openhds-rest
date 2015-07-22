@@ -3,14 +3,11 @@ package org.openhds.service.impl.update;
 import org.junit.Test;
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.census.Individual;
-import org.openhds.domain.model.update.PregnancyObservation;
 import org.openhds.domain.model.update.PregnancyOutcome;
 import org.openhds.domain.model.update.Visit;
 import org.openhds.service.AuditableCollectedServiceTest;
 import org.openhds.service.impl.census.IndividualService;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.time.ZonedDateTime;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -32,21 +29,6 @@ public class PregnancyOutcomeServiceTest extends AuditableCollectedServiceTest<P
     @Override
     protected PregnancyOutcome makeInvalidEntity() {
         return new PregnancyOutcome();
-    }
-
-    @Override
-    protected PregnancyOutcome makeValidEntity(String name, String id) {
-        PregnancyOutcome pregnancyOutcome = new PregnancyOutcome();
-        pregnancyOutcome.setUuid(id);
-        pregnancyOutcome.setOutcomeDate(ZonedDateTime.now().minusYears(1));
-        pregnancyOutcome.setPregnancyResults(pregnancyResultService.findAll(UUID_SORT).toList());
-        pregnancyOutcome.setMother(individualService.findAll(UUID_SORT).toList().get(0));
-        pregnancyOutcome.setFather(individualService.findAll(UUID_SORT).toList().get(0));
-        pregnancyOutcome.setVisit(visitService.findAll(UUID_SORT).toList().get(0));
-
-        initCollectedFields(pregnancyOutcome);
-
-        return pregnancyOutcome;
     }
 
     @Override

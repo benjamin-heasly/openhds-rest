@@ -28,15 +28,15 @@ public class PregnancyObservationService extends AbstractAuditableCollectedServi
     }
 
     @Override
-    protected PregnancyObservation makeUnknownEntity() {
+    public PregnancyObservation makePlaceHolder(String id, String name) {
         PregnancyObservation pregnancyObservation = new PregnancyObservation();
-        pregnancyObservation.setCollectedBy(fieldWorkerService.getUnknownEntity());
-        pregnancyObservation.setCollectionDateTime(ZonedDateTime.now());
-
+        pregnancyObservation.setUuid(id);
         pregnancyObservation.setVisit(visitService.getUnknownEntity());
         pregnancyObservation.setMother(individualService.getUnknownEntity());
         pregnancyObservation.setPregnancyDate(ZonedDateTime.now().minusMonths(5));
         pregnancyObservation.setExpectedDeliveryDate(ZonedDateTime.now().plusMonths(5));
+
+        initPlaceHolderCollectedFields(pregnancyObservation);
 
         return pregnancyObservation;
     }

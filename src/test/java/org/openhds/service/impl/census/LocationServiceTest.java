@@ -24,19 +24,6 @@ public class LocationServiceTest extends AuditableExtIdServiceTest<Location, Loc
     }
 
     @Override
-    protected Location makeValidEntity(String name, String id) {
-        Location location = new Location();
-        location.setUuid(id);
-        location.setName(name);
-        location.setExtId(name);
-        location.setLocationHierarchy(locationHierarchyService.findAll(UUID_SORT).toList().get(0));
-
-        initCollectedFields(location);
-
-        return location;
-    }
-
-    @Override
     @Autowired
     protected void initialize(LocationService service) {
         this.service = service;

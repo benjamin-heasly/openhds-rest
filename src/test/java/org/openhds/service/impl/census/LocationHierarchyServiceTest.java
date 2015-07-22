@@ -18,6 +18,11 @@ public class LocationHierarchyServiceTest extends AuditableExtIdServiceTest<Loca
     @Autowired
     private LocationHierarchyLevelService locationHierarchyLevelService;
 
+    @Autowired
+    protected void initialize(LocationHierarchyService service) {
+        this.service = service;
+    }
+
     @Override
     protected LocationHierarchy makeInvalidEntity() {
         return new LocationHierarchy();
@@ -35,12 +40,6 @@ public class LocationHierarchyServiceTest extends AuditableExtIdServiceTest<Loca
         initCollectedFields(locationHierarchy);
 
         return locationHierarchy;
-    }
-
-    @Override
-    @Autowired
-    protected void initialize(LocationHierarchyService service) {
-        this.service = service;
     }
 
     @Test

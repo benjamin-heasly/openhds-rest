@@ -20,12 +20,14 @@ public class IndividualService extends AbstractAuditableExtIdService<Individual,
     }
 
     @Override
-    protected Individual makeUnknownEntity() {
+    public Individual makePlaceHolder(String id, String name) {
         Individual individual = new Individual();
-        individual.setFirstName("unknown");
-        individual.setExtId("unknown");
-        individual.setCollectedBy(fieldWorkerService.getUnknownEntity());
-        individual.setCollectionDateTime(ZonedDateTime.now());
+        individual.setUuid(id);
+        individual.setFirstName(name);
+        individual.setExtId(name);
+
+        initPlaceHolderCollectedFields(individual);
+
         return individual;
     }
 

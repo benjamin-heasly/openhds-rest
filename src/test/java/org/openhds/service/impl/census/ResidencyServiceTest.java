@@ -8,8 +8,6 @@ import org.openhds.domain.model.census.Residency;
 import org.openhds.service.AuditableCollectedServiceTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.ZonedDateTime;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -28,20 +26,6 @@ public class ResidencyServiceTest extends AuditableCollectedServiceTest<Residenc
     @Override
     protected Residency makeInvalidEntity() {
         return new Residency();
-    }
-
-    @Override
-    protected Residency makeValidEntity(String name, String id) {
-        Residency residency = new Residency();
-        residency.setUuid(id);
-        residency.setIndividual(individualService.findAll(UUID_SORT).toList().get(0));
-        residency.setLocation(locationService.findAll(UUID_SORT).toList().get(0));
-        residency.setStartDate(ZonedDateTime.now().minusYears(1));
-        residency.setStartType(name);
-
-        initCollectedFields(residency);
-
-        return residency;
     }
 
     @Override

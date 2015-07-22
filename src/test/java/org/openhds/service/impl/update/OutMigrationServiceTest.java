@@ -4,15 +4,12 @@ import org.junit.Test;
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.census.Individual;
 import org.openhds.domain.model.census.Residency;
-import org.openhds.domain.model.update.InMigration;
 import org.openhds.domain.model.update.OutMigration;
 import org.openhds.domain.model.update.Visit;
 import org.openhds.service.AuditableCollectedServiceTest;
 import org.openhds.service.impl.census.IndividualService;
 import org.openhds.service.impl.census.ResidencyService;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.time.ZonedDateTime;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -41,21 +38,6 @@ public class OutMigrationServiceTest extends AuditableCollectedServiceTest<OutMi
     protected OutMigration makeInvalidEntity() {
         return new OutMigration();
     }
-
-    @Override
-    protected OutMigration makeValidEntity(String name, String id) {
-        OutMigration outMigration = new OutMigration();
-        outMigration.setUuid(id);
-        outMigration.setVisit(visitService.findAll(UUID_SORT).toList().get(0));
-        outMigration.setIndividual(individualService.findAll(UUID_SORT).toList().get(0));
-        outMigration.setResidency(residencyService.findAll(UUID_SORT).toList().get(0));
-        outMigration.setMigrationDate(ZonedDateTime.now().minusYears(1));
-
-        initCollectedFields(outMigration);
-
-        return outMigration;
-    }
-
 
     @Test
     public void recordWithExistingReferences() {

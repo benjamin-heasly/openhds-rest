@@ -35,17 +35,6 @@ public class EventRestControllerTest extends AuditableRestControllerTest
     }
 
     @Override
-    protected Event makeValidEntity(String name, String id) {
-        Event event = new Event();
-        event.setUuid(id);
-        event.setEntityType(name);
-        event.setActionType(name);
-        event.setEventData(name);
-
-        return event;
-    }
-
-    @Override
     protected Event makeInvalidEntity() {
         return new Event();
     }

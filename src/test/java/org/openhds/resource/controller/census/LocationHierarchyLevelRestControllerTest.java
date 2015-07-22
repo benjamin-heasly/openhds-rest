@@ -27,15 +27,6 @@ public class LocationHierarchyLevelRestControllerTest extends AuditableRestContr
     }
 
     @Override
-    protected LocationHierarchyLevel makeValidEntity(String name, String id) {
-        LocationHierarchyLevel locationHierarchyLevel = new LocationHierarchyLevel();
-        locationHierarchyLevel.setUuid(id);
-        locationHierarchyLevel.setName(name);
-        locationHierarchyLevel.setKeyIdentifier(0);
-        return locationHierarchyLevel;
-    }
-
-    @Override
     protected LocationHierarchyLevel makeInvalidEntity() {
         return new LocationHierarchyLevel();
     }

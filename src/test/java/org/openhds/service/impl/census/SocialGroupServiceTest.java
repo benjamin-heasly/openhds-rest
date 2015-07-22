@@ -2,7 +2,6 @@ package org.openhds.service.impl.census;
 
 import org.junit.Test;
 import org.openhds.domain.model.FieldWorker;
-import org.openhds.domain.model.census.Individual;
 import org.openhds.domain.model.census.SocialGroup;
 import org.openhds.service.AuditableExtIdServiceTest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,18 +23,6 @@ public class SocialGroupServiceTest extends AuditableExtIdServiceTest<SocialGrou
     @Override
     protected SocialGroup makeInvalidEntity() {
         return new SocialGroup();
-    }
-
-    @Override
-    protected SocialGroup makeValidEntity(String name, String id) {
-        SocialGroup socialGroup = new SocialGroup();
-        socialGroup.setUuid(id);
-        socialGroup.setGroupName(name);
-        socialGroup.setExtId(name);
-
-        initCollectedFields(socialGroup);
-
-        return socialGroup;
     }
 
     @Test

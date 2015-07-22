@@ -26,17 +26,19 @@ public class ResidencyService extends AbstractAuditableCollectedService<Residenc
     }
 
     @Override
-    protected Residency makeUnknownEntity() {
+    public Residency makePlaceHolder(String id, String name) {
         Residency residency = new Residency();
+        residency.setUuid(id);
         residency.setStartDate(ZonedDateTime.now().minusYears(1));
-        residency.setStartType("unknown");
+        residency.setStartType(name);
         residency.setIndividual(individualService.getUnknownEntity());
         residency.setLocation(locationService.getUnknownEntity());
-        residency.setCollectionDateTime(ZonedDateTime.now());
-        residency.setCollectedBy(fieldWorkerService.getUnknownEntity());
+
+        initPlaceHolderCollectedFields(residency);
 
         return residency;
     }
+
 
     public Residency recordResidency (Residency residency, String individualId, String locationId, String fieldWorkerId){
         residency.setIndividual(individualService.findOrMakePlaceHolder(individualId));

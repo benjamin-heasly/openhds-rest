@@ -1,17 +1,14 @@
 package org.openhds.resource.controller.update;
 
 import org.openhds.domain.model.update.PregnancyOutcome;
-import org.openhds.repository.concrete.FieldWorkerRepository;
-import org.openhds.repository.concrete.census.IndividualRepository;
-import org.openhds.repository.concrete.update.PregnancyResultRepository;
-import org.openhds.repository.concrete.update.VisitRepository;
 import org.openhds.resource.contract.AuditableCollectedRestControllerTest;
 import org.openhds.resource.registration.Registration;
 import org.openhds.resource.registration.update.PregnancyOutcomeRegistration;
+import org.openhds.service.impl.census.IndividualService;
 import org.openhds.service.impl.update.PregnancyOutcomeService;
+import org.openhds.service.impl.update.PregnancyResultService;
+import org.openhds.service.impl.update.VisitService;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.time.ZonedDateTime;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -23,40 +20,19 @@ public class PregnancyOutcomeRestControllerTest extends AuditableCollectedRestCo
         PregnancyOutcome, PregnancyOutcomeService, PregnancyOutcomeRestController> {
 
     @Autowired
-    private PregnancyResultRepository pregnancyResultRepository;
+    private PregnancyResultService pregnancyResultService;
 
     @Autowired
-    private VisitRepository visitRepository;
+    private VisitService visitService;
 
     @Autowired
-    private IndividualRepository individualRepository;
-
-    @Autowired
-    private FieldWorkerRepository fieldWorkerRepository;
+    private IndividualService individualService;
 
     @Override
     @Autowired
     protected void initialize(PregnancyOutcomeService service, PregnancyOutcomeRestController controller) {
         this.service = service;
         this.controller = controller;
-    }
-
-    @Override
-    protected PregnancyOutcome makeValidEntity(String name, String id) {
-        PregnancyOutcome pregnancyOutcome = new PregnancyOutcome();
-        pregnancyOutcome.setUuid(id);
-        pregnancyOutcome.setOutcomeDate(ZonedDateTime.now().minusYears(1));
-
-        pregnancyOutcome.setPregnancyResults(pregnancyResultRepository.findAll());
-        pregnancyOutcome.setMother(individualRepository.findAll().get(0));
-        pregnancyOutcome.setFather(individualRepository.findAll().get(0));
-
-        pregnancyOutcome.setVisit(visitRepository.findAll().get(0));
-
-        pregnancyOutcome.setCollectedBy(fieldWorkerRepository.findAll().get(0));
-        pregnancyOutcome.setCollectionDateTime(ZonedDateTime.now());
-
-        return pregnancyOutcome;
     }
 
     @Override
@@ -80,10 +56,10 @@ public class PregnancyOutcomeRestControllerTest extends AuditableCollectedRestCo
         PregnancyOutcomeRegistration registration = new PregnancyOutcomeRegistration();
         registration.setPregnancyOutcome(entity);
 
-        registration.setMotherUuid(individualRepository.findAll().get(0).getUuid());
-        registration.setFatherUuid(individualRepository.findAll().get(0).getUuid());
-        registration.setVisitUuid(visitRepository.findAll().get(0).getUuid());
-        registration.setCollectedByUuid(fieldWorkerRepository.findAll().get(0).getUuid());
+        registration.setMotherUuid(individualService.findAll(UUID_SORT).toList().get(0).getUuid());
+        registration.setFatherUuid(individualService.findAll(UUID_SORT).toList().get(0).getUuid());
+        registration.setVisitUuid(visitService.findAll(UUID_SORT).toList().get(0).getUuid());
+        registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
 
         return registration;
     }

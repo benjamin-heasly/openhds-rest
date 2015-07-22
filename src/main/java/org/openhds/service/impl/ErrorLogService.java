@@ -21,14 +21,15 @@ public class ErrorLogService extends AbstractAuditableCollectedService<ErrorLog,
     }
 
     @Override
-    protected ErrorLog makeUnknownEntity() {
+    public ErrorLog makePlaceHolder(String id, String name) {
         ErrorLog errorLog = new ErrorLog();
-        errorLog.appendError("unknown");
-        errorLog.setCollectionDateTime(ZonedDateTime.now());
-        errorLog.setCollectedBy(fieldWorkerService.getUnknownEntity());
+        errorLog.setUuid(id);
+        errorLog.appendError(name);
+
+        initPlaceHolderCollectedFields(errorLog);
+
         return errorLog;
     }
-
 
     @Override
     public ErrorLog createOrUpdate(ErrorLog errorLog) {

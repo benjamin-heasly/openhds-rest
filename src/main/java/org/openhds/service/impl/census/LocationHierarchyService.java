@@ -31,13 +31,16 @@ public class LocationHierarchyService extends AbstractAuditableExtIdService<
     }
 
     @Override
-    protected LocationHierarchy makeUnknownEntity() {
+    public LocationHierarchy makePlaceHolder(String id, String name) {
         LocationHierarchy locationHierarchy = new LocationHierarchy();
-        locationHierarchy.setName("unknown");
-        locationHierarchy.setExtId("unknown");
         locationHierarchy.setLevel(locationHierarchyLevelService.getUnknownEntity());
-        locationHierarchy.setCollectionDateTime(ZonedDateTime.now());
-        locationHierarchy.setCollectedBy(fieldWorkerService.getUnknownEntity());
+        locationHierarchy.setParent(getUnknownEntity());
+        locationHierarchy.setUuid(id);
+        locationHierarchy.setName(name);
+        locationHierarchy.setExtId(name);
+
+        initPlaceHolderCollectedFields(locationHierarchy);
+
         return locationHierarchy;
     }
 

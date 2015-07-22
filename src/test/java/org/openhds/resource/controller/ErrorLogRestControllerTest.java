@@ -1,9 +1,7 @@
 package org.openhds.resource.controller;
 
 import org.junit.Test;
-import org.openhds.errors.model.Error;
 import org.openhds.errors.model.ErrorLog;
-import org.openhds.repository.concrete.FieldWorkerRepository;
 import org.openhds.resource.contract.AuditableCollectedRestControllerTest;
 import org.openhds.resource.registration.ErrorLogRegistration;
 import org.openhds.resource.registration.Registration;
@@ -11,8 +9,6 @@ import org.openhds.service.impl.ErrorLogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MvcResult;
-
-import java.time.ZonedDateTime;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -30,28 +26,10 @@ public class ErrorLogRestControllerTest extends AuditableCollectedRestController
         <ErrorLog, ErrorLogService, ErrorLogRestController> {
 
     @Autowired
-    FieldWorkerRepository fieldWorkerRepository;
-
-    @Autowired
     @Override
     protected void initialize(ErrorLogService service, ErrorLogRestController controller) {
         this.service = service;
         this.controller = controller;
-    }
-
-    @Override
-    protected ErrorLog makeValidEntity(String name, String id) {
-        ErrorLog errorLog = new ErrorLog();
-        errorLog.setUuid(id);
-        errorLog.setDataPayload(name);
-
-        Error error = new Error();
-        error.setErrorMessage(name);
-        errorLog.getErrors().add(error);
-
-        errorLog.setCollectionDateTime(ZonedDateTime.now());
-
-        return errorLog;
     }
 
     @Override
@@ -75,7 +53,7 @@ public class ErrorLogRestControllerTest extends AuditableCollectedRestController
     protected Registration<ErrorLog> makeRegistration(ErrorLog entity) {
         ErrorLogRegistration errorLogRegistration = new ErrorLogRegistration();
         errorLogRegistration.setErrorLog(entity);
-        errorLogRegistration.setCollectedByUuid(fieldWorkerRepository.findAll().get(0).getUuid());
+        errorLogRegistration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
         return errorLogRegistration;
     }
 
