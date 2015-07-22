@@ -21,9 +21,11 @@ import org.springframework.hateoas.config.EnableEntityLinks;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import javax.validation.Validator;
 import java.util.List;
 
 /**
@@ -54,6 +56,11 @@ public class OpenHdsRestApplication {
         YamlMapFactoryBean yamlMapFactoryBean = new YamlMapFactoryBean();
         yamlMapFactoryBean.setResources(new ClassPathResource("project-codes.yml"));
         return yamlMapFactoryBean;
+    }
+
+    @Bean
+    public Validator beanValidator() {
+        return new LocalValidatorFactoryBean();
     }
 
     @EnableWebMvc
