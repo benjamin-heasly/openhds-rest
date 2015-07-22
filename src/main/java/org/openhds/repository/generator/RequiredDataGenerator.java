@@ -22,7 +22,8 @@ import static java.util.stream.Collectors.toSet;
  * User, Role, Privilege, FieldWorker, and ProjectCodes.
  *
  * For each entity, only inserts required records if there are no records yet.
- * The should support project bootstrapping without messing up existing project data.
+ * This behavior should support project bootstrapping and testing,
+ * without messing up existing project data.
  *
  */
 @Component

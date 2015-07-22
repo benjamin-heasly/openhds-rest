@@ -3,6 +3,7 @@ package org.openhds.domain.model.census;
 import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.domain.util.Description;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -15,6 +16,7 @@ public class LocationHierarchyLevel extends AuditableEntity implements Serializa
 
     private static final long serialVersionUID = -1070569257732332545L;
 
+    @Column(unique = true)
     @Description(description = "A key to identify this level.")
     int keyIdentifier;
 

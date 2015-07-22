@@ -19,6 +19,10 @@ public class LocationHierarchyLevelServiceTest extends AuditableServiceTest<Loca
         LocationHierarchyLevel locationHierarchyLevel = new LocationHierarchyLevel();
         locationHierarchyLevel.setUuid(id);
         locationHierarchyLevel.setName(name);
+
+        // keyIdentifier must be unique, like id.  So try to make them vary together.
+        locationHierarchyLevel.setKeyIdentifier(id.hashCode());
+
         return locationHierarchyLevel;
     }
 

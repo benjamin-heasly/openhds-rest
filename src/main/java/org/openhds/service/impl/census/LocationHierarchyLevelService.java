@@ -31,8 +31,28 @@ public class LocationHierarchyLevelService extends AbstractAuditableService<Loca
         super.validate(entity, errorLog);
     }
 
+    @Override
+    public LocationHierarchyLevel findOrMakePlaceHolder(String uuid){
+        LocationHierarchyLevel entity = findOne(uuid);
+        if (null == entity){
+            entity = makeUnknownEntity();
+            entity.setUuid(uuid);
+            entity.setKeyIdentifier(uuid.hashCode());
+            createOrUpdate(entity);
+        }
+        return entity;
+    }
+
     public LocationHierarchyLevel findByName(String name) {
         return repository.findByDeletedFalseAndName(name).get();
+    }
+
+    public LocationHierarchyLevel findByKeyIdentifier(int keyIdentifier) {
+        return repository.findByDeletedFalseAndKeyIdentifier(keyIdentifier).get();
+    }
+
+    public boolean levelKeyIdentifierExists(int keyIdentifier) {
+        return repository.findByDeletedFalseAndKeyIdentifier(keyIdentifier).isPresent();
     }
 
     public LocationHierarchyLevel recordLocationHierarchyLevel(LocationHierarchyLevel locationHierarchyLevel){
