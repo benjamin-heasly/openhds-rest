@@ -1,13 +1,12 @@
 package org.openhds.resource.controller.census;
 
 import org.openhds.domain.model.census.Membership;
-import org.openhds.repository.concrete.FieldWorkerRepository;
-import org.openhds.repository.concrete.census.IndividualRepository;
-import org.openhds.repository.concrete.census.SocialGroupRepository;
 import org.openhds.resource.contract.AuditableCollectedRestControllerTest;
 import org.openhds.resource.registration.Registration;
 import org.openhds.resource.registration.census.MembershipRegistration;
+import org.openhds.service.impl.census.IndividualService;
 import org.openhds.service.impl.census.MembershipService;
+import org.openhds.service.impl.census.SocialGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.ZonedDateTime;
@@ -25,13 +24,10 @@ public class MembershipRestControllerTest extends AuditableCollectedRestControll
         MembershipRestController> {
 
     @Autowired
-    private IndividualRepository individualRepository;
+    private IndividualService individualService;
 
     @Autowired
-    private SocialGroupRepository socialGroupRepository;
-
-    @Autowired
-    private FieldWorkerRepository fieldWorkerRepository;
+    private SocialGroupService socialGroupService;
 
 
     @Autowired
@@ -46,9 +42,9 @@ public class MembershipRestControllerTest extends AuditableCollectedRestControll
         Membership membership = new Membership();
         membership.setUuid(id);
 
-        membership.setSocialGroup(socialGroupRepository.findAll().get(0));
-        membership.setIndividual(individualRepository.findAll().get(0));
-        membership.setCollectedBy(fieldWorkerRepository.findAll().get(0));
+        membership.setSocialGroup(socialGroupService.findAll(UUID_SORT).toList().get(0));
+        membership.setIndividual(individualService.findAll(UUID_SORT).toList().get(0));
+        membership.setCollectedBy(fieldWorkerService.findAll(UUID_SORT).toList().get(0));
 
         membership.setRelationshipToGroupHead(name);
         membership.setStartType(name);
@@ -81,9 +77,9 @@ public class MembershipRestControllerTest extends AuditableCollectedRestControll
         MembershipRegistration registration = new MembershipRegistration();
         registration.setMembership(entity);
 
-        registration.setIndividualUuid(individualRepository.findAll().get(0).getUuid());
-        registration.setSocialGroupUuid(socialGroupRepository.findAll().get(0).getUuid());
-        registration.setCollectedByUuid(fieldWorkerRepository.findAll().get(0).getUuid());
+        registration.setIndividualUuid(individualService.findAll(UUID_SORT).toList().get(0).getUuid());
+        registration.setSocialGroupUuid(socialGroupService.findAll(UUID_SORT).toList().get(0).getUuid());
+        registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
 
         return registration;
     }

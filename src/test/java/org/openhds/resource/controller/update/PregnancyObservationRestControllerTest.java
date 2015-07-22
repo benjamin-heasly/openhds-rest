@@ -1,13 +1,12 @@
 package org.openhds.resource.controller.update;
 
 import org.openhds.domain.model.update.PregnancyObservation;
-import org.openhds.repository.concrete.FieldWorkerRepository;
-import org.openhds.repository.concrete.census.IndividualRepository;
-import org.openhds.repository.concrete.update.VisitRepository;
 import org.openhds.resource.contract.AuditableCollectedRestControllerTest;
 import org.openhds.resource.registration.Registration;
 import org.openhds.resource.registration.update.PregnancyObservationRegistration;
+import org.openhds.service.impl.census.IndividualService;
 import org.openhds.service.impl.update.PregnancyObservationService;
+import org.openhds.service.impl.update.VisitService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.ZonedDateTime;
@@ -21,15 +20,12 @@ import static org.junit.Assert.assertNotNull;
  */
 public class PregnancyObservationRestControllerTest extends AuditableCollectedRestControllerTest<
         PregnancyObservation, PregnancyObservationService, PregnancyObservationRestController> {
+    
+    @Autowired
+    private IndividualService individualService;
 
     @Autowired
-    private FieldWorkerRepository fieldWorkerRepository;
-
-    @Autowired
-    private IndividualRepository individualRepository;
-
-    @Autowired
-    private VisitRepository visitRepository;
+    private VisitService visitService;
 
     @Autowired
     @Override
@@ -43,11 +39,11 @@ public class PregnancyObservationRestControllerTest extends AuditableCollectedRe
         PregnancyObservation pregnancyObservation = new PregnancyObservation();
         pregnancyObservation.setUuid(id);
 
-        pregnancyObservation.setCollectedBy(fieldWorkerRepository.findAll().get(0));
+        pregnancyObservation.setCollectedBy(fieldWorkerService.findAll(UUID_SORT).toList().get(0));
         pregnancyObservation.setCollectionDateTime(ZonedDateTime.now());
 
-        pregnancyObservation.setVisit(visitRepository.findAll().get(0));
-        pregnancyObservation.setMother(individualRepository.findAll().get(0));
+        pregnancyObservation.setVisit(visitService.findAll(UUID_SORT).toList().get(0));
+        pregnancyObservation.setMother(individualService.findAll(UUID_SORT).toList().get(0));
         pregnancyObservation.setPregnancyDate(ZonedDateTime.now().minusMonths(5));
         pregnancyObservation.setExpectedDeliveryDate(ZonedDateTime.now().plusMonths(5));
 
@@ -78,9 +74,9 @@ public class PregnancyObservationRestControllerTest extends AuditableCollectedRe
         PregnancyObservationRegistration registration = new PregnancyObservationRegistration();
         registration.setPregnancyObservation(entity);
 
-        registration.setCollectedByUuid(fieldWorkerRepository.findAll().get(0).getUuid());
-        registration.setVisitUuid(visitRepository.findAll().get(0).getUuid());
-        registration.setMotherUuid(individualRepository.findAll().get(0).getUuid());
+        registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
+        registration.setVisitUuid(visitService.findAll(UUID_SORT).toList().get(0).getUuid());
+        registration.setMotherUuid(individualService.findAll(UUID_SORT).toList().get(0).getUuid());
 
         return registration;
     }

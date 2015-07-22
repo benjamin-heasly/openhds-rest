@@ -3,7 +3,6 @@ package org.openhds.resource.controller;
 import org.junit.Test;
 import org.openhds.errors.model.Error;
 import org.openhds.errors.model.ErrorLog;
-import org.openhds.repository.concrete.FieldWorkerRepository;
 import org.openhds.resource.contract.AuditableCollectedRestControllerTest;
 import org.openhds.resource.registration.ErrorLogRegistration;
 import org.openhds.resource.registration.Registration;
@@ -27,9 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 public class ErrorLogRestControllerTest extends AuditableCollectedRestControllerTest
         <ErrorLog, ErrorLogService, ErrorLogRestController> {
-
-    @Autowired
-    FieldWorkerRepository fieldWorkerRepository;
 
     @Autowired
     @Override
@@ -74,7 +70,7 @@ public class ErrorLogRestControllerTest extends AuditableCollectedRestController
     protected Registration<ErrorLog> makeRegistration(ErrorLog entity) {
         ErrorLogRegistration errorLogRegistration = new ErrorLogRegistration();
         errorLogRegistration.setErrorLog(entity);
-        errorLogRegistration.setCollectedByUuid(fieldWorkerRepository.findAll().get(0).getUuid());
+        errorLogRegistration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
         return errorLogRegistration;
     }
 

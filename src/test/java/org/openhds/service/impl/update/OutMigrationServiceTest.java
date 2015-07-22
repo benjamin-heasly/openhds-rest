@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.census.Individual;
 import org.openhds.domain.model.census.Residency;
-import org.openhds.domain.model.update.InMigration;
 import org.openhds.domain.model.update.OutMigration;
 import org.openhds.domain.model.update.Visit;
 import org.openhds.service.AuditableCollectedServiceTest;

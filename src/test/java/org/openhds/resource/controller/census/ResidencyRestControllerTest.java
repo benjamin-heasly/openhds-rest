@@ -1,12 +1,11 @@
 package org.openhds.resource.controller.census;
 
 import org.openhds.domain.model.census.Residency;
-import org.openhds.repository.concrete.FieldWorkerRepository;
-import org.openhds.repository.concrete.census.IndividualRepository;
-import org.openhds.repository.concrete.census.LocationRepository;
 import org.openhds.resource.contract.AuditableCollectedRestControllerTest;
 import org.openhds.resource.registration.Registration;
 import org.openhds.resource.registration.census.ResidencyRegistration;
+import org.openhds.service.impl.census.IndividualService;
+import org.openhds.service.impl.census.LocationService;
 import org.openhds.service.impl.census.ResidencyService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,13 +20,10 @@ import static org.junit.Assert.assertNotNull;
 public class ResidencyRestControllerTest extends AuditableCollectedRestControllerTest<Residency, ResidencyService, ResidencyRestController> {
 
     @Autowired
-    private IndividualRepository individualRepository;
+    private IndividualService individualService;
 
     @Autowired
-    private LocationRepository locationRepository;
-
-    @Autowired
-    private FieldWorkerRepository fieldWorkerRepository;
+    private LocationService locationService;
 
 
     @Override
@@ -42,11 +38,11 @@ public class ResidencyRestControllerTest extends AuditableCollectedRestControlle
         Residency residency = new Residency();
         residency.setUuid(id);
 
-        residency.setCollectedBy(fieldWorkerRepository.findAll().get(0));
+        residency.setCollectedBy(fieldWorkerService.findAll(UUID_SORT).toList().get(0));
         residency.setCollectionDateTime(ZonedDateTime.now());
 
-        residency.setIndividual(individualRepository.findAll().get(0));
-        residency.setLocation(locationRepository.findAll().get(0));
+        residency.setIndividual(individualService.findAll(UUID_SORT).toList().get(0));
+        residency.setLocation(locationService.findAll(UUID_SORT).toList().get(0));
         residency.setStartDate(ZonedDateTime.now().minusYears(1));
         residency.setStartType(name);
 
@@ -76,9 +72,9 @@ public class ResidencyRestControllerTest extends AuditableCollectedRestControlle
     protected Registration<Residency> makeRegistration(Residency entity) {
         ResidencyRegistration registration = new ResidencyRegistration();
         registration.setResidency(entity);
-        registration.setIndividualUuid(individualRepository.findAll().get(0).getUuid());
-        registration.setLocationUuid(locationRepository.findAll().get(0).getUuid());
-        registration.setCollectedByUuid(fieldWorkerRepository.findAll().get(0).getUuid());
+        registration.setIndividualUuid(individualService.findAll(UUID_SORT).toList().get(0).getUuid());
+        registration.setLocationUuid(locationService.findAll(UUID_SORT).toList().get(0).getUuid());
+        registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
         return registration;
     }
 }
