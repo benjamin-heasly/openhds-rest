@@ -14,16 +14,6 @@ public class UserServiceTest extends UuidServiceTest<User, UserService> {
     }
 
     @Override
-    protected User makeValidEntity(String name, String id) {
-        User user = new User();
-        user.setUuid(id);
-        user.setUsername(name);
-        user.setFirstName(name);
-        user.setLastName(name);
-        return user;
-    }
-
-    @Override
     @Autowired
     protected void initialize(UserService service) {
         this.service = service;

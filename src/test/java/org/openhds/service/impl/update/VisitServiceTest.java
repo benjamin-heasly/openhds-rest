@@ -33,19 +33,6 @@ public class VisitServiceTest extends AuditableExtIdServiceTest<Visit, VisitServ
         return new Visit();
     }
 
-    @Override
-    protected Visit makeValidEntity(String name, String id) {
-        Visit visit = new Visit();
-        visit.setUuid(id);
-        visit.setExtId(name);
-        visit.setLocation(locationService.findAll(UUID_SORT).toList().get(0));
-        visit.setVisitDate(ZonedDateTime.now().minusYears(1));
-
-        initCollectedFields(visit);
-
-        return visit;
-    }
-
     @Test
     public void recordWithExistingReferences() {
 

@@ -26,20 +26,6 @@ public class RelationshipServiceTest extends AuditableCollectedServiceTest<Relat
     }
 
     @Override
-    protected Relationship makeValidEntity(String name, String id) {
-        Relationship relationship = new Relationship();
-        relationship.setUuid(id);
-        relationship.setRelationshipType(name);
-        relationship.setStartDate(ZonedDateTime.now().minusYears(1));
-        relationship.setIndividualA(individualService.findAll(UUID_SORT).toList().get(0));
-        relationship.setIndividualB(individualService.findAll(UUID_SORT).toList().get(0));
-
-        initCollectedFields(relationship);
-
-        return relationship;
-    }
-
-    @Override
     @Autowired
     protected void initialize(RelationshipService service) {
         this.service = service;

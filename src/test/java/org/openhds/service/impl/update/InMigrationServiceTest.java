@@ -42,21 +42,6 @@ public class InMigrationServiceTest extends AuditableCollectedServiceTest<InMigr
         return new InMigration();
     }
 
-    @Override
-    protected InMigration makeValidEntity(String name, String id) {
-        InMigration inMigration = new InMigration();
-        inMigration.setUuid(id);
-        inMigration.setVisit(visitService.findAll(UUID_SORT).toList().get(0));
-        inMigration.setIndividual(individualService.findAll(UUID_SORT).toList().get(0));
-        inMigration.setResidency(residencyService.findAll(UUID_SORT).toList().get(0));
-        inMigration.setMigrationDate(ZonedDateTime.now().minusYears(1));
-        inMigration.setMigrationType(name);
-
-        initCollectedFields(inMigration);
-
-        return inMigration;
-    }
-
     @Test
     public void recordWithExistingReferences() {
 

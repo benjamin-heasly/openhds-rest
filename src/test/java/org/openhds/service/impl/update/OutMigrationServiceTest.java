@@ -42,21 +42,6 @@ public class OutMigrationServiceTest extends AuditableCollectedServiceTest<OutMi
         return new OutMigration();
     }
 
-    @Override
-    protected OutMigration makeValidEntity(String name, String id) {
-        OutMigration outMigration = new OutMigration();
-        outMigration.setUuid(id);
-        outMigration.setVisit(visitService.findAll(UUID_SORT).toList().get(0));
-        outMigration.setIndividual(individualService.findAll(UUID_SORT).toList().get(0));
-        outMigration.setResidency(residencyService.findAll(UUID_SORT).toList().get(0));
-        outMigration.setMigrationDate(ZonedDateTime.now().minusYears(1));
-
-        initCollectedFields(outMigration);
-
-        return outMigration;
-    }
-
-
     @Test
     public void recordWithExistingReferences() {
 

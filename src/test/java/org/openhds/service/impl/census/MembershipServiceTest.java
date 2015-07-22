@@ -31,21 +31,6 @@ public class MembershipServiceTest extends AuditableCollectedServiceTest<Members
     }
 
     @Override
-    protected Membership makeValidEntity(String name, String id) {
-        Membership membership = new Membership();
-        membership.setUuid(id);
-        membership.setIndividual(individualService.findAll(UUID_SORT).toList().get(0));
-        membership.setSocialGroup(socialGroupService.findAll(UUID_SORT).toList().get(0));
-        membership.setRelationshipToGroupHead(name);
-        membership.setStartDate(ZonedDateTime.now().minusYears(1));
-        membership.setStartType(name);
-
-        initCollectedFields(membership);
-
-        return membership;
-    }
-
-    @Override
     @Autowired
     protected void initialize(MembershipService service) {
         this.service = service;

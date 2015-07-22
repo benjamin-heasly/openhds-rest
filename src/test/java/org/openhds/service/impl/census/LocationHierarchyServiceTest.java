@@ -20,18 +20,6 @@ public class LocationHierarchyServiceTest extends AuditableExtIdServiceTest<Loca
     }
 
     @Override
-    protected LocationHierarchy makeValidEntity(String name, String id) {
-        LocationHierarchy locationHierarchy = new LocationHierarchy();
-        locationHierarchy.setUuid(id);
-        locationHierarchy.setName(name);
-        locationHierarchy.setExtId(name);
-
-        initCollectedFields(locationHierarchy);
-
-        return locationHierarchy;
-    }
-
-    @Override
     @Autowired
     protected void initialize(LocationHierarchyService service) {
         this.service = service;

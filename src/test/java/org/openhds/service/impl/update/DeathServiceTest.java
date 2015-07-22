@@ -31,21 +31,6 @@ public class DeathServiceTest extends AuditableCollectedServiceTest<Death, Death
     }
 
     @Override
-    protected Death makeValidEntity(String name, String id) {
-        Death death = new Death();
-        death.setUuid(id);
-        death.setDeathDate(ZonedDateTime.now().minusYears(1));
-        death.setDeathCause(name);
-        death.setDeathPlace(name);
-        death.setIndividual(individualService.findAll(UUID_SORT).toList().get(0));
-        death.setVisit(visitService.findAll(UUID_SORT).toList().get(0));
-
-        initCollectedFields(death);
-
-        return death;
-    }
-
-    @Override
     @Autowired
     protected void initialize(DeathService service) {
         this.service = service;

@@ -15,17 +15,6 @@ public class FieldWorkerServiceTest extends AuditableServiceTest<FieldWorker, Fi
     }
 
     @Override
-    protected FieldWorker makeValidEntity(String name, String id) {
-        FieldWorker fieldWorker = new FieldWorker();
-        fieldWorker.setUuid(id);
-        fieldWorker.setFieldWorkerId(id);
-        fieldWorker.setFirstName(name);
-        fieldWorker.setLastName(name);
-        fieldWorker.setPasswordHash(name);
-        return fieldWorker;
-    }
-
-    @Override
     @Autowired
     protected void initialize(FieldWorkerService service) {
         this.service = service;

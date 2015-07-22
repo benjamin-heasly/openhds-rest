@@ -28,16 +28,6 @@ public class ProjectCodeServiceTest extends UuidServiceTest<ProjectCode, Project
         return new ProjectCode();
     }
 
-    @Override
-    protected ProjectCode makeValidEntity(String name, String id) {
-        ProjectCode projectCode = new ProjectCode();
-        projectCode.setUuid(id);
-        projectCode.setCodeName(name);
-        projectCode.setCodeValue(name);
-        projectCode.setCodeGroup(name);
-        return projectCode;
-    }
-
     @Test(expected = DataIntegrityViolationException.class)
     @WithUserDetails
     public void noDuplicateNames() throws Exception {

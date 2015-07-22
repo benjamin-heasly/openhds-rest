@@ -22,19 +22,6 @@ public class IndividualServiceTest extends AuditableExtIdServiceTest<Individual,
     }
 
     @Override
-    protected Individual makeValidEntity(String name, String id) {
-        Individual individual = new Individual();
-        individual.setUuid(id);
-        individual.setExtId(name);
-        individual.setFirstName(name);
-        individual.setDateOfBirth(ZonedDateTime.now().minusYears(1));
-
-        initCollectedFields(individual);
-
-        return individual;
-    }
-
-    @Override
     @Autowired
     protected void initialize(IndividualService service) {
         this.service = service;

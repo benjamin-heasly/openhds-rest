@@ -31,19 +31,6 @@ public class PregnancyResultServiceTest extends AuditableCollectedServiceTest<Pr
     }
 
     @Override
-    protected PregnancyResult makeValidEntity(String name, String id) {
-        PregnancyResult pregnancyResult = new PregnancyResult();
-        pregnancyResult.setUuid(id);
-        pregnancyResult.setType(name);
-        pregnancyResult.setPregnancyOutcome(pregnancyOutcomeService.findAll(UUID_SORT).toList().get(0));
-        pregnancyResult.setChild(individualService.findAll(UUID_SORT).toList().get(0));
-
-        initCollectedFields(pregnancyResult);
-
-        return pregnancyResult;
-    }
-
-    @Override
     @Autowired
     protected void initialize(PregnancyResultService service) {
         this.service = service;
