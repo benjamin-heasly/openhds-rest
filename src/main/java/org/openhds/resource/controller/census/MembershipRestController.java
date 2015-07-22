@@ -45,11 +45,10 @@ class MembershipRestController extends AuditableCollectedRestController<
 
     @Override
     protected Membership register(MembershipRegistration registration) {
-        Membership membership = registration.getMembership();
-        membership.setIndividual(individualService.findOne(registration.getIndividualUuid()));
-        membership.setSocialGroup(socialGroupService.findOne(registration.getSocialGroupUuid()));
-        membership.setCollectedBy(fieldWorkerService.findOne(registration.getCollectedByUuid()));
-        return membershipService.createOrUpdate(membership);
+        return membershipService.recordMembership(registration.getMembership(),
+                registration.getIndividualUuid(),
+                registration.getSocialGroupUuid(),
+                registration.getCollectedByUuid());
     }
 
     @Override

@@ -50,12 +50,10 @@ public class OutMigrationRestController extends AuditableCollectedRestController
 
     @Override
     protected OutMigration register(OutMigrationRegistration registration) {
-        OutMigration outMigration = registration.getOutMigration();
-        outMigration.setCollectedBy(fieldWorkerService.findOne(registration.getCollectedByUuid()));
-        outMigration.setIndividual(individualService.findOne(registration.getIndividualUuid()));
-        outMigration.setResidency(residencyService.findOne(registration.getResidencyUuid()));
-        outMigration.setVisit(visitService.findOne(registration.getVisitUuid()));
-        return outMigrationService.createOrUpdate(outMigration);
+        return outMigrationService.recordOutMigration(registration.getOutMigration(), registration.getIndividualUuid(),
+                registration.getResidencyUuid(),
+                registration.getVisitUuid(),
+                registration.getCollectedByUuid());
     }
 
     @Override

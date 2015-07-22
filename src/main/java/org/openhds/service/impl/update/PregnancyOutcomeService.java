@@ -1,6 +1,5 @@
 package org.openhds.service.impl.update;
 
-import org.openhds.domain.model.update.PregnancyObservation;
 import org.openhds.domain.model.update.PregnancyOutcome;
 import org.openhds.repository.concrete.update.PregnancyOutcomeRepository;
 import org.openhds.service.contract.AbstractAuditableCollectedService;

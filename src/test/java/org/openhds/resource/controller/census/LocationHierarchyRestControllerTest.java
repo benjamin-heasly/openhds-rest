@@ -48,6 +48,7 @@ public class LocationHierarchyRestControllerTest extends AuditableExtIdRestContr
         locationHierarchy.setLevel(locationHierarchyLevelRepository.findAll().get(0));
         locationHierarchy.setCollectionDateTime(ZonedDateTime.now());
         locationHierarchy.setCollectedBy(fieldWorkerRepository.findAll().get(0));
+        locationHierarchy.setParent(service.findAll(UUID_SORT).toList().get(0));
         return locationHierarchy;
     }
 

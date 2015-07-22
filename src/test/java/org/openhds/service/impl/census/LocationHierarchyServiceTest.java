@@ -25,7 +25,7 @@ public class LocationHierarchyServiceTest extends AuditableExtIdServiceTest<Loca
         locationHierarchy.setUuid(id);
         locationHierarchy.setName(name);
         locationHierarchy.setExtId(name);
-
+        locationHierarchy.setParent(service.findAll(UUID_SORT).toList().get(0));
         initCollectedFields(locationHierarchy);
 
         return locationHierarchy;
@@ -46,13 +46,19 @@ public class LocationHierarchyServiceTest extends AuditableExtIdServiceTest<Loca
         FieldWorker fieldWorker = locationHierarchy.getCollectedBy();
         locationHierarchy.setCollectedBy(null);
 
+        LocationHierarchy parent = locationHierarchy.getParent();
+        locationHierarchy.setParent(null);
+
         // pass it all into the record method
-        locationHierarchy = service.recordLocationHierarchy(locationHierarchy, fieldWorker.getUuid());
+        locationHierarchy = service.recordLocationHierarchy(locationHierarchy, parent.getUuid(), fieldWorker.getUuid());
 
 
         //Check that the originals match the ones pulled out from findOrMakePlaceholder()
         assertNotNull(locationHierarchy.getCollectedBy());
         assertEquals(locationHierarchy.getCollectedBy(), fieldWorker);
+
+        assertNotNull(locationHierarchy.getParent());
+        assertEquals(locationHierarchy.getParent(), parent);
 
     }
 
@@ -62,13 +68,16 @@ public class LocationHierarchyServiceTest extends AuditableExtIdServiceTest<Loca
         //Make a new entity with no references
         LocationHierarchy locationHierarchy = makeValidEntity("validName", "validId");
         locationHierarchy.setCollectedBy(null);
+        locationHierarchy.setParent(null);
 
         //Pass it in with new reference uuids
-        locationHierarchy = service.recordLocationHierarchy(locationHierarchy, "feldwarker");
+        locationHierarchy = service.recordLocationHierarchy(locationHierarchy, "parunt", "feldwarker");
 
         //check that they were persisted
         assertNotNull(locationHierarchy.getCollectedBy());
         assertEquals(locationHierarchy.getCollectedBy().getUuid(), "feldwarker");
+        assertNotNull(locationHierarchy.getParent());
+        assertEquals(locationHierarchy.getParent().getUuid(), "parunt");
 
     }
 }

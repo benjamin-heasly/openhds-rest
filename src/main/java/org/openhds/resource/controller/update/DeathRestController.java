@@ -46,12 +46,10 @@ public class DeathRestController extends AuditableCollectedRestController<
 
     @Override
     protected Death register(DeathRegistration registration) {
-
-        Death death = registration.getDeath();
-        death.setCollectedBy(fieldWorkerService.findOne(registration.getCollectedByUuid()));
-        death.setIndividual(individualService.findOne(registration.getIndividualUuid()));
-        death.setVisit(visitService.findOne(registration.getVisitUuid()));
-        return deathService.createOrUpdate(death);
+        return deathService.recordDeath(registration.getDeath(),
+                registration.getIndividualUuid(),
+                registration.getVisitUuid(),
+                registration.getCollectedByUuid());
     }
 
     @Override

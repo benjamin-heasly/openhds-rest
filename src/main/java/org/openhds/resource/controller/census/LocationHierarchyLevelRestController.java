@@ -30,8 +30,7 @@ public class LocationHierarchyLevelRestController extends AuditableRestControlle
 
     @Override
     protected LocationHierarchyLevel register(LocationHierarchyLevelRegistration registration) {
-        LocationHierarchyLevel locationHierarchyLevel = registration.getLocationHierarchyLevel();
-        return locationHierarchyLevelService.createOrUpdate(locationHierarchyLevel);
+        return locationHierarchyLevelService.recordLocationHierarchyLevel(registration.getLocationHierarchyLevel());
     }
 
     @Override
