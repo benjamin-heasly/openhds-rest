@@ -1,9 +1,8 @@
-package org.openhds.repository.util;
+package org.openhds.repository.generator;
 
 import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.domain.model.FieldWorker;
-import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.*;
 import org.openhds.domain.model.update.*;
 import org.openhds.errors.model.Error;
@@ -13,18 +12,12 @@ import org.openhds.events.model.EventMetadata;
 import org.openhds.repository.concrete.*;
 import org.openhds.repository.concrete.census.*;
 import org.openhds.repository.concrete.update.*;
-import org.openhds.security.model.Privilege;
-import org.openhds.security.model.Role;
 import org.openhds.security.model.User;
-import org.openhds.service.impl.census.LocationHierarchyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.UUID;
-
-import static java.util.stream.Collectors.toSet;
 
 /**
  * Created by Ben on 5/18/15.
@@ -35,28 +28,19 @@ import static java.util.stream.Collectors.toSet;
 public class SampleDataGenerator {
 
     @Autowired
-    private PrivilegeRepository privilegeRepository;
+    private RequiredDataGenerator requiredDataGenerator;
 
     @Autowired
-    private RoleRepository roleRepository;
+    private LocationDataGenerator locationDataGenerator;
+
+    @Autowired
+    private LocationRepository locationRepository;
 
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private FieldWorkerRepository fieldWorkerRepository;
-
-    @Autowired
-    private LocationHierarchyLevelRepository locationHierarchyLevelRepository;
-
-    @Autowired
-    private LocationHierarchyRepository locationHierarchyRepository;
-
-    @Autowired
-    private LocationHierarchyService locationHierarchyService;
-
-    @Autowired
-    private LocationRepository locationRepository;
 
     @Autowired
     private IndividualRepository individualRepository;
@@ -78,9 +62,6 @@ public class SampleDataGenerator {
 
     @Autowired
     private EventRepository eventRepository;
-
-    @Autowired
-    private ProjectCodeRepository projectCodeRepository;
 
     @Autowired
     private SocialGroupRepository socialGroupRepository;
@@ -135,54 +116,21 @@ public class SampleDataGenerator {
 
         relationshipRepository.deleteAllInBatch();
 
-        locationRepository.deleteAllInBatch();
-
         socialGroupRepository.deleteAllInBatch();
 
         individualRepository.deleteAllInBatch();
 
-        locationRepository.deleteAllInBatch();
-        locationHierarchyRepository.deleteAllInBatch();
-        locationHierarchyLevelRepository.deleteAllInBatch();
-
-        fieldWorkerRepository.deleteAllInBatch();
-
-        userRepository.deleteAllInBatch();
-        roleRepository.deleteAllInBatch();
-        privilegeRepository.deleteAllInBatch();
-
-        projectCodeRepository.deleteAllInBatch();
+        locationDataGenerator.clearData();
+        requiredDataGenerator.clearData();
     }
 
     public void generateSampleData() {
-        addPrivileges(Privilege.Grant.values());
+        requiredDataGenerator.generateData();
+        locationDataGenerator.generateData(1);
 
-        addRole("user-role", Privilege.Grant.values());
-        addUser("user", "password", "user-role");
-
-        addRole("empty-role");
-        addUser("non-user", "password", "empty-role");
-
-        addFieldWorker("fieldworker", "password");
-
-        addLocationHierarchyLevel(0, "root-level");
-        addLocationHierarchyLevel(1, "top-level");
-        addLocationHierarchyLevel(2, "bottom-level");
-
-        LocationHierarchy root = locationHierarchyService.getHierarchyRoot();
-        addLocationHierarchy("bottom-one", root.getExtId(), "bottom-level");
-        addLocationHierarchy("bottom-two", root.getExtId(), "bottom-level");
-
-        addLocation("location-a", "bottom-one");
-        addLocation("location-b", "bottom-one");
-        addLocation("location-c", "bottom-two");
-        addLocation("location-d", "bottom-two");
-        addLocation("duplicated", "bottom-two");
-        addLocation("duplicated", "bottom-two");
-
-        addVisit("visit-a", "location-a");
-        addVisit("visit-b", "location-b");
-        addVisit("visit-c", "location-c");
+        addVisit("visit-a", "location-1");
+        addVisit("visit-b", "location-2");
+        addVisit("visit-c", "location-3");
 
         addIndividual("individual-a");
         addIndividual("individual-b");
@@ -200,9 +148,9 @@ public class SampleDataGenerator {
         addMembership("memberhip-type-b", "individual-b", "social-group-b");
         addMembership("memberhip-type-c", "individual-c", "social-group-c");
 
-        addResidency("resdoncy-toop-a", "individual-a", "location-a");
-        addResidency("resdoncy-toop-b", "individual-b", "location-b");
-        addResidency("resdoncy-toop-c", "individual-c", "location-c");
+        addResidency("resdoncy-toop-a", "individual-a", "location-1");
+        addResidency("resdoncy-toop-b", "individual-b", "location-2");
+        addResidency("resdoncy-toop-c", "individual-c", "location-3");
 
         addDeath("death-a", "individual-a", "visit-a");
         addDeath("death-b", "individual-b", "visit-b");
@@ -224,38 +172,6 @@ public class SampleDataGenerator {
         addErrorLog("sample error");
 
         addEvent("sample event", "sample system");
-
-        addProjectCode("test-code-1", "value-1", "group-1");
-        addProjectCode("test-code-2", "value-2", "group-1");
-        addProjectCode("test-code-3", "value-3", "group-2");
-        addProjectCode("test-code-4", "value-4", "group-2");
-    }
-
-    private void addPrivileges(Privilege.Grant... grants) {
-        Arrays.stream(grants)
-                .map(Privilege::new)
-                .forEach(privilegeRepository::save);
-    }
-
-    private void addRole(String name, Privilege.Grant... grants) {
-        Role role = new Role();
-        role.setName(name);
-        role.setDescription(name);
-        role.setPrivileges(Arrays.stream(grants)
-                .map(Privilege::new)
-                .collect(toSet()));
-        roleRepository.save(role);
-    }
-
-    private void addUser(String name, String password, String roleName) {
-        User user = new User();
-        user.setUuid(name);
-        user.setFirstName(name);
-        user.setLastName(name);
-        user.setUsername(name);
-        user.setPassword(password);
-        user.getRoles().add(roleRepository.findByName(roleName).get());
-        userRepository.save(user);
     }
 
     private void initAuditableFields(AuditableEntity auditableEntity) {
@@ -283,43 +199,6 @@ public class SampleDataGenerator {
         fieldWorker.setPassword(password);
         fieldWorker.setPasswordHash(password);
         fieldWorkerRepository.save(fieldWorker);
-    }
-
-    private void addLocationHierarchyLevel(int keyIdentifier, String name) {
-        LocationHierarchyLevel locationHierarchyLevel = new LocationHierarchyLevel();
-        initAuditableFields(locationHierarchyLevel);
-
-        locationHierarchyLevel.setKeyIdentifier(keyIdentifier);
-        locationHierarchyLevel.setName(name);
-        locationHierarchyLevelRepository.save(locationHierarchyLevel);
-    }
-
-    private void addLocationHierarchy(String name, String parentName, String levelName) {
-        LocationHierarchy locationHierarchy = new LocationHierarchy();
-        initAuditableFields(locationHierarchy);
-        initCollectedFields(locationHierarchy);
-
-        locationHierarchy.setName(name);
-        locationHierarchy.setExtId(name);
-        locationHierarchy.setLevel(locationHierarchyLevelRepository.findByDeletedFalseAndName(levelName).get());
-
-        if (null != parentName) {
-            locationHierarchy.setParent(locationHierarchyRepository.findByExtId(parentName).get(0));
-        }
-
-        locationHierarchyRepository.save(locationHierarchy);
-    }
-
-    private void addLocation(String name, String hierarchyName) {
-        Location location = new Location();
-        initAuditableFields(location);
-        initCollectedFields(location);
-
-        location.setName(name);
-        location.setExtId(name);
-        location.setLocationHierarchy(locationHierarchyRepository.findByExtId(hierarchyName).get(0));
-
-        locationRepository.save(location);
     }
 
     private void addErrorLog(String description) {
@@ -362,14 +241,6 @@ public class SampleDataGenerator {
         individual.setDateOfBirth(ZonedDateTime.now().minusYears(1));
 
         individualRepository.save(individual);
-    }
-
-    private void addProjectCode(String name, String value, String group) {
-        ProjectCode projectCode = new ProjectCode();
-        projectCode.setCodeName(name);
-        projectCode.setCodeValue(value);
-        projectCode.setCodeGroup(value);
-        projectCodeRepository.save(projectCode);
     }
 
     private void addSocialGroup(String name) {

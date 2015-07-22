@@ -9,14 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public class LocationHierarchyLevelServiceTest extends AuditableServiceTest<LocationHierarchyLevel, LocationHierarchyLevelService> {
 
-    @Override
-    protected LocationHierarchyLevel makeInvalidEntity() {
-        return new LocationHierarchyLevel();
-    }
-
-    @Override
     @Autowired
     protected void initialize(LocationHierarchyLevelService service) {
         this.service = service;
+    }
+
+    @Override
+    protected LocationHierarchyLevel makeInvalidEntity() {
+        return new LocationHierarchyLevel();
     }
 }

@@ -38,7 +38,7 @@ membershipType:
   grandchild: {codeValue : "GRANDCHILD", description : "grandchild of group head" }
   notRelated: {codeValue : "NOT_RELATED", description : "not related to group head" }
   otherRelative: {codeValue : "OTHER_RELATIVE", description : "other relative of group head" }
-  unknown: {codeValue : "UNKNOWN", description : "unknown relationship to group head" }
+  unknownMembership: {codeValue : "UNKNOWN", description : "unknown relationship to group head" }
 
 relationshipType:
   self: {codeValue : "SELF", description : "individual's relationship to self" }
@@ -49,7 +49,7 @@ relationshipType:
   grandchild: {codeValue : "GRANDCHILD", description : "grandchild of individual" }
   notRelated: {codeValue : "NOT_RELATED", description : "not related to individual" }
   otherRelative: {codeValue : "OTHER_RELATIVE", description : "other relative of individual" }
-  unknown: {codeValue : "UNKNOWN", description : "unknown relationship to individual" }
+  unknownRelationship: {codeValue : "UNKNOWN", description : "unknown relationship to individual" }
 
 dataStatus:
   closed: {codeValue : "CLOSED", description : "closed data" }

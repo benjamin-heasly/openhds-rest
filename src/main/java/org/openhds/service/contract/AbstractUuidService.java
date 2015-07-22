@@ -73,6 +73,11 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
         return repository.findOne(UNKNOWN_ENTITY_UUID);
     }
 
+    // Are there any records, not counting the unknown entity?
+    public boolean hasRecords() {
+        return repository.exists(UNKNOWN_ENTITY_UUID) ? 1 < repository.count() : 0 < repository.count();
+    }
+
     public long countAll() {
         return repository.count();
     }
@@ -107,37 +112,40 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
         return repository.findOne(id);
     }
 
-    public T findOrMakePlaceHolder(String uuid){
-        T entity = findOne(uuid);
-        if (null == entity){
-            entity = makeUnknownEntity();
-            entity.setUuid(uuid);
-            createOrUpdate(entity);
+    public boolean exists(String id) {
+        return repository.exists(id);
+    }
+
+    public T findOrMakePlaceHolder(String id){
+        if (exists(id)) {
+            return findOne(id);
         }
-        return entity;
+
+        T entity = makePlaceHolder(id);
+        entity.setUuid(id);
+        return createOrUpdate(entity);
     }
 
     public T createOrUpdate(T entity) {
 
         ErrorLog errorLog = new ErrorLog();
         errorLog.setEntityType(entity.getClass().getSimpleName());
-
         validate(entity, errorLog);
 
         if (!errorLog.getErrors().isEmpty()) {
             errorLogger.log(errorLog);
             throw new ErrorLogException(errorLog);
-        } else {
-            repository.save(entity);
-
-            Event event = new Event();
-            event.setActionType(Event.PERSIST_ACTION);
-            event.setEntityType(entity.getClass().getSimpleName());
-            event.setEventData(entity.toString());
-            eventPublisher.publish(event);
         }
 
-        return entity;
+        T saved = repository.save(entity);
+
+        Event event = new Event();
+        event.setActionType(Event.PERSIST_ACTION);
+        event.setEntityType(saved.getClass().getSimpleName());
+        event.setEventData(saved.toString());
+        eventPublisher.publish(event);
+
+        return saved;
     }
 
     public EntityIterator<T> findByMultipleValues(Sort sort, QueryValue... queryValues) {

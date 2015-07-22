@@ -6,7 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openhds.OpenHdsRestApplication;
-import org.openhds.repository.util.SampleDataGenerator;
+import org.openhds.repository.generator.RequiredDataGenerator;
+import org.openhds.repository.generator.SampleDataGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.hateoas.MediaTypes;
@@ -66,6 +67,9 @@ public class RestControllerTestSupport {
     protected SampleDataGenerator sampleDataGenerator;
 
     @Autowired
+    protected RequiredDataGenerator requiredDataGenerator;
+
+    @Autowired
     protected MappingJackson2HttpMessageConverter jsonMessageConverter;
 
     @Autowired
@@ -101,8 +105,9 @@ public class RestControllerTestSupport {
 
     @After
     public void tearDown() {
-        sampleDataGenerator.clearData();
-        sampleDataGenerator.generateSampleData();
+        // make sure the default user still exists after tests
+        // this is required for @WithUserDetails, which executes *before* the @Before method
+        requiredDataGenerator.createDefaultUser();
     }
 
     @Test

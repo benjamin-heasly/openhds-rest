@@ -16,6 +16,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -69,12 +70,12 @@ public class EventRestControllerTest extends AuditableRestControllerTest
         final int totalCount = (int) service.countAll();
         this.mockMvc.perform(get(getResourceUrl() + "query"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.events", hasSize(totalCount)))
+                .andExpect(jsonPath("$.page.totalElements", is(totalCount)))
                 .andExpect(jsonPath("$._embedded.events[*].eventMetadata[*].numTimesRead").value(everyItem(is(1))));
 
         this.mockMvc.perform(get(getResourceUrl() + "query"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.events", hasSize(totalCount)))
+                .andExpect(jsonPath("$.page.totalElements", is(totalCount)))
                 .andExpect(jsonPath("$._embedded.events[*].eventMetadata[*].numTimesRead").value(everyItem(is(2))));
     }
 
@@ -111,7 +112,7 @@ public class EventRestControllerTest extends AuditableRestControllerTest
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("actionType", "action-1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.events", hasSize(2)))
+                .andExpect(jsonPath("$.page.totalElements", is(2)))
                 .andExpect(jsonPath("$._embedded.events[*].actionType").value(everyItem(is("action-1"))))
                 .andExpect(jsonPath("$._embedded.events[*].uuid").value(containsInAnyOrder("A-id", "C-id")));
 
@@ -119,7 +120,7 @@ public class EventRestControllerTest extends AuditableRestControllerTest
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("entityType", "entity-2"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.events", hasSize(2)))
+                .andExpect(jsonPath("$.page.totalElements", is(2)))
                 .andExpect(jsonPath("$._embedded.events[*].entityType").value(everyItem(is("entity-2"))))
                 .andExpect(jsonPath("$._embedded.events[*].uuid").value(containsInAnyOrder("B-id", "C-id")));
 
@@ -128,7 +129,7 @@ public class EventRestControllerTest extends AuditableRestControllerTest
                 .param("actionType", "action-1")
                 .param("entityType", "entity-1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.events", hasSize(1)))
+                .andExpect(jsonPath("$.page.totalElements", is(1)))
                 .andExpect(jsonPath("$._embedded.events[0].actionType").value("action-1"))
                 .andExpect(jsonPath("$._embedded.events[0].entityType").value("entity-1"))
                 .andExpect(jsonPath("$._embedded.events[0].uuid").value("A-id"));
@@ -138,7 +139,7 @@ public class EventRestControllerTest extends AuditableRestControllerTest
                 .param("actionType", "action-2")
                 .param("entityType", "entity-2"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.events", hasSize(1)))
+                .andExpect(jsonPath("$.page.totalElements", is(1)))
                 .andExpect(jsonPath("$._embedded.events[0].actionType").value("action-2"))
                 .andExpect(jsonPath("$._embedded.events[0].entityType").value("entity-2"))
                 .andExpect(jsonPath("$._embedded.events[0].uuid").value("B-id"));
@@ -148,7 +149,7 @@ public class EventRestControllerTest extends AuditableRestControllerTest
                 .param("actionType", "action-1")
                 .param("entityType", "entity-2"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.events", hasSize(1)))
+                .andExpect(jsonPath("$.page.totalElements", is(1)))
                 .andExpect(jsonPath("$._embedded.events[0].actionType").value("action-1"))
                 .andExpect(jsonPath("$._embedded.events[0].entityType").value("entity-2"))
                 .andExpect(jsonPath("$._embedded.events[0].uuid").value("C-id"));
@@ -171,7 +172,7 @@ public class EventRestControllerTest extends AuditableRestControllerTest
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("system", "system-1"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.events", hasSize(totalCount)))
+                .andExpect(jsonPath("$.page.totalElements", is(totalCount)))
                 .andExpect(jsonPath("$._embedded.events[*].eventMetadata[*].numTimesRead").value(everyItem(is(1))));
 
         // another query from system-1 should increment read count
@@ -179,7 +180,7 @@ public class EventRestControllerTest extends AuditableRestControllerTest
                 .param("system", "system-1")
                 .param("status", Event.READ_STATUS))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.events", hasSize(totalCount)))
+                .andExpect(jsonPath("$.page.totalElements", is(totalCount)))
                 .andExpect(jsonPath("$._embedded.events[*].eventMetadata[*].numTimesRead").value(everyItem(is(2))));
 
         // no events should be left unread by system-1
@@ -193,7 +194,7 @@ public class EventRestControllerTest extends AuditableRestControllerTest
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("system", "system-2"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.events", hasSize(totalCount)))
+                .andExpect(jsonPath("$.page.totalElements", is(totalCount)))
                 .andExpect(jsonPath("$._embedded.events[*].eventMetadata[*].numTimesRead").value(everyItem(is(1))));
 
     }
@@ -210,7 +211,7 @@ public class EventRestControllerTest extends AuditableRestControllerTest
                 .param("minDate", second.getInsertDate().toString())
                 .accept(halJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.events", hasSize(2)))
+                .andExpect(jsonPath("$.page.totalElements", is(2)))
                 .andExpect(jsonPath("$._embedded.events[*].uuid").value(containsInAnyOrder("B-id", "C-id")));
 
         // all but one event before second
@@ -219,7 +220,7 @@ public class EventRestControllerTest extends AuditableRestControllerTest
                 .param("maxDate", second.getInsertDate().toString())
                 .accept(halJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.events", hasSize(totalCount - 1)));
+                .andExpect(jsonPath("$.page.totalElements", is(totalCount - 1)));
 
         // three events between first and third
         this.mockMvc.perform(get(getResourceUrl() + "query")
@@ -227,7 +228,7 @@ public class EventRestControllerTest extends AuditableRestControllerTest
                 .param("maxDate", third.getInsertDate().toString())
                 .accept(halJson))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.events", hasSize(3)))
+                .andExpect(jsonPath("$.page.totalElements", is(3)))
                 .andExpect(jsonPath("$._embedded.events[*].uuid").value(containsInAnyOrder("A-id", "B-id", "C-id")));
     }
 
