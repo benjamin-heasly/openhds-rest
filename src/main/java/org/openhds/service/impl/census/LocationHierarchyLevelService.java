@@ -23,7 +23,7 @@ public class LocationHierarchyLevelService extends AbstractAuditableService<Loca
         LocationHierarchyLevel locationHierarchyLevel = new LocationHierarchyLevel();
         locationHierarchyLevel.setUuid(id);
         locationHierarchyLevel.setName(name);
-        locationHierarchyLevel.setKeyIdentifier(-1);
+        locationHierarchyLevel.setKeyIdentifier(id.hashCode());
         return locationHierarchyLevel;
     }
 

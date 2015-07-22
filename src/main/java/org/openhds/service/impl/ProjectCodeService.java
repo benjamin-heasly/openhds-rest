@@ -24,7 +24,7 @@ public class ProjectCodeService extends AbstractUuidService<ProjectCode, Project
     public ProjectCode makePlaceHolder(String id, String name) {
         ProjectCode projectCode = new ProjectCode();
         projectCode.setUuid(id);
-        projectCode.setCodeName(name);
+        projectCode.setCodeName(id);
         projectCode.setCodeValue(name);
         projectCode.setCodeGroup(name);
         return projectCode;
