@@ -47,7 +47,7 @@ public abstract class AuditableServiceTest
     }
 
     // Sleep some millis before creating an entity, to ensure a fresh timestamp.
-    private T makeValidEntityWithDelay(String name, String id) throws Exception {
+    protected T makeValidEntityWithDelay(String name, String id) throws Exception {
         Thread.sleep(100);
         return makeValidEntity(name, id);
     }
