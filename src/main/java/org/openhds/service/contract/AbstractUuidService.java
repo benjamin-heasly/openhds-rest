@@ -21,9 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
 import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -39,6 +37,9 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
     public final static String UNKNOWN_ENTITY_UUID = "UNKNOWN";
 
     protected final V repository;
+
+    @Autowired
+    protected Validator validator;
 
     @Autowired
     protected ErrorLogger errorLogger;
@@ -167,8 +168,6 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
     public void validate(T entity, ErrorLog errorLog) {
 
         //Fire JSR-303 annotations
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        Validator validator = factory.getValidator();
         Set<ConstraintViolation<T>> violations = validator.validate(entity);
 
         List<Error> errors = errorLog.getErrors();
