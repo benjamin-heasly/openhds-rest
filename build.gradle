@@ -49,6 +49,7 @@ dependencies {
     compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.4.0")
     compile("com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.4.0")
     compile("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.4.0")
+    compile("com.mangofactory:swagger-springmvc:1.0.2")
     runtime("com.h2database:h2")
     runtime("mysql:mysql-connector-java")
     runtime("org.springframework.boot:spring-boot-starter-tomcat")
