@@ -149,6 +149,16 @@ public class UpdateDataGenerator implements DataGenerator {
 
     // add a visit at each location
     private void addVisitToEach(Iterable<Location> locations) {
+        if (visitService.hasRecords()
+                || outMigrationService.hasRecords()
+                || inMigrationService.hasRecords()
+                || deathService.hasRecords()
+                || pregnancyObservationService.hasRecords()
+                || pregnancyOutcomeService.hasRecords()
+                || pregnancyResultService.hasRecords()) {
+            return;
+        }
+
         Individual individual = individualService.getUnknownEntity();
         Residency residency = residencyService.getUnknownEntity();
 

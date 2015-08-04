@@ -117,6 +117,14 @@ public class FamilyDataGenerator implements DataGenerator {
 
     // add a family at each location
     private void addFamilyToEach(Iterable<Location> locations, int size) {
+        if (socialGroupService.hasRecords()
+                || individualService.hasRecords()
+                || residencyService.hasRecords()
+                || membershipService.hasRecords()
+                || relationshipService.hasRecords()) {
+            return;
+        }
+
         for (Location locaiton : locations) {
             addFamily(locaiton, size);
         }

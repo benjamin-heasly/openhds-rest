@@ -92,6 +92,10 @@ public class MiscellaneousDataGenerator implements DataGenerator {
     }
 
     private void generateErrorLog(String description) {
+        if (errorLogService.hasRecords()) {
+            return;
+        }
+
         ErrorLog errorLog = new ErrorLog();
         setAuditableFields(errorLog);
         setCollectedFields(errorLog);
@@ -106,6 +110,10 @@ public class MiscellaneousDataGenerator implements DataGenerator {
     }
 
     private void generateEvent(String description) {
+        if (eventService.hasRecords()) {
+            return;
+        }
+
         Event event = new Event();
         setAuditableFields(event);
 

@@ -23,6 +23,8 @@ public class MasterDataGenerator implements DataGenerator {
                                FamilyDataGenerator familyDataGenerator,
                                UpdateDataGenerator updateDataGenerator,
                                MiscellaneousDataGenerator miscellaneousDataGenerator) {
+
+        // list data generators in order of dependency
         dataGenerators.add(requiredDataGenerator);
         dataGenerators.add(locationDataGenerator);
         dataGenerators.add(familyDataGenerator);
