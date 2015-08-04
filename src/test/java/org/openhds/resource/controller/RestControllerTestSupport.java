@@ -7,7 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openhds.OpenHdsRestApplication;
 import org.openhds.repository.generator.RequiredDataGenerator;
-import org.openhds.repository.generator.SampleDataGenerator;
+import org.openhds.repository.generator.MasterDataGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.hateoas.MediaTypes;
@@ -64,7 +64,7 @@ public class RestControllerTestSupport {
     protected WebApplicationContext webApplicationContext;
 
     @Autowired
-    protected SampleDataGenerator sampleDataGenerator;
+    protected MasterDataGenerator masterDataGenerator;
 
     @Autowired
     protected RequiredDataGenerator requiredDataGenerator;
@@ -92,8 +92,8 @@ public class RestControllerTestSupport {
 
     @Before
     public void setup() throws Exception {
-        sampleDataGenerator.clearData();
-        sampleDataGenerator.generateSampleData();
+        masterDataGenerator.clearData();
+        masterDataGenerator.generateData();
 
         this.mockMvc = webAppContextSetup(webApplicationContext)
                 .apply(springSecurity())

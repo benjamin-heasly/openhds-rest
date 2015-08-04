@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openhds.OpenHdsRestApplication;
 import org.openhds.domain.contract.UuidIdentifiable;
-import org.openhds.repository.generator.SampleDataGenerator;
+import org.openhds.repository.generator.MasterDataGenerator;
 import org.openhds.repository.queries.QueryRange;
 import org.openhds.repository.queries.QueryValue;
 import org.openhds.service.contract.AbstractUuidService;
@@ -38,7 +38,7 @@ import static org.junit.Assert.assertNotNull;
 public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends AbstractUuidService<T, ?>> {
 
     @Autowired
-    protected SampleDataGenerator sampleDataGenerator;
+    protected MasterDataGenerator masterDataGenerator;
 
     protected U service;
 
@@ -55,8 +55,8 @@ public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends Abst
     @Before
     public void setup() throws Exception {
         initialize(service);
-        sampleDataGenerator.clearData();
-        sampleDataGenerator.generateSampleData();
+        masterDataGenerator.clearData();
+        masterDataGenerator.generateData();
 
         // make sure the unknown entity already exists, to avoid test surprises
         service.getUnknownEntity();

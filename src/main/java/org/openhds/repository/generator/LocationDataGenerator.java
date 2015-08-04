@@ -2,7 +2,6 @@ package org.openhds.repository.generator;
 
 import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.contract.AuditableEntity;
-import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.census.Location;
 import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.domain.model.census.LocationHierarchyLevel;
@@ -44,7 +43,7 @@ import java.util.List;
  * 10-ary tree with h levels, times 10: 10^h.
  */
 @Component
-public class LocationDataGenerator {
+public class LocationDataGenerator implements DataGenerator {
 
     public static final int ARITY = 10;
 
@@ -81,13 +80,20 @@ public class LocationDataGenerator {
         this.userService = userService;
     }
 
-    public void generateData(int h) {
-        generateLevels(h);
-        generateHierarchies(h);
-        generateLocations(h);
+    @Override
+    public void generateData() {
+        generateData(0);
+    }
+
+    @Override
+    public void generateData(int size) {
+        generateLevels(size);
+        generateHierarchies(size);
+        generateLocations(size);
         generateUnknowns();
     }
 
+    @Override
     public void clearData() {
         locationRepository.deleteAllInBatch();
         locationHierarchyRepository.deleteAllInBatch();
@@ -107,7 +113,8 @@ public class LocationDataGenerator {
             return;
         }
 
-        for (int i = 1; i <= h; i++) {
+        // always create the 0-level, then work down to h
+        for (int i = 0; i <= h; i++) {
             LocationHierarchyLevel locationHierarchyLevel = new LocationHierarchyLevel();
             locationHierarchyLevel.setKeyIdentifier(i);
             locationHierarchyLevel.setName(String.format("location-hierarchy-level-%d", i));
@@ -117,9 +124,16 @@ public class LocationDataGenerator {
 
     // define h levels
     private void generateHierarchies(int h) {
+
+        // always create one hierarchy at level 0, then recur down to the bottom
         LocationHierarchy root = locationHierarchyService.getHierarchyRoot();
-        LocationHierarchyLevel level = locationHierarchyLevelService.findByKeyIdentifier(1);
-        generateChildHierarchies(root, level);
+        LocationHierarchyLevel levelZero = locationHierarchyLevelService.findByKeyIdentifier(0);
+        LocationHierarchy top = generateHierarchy(root, levelZero, "hierarchy-0");
+
+        if (h > 0) {
+            LocationHierarchyLevel levelOne = locationHierarchyLevelService.findByKeyIdentifier(1);
+            generateChildHierarchies(top, levelOne);
+        }
     }
 
     // recursively build the ARITY-ary tree
@@ -134,17 +148,8 @@ public class LocationDataGenerator {
 
         // add ARITY children
         for (int i = 1; i <= ARITY; i++) {
-            LocationHierarchy child = new LocationHierarchy();
             String extId = parent.getExtId() + "-" + i;
-            child.setExtId(extId);
-            child.setName(extId);
-            child.setParent(parent);
-            child.setLevel(level);
-
-            // save using repository, not service, for performance
-            setAuditableFields(child);
-            setCollectedFields(child);
-            locationHierarchyRepository.save(child);
+            LocationHierarchy child = generateHierarchy(parent, level, extId);
 
             // base case: bottom of the tree
             if (null == nextLevel) {
@@ -157,27 +162,53 @@ public class LocationDataGenerator {
 
     }
 
+    private LocationHierarchy generateHierarchy(LocationHierarchy parent, LocationHierarchyLevel level, String extId) {
+        LocationHierarchy child = new LocationHierarchy();
+        setAuditableFields(child);
+        setCollectedFields(child);
+
+        child.setExtId(extId);
+        child.setName(extId);
+        child.setParent(parent);
+        child.setLevel(level);
+
+        // save using repository, not service, for performance
+        return locationHierarchyRepository.save(child);
+    }
+
     // add ARITY locations at each leaf of the hierarchy
     private void generateLocations(int h) {
+
+        // always create one location at level 0, then add to the leaves
+        LocationHierarchyLevel zeroLevel = locationHierarchyLevelService.findByKeyIdentifier(0);
+        List<LocationHierarchy> zeroNodes = locationHierarchyService.findByLevel(zeroLevel);
+        generateLocation(zeroNodes.get(0), "location-0");
+
+        if (h < 1) {
+            return;
+        }
+
         LocationHierarchyLevel bottomLevel = locationHierarchyLevelService.findByKeyIdentifier(h);
         List<LocationHierarchy> leafNodes = locationHierarchyService.findByLevel(bottomLevel);
-
         for (LocationHierarchy leaf : leafNodes) {
             for (int i = 1; i <= ARITY; i++) {
-                Location location = new Location();
-
                 String extId = String.format("location-%d", i);
-                location.setExtId(extId);
-                location.setName(extId);
-                location.setDescription("sample location");
-                location.setLocationHierarchy(leaf);
-
-                // save using repository, not service, for performance
-                setAuditableFields(location);
-                setCollectedFields(location);
-                locationRepository.save(location);
+                generateLocation(leaf, extId);
             }
         }
+    }
+
+    private void generateLocation(LocationHierarchy locationHierarchy, String extId) {
+        Location location = new Location();
+        setAuditableFields(location);
+        setCollectedFields(location);
+
+        location.setExtId(extId);
+        location.setName(extId);
+        location.setDescription("sample location");
+        location.setLocationHierarchy(locationHierarchy);
+
+        locationRepository.save(location);
     }
 
     private void setAuditableFields(AuditableEntity entity) {

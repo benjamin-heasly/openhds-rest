@@ -40,7 +40,7 @@ import java.time.ZonedDateTime;
  * - a pregnancy result
  */
 @Component
-public class UpdateDataGenerator {
+public class UpdateDataGenerator implements DataGenerator {
 
     private final VisitService visitService;
     private final VisitRepository visitRepository;
@@ -114,11 +114,18 @@ public class UpdateDataGenerator {
         this.userService = userService;
     }
 
-    public void generateData() {
+    @Override
+    public void generateData(int size) {
         generateUnknowns();
         addVisitToEach(locationService.findAll(new Sort("uuid")));
     }
 
+    @Override
+    public void generateData() {
+        generateData(0);
+    }
+
+    @Override
     public void clearData() {
         pregnancyResultRepository.deleteAllInBatch();
         pregnancyOutcomeRepository.deleteAllInBatch();

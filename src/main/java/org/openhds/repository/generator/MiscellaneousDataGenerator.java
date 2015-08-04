@@ -32,7 +32,7 @@ import java.time.ZonedDateTime;
  * Creates one of each entity.
  */
 @Component
-public class MiscellaneousDataGenerator {
+public class MiscellaneousDataGenerator implements DataGenerator {
 
     private final EventService eventService;
     private final EventRepository eventRepository;
@@ -65,12 +65,19 @@ public class MiscellaneousDataGenerator {
         this.userService = userService;
     }
 
-    public void generateData() {
+    @Override
+    public void generateData(int size) {
         generateUnknowns();
         generateEvent("sample-event");
         generateErrorLog("sample-error");
     }
 
+    @Override
+    public void generateData() {
+        generateData(0);
+    }
+
+    @Override
     public void clearData() {
         eventMetadataRepository.deleteAllInBatch();
         eventRepository.deleteAllInBatch();

@@ -34,9 +34,7 @@ import java.time.ZonedDateTime;
  * - 10 Relationships to the head of household
  */
 @Component
-public class FamilyDataGenerator {
-
-    public static final int ARITY = 10;
+public class FamilyDataGenerator implements DataGenerator {
 
     private final IndividualRepository individualRepository;
     private final IndividualService individualService;
@@ -88,11 +86,18 @@ public class FamilyDataGenerator {
         this.userService = userService;
     }
 
-    public void generateData() {
+    @Override
+    public void generateData(int size) {
         generateUnknowns();
-        addFamilyToEach(locationService.findAll(new Sort("uuid")));
+        addFamilyToEach(locationService.findAll(new Sort("uuid")), size);
     }
 
+    @Override
+    public void generateData() {
+        generateData(0);
+    }
+
+    @Override
     public void clearData() {
         relationshipRepository.deleteAllInBatch();
         membershipRepository.deleteAllInBatch();
@@ -111,22 +116,23 @@ public class FamilyDataGenerator {
     }
 
     // add a family at each location
-    private void addFamilyToEach(Iterable<Location> locations) {
+    private void addFamilyToEach(Iterable<Location> locations, int size) {
         for (Location locaiton : locations) {
-            addFamily(locaiton);
+            addFamily(locaiton, size);
         }
     }
 
     // add a family at the given location
-    private void addFamily(Location location) {
+    private void addFamily(Location location, int size) {
         SocialGroup socialGroup = generateSocialGroup(location.getExtId());
 
+        // always create the group head, then add more family members
         Individual head = generateIndividual(location.getName() + "-head");
         generateRelationship(head, head, "self");
         generateMembership(head, socialGroup, "self");
         generateResidency(head, location);
 
-        for (int i = 1; i < ARITY; i++) {
+        for (int i = 1; i < size; i++) {
             Individual member = generateIndividual(location.getName() + "-member");
             generateRelationship(member, head, "household-member");
             generateMembership(member, socialGroup, "household-member");
