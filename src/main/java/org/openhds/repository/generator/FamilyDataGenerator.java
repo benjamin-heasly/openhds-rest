@@ -126,8 +126,12 @@ public class FamilyDataGenerator {
         generateMembership(head, socialGroup, "self");
         generateResidency(head, location);
 
-        // create arity-1 individuals
-        // create each relationship, membership, residency
+        for (int i = 1; i < ARITY; i++) {
+            Individual member = generateIndividual(location.getName() + "-member");
+            generateRelationship(member, head, "household-member");
+            generateMembership(member, socialGroup, "household-member");
+            generateResidency(member, location);
+        }
     }
 
     private SocialGroup generateSocialGroup(String name) {
