@@ -3,10 +3,8 @@ package org.openhds.service.impl.update;
 import org.junit.Test;
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.census.Individual;
-import org.openhds.domain.model.update.PregnancyObservation;
 import org.openhds.domain.model.update.PregnancyOutcome;
 import org.openhds.domain.model.update.PregnancyResult;
-import org.openhds.domain.model.update.Visit;
 import org.openhds.service.AuditableCollectedServiceTest;
 import org.openhds.service.impl.census.IndividualService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,19 +26,6 @@ public class PregnancyResultServiceTest extends AuditableCollectedServiceTest<Pr
     @Override
     protected PregnancyResult makeInvalidEntity() {
         return new PregnancyResult();
-    }
-
-    @Override
-    protected PregnancyResult makeValidEntity(String name, String id) {
-        PregnancyResult pregnancyResult = new PregnancyResult();
-        pregnancyResult.setUuid(id);
-        pregnancyResult.setType(name);
-        pregnancyResult.setPregnancyOutcome(pregnancyOutcomeService.findAll(UUID_SORT).toList().get(0));
-        pregnancyResult.setChild(individualService.findAll(UUID_SORT).toList().get(0));
-
-        initCollectedFields(pregnancyResult);
-
-        return pregnancyResult;
     }
 
     @Override
@@ -123,9 +108,8 @@ public class PregnancyResultServiceTest extends AuditableCollectedServiceTest<Pr
         pregnancyResult = service.recordPregnancyResult(pregnancyResult, "prugnuncyOotkum", "chuld", "feldwarker");
 
         //make the "real" entity to overwrite the old one.
-        PregnancyOutcome pregnancyOutcome = pregnancyOutcomeService.makeUnknownEntity();
+        PregnancyOutcome pregnancyOutcome = pregnancyOutcomeService.makePlaceHolder("prugnuncyOotkum");
         pregnancyOutcome.setChildrenBorn(11);
-        pregnancyOutcome.setUuid("prugnuncyOotkum");
 
         pregnancyOutcomeService.createOrUpdate(pregnancyOutcome);
 

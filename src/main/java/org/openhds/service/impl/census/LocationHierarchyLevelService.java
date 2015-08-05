@@ -19,10 +19,11 @@ public class LocationHierarchyLevelService extends AbstractAuditableService<Loca
     }
 
     @Override
-    protected LocationHierarchyLevel makeUnknownEntity() {
+    public LocationHierarchyLevel makePlaceHolder(String id, String name) {
         LocationHierarchyLevel locationHierarchyLevel = new LocationHierarchyLevel();
-        locationHierarchyLevel.setName("unknown");
-        locationHierarchyLevel.setKeyIdentifier(-1);
+        locationHierarchyLevel.setUuid(id);
+        locationHierarchyLevel.setName(name);
+        locationHierarchyLevel.setKeyIdentifier(id.hashCode());
         return locationHierarchyLevel;
     }
 
@@ -33,6 +34,14 @@ public class LocationHierarchyLevelService extends AbstractAuditableService<Loca
 
     public LocationHierarchyLevel findByName(String name) {
         return repository.findByDeletedFalseAndName(name).get();
+    }
+
+    public LocationHierarchyLevel findByKeyIdentifier(int keyIdentifier) {
+        return repository.findByDeletedFalseAndKeyIdentifier(keyIdentifier).get();
+    }
+
+    public boolean levelKeyIdentifierExists(int keyIdentifier) {
+        return repository.findByDeletedFalseAndKeyIdentifier(keyIdentifier).isPresent();
     }
 
     public LocationHierarchyLevel recordLocationHierarchyLevel(LocationHierarchyLevel locationHierarchyLevel){

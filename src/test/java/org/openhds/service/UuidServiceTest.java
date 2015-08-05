@@ -1,14 +1,13 @@
 package org.openhds.service;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openhds.OpenHdsRestApplication;
 import org.openhds.domain.contract.UuidIdentifiable;
+import org.openhds.repository.generator.SampleDataGenerator;
 import org.openhds.repository.queries.QueryRange;
 import org.openhds.repository.queries.QueryValue;
-import org.openhds.repository.util.SampleDataGenerator;
 import org.openhds.service.contract.AbstractUuidService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -45,7 +44,9 @@ public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends Abst
 
     protected abstract T makeInvalidEntity();
 
-    protected abstract T makeValidEntity(String name, String id);
+    protected T makeValidEntity(String name, String id){
+        return service.makePlaceHolder(id, name);
+    }
 
     protected abstract void initialize(U service);
 
@@ -56,12 +57,9 @@ public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends Abst
         initialize(service);
         sampleDataGenerator.clearData();
         sampleDataGenerator.generateSampleData();
-    }
 
-    @After
-    public void tearDown() {
-        sampleDataGenerator.clearData();
-        sampleDataGenerator.generateSampleData();
+        // make sure the unknown entity already exists, to avoid test surprises
+        service.getUnknownEntity();
     }
 
     @Test

@@ -21,9 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
 import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -33,9 +31,15 @@ import java.util.Set;
  */
 public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends UuidIdentifiableRepository<T>> {
 
+    public final static String PLACEHOLDER_NAME = "PLACEHOLDER_NAME";
+
+    public final static String UNKNOWN_NAME = "UNKNOWN_NAME";
     public final static String UNKNOWN_ENTITY_UUID = "UNKNOWN";
 
     protected final V repository;
+
+    @Autowired
+    protected Validator validator;
 
     @Autowired
     protected ErrorLogger errorLogger;
@@ -47,11 +51,18 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
         this.repository = repository;
     }
 
-    protected abstract T makeUnknownEntity();
+    public abstract T makePlaceHolder(String id, String name);
+
+    public T makePlaceHolder(String id){
+        return makePlaceHolder(id, PLACEHOLDER_NAME);
+    }
+
+    protected T makeUnknownEntity(){
+        return makePlaceHolder(UNKNOWN_ENTITY_UUID, UNKNOWN_NAME);
+    }
 
     private T persistUnknownEntity() {
         T unknownEntity = makeUnknownEntity();
-        unknownEntity.setUuid(UNKNOWN_ENTITY_UUID);
         return createOrUpdate(unknownEntity);
     }
 
@@ -60,6 +71,11 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
             return persistUnknownEntity();
         }
         return repository.findOne(UNKNOWN_ENTITY_UUID);
+    }
+
+    // Are there any records, not counting the unknown entity?
+    public boolean hasRecords() {
+        return repository.exists(UNKNOWN_ENTITY_UUID) ? 1 < repository.count() : 0 < repository.count();
     }
 
     public long countAll() {
@@ -96,37 +112,40 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
         return repository.findOne(id);
     }
 
-    public T findOrMakePlaceHolder(String uuid){
-        T entity = findOne(uuid);
-        if (null == entity){
-            entity = makeUnknownEntity();
-            entity.setUuid(uuid);
-            createOrUpdate(entity);
+    public boolean exists(String id) {
+        return repository.exists(id);
+    }
+
+    public T findOrMakePlaceHolder(String id){
+        if (exists(id)) {
+            return findOne(id);
         }
-        return entity;
+
+        T entity = makePlaceHolder(id);
+        entity.setUuid(id);
+        return createOrUpdate(entity);
     }
 
     public T createOrUpdate(T entity) {
 
         ErrorLog errorLog = new ErrorLog();
         errorLog.setEntityType(entity.getClass().getSimpleName());
-
         validate(entity, errorLog);
 
         if (!errorLog.getErrors().isEmpty()) {
             errorLogger.log(errorLog);
             throw new ErrorLogException(errorLog);
-        } else {
-            repository.save(entity);
-
-            Event event = new Event();
-            event.setActionType(Event.PERSIST_ACTION);
-            event.setEntityType(entity.getClass().getSimpleName());
-            event.setEventData(entity.toString());
-            eventPublisher.publish(event);
         }
 
-        return entity;
+        T saved = repository.save(entity);
+
+        Event event = new Event();
+        event.setActionType(Event.PERSIST_ACTION);
+        event.setEntityType(saved.getClass().getSimpleName());
+        event.setEventData(saved.toString());
+        eventPublisher.publish(event);
+
+        return saved;
     }
 
     public EntityIterator<T> findByMultipleValues(Sort sort, QueryValue... queryValues) {
@@ -157,8 +176,6 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
     public void validate(T entity, ErrorLog errorLog) {
 
         //Fire JSR-303 annotations
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        Validator validator = factory.getValidator();
         Set<ConstraintViolation<T>> violations = validator.validate(entity);
 
         List<Error> errors = errorLog.getErrors();

@@ -15,16 +15,6 @@ public class EventServiceTest extends AuditableServiceTest<Event, EventService> 
     }
 
     @Override
-    protected Event makeValidEntity(String name, String id) {
-        Event event = new Event();
-        event.setUuid(id);
-        event.setActionType(name);
-        event.setEntityType(name);
-        event.setEventData(name);
-        return event;
-    }
-
-    @Override
     @Autowired
     protected void initialize(EventService service) {
         this.service = service;

@@ -9,8 +9,6 @@ import org.openhds.service.AuditableCollectedServiceTest;
 import org.openhds.service.impl.census.IndividualService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.ZonedDateTime;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -28,21 +26,6 @@ public class DeathServiceTest extends AuditableCollectedServiceTest<Death, Death
     @Override
     protected Death makeInvalidEntity() {
         return new Death();
-    }
-
-    @Override
-    protected Death makeValidEntity(String name, String id) {
-        Death death = new Death();
-        death.setUuid(id);
-        death.setDeathDate(ZonedDateTime.now().minusYears(1));
-        death.setDeathCause(name);
-        death.setDeathPlace(name);
-        death.setIndividual(individualService.findAll(UUID_SORT).toList().get(0));
-        death.setVisit(visitService.findAll(UUID_SORT).toList().get(0));
-
-        initCollectedFields(death);
-
-        return death;
     }
 
     @Override

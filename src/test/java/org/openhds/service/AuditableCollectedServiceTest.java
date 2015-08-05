@@ -52,12 +52,12 @@ public abstract class AuditableCollectedServiceTest
 
     @Test
     @WithUserDetails
-    public void findByCollectionDateTime() {
+    public void findByCollectionDateTime() throws Exception {
 
-        T earlyEntity = makeValidEntity("earlyEntity", "earlyEntity");
+        T earlyEntity = makeValidEntityWithDelay("earlyEntity", "earlyEntity");
         ZonedDateTime earlyTime = service.createOrUpdate(earlyEntity).getCollectionDateTime();
 
-        T lateEntity = makeValidEntity("lateEntity", "lateEntity");
+        T lateEntity = makeValidEntityWithDelay("lateEntity", "lateEntity");
         ZonedDateTime lateTime = service.createOrUpdate(lateEntity).getCollectionDateTime();
 
         assertTrue(earlyTime.compareTo(lateTime) < 0);
@@ -73,7 +73,7 @@ public abstract class AuditableCollectedServiceTest
     }
 
     protected void initCollectedFields(T entity){
-        entity.setCollectedBy(fieldWorkerService.findAll(UUID_SORT).toList().get(0));
+        entity.setCollectedBy(fieldWorkerService.getUnknownEntity());
         entity.setCollectionDateTime(ZonedDateTime.now());
     }
 }

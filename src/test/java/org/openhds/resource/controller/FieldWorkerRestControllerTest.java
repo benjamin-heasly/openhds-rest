@@ -24,18 +24,6 @@ public class FieldWorkerRestControllerTest extends AuditableRestControllerTest<
     }
 
     @Override
-    protected FieldWorker makeValidEntity(String name, String id) {
-        FieldWorker fieldWorker = new FieldWorker();
-        fieldWorker.setUuid(id);
-        fieldWorker.setFirstName(name);
-        fieldWorker.setLastName(name);
-        fieldWorker.setFieldWorkerId(name);
-        fieldWorker.setPassword(name);
-        fieldWorker.setPasswordHash(name);
-        return fieldWorker;
-    }
-
-    @Override
     protected FieldWorker makeInvalidEntity() {
         return new FieldWorker();
     }

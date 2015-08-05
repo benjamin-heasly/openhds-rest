@@ -20,13 +20,13 @@ public class FieldWorkerService extends AbstractAuditableService<FieldWorker, Fi
     }
 
     @Override
-    protected FieldWorker makeUnknownEntity() {
+    public FieldWorker makePlaceHolder(String id, String name) {
         FieldWorker fieldWorker = new FieldWorker();
-        fieldWorker.setFieldWorkerId("unknown");
-        fieldWorker.setPasswordHash("unknown");
+        fieldWorker.setUuid(id);
+        fieldWorker.setFieldWorkerId(name);
+        fieldWorker.setPasswordHash(name);
         return fieldWorker;
     }
-
 
     public EntityIterator<FieldWorker> findByFieldWorkerId(Sort sort, String fieldWorkerId) {
         return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndFieldWorkerId(fieldWorkerId, pageable), sort);

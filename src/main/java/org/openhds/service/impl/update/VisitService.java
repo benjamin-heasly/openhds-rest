@@ -24,13 +24,15 @@ public class VisitService extends AbstractAuditableExtIdService<Visit, VisitRepo
     }
 
     @Override
-    protected Visit makeUnknownEntity() {
+    public Visit makePlaceHolder(String id, String name) {
         Visit visit = new Visit();
-        visit.setExtId("unknown");
-        visit.setCollectedBy(fieldWorkerService.getUnknownEntity());
-        visit.setCollectionDateTime(ZonedDateTime.now());
+        visit.setUuid(id);
+        visit.setExtId(name);
         visit.setLocation(locationService.getUnknownEntity());
         visit.setVisitDate(ZonedDateTime.now().minusYears(1));
+
+        initPlaceHolderCollectedFields(visit);
+
         return visit;
     }
 

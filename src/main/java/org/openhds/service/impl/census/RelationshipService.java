@@ -23,14 +23,16 @@ public class RelationshipService extends AbstractAuditableCollectedService<Relat
     }
 
     @Override
-    protected Relationship makeUnknownEntity() {
+    public Relationship makePlaceHolder(String id, String name) {
         Relationship relationship = new Relationship();
-        relationship.setRelationshipType("unknown");
+        relationship.setUuid(id);
+        relationship.setRelationshipType(name);
         relationship.setStartDate(ZonedDateTime.now());
         relationship.setIndividualA(individualService.getUnknownEntity());
         relationship.setIndividualB(individualService.getUnknownEntity());
-        relationship.setCollectionDateTime(ZonedDateTime.now());
-        relationship.setCollectedBy(fieldWorkerService.getUnknownEntity());
+
+        initPlaceHolderCollectedFields(relationship);
+
         return relationship;
     }
 

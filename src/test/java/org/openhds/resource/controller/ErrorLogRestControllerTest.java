@@ -1,9 +1,7 @@
 package org.openhds.resource.controller;
 
 import org.junit.Test;
-import org.openhds.errors.model.Error;
 import org.openhds.errors.model.ErrorLog;
-import org.openhds.repository.concrete.FieldWorkerRepository;
 import org.openhds.resource.contract.AuditableCollectedRestControllerTest;
 import org.openhds.resource.registration.ErrorLogRegistration;
 import org.openhds.resource.registration.Registration;
@@ -12,9 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.time.ZonedDateTime;
-
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -29,28 +26,10 @@ public class ErrorLogRestControllerTest extends AuditableCollectedRestController
         <ErrorLog, ErrorLogService, ErrorLogRestController> {
 
     @Autowired
-    FieldWorkerRepository fieldWorkerRepository;
-
-    @Autowired
     @Override
     protected void initialize(ErrorLogService service, ErrorLogRestController controller) {
         this.service = service;
         this.controller = controller;
-    }
-
-    @Override
-    protected ErrorLog makeValidEntity(String name, String id) {
-        ErrorLog errorLog = new ErrorLog();
-        errorLog.setUuid(id);
-        errorLog.setDataPayload(name);
-
-        Error error = new Error();
-        error.setErrorMessage(name);
-        errorLog.getErrors().add(error);
-
-        errorLog.setCollectionDateTime(ZonedDateTime.now());
-
-        return errorLog;
     }
 
     @Override
@@ -74,7 +53,7 @@ public class ErrorLogRestControllerTest extends AuditableCollectedRestController
     protected Registration<ErrorLog> makeRegistration(ErrorLog entity) {
         ErrorLogRegistration errorLogRegistration = new ErrorLogRegistration();
         errorLogRegistration.setErrorLog(entity);
-        errorLogRegistration.setCollectedByUuid(fieldWorkerRepository.findAll().get(0).getUuid());
+        errorLogRegistration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
         return errorLogRegistration;
     }
 
@@ -89,45 +68,45 @@ public class ErrorLogRestControllerTest extends AuditableCollectedRestController
         final int totalCount = (int) service.countAll();
         this.mockMvc.perform(get(getResourceUrl() + "query"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(totalCount)));
+                .andExpect(jsonPath("$.page.totalElements", is(totalCount)));
 
         // several queries to match only the second
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("resolutionStatus", second.getResolutionStatus()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(1)));
+                .andExpect(jsonPath("$.page.totalElements", is(1)));
 
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("entityType", second.getEntityType()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(1)));
+                .andExpect(jsonPath("$.page.totalElements", is(1)));
 
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("assignedTo", second.getAssignedTo()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(1)));
+                .andExpect(jsonPath("$.page.totalElements", is(1)));
 
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("fieldWorkerId", second.getCollectedBy().getFieldWorkerId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(totalCount)));
+                .andExpect(jsonPath("$.page.totalElements", is(totalCount)));
 
         // queries by date range
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("minDate", second.getInsertDate().toString()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(2)));
+                .andExpect(jsonPath("$.page.totalElements", is(2)));
 
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("maxDate", second.getInsertDate().toString()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(totalCount - 1)));
+                .andExpect(jsonPath("$.page.totalElements", is(totalCount - 1)));
 
         this.mockMvc.perform(get(getResourceUrl() + "query")
                 .param("minDate", first.getInsertDate().toString())
                 .param("maxDate", third.getInsertDate().toString()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(3)));
+                .andExpect(jsonPath("$.page.totalElements", is(3)));
 
         // match only the second, emphatically!
         this.mockMvc.perform(get(getResourceUrl() + "query")
@@ -138,7 +117,7 @@ public class ErrorLogRestControllerTest extends AuditableCollectedRestController
                 .param("minDate", second.getInsertDate().toString())
                 .param("maxDate", second.getInsertDate().toString()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(1)));
+                .andExpect(jsonPath("$.page.totalElements", is(1)));
     }
 
     private ErrorLog insertFancyAndReturn(String name,

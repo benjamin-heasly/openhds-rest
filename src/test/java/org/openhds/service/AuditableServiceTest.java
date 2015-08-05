@@ -47,7 +47,7 @@ public abstract class AuditableServiceTest
     }
 
     // Sleep some millis before creating an entity, to ensure a fresh timestamp.
-    private T makeValidEntityWithDelay(String name, String id) throws Exception {
+    protected T makeValidEntityWithDelay(String name, String id) throws Exception {
         Thread.sleep(100);
         return makeValidEntity(name, id);
     }
@@ -79,7 +79,7 @@ public abstract class AuditableServiceTest
         List<T> afterReslts = service.findByInsertDate(UUID_SORT, earlyTime, null).toList();
         assertEquals(2, afterReslts.size());
 
-        // pre-existing, plust two which we just inserted
+        // pre-existing, plus two which we just inserted
         List<T> beforeReslts = service.findByInsertDate(UUID_SORT, null, lateTime).toList();
         assertEquals(2 + initialCount, beforeReslts.size());
 
@@ -107,7 +107,7 @@ public abstract class AuditableServiceTest
         List<T> afterReslts = service.findByInsertDate(UUID_SORT, earlyTime, null).toList();
         assertEquals(2, afterReslts.size());
 
-        // pre-existing, plust two which we just inserted
+        // pre-existing, plus two which we just inserted
         List<T> beforeReslts = service.findByInsertDate(UUID_SORT, null, lateTime).toList();
         assertEquals(2 + initialCount, beforeReslts.size());
 

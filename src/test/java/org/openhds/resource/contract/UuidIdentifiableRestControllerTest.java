@@ -37,9 +37,13 @@ public abstract class UuidIdentifiableRestControllerTest<
 
     protected V controller;
 
+    protected final Sort UUID_SORT = new Sort("uuid");
+
     protected abstract void initialize(U service, V controller);
 
-    protected abstract T makeValidEntity(String name, String id);
+    protected T makeValidEntity(String name, String id){
+        return service.makePlaceHolder(id, name);
+    }
 
     protected abstract T makeInvalidEntity();
 
@@ -52,7 +56,7 @@ public abstract class UuidIdentifiableRestControllerTest<
     }
 
     protected T findAnyExisting() {
-        return service.findAll(new Sort("uuid")).toList().get(0);
+        return service.findAll(UUID_SORT).toList().get(0);
     }
 
     protected T makeUpdateEntity(String name) {
@@ -256,7 +260,7 @@ public abstract class UuidIdentifiableRestControllerTest<
         mockMvc.perform(get(getResourceUrl()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize((int) service.countAll())));
+                .andExpect(jsonPath("$.page.totalElements", is((int) service.countAll())));
     }
 
     @Test

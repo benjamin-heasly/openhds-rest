@@ -1,6 +1,7 @@
 package org.openhds.service.impl;
 
 import org.openhds.errors.model.ErrorLog;
+import org.openhds.errors.model.ErrorLogException;
 import org.openhds.repository.concrete.PrivilegeRepository;
 import org.openhds.repository.concrete.RoleRepository;
 import org.openhds.repository.concrete.UserRepository;
@@ -33,10 +34,11 @@ public class UserService extends AbstractUuidService<User, UserRepository> {
     }
 
     @Override
-    protected User makeUnknownEntity() {
+    public User makePlaceHolder(String id, String name) {
         User user = new User();
-        user.setUsername("unknown");
-        user.setFirstName("unknown");
+        user.setUuid(id);
+        user.setUsername(name);
+        user.setFirstName(name);
         return user;
     }
 
@@ -53,7 +55,23 @@ public class UserService extends AbstractUuidService<User, UserRepository> {
         return roleRepository.findByName(name).get();
     }
 
-    public Privilege findPrivledgeByGrant(Privilege.Grant grant) {
+    public Privilege createOrUpdate (Privilege privilege) {
+        return privilegeRepository.save(privilege);
+    }
+
+    public Role createOrUpdate(Role role) {
+        return roleRepository.save(role);
+    }
+
+    public long countPrivileges() {
+        return privilegeRepository.count();
+    }
+
+    public long countRoles() {
+        return roleRepository.count();
+    }
+
+    public Privilege findPrivilegeByGrant(Privilege.Grant grant) {
         return privilegeRepository.findByGrant(grant).get();
     }
 

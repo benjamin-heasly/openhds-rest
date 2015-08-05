@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.time.ZonedDateTime;
 
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -58,7 +59,7 @@ public abstract class AuditableRestControllerTest<
                 .param("beforeDate", preInsert.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(preexistingRecords)));
+                .andExpect(jsonPath("$.page.totalElements", is(preexistingRecords)));
         mockMvc.perform(get(getByDateBulkUrl())
                 .param("beforeDate", preInsert.toString()))
                 .andExpect(status().isOk())
@@ -71,7 +72,7 @@ public abstract class AuditableRestControllerTest<
                 .param("afterDate", preInsert.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(newRecords)));
+                .andExpect(jsonPath("$.page.totalElements", is(newRecords)));
         mockMvc.perform(get(getByDateBulkUrl())
                 .param("afterDate", preInsert.toString()))
                 .andExpect(status().isOk())
@@ -83,7 +84,7 @@ public abstract class AuditableRestControllerTest<
                 .param("beforeDate", postInsert.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(newRecords)));
+                .andExpect(jsonPath("$.page.totalElements", is(newRecords)));
         mockMvc.perform(get(getByDateBulkUrl())
                 .param("afterDate", preInsert.toString())
                 .param("beforeDate", postInsert.toString()))
@@ -96,7 +97,7 @@ public abstract class AuditableRestControllerTest<
                 .param("beforeDate", postInsert.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(allRecords)));
+                .andExpect(jsonPath("$.page.totalElements", is(allRecords)));
         mockMvc.perform(get(getByDateBulkUrl())
                 .param("beforeDate", postInsert.toString()))
                 .andExpect(status().isOk())
@@ -108,7 +109,7 @@ public abstract class AuditableRestControllerTest<
                 .param("afterDate", postInsert.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
-                .andExpect(jsonPath("$._embedded.", isEmptyOrNullString()));
+                .andExpect(jsonPath("$.page.totalElements", is(0)));
         mockMvc.perform(get(getByDateBulkUrl())
                 .param("afterDate", postInsert.toString()))
                 .andExpect(status().isOk())
@@ -128,7 +129,7 @@ public abstract class AuditableRestControllerTest<
         mockMvc.perform(get(getVoidedResourceUrl()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
-                .andExpect(jsonPath("$._embedded.", isEmptyOrNullString()));
+                .andExpect(jsonPath("$.page.totalElements", is(0)));
 
         // void it
         mockMvc.perform(delete(getResourceUrl() + entity.getUuid()))
@@ -138,7 +139,7 @@ public abstract class AuditableRestControllerTest<
         mockMvc.perform(get(getVoidedResourceUrl()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(halJson))
-                .andExpect(jsonPath("$._embedded." + controller.getResourceName(), hasSize(1)));
+                .andExpect(jsonPath("$.page.totalElements", is(1)));
 
         // can't get it anymore
         mockMvc.perform(get(getResourceUrl() + entity.getUuid()))

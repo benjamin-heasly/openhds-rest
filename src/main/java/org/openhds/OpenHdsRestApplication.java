@@ -3,8 +3,7 @@ package org.openhds;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import org.openhds.repository.util.ProjectCodeLoader;
-import org.openhds.repository.util.SampleDataGenerator;
+import org.openhds.repository.generator.SampleDataGenerator;
 import org.openhds.resource.converter.EntityCollectionMessageWriter;
 import org.openhds.resource.converter.JsonArrayDelimiter;
 import org.openhds.resource.converter.XmlElementDelimiter;
@@ -21,9 +20,11 @@ import org.springframework.hateoas.config.EnableEntityLinks;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import javax.validation.Validator;
 import java.util.List;
 
 /**
@@ -40,11 +41,9 @@ public class OpenHdsRestApplication {
     }
 
     @Bean
-    public CommandLineRunner initWithSampleData(SampleDataGenerator sampleDataGenerator,
-                                                ProjectCodeLoader projectCodeLoader) {
+    public CommandLineRunner initWithSampleData(SampleDataGenerator sampleDataGenerator) {
         return (args) -> {
             sampleDataGenerator.clearData();
-            projectCodeLoader.loadAllCodes();
             sampleDataGenerator.generateSampleData();
         };
     }
@@ -54,6 +53,11 @@ public class OpenHdsRestApplication {
         YamlMapFactoryBean yamlMapFactoryBean = new YamlMapFactoryBean();
         yamlMapFactoryBean.setResources(new ClassPathResource("project-codes.yml"));
         return yamlMapFactoryBean;
+    }
+
+    @Bean
+    public Validator beanValidator() {
+        return new LocalValidatorFactoryBean();
     }
 
     @EnableWebMvc
