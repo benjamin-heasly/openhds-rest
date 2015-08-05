@@ -7,6 +7,7 @@ import org.openhds.repository.generator.MasterDataGenerator;
 import org.openhds.resource.converter.EntityCollectionMessageWriter;
 import org.openhds.resource.converter.JsonArrayDelimiter;
 import org.openhds.resource.converter.XmlElementDelimiter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.YamlMapFactoryBean;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -43,8 +44,7 @@ public class OpenHdsRestApplication {
     @Bean
     public CommandLineRunner initWithSampleData(MasterDataGenerator masterDataGenerator) {
         return (args) -> {
-            masterDataGenerator.clearData();
-            masterDataGenerator.generateData();
+            // TODO: optional command line argument to generate data
         };
     }
 

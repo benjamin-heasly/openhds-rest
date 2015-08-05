@@ -1,9 +1,11 @@
 package org.openhds.service;
 
+import javassist.tools.reflect.Sample;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openhds.OpenHdsRestApplication;
+import org.openhds.SampleDataTestSetup;
 import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.repository.generator.MasterDataGenerator;
 import org.openhds.repository.queries.QueryRange;
@@ -12,8 +14,11 @@ import org.openhds.service.contract.AbstractUuidService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.List;
@@ -34,11 +39,11 @@ import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = OpenHdsRestApplication.class)
+@TestExecutionListeners({DependencyInjectionTestExecutionListener.class,
+        WithSecurityContextTestExecutionListener.class,
+        SampleDataTestSetup.class})
 @WebAppConfiguration
 public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends AbstractUuidService<T, ?>> {
-
-    @Autowired
-    protected MasterDataGenerator masterDataGenerator;
 
     protected U service;
 
@@ -55,8 +60,6 @@ public abstract class UuidServiceTest<T extends UuidIdentifiable, U extends Abst
     @Before
     public void setup() throws Exception {
         initialize(service);
-        masterDataGenerator.clearData();
-        masterDataGenerator.generateData();
 
         // make sure the unknown entity already exists, to avoid test surprises
         service.getUnknownEntity();
