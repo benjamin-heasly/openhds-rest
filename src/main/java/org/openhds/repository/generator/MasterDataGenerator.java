@@ -41,6 +41,7 @@ public class MasterDataGenerator implements DataGenerator {
 
     @Override
     public void generateData(int size) {
+        System.out.println("Generating data with size " + size + ".");
         for (DataGenerator dataGenerator : dataGenerators) {
             dataGenerator.generateData(size);
         }
@@ -48,6 +49,7 @@ public class MasterDataGenerator implements DataGenerator {
 
     @Override
     public void clearData() {
+        System.out.println("Clearing data!");
         ListIterator<DataGenerator> listIterator = dataGenerators.listIterator(dataGenerators.size());
         while (listIterator.hasPrevious()) {
             listIterator.previous().clearData();

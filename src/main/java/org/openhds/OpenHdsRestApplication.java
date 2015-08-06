@@ -14,6 +14,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
@@ -37,14 +38,26 @@ import java.util.List;
 @EnableEntityLinks
 public class OpenHdsRestApplication {
 
+    private static final String SAMPLE_DATA_SIZE_PROPERTY = "sampleDataSize";
+
     public static void main(String[] args) {
         SpringApplication.run(OpenHdsRestApplication.class, args);
     }
 
     @Bean
-    public CommandLineRunner initWithSampleData(MasterDataGenerator masterDataGenerator) {
+    public CommandLineRunner initWithSampleData(MasterDataGenerator masterDataGenerator,
+                                                Environment environment) {
         return (args) -> {
-            // TODO: optional command line argument to generate data
+            if (!environment.containsProperty(SAMPLE_DATA_SIZE_PROPERTY)) {
+                // start normally
+                return;
+            }
+
+            int size = environment.getProperty(SAMPLE_DATA_SIZE_PROPERTY, Integer.class);
+            if (size >= 0) {
+                // start with sample data
+                masterDataGenerator.generateData(size);
+            }
         };
     }
 
