@@ -65,7 +65,6 @@ public class LocationHierarchy extends AuditableExtIdEntity implements Serializa
     @Override
     public String toString() {
         return "LocationHierarchy{" +
-                "parent=" + parent +
                 ", name='" + name + '\'' +
                 ", level=" + level +
                 "} " + super.toString();

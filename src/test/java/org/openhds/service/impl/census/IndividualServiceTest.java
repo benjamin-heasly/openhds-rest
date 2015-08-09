@@ -14,6 +14,13 @@ import static org.junit.Assert.assertNotNull;
  */
 public class IndividualServiceTest extends AuditableExtIdServiceTest<Individual, IndividualService> {
 
+    public static final String FIELDWORKER_ID = "feldwarker";
+    public static final String SOCIALGROUP_ID = "suculgrup";
+    public static final String LOCATION_ID = "lucution";
+    public static final String RESIDENCY_ID = "rusuduncy";
+    public static final String MEMBERSHIP_ID = "mumbershup";
+    public static final String RELATIONSHIP_ID = "relutuionshup";
+
     @Override
     protected Individual makeInvalidEntity() {
         return new Individual();
@@ -35,7 +42,12 @@ public class IndividualServiceTest extends AuditableExtIdServiceTest<Individual,
         individual.setCollectedBy(null);
 
         // pass it all into the record method
-        individual = service.recordIndividual(individual, fieldWorker.getUuid());
+        individual = service.recordIndividual(individual, SOCIALGROUP_ID,
+                                                            LOCATION_ID,
+                                                            RESIDENCY_ID,
+                                                            MEMBERSHIP_ID,
+                                                            RELATIONSHIP_ID,
+                                                            fieldWorker.getUuid());
 
 
         //Check that the originals match the ones pulled out from findOrMakePlaceholder()
@@ -52,11 +64,16 @@ public class IndividualServiceTest extends AuditableExtIdServiceTest<Individual,
         individual.setCollectedBy(null);
 
         //Pass it in with new reference uuids
-        individual = service.recordIndividual(individual, "feldwarker");
+        individual = service.recordIndividual(individual, SOCIALGROUP_ID,
+                                                            LOCATION_ID,
+                                                            RESIDENCY_ID,
+                                                            MEMBERSHIP_ID,
+                                                            RELATIONSHIP_ID,
+                                                            FIELDWORKER_ID);
 
         //check that they were persisted
         assertNotNull(individual.getCollectedBy());
-        assertEquals(individual.getCollectedBy().getUuid(), "feldwarker");
+        assertEquals(individual.getCollectedBy().getUuid(), FIELDWORKER_ID);
 
     }
 }

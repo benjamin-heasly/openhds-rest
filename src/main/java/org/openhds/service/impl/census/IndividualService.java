@@ -31,7 +31,13 @@ public class IndividualService extends AbstractAuditableExtIdService<Individual,
         return individual;
     }
 
-    public Individual recordIndividual(Individual individual, String fieldWorkerId){
+    public Individual recordIndividual(Individual individual,
+                                       String socialGroupUuid,
+                                       String locationUuid,
+                                       String residencyUuid,
+                                       String membershipUuid,
+                                       String relationshipUuid,
+                                       String fieldWorkerId) {
         individual.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
         return createOrUpdate(individual);
     }
