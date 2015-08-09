@@ -35,9 +35,7 @@ public class SocialGroupRestController extends AuditableExtIdRestController<
 
     @Override
     protected SocialGroup register(SocialGroupRegistration registration) {
-        SocialGroup socialGroup = registration.getSocialGroup();
-        socialGroup.setCollectedBy(fieldWorkerService.findOne(registration.getCollectedByUuid()));
-        return socialGroupService.createOrUpdate(socialGroup);
+        return socialGroupService.recordSocialGroup(registration.getSocialGroup(), registration.getCollectedByUuid());
     }
 
     @Override

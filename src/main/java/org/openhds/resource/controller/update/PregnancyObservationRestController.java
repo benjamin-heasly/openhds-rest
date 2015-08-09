@@ -45,11 +45,10 @@ public class PregnancyObservationRestController extends AuditableCollectedRestCo
 
     @Override
     protected PregnancyObservation register(PregnancyObservationRegistration registration) {
-        PregnancyObservation pregnancyObservation = registration.getPregnancyObservation();
-        pregnancyObservation.setCollectedBy(fieldWorkerService.findOne(registration.getCollectedByUuid()));
-        pregnancyObservation.setMother(individualService.findOne(registration.getMotherUuid()));
-        pregnancyObservation.setVisit(visitService.findOne(registration.getVisitUuid()));
-        return pregnancyObservationService.createOrUpdate(pregnancyObservation);
+        return pregnancyObservationService.recordPregnancyObservation(registration.getPregnancyObservation(),
+                registration.getMotherUuid(),
+                registration.getVisitUuid(),
+                registration.getCollectedByUuid());
     }
 
     @Override

@@ -31,9 +31,13 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
 
     @Override
     protected Individual register(IndividualRegistration registration) {
-        Individual individual = registration.getIndividual();
-        individual.setCollectedBy(fieldWorkerService.findOne(registration.getCollectedByUuid()));
-        return individualService.createOrUpdate(individual);
+        return individualService.recordIndividual(registration.getIndividual(),
+            registration.getSocialGroupUuid(),
+            registration.getLocationUuid(),
+            registration.getResidencyUuid(),
+            registration.getMembershipUuid(),
+            registration.getRelationshipUuid(),
+            registration.getCollectedByUuid());
     }
 
     @Override

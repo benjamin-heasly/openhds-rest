@@ -50,12 +50,11 @@ public class InMigrationRestController extends AuditableCollectedRestController<
 
     @Override
     protected InMigration register(InMigrationRegistration registration) {
-        InMigration inMigration = registration.getInMigration();
-        inMigration.setCollectedBy(fieldWorkerService.findOne(registration.getCollectedByUuid()));
-        inMigration.setIndividual(individualService.findOne(registration.getIndividualUuid()));
-        inMigration.setResidency(residencyService.findOne(registration.getResidencyUuid()));
-        inMigration.setVisit(visitService.findOne(registration.getVisitUuid()));
-        return inMigrationService.createOrUpdate(inMigration);
+        return inMigrationService.recordInMigration(registration.getInMigration(),
+                registration.getIndividualUuid(),
+                registration.getResidencyUuid(),
+                registration.getVisitUuid(),
+                registration.getCollectedByUuid());
     }
 
     @Override

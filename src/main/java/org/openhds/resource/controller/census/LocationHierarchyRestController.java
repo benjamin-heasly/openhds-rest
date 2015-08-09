@@ -35,10 +35,10 @@ public class LocationHierarchyRestController extends AuditableExtIdRestControlle
 
     @Override
     protected LocationHierarchy register(LocationHierarchyRegistration registration) {
-        LocationHierarchy locationHierarchy = registration.getLocationHierarchy();
-        locationHierarchy.setParent(locationHierarchyService.findOne(registration.getParentUuid()));
-        locationHierarchy.setCollectedBy(fieldWorkerService.findOne(registration.getCollectedByUuid()));
-        return locationHierarchyService.createOrUpdate(locationHierarchy);
+        return locationHierarchyService.recordLocationHierarchy(registration.getLocationHierarchy(),
+                registration.getParentUuid(),
+                registration.getLevelUuid(),
+                registration.getCollectedByUuid());
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.openhds.service.impl.update;
 
 import org.openhds.domain.model.update.PregnancyObservation;
+import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.update.PregnancyObservationRepository;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
 import org.openhds.service.impl.census.IndividualService;
@@ -51,5 +52,10 @@ public class PregnancyObservationService extends AbstractAuditableCollectedServi
         pregnancyObservation.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
 
         return createOrUpdate(pregnancyObservation);
+    }
+
+    @Override
+    public void validate(PregnancyObservation entity, ErrorLog errorLog) {
+        super.validate(entity, errorLog);
     }
 }

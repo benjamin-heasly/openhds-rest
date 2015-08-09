@@ -1,6 +1,7 @@
 package org.openhds.service.impl.census;
 
 import org.openhds.domain.model.census.Relationship;
+import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.census.RelationshipRepository;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,5 +42,10 @@ public class RelationshipService extends AbstractAuditableCollectedService<Relat
         relationship.setIndividualB(individualService.findOrMakePlaceHolder(individualBId));
         relationship.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
         return createOrUpdate(relationship);
+    }
+
+    @Override
+    public void validate(Relationship entity, ErrorLog errorLog) {
+        super.validate(entity, errorLog);
     }
 }

@@ -1,6 +1,7 @@
 package org.openhds.service.impl.census;
 
 import org.openhds.domain.model.census.SocialGroup;
+import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.census.SocialGroupRepository;
 import org.openhds.service.contract.AbstractAuditableExtIdService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,5 +35,10 @@ public class SocialGroupService extends AbstractAuditableExtIdService<SocialGrou
     public SocialGroup recordSocialGroup(SocialGroup socialGroup, String fieldWorkerId){
         socialGroup.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
         return createOrUpdate(socialGroup);
+    }
+
+    @Override
+    public void validate(SocialGroup entity, ErrorLog errorLog) {
+        super.validate(entity, errorLog);
     }
 }

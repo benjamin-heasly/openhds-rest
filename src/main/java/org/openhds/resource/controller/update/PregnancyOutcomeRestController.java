@@ -40,13 +40,12 @@ public class PregnancyOutcomeRestController extends AuditableCollectedRestContro
 
     @Override
     protected PregnancyOutcome register(PregnancyOutcomeRegistration registration) {
-        PregnancyOutcome pregnancyOutcome = registration.getPregnancyOutcome();
-        pregnancyOutcome.setCollectedBy(fieldWorkerService.findOne(registration.getCollectedByUuid()));
-        pregnancyOutcome.setVisit(visitService.findOne(registration.getVisitUuid()));
-        pregnancyOutcome.setMother(individualService.findOne(registration.getFatherUuid()));
-        pregnancyOutcome.setFather(individualService.findOne(registration.getFatherUuid()));
+        return service.recordPregnancyOutcome(registration.getPregnancyOutcome(),
+                registration.getMotherUuid(),
+                registration.getFatherUuid(),
+                registration.getVisitUuid(),
+                registration.getCollectedByUuid());
 
-        return service.createOrUpdate(pregnancyOutcome);
     }
 
     @Override

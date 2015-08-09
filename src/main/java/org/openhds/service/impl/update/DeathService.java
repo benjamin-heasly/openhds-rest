@@ -1,6 +1,7 @@
 package org.openhds.service.impl.update;
 
 import org.openhds.domain.model.update.Death;
+import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.update.DeathRepository;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
 import org.openhds.service.impl.census.IndividualService;
@@ -46,5 +47,10 @@ public class DeathService extends AbstractAuditableCollectedService<Death, Death
         death.setVisit(visitService.findOrMakePlaceHolder(visitId));
         death.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
         return createOrUpdate(death);
+    }
+
+    @Override
+    public void validate(Death entity, ErrorLog errorLog) {
+        super.validate(entity, errorLog);
     }
 }

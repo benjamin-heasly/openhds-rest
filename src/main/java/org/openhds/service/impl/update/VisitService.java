@@ -1,6 +1,7 @@
 package org.openhds.service.impl.update;
 
 import org.openhds.domain.model.update.Visit;
+import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.update.VisitRepository;
 import org.openhds.service.contract.AbstractAuditableExtIdService;
 import org.openhds.service.impl.census.LocationService;
@@ -40,5 +41,10 @@ public class VisitService extends AbstractAuditableExtIdService<Visit, VisitRepo
         visit.setLocation(locationService.findOrMakePlaceHolder(locationId));
         visit.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
         return createOrUpdate(visit);
+    }
+
+    @Override
+    public void validate(Visit entity, ErrorLog errorLog) {
+        super.validate(entity, errorLog);
     }
 }

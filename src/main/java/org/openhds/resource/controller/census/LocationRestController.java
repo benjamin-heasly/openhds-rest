@@ -40,10 +40,9 @@ public class LocationRestController extends AuditableExtIdRestController<
 
     @Override
     protected Location register(LocationRegistration registration) {
-        Location location = registration.getLocation();
-        location.setLocationHierarchy(locationHierarchyService.findOne(registration.getLocationHierarchyUuid()));
-        location.setCollectedBy(fieldWorkerService.findOne(registration.getCollectedByUuid()));
-        return locationService.createOrUpdate(location);
+        return locationService.recordLocation(registration.getLocation(),
+                registration.getLocationHierarchyUuid(),
+                registration.getCollectedByUuid());
     }
 
     @Override
