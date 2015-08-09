@@ -3,16 +3,18 @@ package org.openhds;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import org.openhds.repository.generator.SampleDataGenerator;
+import org.openhds.repository.generator.MasterDataGenerator;
 import org.openhds.resource.converter.EntityCollectionMessageWriter;
 import org.openhds.resource.converter.JsonArrayDelimiter;
 import org.openhds.resource.converter.XmlElementDelimiter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.YamlMapFactoryBean;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
@@ -36,15 +38,26 @@ import java.util.List;
 @EnableEntityLinks
 public class OpenHdsRestApplication {
 
+    private static final String SAMPLE_DATA_SIZE_PROPERTY = "sampleDataSize";
+
     public static void main(String[] args) {
         SpringApplication.run(OpenHdsRestApplication.class, args);
     }
 
     @Bean
-    public CommandLineRunner initWithSampleData(SampleDataGenerator sampleDataGenerator) {
+    public CommandLineRunner initWithSampleData(MasterDataGenerator masterDataGenerator,
+                                                Environment environment) {
         return (args) -> {
-            sampleDataGenerator.clearData();
-            sampleDataGenerator.generateSampleData();
+            if (!environment.containsProperty(SAMPLE_DATA_SIZE_PROPERTY)) {
+                // start normally
+                return;
+            }
+
+            int size = environment.getProperty(SAMPLE_DATA_SIZE_PROPERTY, Integer.class);
+            if (size >= 0) {
+                // start with sample data
+                masterDataGenerator.generateData(size);
+            }
         };
     }
 

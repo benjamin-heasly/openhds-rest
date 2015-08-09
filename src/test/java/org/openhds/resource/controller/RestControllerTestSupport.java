@@ -6,15 +6,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openhds.OpenHdsRestApplication;
+import org.openhds.SampleDataTestSetup;
+import org.openhds.repository.generator.MasterDataGenerator;
 import org.openhds.repository.generator.RequiredDataGenerator;
-import org.openhds.repository.generator.SampleDataGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
+import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;
+import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -37,7 +41,10 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
  * Created by Ben on 6/3/15.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = OpenHdsRestApplication.class)
+@SpringApplicationConfiguration(classes = {OpenHdsRestApplication.class})
+@TestExecutionListeners({DependencyInjectionTestExecutionListener.class,
+        WithSecurityContextTestExecutionListener.class,
+        SampleDataTestSetup.class})
 @WebAppConfiguration
 public class RestControllerTestSupport {
 
@@ -64,12 +71,6 @@ public class RestControllerTestSupport {
     protected WebApplicationContext webApplicationContext;
 
     @Autowired
-    protected SampleDataGenerator sampleDataGenerator;
-
-    @Autowired
-    protected RequiredDataGenerator requiredDataGenerator;
-
-    @Autowired
     protected MappingJackson2HttpMessageConverter jsonMessageConverter;
 
     @Autowired
@@ -92,22 +93,12 @@ public class RestControllerTestSupport {
 
     @Before
     public void setup() throws Exception {
-        sampleDataGenerator.clearData();
-        sampleDataGenerator.generateSampleData();
-
         this.mockMvc = webAppContextSetup(webApplicationContext)
                 .apply(springSecurity())
                 .build();
 
         assertNotNull("the Json message converter must not be null", jsonMessageConverter);
         assertNotNull("the Xml message converter must not be null", xmlMessageConverter);
-    }
-
-    @After
-    public void tearDown() {
-        // make sure the default user still exists after tests
-        // this is required for @WithUserDetails, which executes *before* the @Before method
-        requiredDataGenerator.createDefaultUser();
     }
 
     @Test
