@@ -28,7 +28,7 @@ import static java.util.stream.Collectors.toSet;
  *
  */
 @Component
-public class RequiredDataGenerator {
+public class RequiredDataGenerator implements DataGenerator {
 
     private static final String DEFAULT_USER_UUID = "DEFAULT_USER";
     private static final String DEFAULT_USER_USERNAME = "user";
@@ -68,7 +68,8 @@ public class RequiredDataGenerator {
         this.projectCodeRepository = projectCodeRepository;
     }
 
-    public void generateData() {
+    @Override
+    public void generateData(int size) {
         generatePrivileges();
         generateRoles();
         generateUsers();
@@ -77,6 +78,12 @@ public class RequiredDataGenerator {
         generateUnknowns();
     }
 
+    @Override
+    public void generateData() {
+        generateData(0);
+    }
+
+    @Override
     public void clearData() {
         fieldWorkerRepository.deleteAllInBatch();
         projectCodeRepository.deleteAllInBatch();
