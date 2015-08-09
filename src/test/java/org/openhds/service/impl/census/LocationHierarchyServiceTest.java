@@ -7,6 +7,8 @@ import org.openhds.domain.model.census.LocationHierarchyLevel;
 import org.openhds.service.AuditableExtIdServiceTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -45,10 +47,9 @@ public class LocationHierarchyServiceTest extends AuditableExtIdServiceTest<Loca
 
         // pass it all into the record method
         locationHierarchy = service.recordLocationHierarchy(locationHierarchy,
-                fieldWorker.getUuid(),
                 parent.getUuid(),
-                level.getUuid());
-
+                level.getUuid(),
+                fieldWorker.getUuid());
 
         //Check that the originals match the ones pulled out from findOrMakePlaceholder()
         assertNotNull(locationHierarchy.getCollectedBy());

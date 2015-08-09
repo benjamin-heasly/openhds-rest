@@ -74,7 +74,6 @@ public class LocationHierarchyService extends AbstractAuditableExtIdService<
         locationHierarchy.setParent(findOrMakePlaceHolder(parentId));
         locationHierarchy.setLevel(locationHierarchyLevelService.findOrMakePlaceHolder(levelId));
         locationHierarchy.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
-        locationHierarchy.setParent(findOrMakePlaceHolder(parentId));
         return createOrUpdate(locationHierarchy);
     }
 
