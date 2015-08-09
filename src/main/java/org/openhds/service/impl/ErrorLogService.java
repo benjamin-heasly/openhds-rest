@@ -70,5 +70,8 @@ public class ErrorLogService extends AbstractAuditableCollectedService<ErrorLog,
         return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndCollectedBy(fieldWorker, pageable), sort);
     }
 
-
+    @Override
+    public void validate(ErrorLog entity, ErrorLog errorLog) {
+        super.validate(entity, errorLog);
+    }
 }

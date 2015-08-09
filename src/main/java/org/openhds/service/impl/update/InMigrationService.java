@@ -1,6 +1,7 @@
 package org.openhds.service.impl.update;
 
 import org.openhds.domain.model.update.InMigration;
+import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.update.InMigationRepository;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
 import org.openhds.service.impl.census.IndividualService;
@@ -54,5 +55,10 @@ public class InMigrationService extends AbstractAuditableCollectedService<InMigr
         inMigration.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
 
         return createOrUpdate(inMigration);
+    }
+
+    @Override
+    public void validate(InMigration entity, ErrorLog errorLog) {
+        super.validate(entity, errorLog);
     }
 }

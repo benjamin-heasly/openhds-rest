@@ -1,6 +1,7 @@
 package org.openhds.service.impl.update;
 
 import org.openhds.domain.model.update.PregnancyOutcome;
+import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.update.PregnancyOutcomeRepository;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
 import org.openhds.service.impl.census.IndividualService;
@@ -54,4 +55,8 @@ public class PregnancyOutcomeService extends AbstractAuditableCollectedService<P
         return createOrUpdate(pregnancyOutcome);
     }
 
+    @Override
+    public void validate(PregnancyOutcome entity, ErrorLog errorLog) {
+        super.validate(entity, errorLog);
+    }
 }

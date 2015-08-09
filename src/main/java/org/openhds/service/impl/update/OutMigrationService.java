@@ -1,6 +1,7 @@
 package org.openhds.service.impl.update;
 
 import org.openhds.domain.model.update.OutMigration;
+import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.update.OutMigationRepository;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
 import org.openhds.service.impl.census.IndividualService;
@@ -54,4 +55,9 @@ public class OutMigrationService extends AbstractAuditableCollectedService<OutMi
 
         return createOrUpdate(outMigration);
     }
+
+    @Override
+    public void validate(OutMigration entity, ErrorLog errorLog) {
+        super.validate(entity, errorLog);
     }
+}

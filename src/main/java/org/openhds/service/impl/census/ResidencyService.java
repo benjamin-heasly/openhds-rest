@@ -1,6 +1,7 @@
 package org.openhds.service.impl.census;
 
 import org.openhds.domain.model.census.Residency;
+import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.census.ResidencyRepository;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,5 +46,10 @@ public class ResidencyService extends AbstractAuditableCollectedService<Residenc
         residency.setLocation(locationService.findOrMakePlaceHolder(locationId));
         residency.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
         return createOrUpdate(residency);
+    }
+
+    @Override
+    public void validate(Residency entity, ErrorLog errorLog) {
+        super.validate(entity, errorLog);
     }
 }
