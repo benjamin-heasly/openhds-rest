@@ -5,6 +5,7 @@ import org.openhds.resource.contract.AuditableExtIdRestControllerTest;
 import org.openhds.resource.registration.Registration;
 import org.openhds.resource.registration.census.IndividualRegistration;
 import org.openhds.service.impl.census.IndividualService;
+import org.openhds.service.impl.census.IndividualServiceTest;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertEquals;
@@ -43,6 +44,12 @@ public class IndividualRestControllerTest extends AuditableExtIdRestControllerTe
     protected Registration<Individual> makeRegistration(Individual entity) {
         IndividualRegistration registration = new IndividualRegistration();
         registration.setIndividual(entity);
+        //TODO: move these somewhere useful.
+        registration.setLocationUuid(IndividualServiceTest.LOCATION_ID);
+        registration.setSocialGroupUuid(IndividualServiceTest.SOCIALGROUP_ID);
+        registration.setResidencyUuid(IndividualServiceTest.RESIDENCY_ID);
+        registration.setMembershipUuid(IndividualServiceTest.MEMBERSHIP_ID);
+        registration.setRelationshipUuid(IndividualServiceTest.RELATIONSHIP_ID);
         registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
         return registration;
     }
