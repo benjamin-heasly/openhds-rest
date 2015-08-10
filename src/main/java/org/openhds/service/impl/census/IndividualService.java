@@ -102,6 +102,7 @@ public class IndividualService extends AbstractAuditableExtIdService<Individual,
         membership.setStartType("PROJECT-CODE-GOES-HERE");
         membership.setIndividual(individual);
         membership.setSocialGroup(socialGroup);
+        membershipService.createOrUpdate(membership);
         //TODO: Is relationship to group head still a valid field of a membership?
 
 
