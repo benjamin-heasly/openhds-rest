@@ -2,6 +2,7 @@ package org.openhds.service;
 
 import org.junit.Test;
 import org.openhds.domain.contract.AuditableEntity;
+import org.openhds.errors.model.ErrorLogException;
 import org.openhds.security.model.User;
 import org.openhds.service.contract.AbstractAuditableService;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -27,6 +28,25 @@ public abstract class AuditableServiceTest
 
         List<T> results = service.findAll(UUID_SORT).toList();
         assertNotNull(results.get(0));
+
+    }
+
+    @Test(expected = ErrorLogException.class)
+    @WithUserDetails
+    public void updateWithOldLastModified(){
+        String id = "testId";
+
+        //Create original and keep reference to it.
+        T oldEntity = service.createOrUpdate(makeValidEntity("testEntity", id));
+
+        //Update with new info
+        T newEntity = service.createOrUpdate(makeValidEntity("blahg", id));
+
+        //Try to persist oldEntity again w/ out of date lastModifiedDate
+        service.createOrUpdate(oldEntity);
+
+        //Check that the entity in the DB is the entity with the up to date lastModifiedDate
+        assertEquals(service.findOne(id), newEntity);
 
     }
 

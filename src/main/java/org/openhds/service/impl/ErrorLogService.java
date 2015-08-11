@@ -41,6 +41,8 @@ public class ErrorLogService extends AbstractAuditableCollectedService<ErrorLog,
         if (null == errorLog.getCollectionDateTime()) {
             errorLog.setCollectionDateTime(ZonedDateTime.now());
         }
+
+        checkNonStaleModifiedDate(errorLog);
         setAuditableFields(errorLog);
 
         ErrorLog errorLogforErrorLog = new ErrorLog();
