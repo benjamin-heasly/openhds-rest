@@ -101,6 +101,7 @@ public class EventService extends AbstractAuditableService<Event, EventRepositor
     @Override
     public Event createOrUpdate(Event event) {
         addSystemMetadata(event, Event.DEFAULT_SYSTEM);
+        checkNonStaleModifiedDate(event);
         setAuditableFields(event);
 
         ErrorLog errorLog = new ErrorLog();

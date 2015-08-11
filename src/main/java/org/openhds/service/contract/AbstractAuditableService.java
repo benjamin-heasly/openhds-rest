@@ -1,7 +1,7 @@
 package org.openhds.service.contract;
 
 import org.openhds.domain.contract.AuditableEntity;
-import org.openhds.errors.model.ErrorLog;
+import org.openhds.errors.model.*;
 import org.openhds.repository.contract.AuditableRepository;
 import org.openhds.repository.queries.QueryRange;
 import org.openhds.repository.results.EntityIterator;
@@ -31,6 +31,7 @@ public abstract class AbstractAuditableService
     @Override
     public T createOrUpdate(T entity) {
 
+        checkNonStaleModifiedDate(entity);
         setAuditableFields(entity);
 
         return super.createOrUpdate(entity);
@@ -151,4 +152,16 @@ public abstract class AbstractAuditableService
         entity.setLastModifiedBy(user);
     }
 
+    protected void checkNonStaleModifiedDate(T entity){
+
+        T existing = findOne(entity.getUuid());
+        if(null != existing
+            && null != entity.getLastModifiedDate()
+            && existing.getLastModifiedDate().isAfter(entity.getLastModifiedDate())){
+
+            ErrorLog errorLog = new ErrorLog();
+            errorLog.appendError("Update candidate is out of date with database.");
+            throw new ErrorLogException(errorLog);
+        }
+    }
 }
