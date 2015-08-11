@@ -13,62 +13,12 @@ public class IndividualRegistration extends Registration<Individual> {
 
     private Individual individual;
 
-    private String socialGroupUuid;
-
-    private String locationUuid;
-
-    private String residencyUuid;
-
-    private String membershipUuid;
-
-    private String relationshipUuid;
-
     public Individual getIndividual() {
         return individual;
     }
 
     public void setIndividual(Individual individual) {
         this.individual = individual;
-    }
-
-    public String getSocialGroupUuid() {
-        return socialGroupUuid;
-    }
-
-    public void setSocialGroupUuid(String socialGroupUuid) {
-        this.socialGroupUuid = socialGroupUuid;
-    }
-
-    public String getLocationUuid() {
-        return locationUuid;
-    }
-
-    public void setLocationUuid(String locationUuid) {
-        this.locationUuid = locationUuid;
-    }
-
-    public String getResidencyUuid() {
-        return residencyUuid;
-    }
-
-    public void setResidencyUuid(String residencyUuid) {
-        this.residencyUuid = residencyUuid;
-    }
-
-    public String getMembershipUuid() {
-        return membershipUuid;
-    }
-
-    public void setMembershipUuid(String membershipUuid) {
-        this.membershipUuid = membershipUuid;
-    }
-
-    public String getRelationshipUuid() {
-        return relationshipUuid;
-    }
-
-    public void setRelationshipUuid(String relationshipUuid) {
-        this.relationshipUuid = relationshipUuid;
     }
 
 }

@@ -34,7 +34,6 @@ public class MembershipService extends AbstractAuditableCollectedService<Members
         membership.setIndividual(individualService.getUnknownEntity());
         membership.setStartDate(ZonedDateTime.now().minusYears(1));
         membership.setStartType(name);
-        membership.setRelationshipToGroupHead(name);
 
         initPlaceHolderCollectedFields(membership);
 

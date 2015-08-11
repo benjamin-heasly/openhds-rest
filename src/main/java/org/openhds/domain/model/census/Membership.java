@@ -22,11 +22,6 @@ public class Membership extends AuditableCollectedEntity implements Serializable
     private static final long serialVersionUID = 3668816399895850928L;
 
     @NotNull
-    @Size(min = 1)
-    @Description(description = "Relationship from the individual to the SocialGroup head.")
-    String relationshipToGroupHead;
-
-    @NotNull
     @Description(description = "Start date of the membership.")
     ZonedDateTime startDate;
 
@@ -97,18 +92,9 @@ public class Membership extends AuditableCollectedEntity implements Serializable
         this.endType = endType;
     }
 
-    public String getRelationshipToGroupHead() {
-        return relationshipToGroupHead;
-    }
-
-    public void setRelationshipToGroupHead(String bIsToA) {
-        this.relationshipToGroupHead = bIsToA;
-    }
-
     @Override
     public String toString() {
         return "Membership{" +
-                "relationshipToGroupHead='" + relationshipToGroupHead + '\'' +
                 ", startDate=" + startDate +
                 ", startType='" + startType + '\'' +
                 ", endDate=" + endDate +
