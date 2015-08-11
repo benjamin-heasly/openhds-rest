@@ -49,8 +49,6 @@ public class MembershipRestControllerTest extends AuditableCollectedRestControll
 
         assertEquals(id, savedMembership.getUuid());
         assertEquals(id, entity.getUuid());
-        assertEquals(entity.getRelationshipToGroupHead(), savedMembership.getRelationshipToGroupHead());
-
     }
 
     @Override

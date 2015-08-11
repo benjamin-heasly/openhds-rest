@@ -195,7 +195,6 @@ public class FamilyDataGenerator implements DataGenerator {
 
         membership.setIndividual(individual);
         membership.setSocialGroup(socialGroup);
-        membership.setRelationshipToGroupHead(relationToHead);
         membership.setStartDate(ZonedDateTime.now());
         membership.setStartType("generated-sample");
 
