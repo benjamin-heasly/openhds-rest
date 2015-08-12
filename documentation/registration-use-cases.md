@@ -22,7 +22,7 @@ A FieldWorker is conducting a census and records a new Location, or updates an e
 
 The registration must include the Location itself, the uuid of the Location's LocationHierarchy, the uuid of the FieldWorker conducting the census, and the date-time of the registration event.
 
-The new Location will be associated with the given LocationHierarchy, and persisted.
+The Location will be associated with the given LocationHierarchy, and persisted.
 
 There are no side-effects on other entities.
 
@@ -31,17 +31,45 @@ A FieldWorker is conducting a census and records a new Individual who is not par
 
 The registration must include the Individual herself, the uuid of the FieldWorker conducting the census, and the date-time of the registration.  The registration may include the uuid of the Individual's mother and/or the uuid of the Individual's father.
 
-The new Individual will be associated with the given mother and father, and persisted.
+The Individual will be associated with the given mother and father, and persisted.
 
 There are no side-effects on other entities.
 
 ## Relationship
+A FieldWorker is conducting a census and records a new non-household Relationship between two Individuals, or updates an existing Relationship.
 
-## User
+The registration must include the Relationship itself, two Individuals A and B who are part of the Relationship, the uuid of the FieldWorker conducting the census, and the date-time of the registration.
 
-## Site Code
+The Relationhsip will be associated with the given Individuals A and B, and persisted.
+
+There are no side-effects on other entities.
 
 ## Visit
+A FieldWorker is recording demographic updates and records a new Visit at an existing Location, or updating an existing Visit.
+
+The registration must include the Visit itself, the uuid of the Location visited, the uuid of the FieldWorker conducting the census, and the date-time of the registration.
+
+The Visit will be associated with the given Location, and persisted.
+
+There are no side-effects on other entities.
+
+## User
+An administrator is creating a new User who may use the REST API, or updating an existing User.
+
+The registration must include the User herself.
+
+The User will be persisted.
+
+There are no side-effects on other entities.
+
+## Project Code
+An administrator is configuring a new openhds-rest deployment and setting up project-specific data codes.
+
+the registration must include the ProjectCode itself.
+
+The ProjectCode will be persisted.
+
+There are no side-effects on other entities.
 
 # Complex Registrations
 These are compound registrations that have significant side-effects on multiple entities.  These should support common operations for demographic surveillance like initial census and demographic updates.
