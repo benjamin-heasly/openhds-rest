@@ -1,6 +1,6 @@
 # Registration Use Cases
 
-Here are descriptions of several important use casees for openhds-rest.
+Here are descriptions of several important use casees for **openhds-rest**.
 
 Each one includes:
  - a little "narrative", or context about what a user is trying to accomplish
@@ -17,7 +17,7 @@ TODO: for usage details, see the integration test that corresponds to each of th
 # Simple Registrations
 These are straightforward registrations with minimal side-effects.  These would support arbitrary entity creation or updates to existing entities.
 
-Every entity in openhds-rest supports a similar simple regitration.  The examples below are representative.
+Every entity in **openhds-rest** supports a similar simple regitration.  The examples below are representative.
 
 ## Location
 A FieldWorker is conducting a census and records a new Location, or updates an existing Location.
@@ -65,7 +65,7 @@ The User will be persisted.
 There are no side-effects on other entities.
 
 ## Project Code
-An administrator is configuring a new openhds-rest deployment and setting up project-specific data codes.
+An administrator is configuring a new **openhds-rest** deployment and setting up project-specific data codes.
 
 the registration must include the ProjectCode itself.
 
