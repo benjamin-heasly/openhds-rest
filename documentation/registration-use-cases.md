@@ -12,6 +12,8 @@ After each registration, the user would be able to do queries to confirm expecte
 
 These are all "happy path" scenarios.  They don't include things like authentication or validation errors.
 
+TODO: for usage details, see the integration test that corresponds to each of these use cases.
+
 # Simple Registrations
 These are straightforward registrations with minimal side-effects.  These would support arbitrary entity creation or updates to existing entities.
 
