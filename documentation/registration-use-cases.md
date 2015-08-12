@@ -4,7 +4,7 @@ Here are descriptions of several important use casees for **openhds-rest**.
 
 Each one includes:
  - a little "narrative", or context about what a user is trying to accomplish
- - information the user prodives in the registration
+ - required and optional information user prodives in the registration
  - what happens to the registered entity
  - side-effects of the registration on other entities
 
