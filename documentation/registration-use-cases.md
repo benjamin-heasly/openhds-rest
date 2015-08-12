@@ -77,6 +77,33 @@ There are no side-effects on other entities.
 These are compound registrations that have significant side-effects on multiple entities.  These should support common operations for demographic surveillance like initial census and demographic updates.
 
 ## Individual (Household)
+A FieldWorker is conducting a census and records an Individual who is part of a household, or updates an Individual's household membership.
+
+The registration must include the Individual herself.
+
+The registration must also include the uuids of several related entities:
+ - the Individual who is the head of the household
+ - the Location where members of the household reside
+ - the SocialGroup representing the household itself
+ - the FieldWorker conducting the census
+
+The registration may include the uuids of several other related entities:
+ - the Individual who is her mother
+ - the Individual who is her father
+ - her Relationship to the head of the household
+ - her Membership in the household SocialGroup
+ - her Residency at the household Location
+ 
+The registration must also include some additional information:
+ - the date-time of the registration
+ - the type of Relationship between the Individual and the Individual who is the head of the household
+ 
+The registered Individual will be associated with the given mother and father, and persisted.
+
+This registration will cause several side-effects:
+ - a Relationship will created or updated, between the registered Individual and the head of the household.  The Relationship will have the given type and the given uuid, if it was provided.  The Relationship start type will be `individualRegistration` and the start date will be the given date-time of the registration.
+ - a Membership will created or updated, for the registered Individual in the household SocialGroup.  The Membership will have the given uuid, if it was provided.  The Membership start type will be `individualRegistration` and the start date will be the given date-time of the registration.
+ - a Residency will created or updated, for the registered Individual at the household Location.  The Residency will have the given uuid, if it was provided.  The Residency start type will be `individualRegistration` and the start date will be the given date-time of the registration.
 
 ## Pregnancy Observation
 
