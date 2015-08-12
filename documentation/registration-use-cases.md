@@ -55,6 +55,15 @@ The Visit will be associated with the given Location, and persisted.
 
 There are no side-effects on other entities.
 
+## Pregnancy Observation
+A FieldWorker is recording demographic updates and records that a known Indivudal is pregnant, or updating an existing PregnancyObservation.
+
+The registration must include the PregnancyObservation itself, the uuid of the Visit during which the pregnancy was observed, the uuid of the Individual who is pregnant, the uuid of the FieldWorker conducting the census, and the date-time of the registration.
+
+The PregnancyObservation will be associated with the gien Visit and mother Individual, and persisted.
+
+There are no side-effects on other entities.
+
 ## User
 An administrator is creating a new User who may use the REST API, or updating an existing User.
 
@@ -104,8 +113,6 @@ This registration will cause several side-effects:
  - a Relationship will created or updated, between the registered Individual and the head of the household.  The Relationship will have the given type and the given uuid, if it was provided.  The Relationship start type will be `individualRegistration` and the start date will be the given date-time of the registration.
  - a Membership will created or updated, for the registered Individual in the household SocialGroup.  The Membership will have the given uuid, if it was provided.  The Membership start type will be `individualRegistration` and the start date will be the given date-time of the registration.
  - a Residency will created or updated, for the registered Individual at the household Location.  The Residency will have the given uuid, if it was provided.  The Residency start type will be `individualRegistration` and the start date will be the given date-time of the registration.
-
-## Pregnancy Observation
 
 ## Pregnancy Outcome
 
