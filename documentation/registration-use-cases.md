@@ -49,7 +49,7 @@ There are no side-effects on other entities.
 ## Visit
 A FieldWorker is recording demographic updates and records a new Visit at an existing Location, or updating an existing Visit.
 
-The registration must include the Visit itself, the uuid of the Location visited, the uuid of the FieldWorker conducting the census, and the date-time of the registration.
+The registration must include the Visit itself, the uuid of the Location visited, the uuid of the FieldWorker conducting the update, and the date-time of the registration.
 
 The Visit will be associated with the given Location, and persisted.
 
@@ -58,9 +58,20 @@ There are no side-effects on other entities.
 ## Pregnancy Observation
 A FieldWorker is recording demographic updates and records that a known Indivudal is pregnant, or updating an existing PregnancyObservation.
 
-The registration must include the PregnancyObservation itself, the uuid of the Visit during which the pregnancy was observed, the uuid of the Individual who is pregnant, the uuid of the FieldWorker conducting the census, and the date-time of the registration.
+The registration must include the PregnancyObservation itself, the uuid of the Visit during which the pregnancy was observed, the uuid of the Individual who is pregnant, the uuid of the FieldWorker conducting the update, and the date-time of the registration.
 
 The PregnancyObservation will be associated with the gien Visit and mother Individual, and persisted.
+
+There are no side-effects on other entities.
+
+## Pregnancy Outcome
+A FieldWorker is recording demographic updates, and records that a pregnant mother has given birth, or her pregnancy otherwise ended, or is updating an existing PregnancyOutcome.
+
+Note: the PregnancyOutcome records the end of the pregnancy itself, not any children born.  See PregnancyResult.
+
+The registration must include the PregnancyOutcome itself, the uuid of the Visit during which the outcome was observerd, the uuid of the Individual who was pregnant, and the uuid of the FieldWorker conducting the update, and the date-time of the registration.  The registration may include the uuid of the father.
+
+The PregnancyOutcome will be associated with the given Visit, mother, and father, and persisted.
 
 There are no side-effects on other entities.
 
@@ -114,9 +125,20 @@ This registration will cause several side-effects:
  - a Membership will created or updated, for the registered Individual in the household SocialGroup.  The Membership will have the given uuid, if it was provided.  The Membership start type will be `individualRegistration` and the start date will be the given date-time of the registration.
  - a Residency will created or updated, for the registered Individual at the household Location.  The Residency will have the given uuid, if it was provided.  The Residency start type will be `individualRegistration` and the start date will be the given date-time of the registration.
 
-## Pregnancy Outcome
-
 ## Pregnancy Result
+A FieldWorker is recording demographic updates, and records a birth or other result related to the end of a pregnancy, or is updating an existing PregnancyResult. 
+
+Note: the PregnancyResult records children born and other results from a pregnancy, not the end of the pregnancy itself.  See PregnancyOutcome.
+
+The registration must include the PregnancyResult itself, the uuid of the PregnancyOutcome associated with the same pregnancy, the uuid of the FieldWorker conducting the update, and the date-time of the registration.
+
+The registration may contain the uuid of a child Individual who was born, the uuid of the child's household Residency, and the uuid of the child's household Membership.
+
+The PregnancyResult will be associated with the given PregnancyOutcome and child, and persisted.
+
+For live births only, the registration will have several side-effects:
+ - 
+
 
 ## Death
 
