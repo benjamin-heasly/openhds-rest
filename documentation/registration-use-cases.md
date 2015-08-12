@@ -77,7 +77,7 @@ There are no side-effects on other entities.
 These are compound registrations that have significant side-effects on multiple entities.  These should support common operations for demographic surveillance like initial census and demographic updates.
 
 ## Individual (Household)
-A FieldWorker is conducting a census and records an Individual who is part of a household, or updates an Individual's household membership.
+A FieldWorker is conducting a census and records an Individual who is part of a household, or updates an Individual's household registration.
 
 The registration must include the Individual herself.
 
