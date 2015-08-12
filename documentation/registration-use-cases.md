@@ -27,6 +27,13 @@ The new Location will be associated with the given LocationHierarchy, and persis
 There are no side-effects on other entities.
 
 ## Individual (Simple)
+A FieldWorker is conducting a census and records a new Individual who is not part of a household, or updates an existing Individual.
+
+The registration must include the Individual herself, the uuid of the FieldWorker conducting the census, and the date-time of the registration.  The registration may include the uuid of the Individual's mother and/or the uuid of the Individual's father.
+
+The new Individual will be associated with the given mother and father, and persisted.
+
+There are no side-effects on other entities.
 
 ## Relationship
 
