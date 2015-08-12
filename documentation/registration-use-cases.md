@@ -171,3 +171,10 @@ The InMigration will be associated with the given Individual, Location, and Visi
 The registration will have a side effect: a Residency will be created or updated, for the given Individual at the given Location.  The Residency will have the given uuid, if it was provided.  The Residency start type will be `inMigration` and the start date will be taken from the InMigration.
 
 ## Household Migration
+A FieldWorker is recording demographic updates and records that an entire household has moved to a new Locaiton, or is updating an existing household migration.
+
+The registration must include the uuid of the household SocialGroup, the uuid of the Location where the household now lives, the uuid of the Visit when the InMigration was recorded, the uuid of the FieldWorker conducting the update, and the date-time of the registration.
+
+This registration is not persisted, but has repeated side-effects.  For each Individual who has a Memebership in the given household SocialGroup:
+ - The Individual will experience the side-effects of an OutMigration from her current Residency.
+ - The Individual will experience the side-effects of an InMigration to the given Location.
