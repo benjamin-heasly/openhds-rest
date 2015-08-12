@@ -141,11 +141,33 @@ For live births only, the registration will have several side-effects:
  - A Membership will be created or updated, for the child in the mother's household SocialGroup.  The Membership will have the given uuid, if it was provided.  The Membership start type will be `birth` and the start date will be the given date-time of the registration.
  - A Residency will be created or updated, for the registered Individual at the mother's household Location.  The Residency will have the given uuid, if it was provided.  The Residency start type will be `birth` and the start date will be the given date-time of the registration.
 
-
 ## Death
+A FieldWorker is recording demographic updates, and records that an individual has died, or us updating an existing Death record.
 
-## In-Migration
+The registration must include the Death itself, the uuid of the Individual who died the uuid of the Visit during which the Death was recorded, the uuid of the FieldWorker conducting the update, and the date-time of the registration.
+
+The Death will be associated with the given Individual and Visit, and persisted.
+
+The registration will have several side-effects for the Individual who died:
+ - Any Residencies, Memberships, and Relationships associated with the Individual will be terminated with end type `death` and end date the date-time of the registration.
+ - If there is a PregnancyObservation associated with the Individual, and no later PregnancyOutcome, a PregnancyOutcome will be created or updated, with no associated PregnancyResults.  The outcomeDate will be the date of Death.
 
 ## Out-Migration
+A FieldWorker is recording demographic updates and records that an Individual's recorded Residency has ended, or is updating an existing OutMigration.
+
+The registration must include the OutMigration itself, the uuid of the Visit when the OutMigration was recorded, the uuid of the FieldWorker conducting the update, and the date-time of the registration.   The registration must include either the uuid of the Individual who is migrating or the uuid of the ended Residency.  If only the Individual is provided, then Individual's current (latest recorded) Residency will be used.
+
+The OutMigration will be associated with the given Individual, Residency, and Visit, and persisted.
+
+The registration will have a side-effect on the given (or current) Residency: it will be terminated with end type `outMigration` and end date taken from the OutMigration.
+
+## In-Migration
+A FieldWorker is recording demographic updates and records that an Individual has begun a Residency at a new Location, or is updating an existing InMigration.
+
+The registration must include the InMigration itself, the uuid of the Individual who has migrated, the uuid of the Location where the Individual has begun living, the uuid of the Visit when the InMigration was recorded, the uuid of the FieldWorker conducting the update, and the date-time of the registration.  The registration may include the uuid of the Individual's new Residency.
+
+The InMigration will be associated with the given Individual, Location, and Visit, and persisted.
+
+The registration will have a side effect: a Residency will be created or updated, for the given Individual at the given Location.  The Residency will have the given uuid, if it was provided.  The Residency start type will be `inMigration` and the start date will be taken from the InMigration.
 
 ## Household Migration
