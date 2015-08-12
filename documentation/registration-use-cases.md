@@ -15,9 +15,16 @@ These are all "happy path" scenarios.  They don't include things like authentica
 # Simple Registrations
 These are straightforward registrations with minimal side-effects.  These would support arbitrary entity creation or updates to existing entities.
 
-Every entity in openhds-rest supports a similar simple regitration.  Below are a representative selection.
+Every entity in openhds-rest supports a similar simple regitration.  The examples below are representative.
 
 ## Location
+A FieldWorker is conducting a census and records a new Location, or updates an existing Location.
+
+The registration must include the Location itself, the uuid of the Location's LocationHierarchy, the uuid of the FieldWorker conducting the census, and the date-time of the registration event.
+
+The new Location will be associated with the given LocationHierarchy, and persisted.
+
+There are no side-effects on other entities.
 
 ## Individual (Simple)
 
