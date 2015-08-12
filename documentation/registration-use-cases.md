@@ -121,9 +121,9 @@ The registration must also include some additional information:
 The registered Individual will be associated with the given mother and father, and persisted.
 
 This registration will cause several side-effects:
- - a Relationship will created or updated, between the registered Individual and the head of the household.  The Relationship will have the given type and the given uuid, if it was provided.  The Relationship start type will be `individualRegistration` and the start date will be the given date-time of the registration.
- - a Membership will created or updated, for the registered Individual in the household SocialGroup.  The Membership will have the given uuid, if it was provided.  The Membership start type will be `individualRegistration` and the start date will be the given date-time of the registration.
- - a Residency will created or updated, for the registered Individual at the household Location.  The Residency will have the given uuid, if it was provided.  The Residency start type will be `individualRegistration` and the start date will be the given date-time of the registration.
+ - A Relationship will be created or updated, between the registered Individual and the head of the household.  The Relationship will have the given type and the given uuid, if it was provided.  The Relationship start type will be `individualRegistration` and the start date will be the given date-time of the registration.
+ - A Membership will be created or updated, for the registered Individual in the household SocialGroup.  The Membership will have the given uuid, if it was provided.  The Membership start type will be `individualRegistration` and the start date will be the given date-time of the registration.
+ - A Residency will be created or updated, for the registered Individual at the household Location.  The Residency will have the given uuid, if it was provided.  The Residency start type will be `individualRegistration` and the start date will be the given date-time of the registration.
 
 ## Pregnancy Result
 A FieldWorker is recording demographic updates, and records a birth or other result related to the end of a pregnancy, or is updating an existing PregnancyResult. 
@@ -137,7 +137,9 @@ The registration may contain the uuid of a child Individual who was born, the uu
 The PregnancyResult will be associated with the given PregnancyOutcome and child, and persisted.
 
 For live births only, the registration will have several side-effects:
- - 
+ - an Individual will be created or updated, for the child who was born.  The child's name and other fields will be taken from the registered PregnanchResult.   The child will be associated with the mother and father recorded with the given PregnancyOutcome.  The child will have the given uuid, if it was provided.
+ - A Membership will be created or updated, for the child in the mother's household SocialGroup.  The Membership will have the given uuid, if it was provided.  The Membership start type will be `birth` and the start date will be the given date-time of the registration.
+ - A Residency will be created or updated, for the registered Individual at the mother's household Location.  The Residency will have the given uuid, if it was provided.  The Residency start type will be `birth` and the start date will be the given date-time of the registration.
 
 
 ## Death
