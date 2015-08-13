@@ -3,6 +3,7 @@
 Here are descriptions of several important use casees for **openhds-rest**.
 
 Each one includes:
+
  - a little "narrative", or context about what a user is trying to accomplish
  - required and optional information user prodives in the registration
  - what happens to the registered entity
@@ -12,7 +13,7 @@ After each registration, the user would be able to do queries to confirm expecte
 
 These are all "happy path" scenarios.  They don't include things like authentication or validation errors.
 
-TODO: for usage details, see the integration test that corresponds to each of these use cases.
+*TODO: for usage details, see the integration test that corresponds to each of these use cases.*
 
 # Simple Registrations
 These are straightforward registrations with minimal side-effects.  These would support arbitrary entity creation or updates to existing entities.
@@ -28,7 +29,7 @@ The Location will be associated with the given LocationHierarchy, and persisted.
 
 There are no side-effects on other entities.
 
-## Individual (Simple)
+## Simple Individual
 A FieldWorker is conducting a census and records a new Individual who is not part of a household, or updates an existing Individual.
 
 The registration must include the Individual herself, the uuid of the FieldWorker conducting the census, and the date-time of the registration.  The registration may include the uuid of the Individual's mother and/or the uuid of the Individual's father.
@@ -96,18 +97,20 @@ There are no side-effects on other entities.
 # Complex Registrations
 These are compound registrations that have significant side-effects on multiple entities.  These should support common operations for demographic surveillance like initial census and demographic updates.
 
-## Individual (Household)
+## Household Individual
 A FieldWorker is conducting a census and records an Individual who is part of a household, or updates an Individual's household registration.
 
 The registration must include the Individual herself.
 
 The registration must also include the uuids of several related entities:
+
  - the Individual who is the head of the household
  - the Location where members of the household reside
  - the SocialGroup representing the household itself
  - the FieldWorker conducting the census
 
 The registration may include the uuids of several other related entities:
+
  - the Individual who is her mother
  - the Individual who is her father
  - her Relationship to the head of the household
@@ -115,12 +118,14 @@ The registration may include the uuids of several other related entities:
  - her Residency at the household Location
  
 The registration must also include some additional information:
+
  - the date-time of the registration
  - the type of Relationship between the Individual and the Individual who is the head of the household
  
 The registered Individual will be associated with the given mother and father, and persisted.
 
 This registration will cause several side-effects:
+
  - A Relationship will be created or updated, between the registered Individual and the head of the household.  The Relationship will have the given type and the given uuid, if it was provided.  The Relationship start type will be `individualRegistration` and the start date will be the given date-time of the registration.
  - A Membership will be created or updated, for the registered Individual in the household SocialGroup.  The Membership will have the given uuid, if it was provided.  The Membership start type will be `individualRegistration` and the start date will be the given date-time of the registration.
  - A Residency will be created or updated, for the registered Individual at the household Location.  The Residency will have the given uuid, if it was provided.  The Residency start type will be `individualRegistration` and the start date will be the given date-time of the registration.
@@ -137,6 +142,7 @@ The registration may contain the uuid of a child Individual who was born, the uu
 The PregnancyResult will be associated with the given PregnancyOutcome and child, and persisted.
 
 For live births only, the registration will have several side-effects:
+
  - an Individual will be created or updated, for the child who was born.  The child's name and other fields will be taken from the registered PregnanchResult.   The child will be associated with the mother and father recorded with the given PregnancyOutcome.  The child will have the given uuid, if it was provided.
  - A Membership will be created or updated, for the child in the mother's household SocialGroup.  The Membership will have the given uuid, if it was provided.  The Membership start type will be `birth` and the start date will be the given date-time of the registration.
  - A Residency will be created or updated, for the registered Individual at the mother's household Location.  The Residency will have the given uuid, if it was provided.  The Residency start type will be `birth` and the start date will be the given date-time of the registration.
@@ -149,10 +155,11 @@ The registration must include the Death itself, the uuid of the Individual who d
 The Death will be associated with the given Individual and Visit, and persisted.
 
 The registration will have several side-effects for the Individual who died:
+
  - Any Residencies, Memberships, and Relationships associated with the Individual will be terminated with end type `death` and end date the date-time of the registration.
  - If there is a PregnancyObservation associated with the Individual, and no later PregnancyOutcome, a PregnancyOutcome will be created or updated, with no associated PregnancyResults.  The outcomeDate will be the date of Death.
 
-## Out-Migration
+## Out Migration
 A FieldWorker is recording demographic updates and records that an Individual's recorded Residency has ended, or is updating an existing OutMigration.
 
 The registration must include the OutMigration itself, the uuid of the Visit when the OutMigration was recorded, the uuid of the FieldWorker conducting the update, and the date-time of the registration.   The registration must include either the uuid of the Individual who is migrating or the uuid of the ended Residency.  If only the Individual is provided, then Individual's current (latest recorded) Residency will be used.
@@ -161,7 +168,7 @@ The OutMigration will be associated with the given Individual, Residency, and Vi
 
 The registration will have a side-effect on the given (or current) Residency: it will be terminated with end type `outMigration` and end date taken from the OutMigration.
 
-## In-Migration
+## In Migration
 A FieldWorker is recording demographic updates and records that an Individual has begun a Residency at a new Location, or is updating an existing InMigration.
 
 The registration must include the InMigration itself, the uuid of the Individual who has migrated, the uuid of the Location where the Individual has begun living, the uuid of the Visit when the InMigration was recorded, the uuid of the FieldWorker conducting the update, and the date-time of the registration.  The registration may include the uuid of the Individual's new Residency.
@@ -176,5 +183,6 @@ A FieldWorker is recording demographic updates and records that an entire househ
 The registration must include the uuid of the household SocialGroup, the uuid of the Location where the household now lives, the uuid of the Visit when the InMigration was recorded, the uuid of the FieldWorker conducting the update, and the date-time of the registration.
 
 This registration is not persisted, but has repeated side-effects.  For each Individual who has a Memebership in the given household SocialGroup:
+
  - The Individual will experience the side-effects of an OutMigration from her current Residency.
  - The Individual will experience the side-effects of an InMigration to the given Location.

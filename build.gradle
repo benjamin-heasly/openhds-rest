@@ -28,9 +28,6 @@ war {
     version = '0.0.1-SNAPSHOT'
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
 repositories {
     mavenCentral()
 }
@@ -49,6 +46,8 @@ dependencies {
     compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.4.0")
     compile("com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.4.0")
     compile("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.4.0")
+    compile("org.pegdown:pegdown:1.5.0")
+    compile("de.neuland-bfi:spring-jade4j:0.4.2")
     runtime("com.h2database:h2")
     runtime("mysql:mysql-connector-java")
     runtime("org.springframework.boot:spring-boot-starter-tomcat")

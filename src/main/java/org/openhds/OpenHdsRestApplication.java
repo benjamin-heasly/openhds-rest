@@ -20,6 +20,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.hateoas.config.EnableEntityLinks;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
@@ -50,6 +51,7 @@ public class OpenHdsRestApplication {
         return (args) -> {
             if (!environment.containsProperty(SAMPLE_DATA_SIZE_PROPERTY)) {
                 // start normally
+                // TODO: create default user on first time startup?
                 return;
             }
 
@@ -104,8 +106,15 @@ public class OpenHdsRestApplication {
             return new EntityCollectionMessageWriter(xmlConverter(), new XmlElementDelimiter());
         }
 
+        @Bean
+        StringHttpMessageConverter stringHttpMessageConverter() {
+            return new StringHttpMessageConverter();
+        }
+
         @Override
         public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+            // order matters
+            converters.add(stringHttpMessageConverter());
             converters.add(jsonPagedMessageWriter());
             converters.add(xmlPagedMessageWriter());
             converters.add(jsonConverter());
