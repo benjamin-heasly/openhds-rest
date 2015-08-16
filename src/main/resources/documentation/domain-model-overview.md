@@ -1,7 +1,7 @@
 #Supertypes
 ####AuditableEntity
 #####What is it?
-AuditableEntity is the abstract base type for all OpenHDS entities. The class provides fields useful for ‘auditing’ or keeping track of meta information pertaining to the concrete type like when it was created and last modified.
+`AuditableEntity` is the abstract base type for all OpenHDS entities. The class provides fields useful for ‘auditing’ or keeping track of meta information pertaining to the concrete type like when it was created and last modified.
 ######Required Fields:
 + String uuid 
 + User insertBy 
@@ -11,9 +11,9 @@ AuditableEntity is the abstract base type for all OpenHDS entities. The class pr
 
 ___
 ####AuditableCollectedEntity
-(child of AuditableEntity)
+(child of `AuditableEntity`)
 #####What is it?
-AuditableCollectedEntity is the abstract base type for all OpenHDS entities that are collected by a fieldworker.
+`AuditableCollectedEntity` is the abstract base type for all OpenHDS entities that are collected by a `FieldWorker`.
 ######Dependencies
 + FieldWorker
 
@@ -23,23 +23,23 @@ AuditableCollectedEntity is the abstract base type for all OpenHDS entities that
 
 ___
 ####AuditableExtIdEntity
-(child of AuditableCollectedEntity) 
+(child of `AuditableCollectedEntity`) 
 #####What is it?
-AuditableExtIdEntity is an entity that is identifiable by an id external to the OpenHDS, i.e. the functionality of the OpenHDS is not dependent on it. 
+`AuditableExtIdEntity` is an entity that is identifiable by an id external to the OpenHDS, i.e. the functionality of the OpenHDS is not dependent on it. 
 ######Required Fields:
 + String extId 
 
 #Census Entities
 ####LocationHierarchy
-(child of AuditableExtIdEntity)
+(child of `AuditableExtIdEntity`)
 #####What is it?
-LocationHierarchy is a node in the tree that represents the study area. For example, at the top of a tree would be the The United States and it would have a child node for each of the 50 states. Each state node could have a child node for its cities and each city could have a child node for its districts and so on. LocationHierarchy extends AuditableExtIdEntity meaning it is identified by uuid as well as extId. 
+`LocationHierarchy` is a node in the tree that represents the study area. For example, at the top of a tree would be the The United States and it would have a child node for each of the 50 states. Each state node could have a child node for its cities and each city could have a child node for its districts and so on. `LocationHierarchy` extends `AuditableExtIdEntity` meaning it is identified by uuid as well as extId. 
 #####Dependencies
 + FieldWorker
 + LocationHierarchy
 + LocationHierarchyLevel
 
-######Required Fields (LocationHierarchy):
+######Required Fields:
 + String name
 + String extId
 + LocationHierarchy parent
@@ -47,19 +47,18 @@ LocationHierarchy is a node in the tree that represents the study area. For exam
 
 ___
 ####LocationHierarchyLevel
-(child of AuditableEntity)
+(child of `AuditableEntity`)
 #####What is it?
-The levels of the LocationHierarchy tree are defined separately as LocationHierarchyLevels and referenced by each instance of LocationHierarchy. From the previous example, the list of LocationHierarchyLevels would be Country, State, City, District.
-######Required Fields (LocationHierarchyLevel):
+The levels of the `LocationHierarchy` tree are defined separately as `LocationHierarchyLevel`s and referenced by each instance of `LocationHierarchy`. From the previous example, the list of `LocationHierarchyLevel`s would be Country, State, City, District.
+######Required Fields:
 + int keyIdentifier
 + String name
 
 ___
 ####Location
-(child of AuditableExtIdEntity)
+(child of `AuditableExtIdEntity`)
 #####What is it?
-Location is the leaf node on the LocationHierarchy tree, it is the smallest geographical unit within a study area. From the previous example for LocationHierarchy, each building within a district could be modeled with Location. 
-Individuals are residents at locations.
+`Location` is the leaf node on the `LocationHierarchy` tree, it is the smallest geographical unit within a study area. From the previous example for `LocationHierarchy`, each building within a district could be modeled with `Location`. `Individual`s are residents at `Locations`.
 ######Dependencies
 + FieldWorker
 + LocationHierarchy
@@ -72,9 +71,9 @@ Individuals are residents at locations.
 
 ___
 ####Individual
-(child of AuditableExtIdEntity)
+(child of `AuditableExtIdEntity`)
 #####What is it?
-An Individual (person) within the study area that resides at a Location, is a member of a SocialGroup, and has a relationship to the head of a household.
+An `Individual` (person) within the study area that resides at a `Location`, is a member of a `SocialGroup`, and has a relationship to the head of a household.
 ######Dependencies
 + FieldWorker
 
@@ -86,9 +85,9 @@ An Individual (person) within the study area that resides at a Location, is a me
 
 ___
 ####SocialGroup
-(child of AuditableExtIdEntity)
+(child of `AuditableExtIdEntity`)
 #####What is it?
-A SocialGroup is any cultural or societal group or collective that Individuals are a member of, e.g. a church group, a household/family, a bowling team.
+A `SocialGroup` is any cultural or societal group or collective that `Individual`s are a member of, e.g. a church group, a household/family, a bowling team.
 ######Dependencies
 + FieldWorker
 
@@ -99,9 +98,9 @@ A SocialGroup is any cultural or societal group or collective that Individuals a
 
 ___
 ###Membership
-(child of AuditableCollectedEntity)
+(child of `AuditableCollectedEntity`)
 ####What is it?
-A Membership models the relationship between an Individual and a SocialGroup.
+A `Membership` models the relationship between an `Individual` and a `SocialGroup`.
 ######Dependencies
 + FieldWorker
 + Individual
@@ -115,9 +114,9 @@ A Membership models the relationship between an Individual and a SocialGroup.
 
 ___
 ####Relationship
-(child of AuditableCollectedEntity)
+(child of `AuditableCollectedEntity`)
 #####What is it?
-A Relationship models the relationship between two individuals. Specifically it models the relationship between an individual and the head of household that the individual is a part of.
+A `Relationship` models the relationship between two `Individual`s. Specifically it models the relationship between an `Individual` and the head of household that the `Individual` is a part of.
 ######Dependencies
 + FieldWorker
 + Individual
@@ -130,9 +129,9 @@ A Relationship models the relationship between two individuals. Specifically it 
 
 ___
 ####Residency
-(child of AuditableCollectedEntity)
+(child of `AuditableCollectedEntity`)
 #####What is it?
-A Residency models the relationship between an Individual and a Location.
+A `Residency` models the relationship between an `Individual` and a `Location`.
 ######Dependencies
 + FieldWorker 
 + Individual
@@ -147,9 +146,9 @@ A Residency models the relationship between an Individual and a Location.
 ___
 #Update
 ####Visit
-(child of AuditableExtIdEntity)
+(child of `AuditableExtIdEntity`)
 #####What is it?
-A Visit models a FieldWorker’s follow-up visit to a particular location at a particular date. Visits are necessary for all “update” events that can take place within a population.
+A `Visit` models a `FieldWorker`’s follow-up visit to a particular `Location` at a particular date. `Visit`s are necessary for all “update” events that can take place within a population.
 ######Dependencies
 + FieldWorker
 + Location 
@@ -157,11 +156,12 @@ A Visit models a FieldWorker’s follow-up visit to a particular location at a p
 ######Required Fields:
 + Date visitDate
 + Location location
+
 ___
 ####Death
-(child of AuditableCollectedEntity)
+(child of `AuditableCollectedEntity`)
 #####What is it?
-A Death models the death of one of the Individuals within the area of study.
+A `Death` models the death of one of the `Individual`s within the area of study.
 ######Dependencies
 + FieldWorker
 + Visit
@@ -174,10 +174,10 @@ A Death models the death of one of the Individuals within the area of study.
 
 ___
 ####InMigration
-(child of AuditableCollectedEntity)
+(child of `AuditableCollectedEntity`)
 #####What is it?
-An InMigration represents a migration between two Locations where the destination
-Location is still inside the area of study. The origin Location can be within or outside the area of study and is model by the migrationType value of internal or external respectively.
+An `InMigration` represents a migration between two `Location`s where the destination
+`Location` is still inside the area of study. The origin `Location` can be within or outside the area of study and is model by the migrationType value of internal or external respectively.
 Dependencies
 ######FieldWorker
 + Visit
@@ -193,9 +193,9 @@ Dependencies
 
 ___
 ####OutMigration
-(child of AuditableCollectedEntity)
+(child of `AuditableCollectedEntity`)
 #####What is it?
-An OutMigration models the migration of an Individual to outside the area of study.
+An `OutMigration` models the migration of an `Individual` to outside the area of study.
 ######Dependencies
 + FieldWorker
 + Visit
@@ -210,9 +210,9 @@ An OutMigration models the migration of an Individual to outside the area of stu
 
 ___
 ####PregnancyObservation
-(child of AuditableCollectedEntity)
+(child of `AuditableCollectedEntity`)
 #####What is it?
-A PregnancyObservation models a FieldWorker’s observation of a pregnant Individual.
+A `PregnancyObservation` models a `FieldWorker`’s observation of a pregnant `Individual`.
 ######Dependencies
 + FieldWorker
 + Visit
@@ -228,7 +228,7 @@ ___
 ####PregnancyOutcome
 (child of AuditableCollectedEntity)
 #####What is it?
-A PregnancyOutcome models the outcome of an individual’s pregnancy.
+A `PregnancyOutcome` models the outcome of an `Individual`’s pregnancy.
 ######Dependencies
 + FieldWorker
 + Visit
@@ -244,7 +244,7 @@ ___
 ####PregnancyResult
 (child of AuditableCollectedEntity)
 #####What is it?
-A PregnancyResult models the separate results of a larger PregnancyOutcome for an Individual’s pregnancy. 
+A `PregnancyResult` models the separate results of a larger `PregnancyOutcome` for an `Individual`’s pregnancy. 
 ######Dependencies
 + FieldWorker
 + Visit
