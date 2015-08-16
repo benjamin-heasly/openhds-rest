@@ -1,4 +1,4 @@
-#Supertypes
+#Contract Entities
 ####AuditableEntity
 #####What is it?
 `AuditableEntity` is the abstract base type for all OpenHDS entities. The class provides fields useful for ‘auditing’ or keeping track of meta information pertaining to the concrete type like when it was created and last modified.
@@ -144,7 +144,7 @@ A `Residency` models the relationship between an `Individual` and a `Location`.
 + Individual individualB
 
 ___
-#Update
+#Update Entities
 ####Visit
 (child of `AuditableExtIdEntity`)
 #####What is it?
