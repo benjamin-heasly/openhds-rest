@@ -1,7 +1,9 @@
 package org.openhds.service.contract;
 
 import org.openhds.domain.contract.AuditableEntity;
-import org.openhds.errors.model.*;
+import org.openhds.domain.model.census.LocationHierarchy;
+import org.openhds.errors.model.ErrorLog;
+import org.openhds.errors.model.ErrorLogException;
 import org.openhds.repository.contract.AuditableRepository;
 import org.openhds.repository.queries.QueryRange;
 import org.openhds.repository.results.EntityIterator;
@@ -44,6 +46,7 @@ public abstract class AbstractAuditableService
 
     @Override
     public boolean exists(String id) {
+        // exists is a first-pass check, findOne also checks isDeleted
         return repository.exists(id) && null != findOne(id);
     }
 
@@ -93,6 +96,18 @@ public abstract class AbstractAuditableService
 
         return findByMultipleValuesRanged(pageable, new QueryRange<>("lastModifiedDate", modifiedAfter, modifiedBefore));
 
+    }
+
+    public Page<T> findByLocationHierarchy(Pageable pageable, String locationHierarchyUuid) {
+        throw new UnsupportedOperationException(this.getClass().getSimpleName() + " can not do location-based queries");
+    }
+
+    public EntityIterator<T> findByLocationHierarchy(Sort sort, String locationHierarchyUuid) {
+        return iteratorFromPageable(pageable -> findByLocationHierarchy(pageable, locationHierarchyUuid), sort);
+    }
+
+    public EntityIterator<LocationHierarchy> findAssociatedLocationHierarchies(T entity) {
+        throw new UnsupportedOperationException(this.getClass().getSimpleName() + " can not do location-based queries");
     }
 
     public void delete(T entity, String reason) {
@@ -156,8 +171,8 @@ public abstract class AbstractAuditableService
 
         T existing = findOne(entity.getUuid());
         if(null != existing
-            && null != entity.getLastModifiedDate()
-            && existing.getLastModifiedDate().isAfter(entity.getLastModifiedDate())){
+                && null != entity.getLastModifiedDate()
+                && existing.getLastModifiedDate().isAfter(entity.getLastModifiedDate())){
 
             ErrorLog errorLog = new ErrorLog();
             errorLog.appendError("Update candidate is out of date with database.");

@@ -67,6 +67,29 @@ public abstract class AuditableRestController<
         return new ShallowCopyIterator<>(entityIterator);
     }
 
+    // records associated with given LocationHierarchy sub-tree
+    @RequestMapping(value = "/bylocationhierarchy", method = RequestMethod.GET)
+    public PagedResources readByLocationHierarchyPaged(Pageable pageable,
+                                                       PagedResourcesAssembler assembler,
+                                                       @RequestParam(required = true)
+                                                       String locationHierarchyUuid) {
+
+        Page<T> entities = service.findByLocationHierarchy(pageable, locationHierarchyUuid);
+        return assembler.toResource(entities, entityLinkAssembler);
+    }
+
+    // records associated with given LocationHierarchy sub-tree
+    @RequestMapping(value = "/bylocationhierarchy/bulk", method = RequestMethod.GET)
+    public EntityIterator<T> readByLocationHierarchyBulk(Sort sort,
+                                                         @RequestParam(required = true)
+                                                         String locationHierarchyUuid) {
+
+        PageIterator<T> pageIterator = new PageIterator<>((pageable) -> service.findByLocationHierarchy(pageable, locationHierarchyUuid), sort);
+        EntityIterator<T> entityIterator = new PagingEntityIterator<>(pageIterator);
+        entityIterator.setCollectionName(getResourceName());
+        return new ShallowCopyIterator<>(entityIterator);
+    }
+
     // for auditing
     @RequestMapping(value = "/voided", method = RequestMethod.GET)
     public PagedResources readPagedByInertDate(Pageable pageable, PagedResourcesAssembler assembler) {

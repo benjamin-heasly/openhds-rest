@@ -5,6 +5,9 @@ import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.errors.model.ErrorLogException;
 import org.openhds.security.model.User;
 import org.openhds.service.contract.AbstractAuditableService;
+import org.openhds.service.contract.AbstractUuidService;
+import org.openhds.service.impl.census.LocationHierarchyService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithUserDetails;
 
 import java.time.ZonedDateTime;
@@ -33,7 +36,7 @@ public abstract class AuditableServiceTest
 
     @Test(expected = ErrorLogException.class)
     @WithUserDetails
-    public void updateWithOldLastModified(){
+    public void updateWithOldLastModified() {
         String id = "testId";
 
         //Create original and keep reference to it.
@@ -180,4 +183,22 @@ public abstract class AuditableServiceTest
 
     }
 
+    @Test
+    @WithUserDetails
+    public void findByLocationHierarchy() {
+
+        // look for entities associated with the "unknown" location hierarchy
+        String locationHierarchyUuid = AbstractUuidService.UNKNOWN_ENTITY_UUID;
+
+        try {
+            List<T> locationEntities = service.findByLocationHierarchy(UUID_SORT, locationHierarchyUuid).toList();
+
+            // TODO: test content of entities
+            assertFalse(true);
+
+        } catch (UnsupportedOperationException e) {
+            // this is OK, not all services have to support location-based queries
+        }
+
+    }
 }
