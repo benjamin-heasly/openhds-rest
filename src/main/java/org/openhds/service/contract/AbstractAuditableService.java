@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 /**
  * Created by wolfe on 6/11/15.
@@ -106,7 +107,7 @@ public abstract class AbstractAuditableService
         return iteratorFromPageable(pageable -> findByLocationHierarchy(pageable, locationHierarchyUuid), sort);
     }
 
-    public EntityIterator<LocationHierarchy> findAssociatedLocationHierarchies(T entity) {
+    public List<LocationHierarchy> findLocationHierarchies(T entity) {
         throw new UnsupportedOperationException(this.getClass().getSimpleName() + " can not do location-based queries");
     }
 

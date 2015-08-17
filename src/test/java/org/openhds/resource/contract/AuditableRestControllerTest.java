@@ -181,7 +181,7 @@ public abstract class AuditableRestControllerTest<
         assertThat(mvcResult.getResponse().getStatus(),
                 isOneOf(HttpStatus.OK.value(), HttpStatus.NOT_FOUND.value()));
         if (mvcResult.getResponse().getStatus() == HttpStatus.OK.value()) {
-            assertEquals(halJson.getType(), mvcResult.getResponse().getContentType());
+            assertEquals(halJson.toString(), mvcResult.getResponse().getContentType());
         }
 
         mvcResult = mockMvc.perform(get(getByLocationHierarchyBulkdUrl())
@@ -190,7 +190,7 @@ public abstract class AuditableRestControllerTest<
         assertThat(mvcResult.getResponse().getStatus(),
                 isOneOf(HttpStatus.OK.value(), HttpStatus.NOT_FOUND.value()));
         if (mvcResult.getResponse().getStatus() == HttpStatus.OK.value()) {
-            assertEquals(regularJson.getType(), mvcResult.getResponse().getContentType());
+            assertEquals(regularJson.toString(), mvcResult.getResponse().getContentType());
         }
     }
 }

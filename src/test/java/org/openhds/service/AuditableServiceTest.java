@@ -2,10 +2,10 @@ package org.openhds.service;
 
 import org.junit.Test;
 import org.openhds.domain.contract.AuditableEntity;
+import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.errors.model.ErrorLogException;
 import org.openhds.security.model.User;
 import org.openhds.service.contract.AbstractAuditableService;
-import org.openhds.service.contract.AbstractUuidService;
 import org.openhds.service.impl.census.LocationHierarchyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithUserDetails;
@@ -22,6 +22,9 @@ import static org.junit.Assert.*;
 public abstract class AuditableServiceTest
         <T extends AuditableEntity, U extends AbstractAuditableService<T, ?>>
         extends UuidServiceTest<T, U> {
+
+    @Autowired
+    LocationHierarchyService locationHierarchyService;
 
     /**
      * Simply check that results are not null after a findAll call
@@ -188,13 +191,24 @@ public abstract class AuditableServiceTest
     public void findByLocationHierarchy() {
 
         // look for entities associated with the "unknown" location hierarchy
-        String locationHierarchyUuid = AbstractUuidService.UNKNOWN_ENTITY_UUID;
+        LocationHierarchy unknown = locationHierarchyService.getUnknownEntity();
+        String locationHierarchyUuid = unknown.getUuid();
 
         try {
-            List<T> locationEntities = service.findByLocationHierarchy(UUID_SORT, locationHierarchyUuid).toList();
 
-            // TODO: test content of entities
-            assertFalse(true);
+            // want to compare location-based subset to the set of all entity records
+            List<T> locationEntities = service.findByLocationHierarchy(UUID_SORT, locationHierarchyUuid).toList();
+            List<T> allEntities = service.findAll(UUID_SORT).toList();
+
+            for (T entity : allEntities) {
+                // is this entity in the location-based results?
+                boolean inLocationResults = locationEntities.contains(entity);
+
+                // if so, it must lead us back to the original hierarchy we queried with
+                List<LocationHierarchy> associatedHierarchies = service.findLocationHierarchies(entity);
+                assertEquals(inLocationResults, associatedHierarchies.contains(unknown));
+            }
+
 
         } catch (UnsupportedOperationException e) {
             // this is OK, not all services have to support location-based queries
