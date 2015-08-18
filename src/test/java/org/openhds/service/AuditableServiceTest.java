@@ -205,7 +205,7 @@ public abstract class AuditableServiceTest
                 boolean inLocationResults = locationEntities.contains(entity);
 
                 // if so, it must lead us back to the original hierarchy we queried with
-                List<LocationHierarchy> associatedHierarchies = service.findEnclosingLocationHierarcies(entity);
+                List<LocationHierarchy> associatedHierarchies = service.findEnclosingLocationHierarchies(entity);
                 assertEquals(inLocationResults, associatedHierarchies.contains(unknown));
             }
 

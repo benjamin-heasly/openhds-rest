@@ -57,7 +57,7 @@ public class LocationHierarchyLevelService extends AbstractAuditableService<Loca
 
     // find all hierarchies on this level
     @Override
-    public List<LocationHierarchy> findEnclosingLocationHierarcies(LocationHierarchyLevel entity) {
+    public List<LocationHierarchy> findEnclosingLocationHierarchies(LocationHierarchyLevel entity) {
         return locationHierarchyService.findByLevel(entity);
     }
 

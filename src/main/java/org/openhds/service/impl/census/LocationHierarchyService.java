@@ -125,7 +125,7 @@ public class LocationHierarchyService extends AbstractAuditableExtIdService<
     }
 
     @Override
-    public List<LocationHierarchy> findEnclosingLocationHierarcies(LocationHierarchy entity) {
+    public List<LocationHierarchy> findEnclosingLocationHierarchies(LocationHierarchy entity) {
         List<LocationHierarchy> ancestors = new ArrayList<>();
 
         if (null != entity) {

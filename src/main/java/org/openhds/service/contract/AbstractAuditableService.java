@@ -107,7 +107,7 @@ public abstract class AbstractAuditableService
         return iteratorFromPageable(pageable -> findByEnclosingLocationHierarchy(pageable, locationHierarchyUuid), sort);
     }
 
-    public List<LocationHierarchy> findEnclosingLocationHierarcies(T entity) {
+    public List<LocationHierarchy> findEnclosingLocationHierarchies(T entity) {
         throw new UnsupportedOperationException(this.getClass().getSimpleName() + " can not do location-based queries");
     }
 
