@@ -74,7 +74,7 @@ public abstract class AuditableRestController<
                                                        @RequestParam(required = true)
                                                        String locationHierarchyUuid) {
 
-        Page<T> entities = service.findByLocationHierarchy(pageable, locationHierarchyUuid);
+        Page<T> entities = service.findByEnclosingLocationHierarchy(pageable, locationHierarchyUuid);
         return assembler.toResource(entities, entityLinkAssembler);
     }
 
@@ -84,7 +84,7 @@ public abstract class AuditableRestController<
                                                          @RequestParam(required = true)
                                                          String locationHierarchyUuid) {
 
-        PageIterator<T> pageIterator = new PageIterator<>((pageable) -> service.findByLocationHierarchy(pageable, locationHierarchyUuid), sort);
+        PageIterator<T> pageIterator = new PageIterator<>((pageable) -> service.findByEnclosingLocationHierarchy(pageable, locationHierarchyUuid), sort);
         EntityIterator<T> entityIterator = new PagingEntityIterator<>(pageIterator);
         entityIterator.setCollectionName(getResourceName());
         return new ShallowCopyIterator<>(entityIterator);

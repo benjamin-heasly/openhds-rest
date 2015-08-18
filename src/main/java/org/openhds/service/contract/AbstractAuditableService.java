@@ -99,15 +99,15 @@ public abstract class AbstractAuditableService
 
     }
 
-    public Page<T> findByLocationHierarchy(Pageable pageable, String locationHierarchyUuid) {
+    public Page<T> findByEnclosingLocationHierarchy(Pageable pageable, String locationHierarchyUuid) {
         throw new UnsupportedOperationException(this.getClass().getSimpleName() + " can not do location-based queries");
     }
 
-    public EntityIterator<T> findByLocationHierarchy(Sort sort, String locationHierarchyUuid) {
-        return iteratorFromPageable(pageable -> findByLocationHierarchy(pageable, locationHierarchyUuid), sort);
+    public EntityIterator<T> findByEnclosingLocationHierarchy(Sort sort, String locationHierarchyUuid) {
+        return iteratorFromPageable(pageable -> findByEnclosingLocationHierarchy(pageable, locationHierarchyUuid), sort);
     }
 
-    public List<LocationHierarchy> findLocationHierarchies(T entity) {
+    public List<LocationHierarchy> findEnclosingLocationHierarcies(T entity) {
         throw new UnsupportedOperationException(this.getClass().getSimpleName() + " can not do location-based queries");
     }
 

@@ -43,7 +43,8 @@ public class LocationHierarchyLevelService extends AbstractAuditableService<Loca
     }
 
     // "find" the one single level associated with the given location hierarchy
-    public Page<LocationHierarchyLevel> findByLocationHierarchy(Pageable pageable, String locationHierarchyUuid) {
+    @Override
+    public Page<LocationHierarchyLevel> findByEnclosingLocationHierarchy(Pageable pageable, String locationHierarchyUuid) {
         LocationHierarchy locationHierarchy = locationHierarchyService.findOne(locationHierarchyUuid);
         List<LocationHierarchyLevel> list = new ArrayList<>();
 
@@ -55,7 +56,8 @@ public class LocationHierarchyLevelService extends AbstractAuditableService<Loca
     }
 
     // find all hierarchies on this level
-    public List<LocationHierarchy> findLocationHierarchies(LocationHierarchyLevel entity) {
+    @Override
+    public List<LocationHierarchy> findEnclosingLocationHierarcies(LocationHierarchyLevel entity) {
         return locationHierarchyService.findByLevel(entity);
     }
 

@@ -197,7 +197,7 @@ public abstract class AuditableServiceTest
         try {
 
             // want to compare location-based subset to the set of all entity records
-            List<T> locationEntities = service.findByLocationHierarchy(UUID_SORT, locationHierarchyUuid).toList();
+            List<T> locationEntities = service.findByEnclosingLocationHierarchy(UUID_SORT, locationHierarchyUuid).toList();
             List<T> allEntities = service.findAll(UUID_SORT).toList();
 
             for (T entity : allEntities) {
@@ -205,7 +205,7 @@ public abstract class AuditableServiceTest
                 boolean inLocationResults = locationEntities.contains(entity);
 
                 // if so, it must lead us back to the original hierarchy we queried with
-                List<LocationHierarchy> associatedHierarchies = service.findLocationHierarchies(entity);
+                List<LocationHierarchy> associatedHierarchies = service.findEnclosingLocationHierarcies(entity);
                 assertEquals(inLocationResults, associatedHierarchies.contains(unknown));
             }
 

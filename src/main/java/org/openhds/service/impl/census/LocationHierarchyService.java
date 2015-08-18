@@ -6,10 +6,15 @@ import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.census.LocationHierarchyRepository;
 import org.openhds.service.contract.AbstractAuditableExtIdService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
+
+import static org.openhds.repository.results.PageMaker.makePage;
 
 /**
  * Created by wolfe on 6/23/15.
@@ -83,5 +88,50 @@ public class LocationHierarchyService extends AbstractAuditableExtIdService<
 
     public List<LocationHierarchy> findByLevel(LocationHierarchyLevel level) {
         return repository.findByLevel(level);
+    }
+
+
+    @Override
+    public Page<LocationHierarchy> findByEnclosingLocationHierarchy(Pageable pageable, String locationHierarchyUuid) {
+        LocationHierarchy locationHierarchy = findOne(locationHierarchyUuid);
+        List<LocationHierarchy> subtree = new ArrayList<>();
+
+        if (null != locationHierarchy) {
+            collectSubtree(locationHierarchy, subtree);
+        }
+
+        return makePage(subtree, pageable);
+    }
+
+    // recursively add descendants of the given subtree root
+    public List<LocationHierarchy> collectSubtree(LocationHierarchy root, List<LocationHierarchy> subtree) {
+        subtree.add(root);
+        List<LocationHierarchy> children = findByParent(root);
+        for (LocationHierarchy child : children) {
+            collectSubtree(child, subtree);
+        }
+        return subtree;
+    }
+
+    // add all ancestors of the given hierarchy
+    public List<LocationHierarchy> collectAncestors(LocationHierarchy node, List<LocationHierarchy> ancestors) {
+        ancestors.add(node);
+        LocationHierarchy parent = node.getParent();
+        while (null != parent) {
+            ancestors.add(parent);
+            parent = parent.getParent();
+        }
+        return ancestors;
+    }
+
+    @Override
+    public List<LocationHierarchy> findEnclosingLocationHierarcies(LocationHierarchy entity) {
+        List<LocationHierarchy> ancestors = new ArrayList<>();
+
+        if (null != entity) {
+            collectAncestors(entity, ancestors);
+        }
+
+        return ancestors;
     }
 }
