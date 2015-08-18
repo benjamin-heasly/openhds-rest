@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -52,9 +53,14 @@ public class LocationService extends AbstractAuditableExtIdService<Location, Loc
     }
 
     @Override
-    public Page<Location> findByEnclosingLocationHierarchy(Pageable pageable, String locationHierarchyUuid) {
+    public Page<Location> findByEnclosingLocationHierarchy(Pageable pageable,
+                                                           String locationHierarchyUuid,
+                                                           ZonedDateTime modifiedAfter,
+                                                           ZonedDateTime modifiedBefore) {
         return locationHierarchyService.findOtherByEnclosingLocationHierarchy(pageable,
                 locationHierarchyUuid,
+                modifiedAfter,
+                modifiedBefore,
                 LocationSpecifications::enclosedLocations,
                 repository);
     }

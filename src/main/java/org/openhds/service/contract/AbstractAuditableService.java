@@ -99,12 +99,25 @@ public abstract class AbstractAuditableService
 
     }
 
-    public Page<T> findByEnclosingLocationHierarchy(Pageable pageable, String locationHierarchyUuid) {
+    public Page<T> findByEnclosingLocationHierarchy(Pageable pageable,
+                                                    String locationHierarchyUuid,
+                                                    ZonedDateTime modifiedAfter,
+                                                    ZonedDateTime modifiedBefore) {
+
         throw new UnsupportedOperationException(this.getClass().getSimpleName() + " can not do location-based queries");
     }
 
-    public EntityIterator<T> findByEnclosingLocationHierarchy(Sort sort, String locationHierarchyUuid) {
-        return iteratorFromPageable(pageable -> findByEnclosingLocationHierarchy(pageable, locationHierarchyUuid), sort);
+    public EntityIterator<T> findByEnclosingLocationHierarchy(Sort sort,
+                                                              String locationHierarchyUuid,
+                                                              ZonedDateTime modifiedAfter,
+                                                              ZonedDateTime modifiedBefore) {
+
+        return iteratorFromPageable(
+                pageable -> findByEnclosingLocationHierarchy(pageable,
+                        locationHierarchyUuid,
+                        modifiedAfter,
+                        modifiedBefore),
+                sort);
     }
 
     public List<LocationHierarchy> findEnclosingLocationHierarchies(T entity) {
@@ -125,7 +138,7 @@ public abstract class AbstractAuditableService
     }
 
     public EntityIterator<T> findAllDeleted(Sort sort) {
-        return iteratorFromPageable(pageable -> repository.findByDeletedTrue(pageable), sort);
+        return iteratorFromPageable(repository::findByDeletedTrue, sort);
     }
 
     public Page<T> findAllDeleted(Pageable pageable) {

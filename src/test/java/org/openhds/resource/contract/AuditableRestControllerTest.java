@@ -173,24 +173,35 @@ public abstract class AuditableRestControllerTest<
     @WithUserDetails
     public void getByLocationHierarchy() throws Exception {
         String locationHierarchyUuid = AbstractUuidService.UNKNOWN_ENTITY_UUID;
+        ZonedDateTime beforeDate = ZonedDateTime.now().plusYears(1);
+        ZonedDateTime afterDate = ZonedDateTime.now().minusYears(1);
 
         // test status and content type, leave details up to corresponding service test
         MvcResult mvcResult = mockMvc.perform(get(getByLocationHierarchyPagedUrl())
-                .param("locationHierarchyUuid", locationHierarchyUuid))
+                .param("locationHierarchyUuid", locationHierarchyUuid)
+                .param("afterDate", afterDate.toString())
+                .param("beforeDate", beforeDate.toString()))
                 .andReturn();
+
         assertThat(mvcResult.getResponse().getStatus(),
                 isOneOf(HttpStatus.OK.value(), HttpStatus.NOT_FOUND.value()));
+
         if (mvcResult.getResponse().getStatus() == HttpStatus.OK.value()) {
             assertEquals(halJson.toString(), mvcResult.getResponse().getContentType());
         }
 
         mvcResult = mockMvc.perform(get(getByLocationHierarchyBulkdUrl())
-                .param("locationHierarchyUuid", locationHierarchyUuid))
+                .param("locationHierarchyUuid", locationHierarchyUuid)
+                .param("afterDate", afterDate.toString())
+                .param("beforeDate", beforeDate.toString()))
                 .andReturn();
+
         assertThat(mvcResult.getResponse().getStatus(),
                 isOneOf(HttpStatus.OK.value(), HttpStatus.NOT_FOUND.value()));
+
         if (mvcResult.getResponse().getStatus() == HttpStatus.OK.value()) {
             assertEquals(regularJson.toString(), mvcResult.getResponse().getContentType());
         }
     }
+
 }

@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,11 +45,15 @@ public class LocationHierarchyLevelService extends AbstractAuditableService<Loca
 
     // "find" the one single level associated with the given location hierarchy
     @Override
-    public Page<LocationHierarchyLevel> findByEnclosingLocationHierarchy(Pageable pageable, String locationHierarchyUuid) {
+    public Page<LocationHierarchyLevel> findByEnclosingLocationHierarchy(Pageable pageable,
+                                                                         String locationHierarchyUuid,
+                                                                         ZonedDateTime modifiedAfter,
+                                                                         ZonedDateTime modifiedBefore) {
+
         LocationHierarchy locationHierarchy = locationHierarchyService.findOne(locationHierarchyUuid);
         List<LocationHierarchyLevel> list = new ArrayList<>();
 
-        if (null != locationHierarchy) {
+        if (null != locationHierarchy && locationHierarchy.isModifiedInRange(modifiedAfter, modifiedBefore)) {
             list.add(locationHierarchy.getLevel());
         }
 

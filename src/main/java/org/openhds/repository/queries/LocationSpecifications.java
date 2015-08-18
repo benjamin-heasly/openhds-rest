@@ -9,6 +9,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -17,14 +18,17 @@ import java.util.List;
 public class LocationSpecifications {
 
     public interface LocationSpecification<T extends AuditableEntity> {
-        Specification<T> getSpecification(final List<LocationHierarchy> enclosing);
+        Specification<T> getSpecification(final List<LocationHierarchy> enclosing,
+                                          final QueryRange<ZonedDateTime> dateRange);
     }
 
-    public static Specification<Location> enclosedLocations(final List<LocationHierarchy> enclosing) {
+    public static Specification<Location> enclosedLocations(final List<LocationHierarchy> enclosing,
+                                                            final QueryRange<ZonedDateTime> dateRange) {
         return new Specification<Location>() {
             @Override
             public Predicate toPredicate(Root<Location> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                return root.get("locationHierarchy").in(enclosing);
+                return cb.and(root.get("locationHierarchy").in(enclosing),
+                        Specifications.inRange(root, cb, dateRange));
             }
         };
     }

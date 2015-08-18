@@ -193,11 +193,13 @@ public abstract class AuditableServiceTest
         // look for entities associated with the "unknown" location hierarchy
         LocationHierarchy unknown = locationHierarchyService.getUnknownEntity();
         String locationHierarchyUuid = unknown.getUuid();
+        ZonedDateTime modifiedBefore = ZonedDateTime.now().plusYears(1);
+        ZonedDateTime modifiedAfter = ZonedDateTime.now().minusYears(1);
 
         try {
 
             // want to compare location-based subset to the set of all entity records
-            List<T> locationEntities = service.findByEnclosingLocationHierarchy(UUID_SORT, locationHierarchyUuid).toList();
+            List<T> locationEntities = service.findByEnclosingLocationHierarchy(UUID_SORT, locationHierarchyUuid, modifiedAfter, modifiedBefore).toList();
             List<T> allEntities = service.findAll(UUID_SORT).toList();
 
             for (T entity : allEntities) {
@@ -215,4 +217,24 @@ public abstract class AuditableServiceTest
         }
 
     }
+
+    @Test
+    @WithUserDetails
+    public void findByLocationHierarchyImpossibleDates() {
+
+        // look for entities associated with the "unknown" location hierarchy
+        LocationHierarchy unknown = locationHierarchyService.getUnknownEntity();
+        String locationHierarchyUuid = unknown.getUuid();
+        ZonedDateTime modifiedBefore = ZonedDateTime.now().minusYears(1);
+        ZonedDateTime modifiedAfter = ZonedDateTime.now().plusYears(1);
+
+        try {
+            List<T> locationEntities = service.findByEnclosingLocationHierarchy(UUID_SORT, locationHierarchyUuid, modifiedAfter, modifiedBefore).toList();
+            assertEquals(0, locationEntities.size());
+        } catch (UnsupportedOperationException e) {
+            // this is OK, not all services have to support location-based queries
+        }
+
+    }
+
 }

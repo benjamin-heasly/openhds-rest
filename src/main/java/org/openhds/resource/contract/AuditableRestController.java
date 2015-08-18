@@ -72,9 +72,15 @@ public abstract class AuditableRestController<
     public PagedResources readByLocationHierarchyPaged(Pageable pageable,
                                                        PagedResourcesAssembler assembler,
                                                        @RequestParam(required = true)
-                                                       String locationHierarchyUuid) {
+                                                       String locationHierarchyUuid,
+                                                       @RequestParam(required = false)
+                                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                       ZonedDateTime afterDate,
+                                                       @RequestParam(required = false)
+                                                       @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                       ZonedDateTime beforeDate) {
 
-        Page<T> entities = service.findByEnclosingLocationHierarchy(pageable, locationHierarchyUuid);
+        Page<T> entities = service.findByEnclosingLocationHierarchy(pageable, locationHierarchyUuid, afterDate, beforeDate);
         return assembler.toResource(entities, entityLinkAssembler);
     }
 
@@ -82,9 +88,15 @@ public abstract class AuditableRestController<
     @RequestMapping(value = "/bylocationhierarchy/bulk", method = RequestMethod.GET)
     public EntityIterator<T> readByLocationHierarchyBulk(Sort sort,
                                                          @RequestParam(required = true)
-                                                         String locationHierarchyUuid) {
+                                                         String locationHierarchyUuid,
+                                                         @RequestParam(required = false)
+                                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                         ZonedDateTime afterDate,
+                                                         @RequestParam(required = false)
+                                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                                                         ZonedDateTime beforeDate) {
 
-        PageIterator<T> pageIterator = new PageIterator<>((pageable) -> service.findByEnclosingLocationHierarchy(pageable, locationHierarchyUuid), sort);
+        PageIterator<T> pageIterator = new PageIterator<>((pageable) -> service.findByEnclosingLocationHierarchy(pageable, locationHierarchyUuid,afterDate, beforeDate), sort);
         EntityIterator<T> entityIterator = new PagingEntityIterator<>(pageIterator);
         entityIterator.setCollectionName(getResourceName());
         return new ShallowCopyIterator<>(entityIterator);

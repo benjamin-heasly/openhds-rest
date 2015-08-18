@@ -7,6 +7,7 @@ import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.census.LocationHierarchyRepository;
 import org.openhds.repository.contract.AuditableRepository;
 import org.openhds.repository.queries.LocationSpecifications;
+import org.openhds.repository.queries.QueryRange;
 import org.openhds.service.contract.AbstractAuditableExtIdService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -95,17 +96,22 @@ public class LocationHierarchyService extends AbstractAuditableExtIdService<
 
 
     @Override
-    public Page<LocationHierarchy> findByEnclosingLocationHierarchy(Pageable pageable, String locationHierarchyUuid) {
-        return makePage(findByEnclosingLocationHierarchy(locationHierarchyUuid), pageable);
+    public Page<LocationHierarchy> findByEnclosingLocationHierarchy(Pageable pageable,
+                                                                    String locationHierarchyUuid,
+                                                                    ZonedDateTime modifiedAfter,
+                                                                    ZonedDateTime modifiedBefore) {
+        return makePage(findByEnclosingLocationHierarchy(locationHierarchyUuid, modifiedAfter, modifiedBefore), pageable);
     }
 
     // find descendants of the given subtree root--whole subtree in memory!
-    public List<LocationHierarchy> findByEnclosingLocationHierarchy(String locationHierarchyUuid) {
+    public List<LocationHierarchy> findByEnclosingLocationHierarchy(String locationHierarchyUuid,
+                                                                    ZonedDateTime modifiedAfter,
+                                                                    ZonedDateTime modifiedBefore) {
         LocationHierarchy locationHierarchy = findOne(locationHierarchyUuid);
         List<LocationHierarchy> subtree = new ArrayList<>();
 
         if (null != locationHierarchy) {
-            collectSubtree(locationHierarchy, subtree);
+            collectSubtree(locationHierarchy, subtree, modifiedAfter, modifiedBefore);
         }
 
         return subtree;
@@ -114,21 +120,32 @@ public class LocationHierarchyService extends AbstractAuditableExtIdService<
     // find other entities joined to the location hierarchy subtree at the given root
     public <T extends AuditableEntity> Page<T> findOtherByEnclosingLocationHierarchy(Pageable pageable,
                                                                                      String locationHierarchyUuid,
+                                                                                     ZonedDateTime modifiedAfter,
+                                                                                     ZonedDateTime modifiedBefore,
                                                                                      LocationSpecifications.LocationSpecification<T> locationSpecification,
                                                                                      AuditableRepository<T> otherRepository) {
         // whole hierarchy subtree in memory!
-        List<LocationHierarchy> enclosing = findByEnclosingLocationHierarchy(locationHierarchyUuid);
+        List<LocationHierarchy> enclosing = findByEnclosingLocationHierarchy(locationHierarchyUuid, modifiedAfter, modifiedBefore);
 
         // page of results associated with the subtree
-        return otherRepository.findAll(locationSpecification.getSpecification(enclosing), pageable);
+        QueryRange<ZonedDateTime> dateRange = new QueryRange<>("lastModifiedDate", modifiedAfter, modifiedBefore);
+        return otherRepository.findAll(locationSpecification.getSpecification(enclosing, dateRange), pageable);
     }
 
     // recursively add descendants of the given subtree root
-    public List<LocationHierarchy> collectSubtree(LocationHierarchy root, List<LocationHierarchy> subtree) {
+    public List<LocationHierarchy> collectSubtree(LocationHierarchy root,
+                                                  List<LocationHierarchy> subtree,
+                                                  ZonedDateTime modifiedAfter,
+                                                  ZonedDateTime modifiedBefore) {
+
+        if (!root.isModifiedInRange(modifiedAfter, modifiedBefore)) {
+            return subtree;
+        }
+
         subtree.add(root);
         List<LocationHierarchy> children = findByParent(root);
         for (LocationHierarchy child : children) {
-            collectSubtree(child, subtree);
+            collectSubtree(child, subtree, modifiedAfter, modifiedBefore);
         }
         return subtree;
     }
