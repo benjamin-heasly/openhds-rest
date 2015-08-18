@@ -1,9 +1,12 @@
 package org.openhds.service.impl.census;
 
+import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.domain.model.census.LocationHierarchyLevel;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.census.LocationHierarchyRepository;
+import org.openhds.repository.contract.AuditableRepository;
+import org.openhds.repository.queries.LocationSpecifications;
 import org.openhds.service.contract.AbstractAuditableExtIdService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -93,6 +96,11 @@ public class LocationHierarchyService extends AbstractAuditableExtIdService<
 
     @Override
     public Page<LocationHierarchy> findByEnclosingLocationHierarchy(Pageable pageable, String locationHierarchyUuid) {
+        return makePage(findByEnclosingLocationHierarchy(locationHierarchyUuid), pageable);
+    }
+
+    // find descendants of the given subtree root--whole subtree in memory!
+    public List<LocationHierarchy> findByEnclosingLocationHierarchy(String locationHierarchyUuid) {
         LocationHierarchy locationHierarchy = findOne(locationHierarchyUuid);
         List<LocationHierarchy> subtree = new ArrayList<>();
 
@@ -100,7 +108,19 @@ public class LocationHierarchyService extends AbstractAuditableExtIdService<
             collectSubtree(locationHierarchy, subtree);
         }
 
-        return makePage(subtree, pageable);
+        return subtree;
+    }
+
+    // find other entities joined to the location hierarchy subtree at the given root
+    public <T extends AuditableEntity> Page<T> findOtherByEnclosingLocationHierarchy(Pageable pageable,
+                                                                                     String locationHierarchyUuid,
+                                                                                     LocationSpecifications.LocationSpecification<T> locationSpecification,
+                                                                                     AuditableRepository<T> otherRepository) {
+        // whole hierarchy subtree in memory!
+        List<LocationHierarchy> enclosing = findByEnclosingLocationHierarchy(locationHierarchyUuid);
+
+        // page of results associated with the subtree
+        return otherRepository.findAll(locationSpecification.getSpecification(enclosing), pageable);
     }
 
     // recursively add descendants of the given subtree root
