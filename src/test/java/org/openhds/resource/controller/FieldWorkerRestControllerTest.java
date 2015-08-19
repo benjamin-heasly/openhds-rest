@@ -44,6 +44,7 @@ public class FieldWorkerRestControllerTest extends AuditableRestControllerTest<
     protected Registration<FieldWorker> makeRegistration(FieldWorker entity) {
         FieldWorkerRegistration registration = new FieldWorkerRegistration();
         registration.setFieldWorker(entity);
+        registration.setPassword("password");
         return registration;
     }
 

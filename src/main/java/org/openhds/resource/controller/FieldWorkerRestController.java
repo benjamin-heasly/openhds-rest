@@ -30,7 +30,7 @@ public class FieldWorkerRestController extends AuditableRestController<
 
     @Override
     protected FieldWorker register(FieldWorkerRegistration registration) {
-        return fieldWorkerService.createOrUpdate(registration.getFieldWorker());
+        return fieldWorkerService.recordFieldWorker(registration.getFieldWorker(), registration.getPassword());
     }
 
     @Override

@@ -1,7 +1,6 @@
 package org.openhds.service.impl;
 
 import org.openhds.errors.model.ErrorLog;
-import org.openhds.errors.model.ErrorLogException;
 import org.openhds.repository.concrete.PrivilegeRepository;
 import org.openhds.repository.concrete.RoleRepository;
 import org.openhds.repository.concrete.UserRepository;
@@ -96,4 +95,10 @@ public class UserService extends AbstractUuidService<User, UserRepository> {
         UserDetailsWrapper wrapper = (UserDetailsWrapper) principal;
         return wrapper.getUser();
     }
+
+    public User recordUser(User user, String password) {
+        user.setPasswordHash(passwordEncoder.encode(password));
+        return createOrUpdate(user);
+    }
+
 }

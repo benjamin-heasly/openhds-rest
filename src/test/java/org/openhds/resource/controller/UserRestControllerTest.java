@@ -44,6 +44,7 @@ public class UserRestControllerTest extends UuidIdentifiableRestControllerTest
     protected Registration<User> makeRegistration(User entity) {
         UserRegistration registration = new UserRegistration();
         registration.setUser(entity);
+        registration.setPassword("password");
         return registration;
     }
 

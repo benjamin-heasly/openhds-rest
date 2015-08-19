@@ -43,4 +43,9 @@ public class FieldWorkerService extends AbstractAuditableService<FieldWorker, Fi
     public EntityIterator<FieldWorker> findByLastName(Sort sort, String lastName) {
         return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndLastName(lastName, pageable), sort);
     }
+
+    public FieldWorker recordFieldWorker(FieldWorker fieldWorker, String password) {
+        fieldWorker.setPasswordHash(passwordEncoder.encode(password));
+        return createOrUpdate(fieldWorker);
+    }
 }

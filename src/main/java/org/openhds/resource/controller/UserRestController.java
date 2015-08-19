@@ -30,7 +30,7 @@ public class UserRestController extends UuidIdentifiableRestController<
 
     @Override
     protected User register(UserRegistration registration) {
-        return userService.createOrUpdate(registration.getUser());
+        return userService.recordUser(registration.getUser(), registration.getPassword());
     }
 
     @Override
