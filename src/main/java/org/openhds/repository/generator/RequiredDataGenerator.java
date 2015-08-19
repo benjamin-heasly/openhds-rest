@@ -10,6 +10,8 @@ import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.ProjectCodeService;
 import org.openhds.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
@@ -45,6 +47,9 @@ public class RequiredDataGenerator implements DataGenerator {
     private final ProjectCodeService projectCodeService;
     private final ProjectCodeLoader projectCodeLoader;
     private final ProjectCodeRepository projectCodeRepository;
+
+    // weak, fast hashing for default user and testing
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(4);
 
     @Autowired
     public RequiredDataGenerator(UserService userService,
@@ -96,7 +101,7 @@ public class RequiredDataGenerator implements DataGenerator {
         User user = new User();
         user.setUuid(DEFAULT_USER_UUID);
         user.setUsername(DEFAULT_USER_USERNAME);
-        user.setPassword(DEFAULT_USER_PASSWORD);
+        user.setPasswordHash(passwordEncoder.encode(DEFAULT_USER_PASSWORD));
         user.setFirstName("default user");
         user.setLastName("default user");
         user.setDescription("default user with root role (all privileges)");
@@ -158,8 +163,7 @@ public class RequiredDataGenerator implements DataGenerator {
         fieldWorker.setFirstName("default fieldworker");
         fieldWorker.setLastName("default fieldworker");
         fieldWorker.setFieldWorkerId("fieldworker");
-        fieldWorker.setPassword("password");
-        fieldWorker.setPasswordHash("password");
+        fieldWorker.setPasswordHash(passwordEncoder.encode("password"));
         fieldWorkerService.createOrUpdate(fieldWorker);
     }
 

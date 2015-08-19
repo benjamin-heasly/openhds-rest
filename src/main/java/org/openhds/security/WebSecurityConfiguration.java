@@ -13,6 +13,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -25,21 +27,31 @@ import java.io.IOException;
 @Configuration
 public class WebSecurityConfiguration {
 
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        // strong, slow hashing in production
+        return new BCryptPasswordEncoder(12);
+    }
+
     @Configuration
     public static class UserDetailsServiceConfig extends GlobalAuthenticationConfigurerAdapter {
 
         @Autowired
         private UserRepository userRepository;
 
+        @Autowired
+        private PasswordEncoder passwordEncoder;
+
         @Override
         public void init(AuthenticationManagerBuilder auth) throws Exception {
-            auth.userDetailsService(userDetailsService());
+            auth.userDetailsService(userDetailsService())
+                    .passwordEncoder(passwordEncoder);
         }
 
         @Bean
         public UserDetailsService userDetailsService() {
             return (username) -> userRepository.findByUsername(username)
-                    .map((org.openhds.security.model.User u) -> new UserDetailsWrapper(u))
+                    .map(UserDetailsWrapper::new)
                     .orElseThrow(() -> new UsernameNotFoundException("No such user: " + username));
         }
     }

@@ -27,11 +27,6 @@ public class FieldWorker extends AuditableEntity implements Serializable {
     @Description(description = "Last name of the field worker.")
     String lastName;
 
-    @Description(description = "Password entered for a new field worker.")
-    @Transient
-    @JsonIgnore
-    String password;
-
     @NotNull(message = "field worker passwordHash may not be null")
     @Description(description = "Hashed version of a field worker's password.")
     String passwordHash;
@@ -60,14 +55,6 @@ public class FieldWorker extends AuditableEntity implements Serializable {
         this.lastName = lastName;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public String getPasswordHash() {
         return passwordHash;
     }
@@ -82,7 +69,6 @@ public class FieldWorker extends AuditableEntity implements Serializable {
                 "fieldWorkerId='" + fieldWorkerId + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", password='" + password + '\'' +
                 ", passwordHash='" + passwordHash + '\'' +
                 "} " + super.toString();
     }

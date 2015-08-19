@@ -27,9 +27,9 @@ public class User implements Serializable, UuidIdentifiable {
     public User() {
     }
 
-    public User(String username, String password) {
+    public User(String username, String passwordHash) {
         setUsername(username);
-        setPassword(password);
+        setPasswordHash(passwordHash);
     }
 
     @Id
@@ -55,9 +55,9 @@ public class User implements Serializable, UuidIdentifiable {
     @Description(description = "The name used for logging into the system.")
     private String username;
 
-    @Description(description = "Password associated with the username.")
-    @JsonIgnore
-    private String password;
+    @NotNull(message = "user passwordHash may not be null")
+    @Description(description = "Hashed version of a user's password.")
+    String passwordHash;
 
     @Description(description = "Set of roles applied to the user.")
     @ManyToMany(fetch = FetchType.EAGER)
@@ -114,12 +114,12 @@ public class User implements Serializable, UuidIdentifiable {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
+    public String getPasswordHash() {
+        return passwordHash;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
     }
 
     public Set<Role> getRoles() {
@@ -155,7 +155,6 @@ public class User implements Serializable, UuidIdentifiable {
                 ", lastName='" + lastName + '\'' +
                 ", description='" + description + '\'' +
                 ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
                 ", roles=" + roles +
                 ", deleted=" + deleted +
                 '}';

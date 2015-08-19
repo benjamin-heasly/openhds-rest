@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,6 +22,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class UserService extends AbstractUuidService<User, UserRepository> {
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private RoleRepository roleRepository;
@@ -38,6 +42,7 @@ public class UserService extends AbstractUuidService<User, UserRepository> {
         User user = new User();
         user.setUuid(id);
         user.setUsername(name);
+        user.setPasswordHash(name);
         user.setFirstName(name);
         return user;
     }

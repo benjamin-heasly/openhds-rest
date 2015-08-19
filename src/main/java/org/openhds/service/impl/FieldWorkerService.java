@@ -6,6 +6,7 @@ import org.openhds.repository.results.EntityIterator;
 import org.openhds.service.contract.AbstractAuditableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,6 +14,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class FieldWorkerService extends AbstractAuditableService<FieldWorker, FieldWorkerRepository> {
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     public FieldWorkerService(FieldWorkerRepository repository) {
