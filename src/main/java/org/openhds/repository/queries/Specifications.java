@@ -1,9 +1,13 @@
 package org.openhds.repository.queries;
 
+import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.domain.contract.UuidIdentifiable;
+import org.openhds.domain.model.census.LocationHierarchy;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,30 +16,33 @@ import java.util.List;
  */
 public class Specifications {
 
+    public interface LocationSpecification<T extends AuditableEntity> {
+        Specification<T> getSpecification(final List<LocationHierarchy> enclosing);
+    }
+
+
     // Query for matching multiple property values.
     public static <T extends UuidIdentifiable> Specification<T> multiValue(final QueryValue... queryValues) {
-        return new Specification<T>() {
-            @Override
-            public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                return allValuesEqual(root, cb, queryValues);
-            }
-        };
+        return (root, query, cb) -> allValuesEqual(root, cb, queryValues);
+    }
+
+    // Query a property in some range.
+    public static <T extends UuidIdentifiable, R extends Comparable> Specification<T> inRange(final QueryRange<R> queryRange) {
+        return (root, query, cb) -> propertyInRange(root, cb, queryRange);
+    }
+
+    public static <T extends UuidIdentifiable, R extends Comparable> Specification<T> withRange(final Specification<T> original,
+                                                                                                final QueryRange<R> queryRange) {
+        return org.springframework.data.jpa.domain.Specifications.where(original).and(inRange(queryRange));
     }
 
     // Query for a property in some range, and matching multiple other property values.
-    public static <T extends UuidIdentifiable, R extends Comparable> Specification<T> rangedMultiValue(
-            final QueryRange<R> queryRange, final QueryValue... queryValues) {
-        return new Specification<T>() {
-            @Override
-            public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
-                return cb.and(
-                        inRange(root, cb, queryRange),
-                        allValuesEqual(root, cb, queryValues));
-            }
-        };
+    public static <T extends UuidIdentifiable, R extends Comparable> Specification<T> rangedMultiValue(final QueryRange<R> queryRange,
+                                                                                                       final QueryValue... queryValues) {
+        return  withRange(multiValue(queryValues), queryRange);
     }
 
-    public static <R extends java.lang.Comparable> Predicate inRange(Path<?> root, CriteriaBuilder cb, QueryRange<R> queryRange) {
+    public static <R extends java.lang.Comparable> Predicate propertyInRange(Path<?> root, CriteriaBuilder cb, QueryRange<R> queryRange) {
 
         if(null != queryRange.getMax() && null != queryRange.getMin()){
 

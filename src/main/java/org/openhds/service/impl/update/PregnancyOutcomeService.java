@@ -1,20 +1,30 @@
 package org.openhds.service.impl.update;
 
+import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.domain.model.update.PregnancyOutcome;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.update.PregnancyOutcomeRepository;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
 import org.openhds.service.impl.census.IndividualService;
+import org.openhds.service.impl.census.LocationHierarchyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Wolfe on 7/15/2015.
  */
 @Service
 public class PregnancyOutcomeService extends AbstractAuditableCollectedService<PregnancyOutcome, PregnancyOutcomeRepository> {
+
+    @Autowired
+    private LocationHierarchyService locationHierarchyService;
 
     @Autowired
     private IndividualService individualService;
@@ -58,5 +68,32 @@ public class PregnancyOutcomeService extends AbstractAuditableCollectedService<P
     @Override
     public void validate(PregnancyOutcome entity, ErrorLog errorLog) {
         super.validate(entity, errorLog);
+    }
+
+    @Override
+    public Set<LocationHierarchy> findEnclosingLocationHierarchies(PregnancyOutcome entity) {
+        return locationHierarchyService.findEnclosingLocationHierarchies(entity.getVisit()
+                .getLocation()
+                .getLocationHierarchy());
+    }
+
+    @Override
+    public Page<PregnancyOutcome> findByEnclosingLocationHierarchy(Pageable pageable,
+                                                                   String locationHierarchyUuid,
+                                                                   ZonedDateTime modifiedAfter,
+                                                                   ZonedDateTime modifiedBefore) {
+        return locationHierarchyService.findOtherByEnclosingLocationHierarchy(pageable,
+                locationHierarchyUuid,
+                modifiedAfter,
+                modifiedBefore,
+                PregnancyOutcomeService::enclosed,
+                repository);
+    }
+
+    private static Specification<PregnancyOutcome> enclosed(final List<LocationHierarchy> enclosing) {
+        return (root, query, cb) -> root.get("visit")
+                .get("location")
+                .get("locationHierarchy")
+                .in(enclosing);
     }
 }

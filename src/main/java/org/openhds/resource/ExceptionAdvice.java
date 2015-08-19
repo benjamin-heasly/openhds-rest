@@ -67,6 +67,13 @@ class ExceptionAdvice {
         return new VndErrors("Nothing found", ex.getMessage());
     }
 
+    @ExceptionHandler(UnsupportedOperationException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public VndErrors unsupportedException(UnsupportedOperationException ex) {
+        return new VndErrors("Unsupported", ex.getMessage());
+    }
+
     @ExceptionHandler(UsernameNotFoundException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.UNAUTHORIZED)

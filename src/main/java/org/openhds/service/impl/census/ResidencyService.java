@@ -1,13 +1,19 @@
 package org.openhds.service.impl.census;
 
+import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.domain.model.census.Residency;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.census.ResidencyRepository;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Wolfe on 7/14/2015.
@@ -20,6 +26,9 @@ public class ResidencyService extends AbstractAuditableCollectedService<Residenc
 
     @Autowired
     private LocationService locationService;
+
+    @Autowired
+    private LocationHierarchyService locationHierarchyService;
 
     @Autowired
     public ResidencyService(ResidencyRepository repository) {
@@ -46,6 +55,28 @@ public class ResidencyService extends AbstractAuditableCollectedService<Residenc
         residency.setLocation(locationService.findOrMakePlaceHolder(locationId));
         residency.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
         return createOrUpdate(residency);
+    }
+
+    @Override
+    public Set<LocationHierarchy> findEnclosingLocationHierarchies(Residency entity) {
+        return locationHierarchyService.findEnclosingLocationHierarchies(entity.getLocation().getLocationHierarchy());
+    }
+
+    @Override
+    public Page<Residency> findByEnclosingLocationHierarchy(Pageable pageable,
+                                                            String locationHierarchyUuid,
+                                                            ZonedDateTime modifiedAfter,
+                                                            ZonedDateTime modifiedBefore) {
+        return locationHierarchyService.findOtherByEnclosingLocationHierarchy(pageable,
+                locationHierarchyUuid,
+                modifiedAfter,
+                modifiedBefore,
+                ResidencyService::enclosed,
+                repository);
+    }
+
+    private static Specification<Residency> enclosed(final List<LocationHierarchy> enclosing) {
+        return (root, query, cb) -> root.get("location").get("locationHierarchy").in(enclosing);
     }
 
     @Override

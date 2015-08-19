@@ -131,6 +131,11 @@ public abstract class AuditableEntity implements UuidIdentifiable, Serializable 
         this.lastModifiedDate = lastModifiedDate;
     }
 
+    public boolean isModifiedInRange(ZonedDateTime modifiedAfter, ZonedDateTime modifiedBefore) {
+        return ((null == modifiedAfter || lastModifiedDate.isEqual(modifiedAfter) || lastModifiedDate.isAfter(modifiedAfter)) &&
+                (null == modifiedBefore || lastModifiedDate.isEqual(modifiedBefore) || lastModifiedDate.isBefore(modifiedBefore)));
+    }
+
     @Override
     public int hashCode() {
         if (null == uuid) {

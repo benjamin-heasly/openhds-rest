@@ -2,13 +2,18 @@ package org.openhds.service;
 
 import org.junit.Test;
 import org.openhds.domain.contract.AuditableEntity;
+import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.errors.model.ErrorLogException;
 import org.openhds.security.model.User;
 import org.openhds.service.contract.AbstractAuditableService;
+import org.openhds.service.impl.census.LocationHierarchyService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -19,6 +24,9 @@ import static org.junit.Assert.*;
 public abstract class AuditableServiceTest
         <T extends AuditableEntity, U extends AbstractAuditableService<T, ?>>
         extends UuidServiceTest<T, U> {
+
+    @Autowired
+    LocationHierarchyService locationHierarchyService;
 
     /**
      * Simply check that results are not null after a findAll call
@@ -33,7 +41,7 @@ public abstract class AuditableServiceTest
 
     @Test(expected = ErrorLogException.class)
     @WithUserDetails
-    public void updateWithOldLastModified(){
+    public void updateWithOldLastModified() {
         String id = "testId";
 
         //Create original and keep reference to it.
@@ -177,6 +185,57 @@ public abstract class AuditableServiceTest
         service.createOrUpdate(makeValidEntity("anotherTestEntity", "anotherTestEntity"));
 
         assertEquals(service.findByLastModifiedBy(UUID_SORT, user).toList().size(), entityCount + 1);
+
+    }
+
+    @Test
+    @WithUserDetails
+    public void findByLocationHierarchy() {
+
+        // look for entities associated with the "unknown" location hierarchy
+        LocationHierarchy unknown = locationHierarchyService.getUnknownEntity();
+        String locationHierarchyUuid = unknown.getUuid();
+        ZonedDateTime modifiedBefore = ZonedDateTime.now().plusYears(1);
+        ZonedDateTime modifiedAfter = ZonedDateTime.now().minusYears(1);
+
+        try {
+
+            // want to compare location-based subset to the set of all entity records
+            List<T> locationEntities = service.findByEnclosingLocationHierarchy(UUID_SORT, locationHierarchyUuid, modifiedAfter, modifiedBefore).toList();
+            List<T> allEntities = service.findAll(UUID_SORT).toList();
+
+            for (T entity : allEntities) {
+                // is this entity in the location-based results?
+                boolean inLocationResults = locationEntities.contains(entity);
+
+                // if so, it must lead us back to the original hierarchy we queried with
+                Set<LocationHierarchy> associatedHierarchies = service.findEnclosingLocationHierarchies(entity);
+                assertEquals(inLocationResults, associatedHierarchies.contains(unknown));
+            }
+
+
+        } catch (UnsupportedOperationException e) {
+            // this is OK, not all services have to support location-based queries
+        }
+
+    }
+
+    @Test
+    @WithUserDetails
+    public void findByLocationHierarchyImpossibleDates() {
+
+        // look for entities associated with the "unknown" location hierarchy
+        LocationHierarchy unknown = locationHierarchyService.getUnknownEntity();
+        String locationHierarchyUuid = unknown.getUuid();
+        ZonedDateTime modifiedBefore = ZonedDateTime.now().minusYears(1);
+        ZonedDateTime modifiedAfter = ZonedDateTime.now().plusYears(1);
+
+        try {
+            List<T> locationEntities = service.findByEnclosingLocationHierarchy(UUID_SORT, locationHierarchyUuid, modifiedAfter, modifiedBefore).toList();
+            assertEquals(0, locationEntities.size());
+        } catch (UnsupportedOperationException e) {
+            // this is OK, not all services have to support location-based queries
+        }
 
     }
 

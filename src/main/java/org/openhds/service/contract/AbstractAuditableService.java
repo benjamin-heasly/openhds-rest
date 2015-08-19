@@ -1,7 +1,9 @@
 package org.openhds.service.contract;
 
 import org.openhds.domain.contract.AuditableEntity;
-import org.openhds.errors.model.*;
+import org.openhds.domain.model.census.LocationHierarchy;
+import org.openhds.errors.model.ErrorLog;
+import org.openhds.errors.model.ErrorLogException;
 import org.openhds.repository.contract.AuditableRepository;
 import org.openhds.repository.queries.QueryRange;
 import org.openhds.repository.results.EntityIterator;
@@ -13,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import java.time.ZonedDateTime;
+import java.util.Set;
 
 /**
  * Created by wolfe on 6/11/15.
@@ -44,6 +47,7 @@ public abstract class AbstractAuditableService
 
     @Override
     public boolean exists(String id) {
+        // exists is a first-pass check, findOne also checks isDeleted
         return repository.exists(id) && null != findOne(id);
     }
 
@@ -95,6 +99,31 @@ public abstract class AbstractAuditableService
 
     }
 
+    public Page<T> findByEnclosingLocationHierarchy(Pageable pageable,
+                                                    String locationHierarchyUuid,
+                                                    ZonedDateTime modifiedAfter,
+                                                    ZonedDateTime modifiedBefore) {
+
+        throw new UnsupportedOperationException(this.getClass().getSimpleName() + " can not do location-based queries");
+    }
+
+    public EntityIterator<T> findByEnclosingLocationHierarchy(Sort sort,
+                                                              String locationHierarchyUuid,
+                                                              ZonedDateTime modifiedAfter,
+                                                              ZonedDateTime modifiedBefore) {
+
+        return iteratorFromPageable(
+                pageable -> findByEnclosingLocationHierarchy(pageable,
+                        locationHierarchyUuid,
+                        modifiedAfter,
+                        modifiedBefore),
+                sort);
+    }
+
+    public Set<LocationHierarchy> findEnclosingLocationHierarchies(T entity) {
+        throw new UnsupportedOperationException(this.getClass().getSimpleName() + " can not do location-based queries");
+    }
+
     public void delete(T entity, String reason) {
         checkEntityExists(entity.getUuid());
         entity.setDeleted(true);
@@ -109,7 +138,7 @@ public abstract class AbstractAuditableService
     }
 
     public EntityIterator<T> findAllDeleted(Sort sort) {
-        return iteratorFromPageable(pageable -> repository.findByDeletedTrue(pageable), sort);
+        return iteratorFromPageable(repository::findByDeletedTrue, sort);
     }
 
     public Page<T> findAllDeleted(Pageable pageable) {
@@ -135,7 +164,7 @@ public abstract class AbstractAuditableService
         return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndLastModifiedBy(user, pageable), sort);
     }
 
-    protected void setAuditableFields(T entity){
+    protected void setAuditableFields(T entity) {
         User user = userHelper.getCurrentUser();
         ZonedDateTime now = ZonedDateTime.now();
 
@@ -152,12 +181,12 @@ public abstract class AbstractAuditableService
         entity.setLastModifiedBy(user);
     }
 
-    protected void checkNonStaleModifiedDate(T entity){
+    protected void checkNonStaleModifiedDate(T entity) {
 
         T existing = findOne(entity.getUuid());
-        if(null != existing
-            && null != entity.getLastModifiedDate()
-            && existing.getLastModifiedDate().isAfter(entity.getLastModifiedDate())){
+        if (null != existing
+                && null != entity.getLastModifiedDate()
+                && existing.getLastModifiedDate().isAfter(entity.getLastModifiedDate())) {
 
             ErrorLog errorLog = new ErrorLog();
             errorLog.appendError("Update candidate is out of date with database.");

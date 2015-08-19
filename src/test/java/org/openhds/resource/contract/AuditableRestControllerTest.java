@@ -5,14 +5,16 @@ import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.repository.contract.AuditableRepository;
 import org.openhds.resource.registration.Registration;
 import org.openhds.service.contract.AbstractAuditableService;
+import org.openhds.service.contract.AbstractUuidService;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.ZonedDateTime;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -32,6 +34,14 @@ public abstract class AuditableRestControllerTest<
 
     protected String getByDateBulkUrl() {
         return getByDatePagedUrl() + "bulk/";
+    }
+
+    protected String getByLocationHierarchyPagedUrl() {
+        return getResourceUrl() + "bylocationhierarchy/";
+    }
+
+    protected String getByLocationHierarchyBulkdUrl() {
+        return getByLocationHierarchyPagedUrl() + "bulk/";
     }
 
     protected String getVoidedResourceUrl() {
@@ -157,6 +167,41 @@ public abstract class AuditableRestControllerTest<
 
         T created = fromJson(controller.getEntityClass(), mvcResult.getResponse().getContentAsString());
         return created;
+    }
+
+    @Test
+    @WithUserDetails
+    public void getByLocationHierarchy() throws Exception {
+        String locationHierarchyUuid = AbstractUuidService.UNKNOWN_ENTITY_UUID;
+        ZonedDateTime beforeDate = ZonedDateTime.now().plusYears(1);
+        ZonedDateTime afterDate = ZonedDateTime.now().minusYears(1);
+
+        // test status and content type, leave details up to corresponding service test
+        MvcResult mvcResult = mockMvc.perform(get(getByLocationHierarchyPagedUrl())
+                .param("locationHierarchyUuid", locationHierarchyUuid)
+                .param("afterDate", afterDate.toString())
+                .param("beforeDate", beforeDate.toString()))
+                .andReturn();
+
+        assertThat(mvcResult.getResponse().getStatus(),
+                isOneOf(HttpStatus.OK.value(), HttpStatus.NOT_FOUND.value()));
+
+        if (mvcResult.getResponse().getStatus() == HttpStatus.OK.value()) {
+            assertEquals(halJson.toString(), mvcResult.getResponse().getContentType());
+        }
+
+        mvcResult = mockMvc.perform(get(getByLocationHierarchyBulkdUrl())
+                .param("locationHierarchyUuid", locationHierarchyUuid)
+                .param("afterDate", afterDate.toString())
+                .param("beforeDate", beforeDate.toString()))
+                .andReturn();
+
+        assertThat(mvcResult.getResponse().getStatus(),
+                isOneOf(HttpStatus.OK.value(), HttpStatus.NOT_FOUND.value()));
+
+        if (mvcResult.getResponse().getStatus() == HttpStatus.OK.value()) {
+            assertEquals(regularJson.toString(), mvcResult.getResponse().getContentType());
+        }
     }
 
 }
