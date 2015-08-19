@@ -24,10 +24,10 @@ import java.util.Set;
 public class VisitService extends AbstractAuditableExtIdService<Visit, VisitRepository> {
 
     @Autowired
-    LocationService locationService;
+    private LocationService locationService;
 
     @Autowired
-    LocationHierarchyService locationHierarchyService;
+    private LocationHierarchyService locationHierarchyService;
 
     @Autowired
     public VisitService(VisitRepository repository) {

@@ -1,15 +1,22 @@
 package org.openhds.service.impl.update;
 
+import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.domain.model.update.InMigration;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.update.InMigationRepository;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
 import org.openhds.service.impl.census.IndividualService;
+import org.openhds.service.impl.census.LocationHierarchyService;
 import org.openhds.service.impl.census.ResidencyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by bsh on 7/13/15.
@@ -18,13 +25,16 @@ import java.time.ZonedDateTime;
 public class InMigrationService extends AbstractAuditableCollectedService<InMigration, InMigationRepository> {
 
     @Autowired
-    VisitService visitService;
+    private LocationHierarchyService locationHierarchyService;
 
     @Autowired
-    IndividualService individualService;
+    private VisitService visitService;
 
     @Autowired
-    ResidencyService residencyService;
+    private IndividualService individualService;
+
+    @Autowired
+    private ResidencyService residencyService;
 
     @Autowired
     public InMigrationService(InMigationRepository repository) {
@@ -60,5 +70,32 @@ public class InMigrationService extends AbstractAuditableCollectedService<InMigr
     @Override
     public void validate(InMigration entity, ErrorLog errorLog) {
         super.validate(entity, errorLog);
+    }
+
+    @Override
+    public Set<LocationHierarchy> findEnclosingLocationHierarchies(InMigration entity) {
+        return locationHierarchyService.findEnclosingLocationHierarchies(entity.getVisit()
+                .getLocation()
+                .getLocationHierarchy());
+    }
+
+    @Override
+    public Page<InMigration> findByEnclosingLocationHierarchy(Pageable pageable,
+                                                              String locationHierarchyUuid,
+                                                              ZonedDateTime modifiedAfter,
+                                                              ZonedDateTime modifiedBefore) {
+        return locationHierarchyService.findOtherByEnclosingLocationHierarchy(pageable,
+                locationHierarchyUuid,
+                modifiedAfter,
+                modifiedBefore,
+                InMigrationService::enclosed,
+                repository);
+    }
+
+    private static Specification<InMigration> enclosed(final List<LocationHierarchy> enclosing) {
+        return (root, query, cb) -> root.get("visit")
+                .get("location")
+                .get("locationHierarchy")
+                .in(enclosing);
     }
 }
