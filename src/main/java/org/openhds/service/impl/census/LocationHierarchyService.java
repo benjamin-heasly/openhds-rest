@@ -6,12 +6,13 @@ import org.openhds.domain.model.census.LocationHierarchyLevel;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.census.LocationHierarchyRepository;
 import org.openhds.repository.contract.AuditableRepository;
-import org.openhds.repository.queries.LocationSpecifications;
 import org.openhds.repository.queries.QueryRange;
+import org.openhds.repository.queries.Specifications;
 import org.openhds.service.contract.AbstractAuditableExtIdService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
@@ -122,14 +123,15 @@ public class LocationHierarchyService extends AbstractAuditableExtIdService<
                                                                                      String locationHierarchyUuid,
                                                                                      ZonedDateTime modifiedAfter,
                                                                                      ZonedDateTime modifiedBefore,
-                                                                                     LocationSpecifications.LocationSpecification<T> locationSpecification,
+                                                                                     Specifications.LocationSpecification<T> locationSpecification,
                                                                                      AuditableRepository<T> otherRepository) {
         // whole hierarchy subtree in memory!
         List<LocationHierarchy> enclosing = findByEnclosingLocationHierarchy(locationHierarchyUuid, modifiedAfter, modifiedBefore);
 
         // page of results associated with the subtree
         QueryRange<ZonedDateTime> dateRange = new QueryRange<>("lastModifiedDate", modifiedAfter, modifiedBefore);
-        return otherRepository.findAll(locationSpecification.getSpecification(enclosing, dateRange), pageable);
+        Specification<T> enclosedAndInRange = Specifications.withRange(locationSpecification.getSpecification(enclosing), dateRange);
+        return otherRepository.findAll(enclosedAndInRange, pageable);
     }
 
     // recursively add descendants of the given subtree root

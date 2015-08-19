@@ -26,7 +26,7 @@ public class EventSpecifications {
                 query.distinct(true);
                 return cb.and(
                         Specifications.allValuesEqual(root, cb, queryValues),
-                        Specifications.inRange(root, cb, queryRange),
+                        Specifications.propertyInRange(root, cb, queryRange),
                         noExistingMetadataForSystem(root, query, cb, system));
             }
         };
@@ -44,7 +44,7 @@ public class EventSpecifications {
                 query.distinct(true);
                 return cb.and(
                         Specifications.allValuesEqual(root, cb, queryValues),
-                        Specifications.inRange(root, cb, queryRange),
+                        Specifications.propertyInRange(root, cb, queryRange),
                         existingMetadataAllValuesEqual(root, query, cb, metadataQueryValues));
             }
         };

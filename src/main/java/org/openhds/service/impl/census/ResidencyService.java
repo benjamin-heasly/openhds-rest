@@ -1,13 +1,16 @@
 package org.openhds.service.impl.census;
 
+import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.domain.model.census.Residency;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.census.ResidencyRepository;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 /**
  * Created by Wolfe on 7/14/2015.
@@ -47,6 +50,11 @@ public class ResidencyService extends AbstractAuditableCollectedService<Residenc
         residency.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
         return createOrUpdate(residency);
     }
+
+    private static Specification<Residency> enclosed(final List<LocationHierarchy> enclosing) {
+        return (root, query, cb) -> root.get("location").get("locationHierarchy").in(enclosing);
+    }
+
 
     @Override
     public void validate(Residency entity, ErrorLog errorLog) {

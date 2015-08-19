@@ -164,7 +164,7 @@ public abstract class AbstractAuditableService
         return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndLastModifiedBy(user, pageable), sort);
     }
 
-    protected void setAuditableFields(T entity){
+    protected void setAuditableFields(T entity) {
         User user = userHelper.getCurrentUser();
         ZonedDateTime now = ZonedDateTime.now();
 
@@ -181,12 +181,12 @@ public abstract class AbstractAuditableService
         entity.setLastModifiedBy(user);
     }
 
-    protected void checkNonStaleModifiedDate(T entity){
+    protected void checkNonStaleModifiedDate(T entity) {
 
         T existing = findOne(entity.getUuid());
-        if(null != existing
+        if (null != existing
                 && null != entity.getLastModifiedDate()
-                && existing.getLastModifiedDate().isAfter(entity.getLastModifiedDate())){
+                && existing.getLastModifiedDate().isAfter(entity.getLastModifiedDate())) {
 
             ErrorLog errorLog = new ErrorLog();
             errorLog.appendError("Update candidate is out of date with database.");
