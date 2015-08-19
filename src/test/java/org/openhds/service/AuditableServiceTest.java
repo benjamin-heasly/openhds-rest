@@ -9,9 +9,11 @@ import org.openhds.service.contract.AbstractAuditableService;
 import org.openhds.service.impl.census.LocationHierarchyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -207,7 +209,7 @@ public abstract class AuditableServiceTest
                 boolean inLocationResults = locationEntities.contains(entity);
 
                 // if so, it must lead us back to the original hierarchy we queried with
-                List<LocationHierarchy> associatedHierarchies = service.findEnclosingLocationHierarchies(entity);
+                Set<LocationHierarchy> associatedHierarchies = service.findEnclosingLocationHierarchies(entity);
                 assertEquals(inLocationResults, associatedHierarchies.contains(unknown));
             }
 

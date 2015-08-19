@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by wolfe on 6/9/15.
@@ -48,7 +49,7 @@ public class LocationService extends AbstractAuditableExtIdService<Location, Loc
     }
 
     @Override
-    public List<LocationHierarchy> findEnclosingLocationHierarchies(Location entity) {
+    public Set<LocationHierarchy> findEnclosingLocationHierarchies(Location entity) {
         return locationHierarchyService.findEnclosingLocationHierarchies(entity.getLocationHierarchy());
     }
 

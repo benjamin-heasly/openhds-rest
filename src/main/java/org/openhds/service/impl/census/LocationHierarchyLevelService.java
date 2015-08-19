@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Wolfe on 7/1/2015.
@@ -62,8 +64,10 @@ public class LocationHierarchyLevelService extends AbstractAuditableService<Loca
 
     // find all hierarchies on this level
     @Override
-    public List<LocationHierarchy> findEnclosingLocationHierarchies(LocationHierarchyLevel entity) {
-        return locationHierarchyService.findByLevel(entity);
+    public Set<LocationHierarchy> findEnclosingLocationHierarchies(LocationHierarchyLevel entity) {
+        Set<LocationHierarchy> onLevel = new HashSet<>();
+        onLevel.addAll(locationHierarchyService.findByLevel(entity));
+        return onLevel;
     }
 
     public LocationHierarchyLevel findByName(String name) {

@@ -4,10 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.openhds.domain.contract.AuditableExtIdEntity;
 import org.openhds.domain.util.Description;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -51,24 +48,24 @@ public class Individual extends AuditableExtIdEntity implements Serializable {
     private Individual father;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "individual")
+    @OneToMany(mappedBy = "individual", fetch = FetchType.EAGER)
     @Description(description = "The set of all residencies that the individual is a part of.")
-    private Set<Residency> residencies = new HashSet<Residency>();
+    private Set<Residency> residencies = new HashSet<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "individual")
     @Description(description = "The set of all memberships the individual is a part of.")
-    private Set<Membership> allMemberships = new HashSet<Membership>();
+    private Set<Membership> allMemberships = new HashSet<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "individualA")
     @Description(description = "The set of all relationships that the individual may have with another individual.")
-    private Set<Relationship> relationshipsAsIndividualA = new HashSet<Relationship>();
+    private Set<Relationship> relationshipsAsIndividualA = new HashSet<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "individualB")
     @Description(description = "The set of all relationships another individual may have with this individual.")
-    private Set<Relationship> relationshipsAsIndividualB = new HashSet<Relationship>();
+    private Set<Relationship> relationshipsAsIndividualB = new HashSet<>();
 
     public String getFirstName() {
         return firstName;
@@ -158,7 +155,7 @@ public class Individual extends AuditableExtIdEntity implements Serializable {
         this.relationshipsAsIndividualB = relationshipsAsIndividualB;
     }
 
-        @Override
+    @Override
     public String toString() {
         return "Individual{" +
                 "firstName='" + firstName + '\'' +

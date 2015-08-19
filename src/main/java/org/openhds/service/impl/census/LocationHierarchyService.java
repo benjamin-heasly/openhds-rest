@@ -17,7 +17,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.openhds.repository.results.PageMaker.makePage;
 
@@ -153,7 +155,7 @@ public class LocationHierarchyService extends AbstractAuditableExtIdService<
     }
 
     // add all ancestors of the given hierarchy
-    public List<LocationHierarchy> collectAncestors(LocationHierarchy node, List<LocationHierarchy> ancestors) {
+    public Set<LocationHierarchy> collectAncestors(LocationHierarchy node, Set<LocationHierarchy> ancestors) {
         ancestors.add(node);
         LocationHierarchy parent = node.getParent();
         while (null != parent) {
@@ -164,8 +166,8 @@ public class LocationHierarchyService extends AbstractAuditableExtIdService<
     }
 
     @Override
-    public List<LocationHierarchy> findEnclosingLocationHierarchies(LocationHierarchy entity) {
-        List<LocationHierarchy> ancestors = new ArrayList<>();
+    public Set<LocationHierarchy> findEnclosingLocationHierarchies(LocationHierarchy entity) {
+        Set<LocationHierarchy> ancestors = new HashSet<>();
 
         if (null != entity) {
             collectAncestors(entity, ancestors);
