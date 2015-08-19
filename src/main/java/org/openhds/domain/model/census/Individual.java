@@ -155,6 +155,20 @@ public class Individual extends AuditableExtIdEntity implements Serializable {
         this.relationshipsAsIndividualB = relationshipsAsIndividualB;
     }
 
+    public Set<Residency> collectActiveResidencies(Set<Residency> collectedResidencies) {
+        if (null == collectedResidencies) {
+            return null;
+        }
+
+        for (Residency residency : residencies) {
+            if (null == residency.getEndDate()) {
+                collectedResidencies.add(residency);
+            }
+        }
+
+        return collectedResidencies;
+    }
+
     @Override
     public String toString() {
         return "Individual{" +

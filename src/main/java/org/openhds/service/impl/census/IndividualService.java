@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Subquery;
@@ -64,10 +63,8 @@ public class IndividualService extends AbstractAuditableExtIdService<Individual,
     @Override
     public Set<LocationHierarchy> findEnclosingLocationHierarchies(Individual entity) {
         Set<LocationHierarchy> locationHierarchies = new HashSet<>();
-        for (Residency residency : entity.getResidencies()) {
-            if (null == residency.getEndDate()) {
-                locationHierarchies.addAll(locationHierarchyService.findEnclosingLocationHierarchies(residency.getLocation().getLocationHierarchy()));
-            }
+        for (Residency residency : entity.collectActiveResidencies(new HashSet<>())) {
+            locationHierarchies.addAll(locationHierarchyService.findEnclosingLocationHierarchies(residency.getLocation().getLocationHierarchy()));
         }
         return locationHierarchies;
     }
