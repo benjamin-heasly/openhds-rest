@@ -15,14 +15,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.PagedResources;
-import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.*;
+import org.springframework.hateoas.core.AnnotationMappingDiscoverer;
+import org.springframework.hateoas.core.DummyInvocationUtils;
+import org.springframework.hateoas.core.MappingDiscoverer;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Method;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 /**
@@ -37,8 +42,10 @@ public abstract class UuidIdentifiableRestController<
         V extends AbstractUuidService<T, ? extends UuidIdentifiableRepository<T>>> {
 
     private final V service;
+
     @Autowired
     protected EntityLinkAssembler entityLinkAssembler;
+
     @Autowired
     protected ControllerRegistry controllerRegistry;
 
@@ -111,5 +118,23 @@ public abstract class UuidIdentifiableRestController<
         response.setHeader(HttpHeaders.LOCATION, ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(entity.getUuid()).toUri().toString());
+    }
+
+    private <U extends UuidIdentifiableRestController> Link buildTemplatedLink(Class<U> controllerClass) {
+        Link link = ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(controllerClass).readPaged(null, null)).withRel("yourRel");
+        DummyInvocationUtils.LastInvocationAware invocations = (DummyInvocationUtils.LastInvocationAware) ControllerLinkBuilder.methodOn(controllerClass).readPaged(null, null);
+        DummyInvocationUtils.MethodInvocation invocation = invocations.getLastInvocation();
+        Method method = invocation.getMethod();
+
+        //taken from ControllerLinkBuilder
+        MappingDiscoverer discoverer = new AnnotationMappingDiscoverer(RequestMapping.class);
+        String mapping = discoverer.getMapping(controllerClass, method);
+
+        UriTemplate uriTemplate = new UriTemplate(mapping);
+        List<TemplateVariable> variables = link.getVariables();
+
+        //the templated link
+        Link templatedLink = new Link(uriTemplate.with(new TemplateVariables(variables)), link.getRel());
+        return templatedLink;
     }
 }

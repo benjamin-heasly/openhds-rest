@@ -55,7 +55,7 @@ public class Individual extends AuditableExtIdEntity implements Serializable {
     @JsonIgnore
     @OneToMany(mappedBy = "individual")
     @Description(description = "The set of all memberships the individual is a part of.")
-    private Set<Membership> allMemberships = new HashSet<>();
+    private Set<Membership> memberships = new HashSet<>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "individualA")
@@ -131,12 +131,12 @@ public class Individual extends AuditableExtIdEntity implements Serializable {
         this.residencies = residencies;
     }
 
-    public Set<Membership> getAllMemberships() {
-        return allMemberships;
+    public Set<Membership> getMemberships() {
+        return memberships;
     }
 
-    public void setAllMemberships(Set<Membership> allMemberships) {
-        this.allMemberships = allMemberships;
+    public void setMemberships(Set<Membership> memberships) {
+        this.memberships = memberships;
     }
 
     public Set<Relationship> getRelationshipsAsIndividualA() {
