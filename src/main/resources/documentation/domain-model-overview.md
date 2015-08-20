@@ -1,4 +1,27 @@
+What is the OpenHDS?
 
+
+It is the Open Health and Demographic System. It is an intuitive and easy way for you to record populations and their
+changes over time. The OpenHDS logically breaks down the geography of your area of study and allows you to capture
+the major demographic events within it.
+
+The OpenHDS view of the world:
+The Hierarchy
+
+The first thing to understand is the way the OpenHDS represents the area of study for your project.
+If you have ever written a letter, you’ve done most of the work already. For every geographical location
+on Earth there exists some way to represent that location hierarchically, much like we do when writing a
+letter to someone. In general, you start from the most specific description of the location and slowly
+become more general until the address you’re sending the letter to is well enough understood by the
+postal service to make sense of and deliver the letter. The OpenHDS has a similar view of the world.
+The regions, districts, prefectures, cities, etc that comprise the area of study are each represented
+in the OpenHDS by an entity called LocationHierarchy. There is one “Root” LocationHierarchy that represents
+the largest geographical denomination for the area of study. Underneath the “Root” LocationHierarchy is a
+LocationHierarchy for every other geographical denomination each of which points to their ‘parent’ which
+forms a tree-like structure that represents the entire area of study. The easiest way to understand this
+is with a picture using a real world example…
+
+![Figure 1](/documentation/figure-1.png)
 
 #Census Entities
 ####LocationHierarchy
