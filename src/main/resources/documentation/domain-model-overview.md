@@ -1,33 +1,4 @@
-#Contract Entities
-####AuditableEntity
-#####What is it?
-`AuditableEntity` is the abstract base type for all OpenHDS entities. The class provides fields useful for ‘auditing’ or keeping track of meta information pertaining to the concrete type like when it was created and last modified.
-######Required Fields:
-+ String uuid 
-+ User insertBy 
-+ Date insertDate 
-+ User lastModifiedBy 
-+ Date lastModifiedDate 
 
-___
-####AuditableCollectedEntity
-(child of `AuditableEntity`)
-#####What is it?
-`AuditableCollectedEntity` is the abstract base type for all OpenHDS entities that are collected by a `FieldWorker`.
-######Dependencies
-+ FieldWorker
-
-######Required Fields:
-+ FieldWorker collectedBy 
-+ Date collectionDateTime
-
-___
-####AuditableExtIdEntity
-(child of `AuditableCollectedEntity`) 
-#####What is it?
-`AuditableExtIdEntity` is an entity that is identifiable by an id external to the OpenHDS, i.e. the functionality of the OpenHDS is not dependent on it. 
-######Required Fields:
-+ String extId 
 
 #Census Entities
 ####LocationHierarchy
