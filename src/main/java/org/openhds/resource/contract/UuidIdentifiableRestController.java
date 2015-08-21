@@ -27,8 +27,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
  * Created by Ben on 5/18/15.
@@ -40,6 +44,8 @@ public abstract class UuidIdentifiableRestController<
         T extends UuidIdentifiable,
         U extends Registration<T>,
         V extends AbstractUuidService<T, ? extends UuidIdentifiableRepository<T>>> {
+
+    public static final String REL_BULK = "bulk";
 
     private final V service;
 
@@ -66,8 +72,28 @@ public abstract class UuidIdentifiableRestController<
 
     protected abstract T register(U registration, String id);
 
-    // optionally add entity-specific links to a HATEOAS resource
-    public void supplementResource(Resource resource) {
+    // add links to a single-record resource
+    public void addSingleResourceLinks(Resource resource) {
+    }
+
+    // add links to a collection resource
+    public void addCollectionResourceLinks(ResourceSupport resource) {
+        resource.add(linkTo(this.getClass()).withRel(EntityLinkAssembler.REL_COLLECTION));
+        resource.add(linkTo(methodOn(this.getClass()).readBulk(null)).withRel(REL_BULK));
+    }
+
+    // convert a page of results to a resource with links, using the given self link
+    public PagedResources<T> toResource(Page<T> entities, PagedResourcesAssembler assembler, Link selfLink) {
+        PagedResources<T> pagedResources = assembler.toResource(entities, entityLinkAssembler, selfLink);
+        addCollectionResourceLinks(pagedResources);
+        return pagedResources;
+    }
+
+    // convert a page of results to a resource with links, using the default self link
+    public PagedResources<T> toResource(Page<T> entities, PagedResourcesAssembler assembler) {
+        PagedResources<T> pagedResources = assembler.toResource(entities, entityLinkAssembler);
+        addCollectionResourceLinks(pagedResources);
+        return pagedResources;
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -82,7 +108,7 @@ public abstract class UuidIdentifiableRestController<
     @RequestMapping(method = RequestMethod.GET)
     public PagedResources readPaged(Pageable pageable, PagedResourcesAssembler assembler) {
         Page<T> entities = service.findAll(pageable);
-        return assembler.toResource(entities, entityLinkAssembler);
+        return toResource(entities, assembler);
     }
 
     @RequestMapping(value = "/bulk", method = RequestMethod.GET)
@@ -120,21 +146,13 @@ public abstract class UuidIdentifiableRestController<
                 .buildAndExpand(entity.getUuid()).toUri().toString());
     }
 
-    private <U extends UuidIdentifiableRestController> Link buildTemplatedLink(Class<U> controllerClass) {
-        Link link = ControllerLinkBuilder.linkTo(ControllerLinkBuilder.methodOn(controllerClass).readPaged(null, null)).withRel("yourRel");
-        DummyInvocationUtils.LastInvocationAware invocations = (DummyInvocationUtils.LastInvocationAware) ControllerLinkBuilder.methodOn(controllerClass).readPaged(null, null);
-        DummyInvocationUtils.MethodInvocation invocation = invocations.getLastInvocation();
-        Method method = invocation.getMethod();
-
-        //taken from ControllerLinkBuilder
-        MappingDiscoverer discoverer = new AnnotationMappingDiscoverer(RequestMapping.class);
-        String mapping = discoverer.getMapping(controllerClass, method);
-
-        UriTemplate uriTemplate = new UriTemplate(mapping);
-        List<TemplateVariable> variables = link.getVariables();
-
-        //the templated link
-        Link templatedLink = new Link(uriTemplate.with(new TemplateVariables(variables)), link.getRel());
-        return templatedLink;
+    protected static Link withTemplateParams(Link link, String ... paramNames) {
+        List<TemplateVariable> templateVariables = new ArrayList<>();
+        templateVariables.addAll(link.getVariables());
+        for (String name : paramNames) {
+            templateVariables.add(new TemplateVariable(name, TemplateVariable.VariableType.REQUEST_PARAM));
+        }
+        UriTemplate uriTemplate = new UriTemplate(link.getHref(), new TemplateVariables(templateVariables));
+        return new Link(uriTemplate, link.getRel());
     }
 }

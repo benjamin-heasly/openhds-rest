@@ -43,8 +43,10 @@ public class MasterDataGenerator implements DataGenerator {
     public void generateData(int size) {
         System.out.println("Generating data with size " + size + ".");
         for (DataGenerator dataGenerator : dataGenerators) {
+            System.out.println("Start generating " + dataGenerator.getClass().getSimpleName());
             dataGenerator.generateData(size);
         }
+        System.out.println("Done generating data.");
     }
 
     @Override

@@ -3,14 +3,13 @@ package org.openhds.resource.contract;
 import org.openhds.domain.contract.AuditableExtIdEntity;
 import org.openhds.domain.contract.ExtIdIdentifiable;
 import org.openhds.repository.contract.AuditableExtIdRepository;
-import org.openhds.resource.links.EntityLinkAssembler;
 import org.openhds.resource.registration.Registration;
 import org.openhds.service.contract.AbstractAuditableExtIdService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
-import org.springframework.hateoas.ResourceSupport;
 import org.springframework.hateoas.Resources;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,7 +39,9 @@ public abstract class AuditableExtIdRestController<
     }
 
     @RequestMapping(value = "/external/{id}", method = RequestMethod.GET)
-    public Resources<?> readByExtId(Pageable pageable, @PathVariable String id) {
+    public Resources<?> readByExtId(Pageable pageable,
+                                    PagedResourcesAssembler assembler,
+                                    @PathVariable String id) {
 
         Page<T> entities = service.findByExtId(pageable, id);
 
@@ -48,23 +49,17 @@ public abstract class AuditableExtIdRestController<
             throw new NoSuchElementException("No entities found with external id: " + id);
         }
 
-        Resources resources = entityLinkAssembler.wrapCollection(entities);
-        addByExtIdLink(resources, id, Link.REL_SELF);
-        addCollectionLink(resources);
-        return resources;
+        return toResource(entities, assembler, byExtIdLink(id, Link.REL_SELF));
     }
 
-    private void addByExtIdLink(ResourceSupport resource, String extId, String relName) {
-        resource.add(linkTo(methodOn(this.getClass()).readByExtId(null, extId)).withRel(relName));
-    }
-
-    private void addCollectionLink(ResourceSupport resource) {
-        resource.add(linkTo(this.getClass()).withRel(EntityLinkAssembler.REL_COLLECTION));
+    private Link byExtIdLink(String extId, String relName) {
+        return linkTo(methodOn(this.getClass()).readByExtId(null, null, extId)).withRel(relName);
     }
 
     @Override
-    public void supplementResource(Resource resource) {
+    public void addSingleResourceLinks(Resource resource) {
         ExtIdIdentifiable entity = (ExtIdIdentifiable) resource.getContent();
-        addByExtIdLink(resource, entity.getExtId(), REL_SECTION);
+        resource.add(byExtIdLink(entity.getExtId(), REL_SECTION));
     }
+
 }
