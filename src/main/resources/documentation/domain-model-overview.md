@@ -54,7 +54,7 @@ Without explaining the Update Events yet, a picture is starting to form on how t
 
 This image makes it easier to visualize how things fit together, but maybe an example would be more helpful…
 
-#####A real-world fake example.
+#####A real-world example.
 ![Figure 4](figure-4.png)
 *figure 4*
 
