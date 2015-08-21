@@ -127,6 +127,9 @@ TODO:
 + LocationHierarchyLevel
 
 ######Required Fields:
++ String uuid
++ Date collectionDateTime
++ FieldWorker collectedBy
 + String name
 + String extId
 + LocationHierarchy parent
@@ -138,6 +141,7 @@ ___
 #####What is it?
 The levels of the `LocationHierarchy` tree are defined separately as `LocationHierarchyLevel`s and referenced by each instance of `LocationHierarchy`. From the previous example, the list of `LocationHierarchyLevel`s would be Country, State, City, District.
 ######Required Fields:
++ String uuid
 + int keyIdentifier
 + String name
 
@@ -152,6 +156,9 @@ ___
 + Domain Constraints
 
 ######Required Fields:
++ String uuid
++ Date collectionDateTime
++ FieldWorker collectedBy
 + String name
 + String extId
 + LocationHierarchy parent
@@ -165,6 +172,9 @@ An `Individual` (person) within the study area that resides at a `Location`, is 
 + FieldWorker
 
 ######Required Fields:
++ String uuid
++ Date collectionDateTime
++ FieldWorker collectedBy
 + String extId
 + String gender
 + Date dateOfBirth
@@ -179,6 +189,9 @@ A `SocialGroup` is any cultural or societal group or collective that `Individual
 + FieldWorker
 
 ######Required Fields:
++ String uuid
++ Date collectionDateTime
++ FieldWorker collectedBy
 + String groupName
 + String groupType
 + String extId
@@ -194,6 +207,9 @@ A `Membership` models the relationship between an `Individual` and a `SocialGrou
 + SocialGroup
 
 ######Required Fields:
++ String uuid
++ Date collectionDateTime
++ FieldWorker collectedBy
 + Date startDate
 + String startType
 + Individual individual
@@ -209,6 +225,9 @@ A `Relationship` models the relationship between two `Individual`s. Specifically
 + Individual
 
 ######Required Fields:
++ String uuid
++ Date collectionDateTime
++ FieldWorker collectedBy
 + Date startDate
 + String relationshipType
 + Individual individualA
@@ -225,6 +244,9 @@ A `Residency` models the relationship between an `Individual` and a `Location`.
 + Location
 
 ######Required Fields:
++ String uuid
++ Date collectionDateTime
++ FieldWorker collectedBy
 + Date startDate
 + String relationshipType
 + Individual individualA
@@ -241,6 +263,9 @@ A `Visit` models a `FieldWorker`’s follow-up visit to a particular `Location` 
 + Location 
 
 ######Required Fields:
++ String uuid
++ Date collectionDateTime
++ FieldWorker collectedBy
 + Date visitDate
 + Location location
 
@@ -255,6 +280,9 @@ A `Death` models the death of one of the `Individual`s within the area of study.
 + Location 
 
 ######Required Fields:
++ String uuid
++ Date collectionDateTime
++ FieldWorker collectedBy
 + Date deathDate
 + Visit visit
 + Individual individual
@@ -272,6 +300,9 @@ Dependencies
 + Individual
 
 ######Required Fields:
++ String uuid
++ Date collectionDateTime
++ FieldWorker collectedBy
 + Visit visit
 + Date migrationDate
 + String migrationType
@@ -290,6 +321,9 @@ An `OutMigration` models the migration of an `Individual` to outside the area of
 + Individual 
  
 ######Required Fields:
++ String uuid
++ Date collectionDateTime
++ FieldWorker collectedBy
 + Visit visit
 + Date migrationDate
 + Residency residency
@@ -306,6 +340,9 @@ A `PregnancyObservation` models a `FieldWorker`’s observation of a pregnant `I
 + Individual
 
 ######Required Fields:
++ String uuid
++ Date collectionDateTime
++ FieldWorker collectedBy
 + Visit visit
 + Date expectedDeliveryDate
 + Date pregnancyDate
@@ -322,6 +359,9 @@ A `PregnancyOutcome` models the outcome of an `Individual`’s pregnancy.
 + Individual
 
 ######Required Fields:
++ String uuid
++ Date collectionDateTime
++ FieldWorker collectedBy
 + Visit visit
 + Date outcomeDate
 + int childrenBorn
@@ -336,9 +376,14 @@ A `PregnancyResult` models the separate results of a larger `PregnancyOutcome` f
 + FieldWorker
 + Visit
 + Individual
++ PregnancyOutcome
 
 ######Required Fields:
++ String uuid
++ Date collectionDateTime
++ FieldWorker collectedBy
 + Visit visit
 + String type
 + Individual child
++ PregnancyOutcome 
 
