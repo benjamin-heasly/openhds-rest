@@ -5,9 +5,9 @@ import org.openhds.domain.util.ShallowCopier;
 import org.openhds.resource.contract.UuidIdentifiableRestController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityLinks;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceAssembler;
-import org.springframework.hateoas.Resources;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -42,18 +42,13 @@ public class EntityLinkAssembler implements ResourceAssembler<UuidIdentifiable, 
         addStubLinks(stubReport, resource);
         addSelfLink(copy, resource);
         addCollectionLink(copy, resource);
-        addSupplementalLinks(copy, resource);
+        addSingleResourceLinks(copy, resource);
 
         return resource;
     }
 
-    // Wrap multiple OpenHDS entities in multiple HATEOAS resources, and wrap all of that in one big HATEOAS resources.
-    public <T extends UuidIdentifiable> Resources<?> wrapCollection(Iterable<T> entities) {
-        List<Resource> resourceList = new ArrayList<>();
-        for (UuidIdentifiable entity : entities) {
-            resourceList.add(toResource(entity));
-        }
-        return new Resources<>(resourceList);
+    public Link getCollectionLink(Class<?> entityClass) {
+        return entityLinks.linkToCollectionResource(entityClass);
     }
 
     // Add the "self" link to an entity's canonical URI.
@@ -63,8 +58,7 @@ public class EntityLinkAssembler implements ResourceAssembler<UuidIdentifiable, 
 
     // Add a collection link to where we can find more similar entities.
     private void addCollectionLink(UuidIdentifiable entity, Resource resource) {
-        Class<?> entityClass = entity.getClass();
-        resource.add(entityLinks.linkToCollectionResource(entityClass).withRel(REL_COLLECTION));
+        resource.add(getCollectionLink(entity.getClass()).withRel(REL_COLLECTION));
     }
 
     // Add links to each "stub" object reachable from an entity.  For example, the "insertBy" user.
@@ -83,11 +77,11 @@ public class EntityLinkAssembler implements ResourceAssembler<UuidIdentifiable, 
     }
 
     // Let an entity's controller add entity-specific links if it wants.
-    private void addSupplementalLinks(UuidIdentifiable entity, Resource resource) {
+    private void addSingleResourceLinks(UuidIdentifiable entity, Resource resource) {
         Class<?> controllerClass = controllerRegistry.getEntitiesToControllers().get(entity.getClass());
 
         // controller registry only holds UuidIdentifiableRestController
         UuidIdentifiableRestController controller = (UuidIdentifiableRestController) controllerRegistry.getController(controllerClass);
-        controller.supplementResource(resource);
+        controller.addSingleResourceLinks(resource);
     }
 }
