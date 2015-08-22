@@ -1,6 +1,6 @@
 # Registration Use Cases
 
-Here are descriptions of several important use casees for **openhds-rest**.
+Here are descriptions of several important use cases for **openhds-rest**.
 
 Each one includes:
 
