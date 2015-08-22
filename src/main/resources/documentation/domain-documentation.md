@@ -9,19 +9,19 @@ Each section below has a brief description of the entity, the other entities it 
 	+ [Individual](#individual)
 	+ [SocialGroup](#socialgroup)
 	
-+ [Relation Entities](#relation-entities)
++ [Relation Entities](#relationentities)
 	+ [Membership](#membership)
 	+ [Relationship](#relationship)
 	+ [Residency](#residency)
 	
-+ [Update Entities](#update-entities)
++ [Update Entities](#updateentities)
 	+ [Visit](#visit)
 	+ [Death](#death)
-	+ [InMigration](#in-migration)
-	+ [OutMigration](#out-migration)
-	+ [PregnancyObservation](#pregnancy-observation)
-	+ [PregnancyOutcome](#pregnancy-outcome)
-	+ [PregnancyResult](#pregnancy-result)
+	+ [InMigration](#inmigration)
+	+ [OutMigration](#outmigration)
+	+ [PregnancyObservation](#pregnancyobservation)
+	+ [PregnancyOutcome](#pregnancyoutcome)
+	+ [PregnancyResult](#pregnancyresult)
 
 ---
 <br>
@@ -183,7 +183,7 @@ A `Residency` models the connection between an `Individual` and a `Location`.
 
 <br>
 #Update Entities
-<a id=“update-entities”></a>
+<a id=“updateentities”></a>
 ###Visit
 <a id=“visit”></a>
 #####What is it?
@@ -224,7 +224,7 @@ A `Death` is record of the death of one of the `Individual`s within the area of 
 
 <br>
 ###InMigration
-<a id=“in-migration”></a>
+<a id=“inmigration”></a>
 #####What is it?
 An `InMigration` is a record of an Individual’s migration between two `Location`s where the destination `Location` is still inside the area of study. 
 Dependencies
@@ -247,7 +247,7 @@ Dependencies
 
 <br>
 ###OutMigration
-<a id=“out-migration”></a>
+<a id=“outmigration”></a>
 #####What is it?
 An `OutMigration` models the migration of an `Individual` to outside the area of study.
 ######Dependencies
@@ -269,7 +269,7 @@ An `OutMigration` models the migration of an `Individual` to outside the area of
 
 <br>
 ###PregnancyObservation
-<a id=“pregnancy-observation”></a>
+<a id=“pregnancyobservation”></a>
 #####What is it?
 A `PregnancyObservation` is a record of a `FieldWorker`’s observation of a pregnant `Individual`.
 ######Dependencies
@@ -290,7 +290,7 @@ A `PregnancyObservation` is a record of a `FieldWorker`’s observation of a pre
 
 <br>
 ###PregnancyOutcome
-<a id=“pregnancy-outcome”></a>
+<a id=“pregnancyoutcome”></a>
 #####What is it?
 A `PregnancyOutcome` is a record of the outcome of an `Individual`’s pregnancy.
 ######Dependencies
@@ -311,7 +311,7 @@ A `PregnancyOutcome` is a record of the outcome of an `Individual`’s pregnancy
 
 <br>
 ###PregnancyResult
-<a id=“pregnancy-result”></a>
+<a id=“pregnancyresult”></a>
 #####What is it?
 A `PregnancyResult` is a record of the separate results of a larger `PregnancyOutcome` for an `Individual`’s pregnancy. 
 ######Dependencies
