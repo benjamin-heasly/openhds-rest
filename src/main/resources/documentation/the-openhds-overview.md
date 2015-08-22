@@ -173,7 +173,7 @@ the FieldWorker registers a PregnancyObservation for Jen Smith (see figure 5)*
 The rest of the Update Events operate on this same basic principle of visiting a Location within the hierarchy and recording the events that have occured at that Location since the last visit.
 
 
-######For more indepth information about the domain entities in the OpenHDS read the [Domain Documentation](src/main/resources/documentation/domain-documentation.md)
+######For more indepth information about the domain entities in the OpenHDS read the [Domain Documentation](domain-documentation.md)
 
 
 
