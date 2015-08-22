@@ -9,13 +9,16 @@
 + LocationHierarchyLevel
 
 ######Required Fields:
-+ String uuid
-+ Date collectionDateTime
-+ FieldWorker collectedBy
-+ String name
-+ String extId
-+ LocationHierarchy parent
-+ LocationHierarchyLevel level
+|Type | Name | Description  	|	
+|-----|------|----------------|
+|`String`| uuid	| primary identifier of entity
+|`Date`| collectionDateTime| when entity was collected by FieldWorker
+|`FieldWorker`| collectedBy| who collected the entity
+|`String`| name	| the name of the LocationHierarchy
+|`String`| extId| an id that is independent of uuid
+|`LocationHierarchy`| parent| the larger geographical denomination this LocationHierarchy is a part of
+|`LocationHierarchyLevel`| level| the level of the LocationHierarchy
+
 
 ___
 ####LocationHierarchyLevel
