@@ -1,6 +1,35 @@
+#Domain Documentation
+
+Each section below has a brief description of the entity, the other entities it is dependent on, and a list of its required fields.
+
++ [Census Entities](#census-entities)
+	+ [LocationHierarchy](#location-hierarchy)
+	+ [LocationHierarchyLevel](#location-hierarchy-level)
+	+ [Location](#location)
+	+ [Individual](#individual)
+	+ [SocialGroup](#socialgroup)
+	
++ [Relation Entities](#relation-entities)
+	+ [Membership](#membership)
+	+ [Relationship](#relationship)
+	+ [Residency](#residency)
+	
++ [Update Entities](#update-entities)
+	+ [Visit](#visit)
+	+ [Death](#death)
+	+ [InMigration](#in-migration)
+	+ [OutMigration](#out-migration)
+	+ [PregnancyObservation](#pregnancy-observation)
+	+ [PregnancyOutcome](#pregnancy-outcome)
+	+ [PregnancyResult](#pregnancy-result)
+
+---
+<br>
+
 #Census Entities
-####LocationHierarchy
-(child of `AuditableExtIdEntity`)
+<a id=“census-entities”></a>
+<a id=“location-hierarchy”></a>
+###LocationHierarchy
 #####What is it?
 `LocationHierarchy` is a node in the tree that represents the study area. For example, at the top of a tree would be the The United States and it would have a child node for each of the 50 states. Each state node could have a child node for its cities and each city could have a child node for its districts and so on. `LocationHierarchy` extends `AuditableExtIdEntity` meaning it is identified by uuid as well as extId. 
 #####Dependencies
@@ -9,175 +38,195 @@
 + LocationHierarchyLevel
 
 ######Required Fields:
-|Type | Name | Description  	|	
-|-----|------|----------------|
-|`String`| uuid	| primary identifier of entity
-|`Date`| collectionDateTime| when entity was collected by FieldWorker
-|`FieldWorker`| collectedBy| who collected the entity
-|`String`| name	| the name of the LocationHierarchy
-|`String`| extId| an id that is independent of uuid
-|`LocationHierarchy`| parent| the larger geographical denomination this LocationHierarchy is a part of
-|`LocationHierarchyLevel`| level| the level of the LocationHierarchy
+|Type | Name |
+|-----|------|
+`String`| uuid
+`Date`| collectionDateTime
+`FieldWorker`| collectedBy 
+`String`| name  
+`String`| extId
+`LocationHierarchy`| parent
+`LocationHierarchyLevel`| level
 
 
-___
-####LocationHierarchyLevel
-(child of `AuditableEntity`)
+<br>
+###LocationHierarchyLevel
+<a id=“location-hierarchy-level”></a>
 #####What is it?
 The levels of the `LocationHierarchy` tree are defined separately as `LocationHierarchyLevel`s and referenced by each instance of `LocationHierarchy`. From the previous example, the list of `LocationHierarchyLevel`s would be Country, State, City, District.
 ######Required Fields:
-+ String uuid
-+ int keyIdentifier
-+ String name
+|Type | Name |
+|-----|------|
+`String`| uuid
+`int`| keyIdentifier
+`String`| name 
 
-___
-####Location
-(child of `AuditableExtIdEntity`)
+<br>
+###Location
+<a id=“location”></a>
 #####What is it?
-`Location` is the leaf node on the `LocationHierarchy` tree, it is the smallest geographical unit within a study area. From the previous example for `LocationHierarchy`, each building within a district could be modeled with `Location`. `Individual`s are residents at `Locations`.
+`Location` is the leaf node on the `LocationHierarchy` tree, it is the smallest geographical unit within a study area. From the previous example for `LocationHierarchy`, each building within a district could be modeled with `Location`.
 ######Dependencies
 + FieldWorker
 + LocationHierarchy
 + Domain Constraints
 
 ######Required Fields:
-+ String uuid
-+ Date collectionDateTime
-+ FieldWorker collectedBy
-+ String name
-+ String extId
-+ LocationHierarchy parent
+|Type |  Name 
+|-----|------|
+`String`| uuid	
+`Date`| collectionDateTime 
+`FieldWorker`| collectedBy
+`String`| extId 
+`String`| name
+`LocationHierarchy`| parent
 
-___
-####Individual
-(child of `AuditableExtIdEntity`)
+<br>
+###Individual
+<a id=“individual”></a>
 #####What is it?
-An `Individual` (person) within the study area that resides at a `Location`, is a member of a `SocialGroup`, and has a relationship to the head of a household.
+An `Individual` (person) within the study area that resides at a `Location`, is a member of a `SocialGroup`.
 ######Dependencies
 + FieldWorker
 
 ######Required Fields:
-+ String uuid
-+ Date collectionDateTime
-+ FieldWorker collectedBy
-+ String extId
-+ String gender
-+ Date dateOfBirth
-+ String firstName
+|Type | Name |
+|-----|------|
+`String`| uuid
+`Date`| collectionDateTime
+`FieldWorker`| collectedBy
+`String`| extId
+`String`| gender
+`Date` | dateOfBirth
+`String`| firstName
 
-___
-####SocialGroup
-(child of `AuditableExtIdEntity`)
+<br>
+###SocialGroup
+<a id=“socialgroup”></a>
 #####What is it?
 A `SocialGroup` is any cultural or societal group or collective that `Individual`s are a member of, e.g. a church group, a household/family, a bowling team.
 ######Dependencies
 + FieldWorker
 
 ######Required Fields:
-+ String uuid
-+ Date collectionDateTime
-+ FieldWorker collectedBy
-+ String groupName
-+ String groupType
-+ String extId
-
-___
+|Type | Name |
+|-----|------|
+`String`| uuid	
+`Date`| collectionDateTime
+`FieldWorker`| collectedBy
+`String`| extId
+`String`| groupName
+`String`| groupType
+<br>
+#Relation Entities
+<a id=“relation-entities”></a>
 ###Membership
-(child of `AuditableCollectedEntity`)
+<a id=“membership”></a>
 ####What is it?
-A `Membership` models the relationship between an `Individual` and a `SocialGroup`.
+A `Membership` models the connection between an `Individual` and a `SocialGroup`.
 ######Dependencies
 + FieldWorker
 + Individual
 + SocialGroup
 
 ######Required Fields:
-+ String uuid
-+ Date collectionDateTime
-+ FieldWorker collectedBy
-+ Date startDate
-+ String startType
-+ Individual individual
-+ SocialGroup socialGroup
+|Type | Name |
+|-----|------|
+`String`| uuid	
+`Date`| collectionDateTime
+`FieldWorker`| collectedBy
+`Date`| startDate
+`String`| startType
+`Individual`| individual
+`SocialGroup`| socialGroup
 
-___
-####Relationship
-(child of `AuditableCollectedEntity`)
+<br>
+###Relationship
+<a id=“relationship”></a>
 #####What is it?
-A `Relationship` models the relationship between two `Individual`s. Specifically it models the relationship between an `Individual` and the head of household that the `Individual` is a part of.
+A `Relationship` models the way two Individual’s are related. This can be anything from being someone’s pastor to being their mother.
 ######Dependencies
 + FieldWorker
 + Individual
 
 ######Required Fields:
-+ String uuid
-+ Date collectionDateTime
-+ FieldWorker collectedBy
-+ Date startDate
-+ String relationshipType
-+ Individual individualA
-+ Individual individualB
+|Type | Name |	
+|-----|------|
+`String`| uuid	
+`Date`| collectionDateTime
+`FieldWorker`| collectedBy
+`Date`| startDate
+`String`| relationshipType
+`Individual`| individualA
+`Individual`| individualB
 
-___
-####Residency
-(child of `AuditableCollectedEntity`)
+<br>
+###Residency
+<a id=“residency”></a>
 #####What is it?
-A `Residency` models the relationship between an `Individual` and a `Location`.
+A `Residency` models the connection between an `Individual` and a `Location`.
 ######Dependencies
 + FieldWorker 
 + Individual
 + Location
 
 ######Required Fields:
-+ String uuid
-+ Date collectionDateTime
-+ FieldWorker collectedBy
-+ Date startDate
-+ String relationshipType
-+ Individual individualA
-+ Individual individualB
+|Type | Name |
+|-----|------|
+`String`| uuid
+`Date`| collectionDateTime
+`FieldWorker`| collectedBy
+`Date`| startDate
+`String`| relationshipType
+`Individual`| individualA
+`Individual`| individualB
 
-___
+<br>
 #Update Entities
-####Visit
-(child of `AuditableExtIdEntity`)
+<a id=“update-entities”></a>
+###Visit
+<a id=“visit”></a>
 #####What is it?
-A `Visit` models a `FieldWorker`’s follow-up visit to a particular `Location` at a particular date. `Visit`s are necessary for all “update” events that can take place within a population.
+A `Visit` models a `FieldWorker`’s follow-up visit to a particular `Location` at a particular date. `Visit`s are necessary for all update events that can take place within a population.
 ######Dependencies
 + FieldWorker
 + Location 
 
 ######Required Fields:
-+ String uuid
-+ Date collectionDateTime
-+ FieldWorker collectedBy
-+ Date visitDate
-+ Location location
+|Type | Name | 
+|-----|------|
+`String`| uuid
+`Date`| collectionDateTime
+`FieldWorker`| collectedBy
+`String`| extId
+`Date`| visitDate
+`Location`| location
 
-___
-####Death
-(child of `AuditableCollectedEntity`)
+<br>
+###Death
+<a id=“death”></a>
 #####What is it?
-A `Death` models the death of one of the `Individual`s within the area of study.
+A `Death` is record of the death of one of the `Individual`s within the area of study.
 ######Dependencies
 + FieldWorker
 + Visit
 + Location 
 
 ######Required Fields:
-+ String uuid
-+ Date collectionDateTime
-+ FieldWorker collectedBy
-+ Date deathDate
-+ Visit visit
-+ Individual individual
+|Type | Name |
+|-----|------|
+`String`| uuid
+`Date`| collectionDateTime
+`FieldWorker`| collectedBy
+`Date`| deathDate
+`Visit`| visit
+`Individual`| individual
 
-___
-####InMigration
-(child of `AuditableCollectedEntity`)
+<br>
+###InMigration
+<a id=“in-migration”></a>
 #####What is it?
-An `InMigration` represents a migration between two `Location`s where the destination
-`Location` is still inside the area of study. The origin `Location` can be within or outside the area of study and is model by the migrationType value of internal or external respectively.
+An `InMigration` is a record of an Individual’s migration between two `Location`s where the destination `Location` is still inside the area of study. 
 Dependencies
 ######FieldWorker
 + Visit
@@ -185,18 +234,20 @@ Dependencies
 + Individual
 
 ######Required Fields:
-+ String uuid
-+ Date collectionDateTime
-+ FieldWorker collectedBy
-+ Visit visit
-+ Date migrationDate
-+ String migrationType
-+ Residency residency
-+ Individual individual
+|Type | Name |
+|-----|------|
+`String`| uuid
+`Date`| collectionDateTime
+`FieldWorker`| collectedBy
+`Visit`| visit
+`Date`| migrationDate
+`String`| migrationType
+`Residency`| residency
+`Individual`| individual
 
-___
-####OutMigration
-(child of `AuditableCollectedEntity`)
+<br>
+###OutMigration
+<a id=“out-migration”></a>
 #####What is it?
 An `OutMigration` models the migration of an `Individual` to outside the area of study.
 ######Dependencies
@@ -206,57 +257,63 @@ An `OutMigration` models the migration of an `Individual` to outside the area of
 + Individual 
  
 ######Required Fields:
-+ String uuid
-+ Date collectionDateTime
-+ FieldWorker collectedBy
-+ Visit visit
-+ Date migrationDate
-+ Residency residency
-+ Individual individual
+|Type | Name |
+|-----|------|
+`String`| uuid
+`Date`| collectionDateTime
+`FieldWorker`| collectedBy
+`Visit`| visit
+`Date`| migrationDate
+`Residency`| residency
+`Individual`| individual
 
-___
-####PregnancyObservation
-(child of `AuditableCollectedEntity`)
+<br>
+###PregnancyObservation
+<a id=“pregnancy-observation”></a>
 #####What is it?
-A `PregnancyObservation` models a `FieldWorker`’s observation of a pregnant `Individual`.
+A `PregnancyObservation` is a record of a `FieldWorker`’s observation of a pregnant `Individual`.
 ######Dependencies
 + FieldWorker
 + Visit
 + Individual
 
 ######Required Fields:
-+ String uuid
-+ Date collectionDateTime
-+ FieldWorker collectedBy
-+ Visit visit
-+ Date expectedDeliveryDate
-+ Date pregnancyDate
-+ Individual mother
+|Type | Name |	
+|-----|------|
+`String`| uuid
+`Date`| collectionDateTime
+`FieldWorker`| collectedBy
+`Visit`| visit
+`Date`| expectedDeliveryDate
+`Date`| pregnancyDate
+`Individual`| mother
 
-___
-####PregnancyOutcome
-(child of AuditableCollectedEntity)
+<br>
+###PregnancyOutcome
+<a id=“pregnancy-outcome”></a>
 #####What is it?
-A `PregnancyOutcome` models the outcome of an `Individual`’s pregnancy.
+A `PregnancyOutcome` is a record of the outcome of an `Individual`’s pregnancy.
 ######Dependencies
 + FieldWorker
 + Visit
 + Individual
 
 ######Required Fields:
-+ String uuid
-+ Date collectionDateTime
-+ FieldWorker collectedBy
-+ Visit visit
-+ Date outcomeDate
-+ int childrenBorn
-+ Individual mother
+|Type | Name |	
+|-----|------|
+`String`| uuid	
+`Date`| collectionDateTime
+`FieldWorker`| collectedBy
+`Visit`| visit
+`Date`| outcomeDate
+`int`| childrenBorn
+`Individual`| mother
 
-___
-####PregnancyResult
-(child of AuditableCollectedEntity)
+<br>
+###PregnancyResult
+<a id=“pregnancy-result”></a>
 #####What is it?
-A `PregnancyResult` models the separate results of a larger `PregnancyOutcome` for an `Individual`’s pregnancy. 
+A `PregnancyResult` is a record of the separate results of a larger `PregnancyOutcome` for an `Individual`’s pregnancy. 
 ######Dependencies
 + FieldWorker
 + Visit
@@ -264,11 +321,13 @@ A `PregnancyResult` models the separate results of a larger `PregnancyOutcome` f
 + PregnancyOutcome
 
 ######Required Fields:
-+ String uuid
-+ Date collectionDateTime
-+ FieldWorker collectedBy
-+ Visit visit
-+ String type
-+ Individual child
-+ PregnancyOutcome 
+|Type | Name |
+|-----|------|
+`String`| uuid
+`Date`| collectionDateTime
+`FieldWorker`| collectedBy
+`Visit`| visit
+`String`| type
+`Individual`| child
+`PregnancyOutcome`| pregnancyOutcome 
 
