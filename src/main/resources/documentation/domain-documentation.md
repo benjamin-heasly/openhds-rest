@@ -8,7 +8,7 @@ For a description of the OpenHDS registration use cases go [here](registration-u
 
 Each section below has a brief description of the entity, the other entities it is dependent on, and a list of its required fields.
 
-+ [Census Entities](#census-entities)
++ [Census Entities](#censusentities)
 	+ [LocationHierarchy](#locationhierarchy)
 	+ [LocationHierarchyLevel](#locationhierarchylevel)
 	+ [Location](#location)
