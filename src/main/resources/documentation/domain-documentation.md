@@ -34,7 +34,7 @@ Each section below has a brief description of the entity, the other entities it 
 <br>
 
 #Census Entities
-<a id=“census-entities”></a>
+<a id=“censusentities”></a>
 <a id=“locationhierarchy”></a>
 ###LocationHierarchy
 #####What is it?
@@ -126,7 +126,7 @@ A `SocialGroup` is any cultural or societal group or collective that `Individual
 `String`| groupType
 <br>
 #Relation Entities
-<a id=“relation-entities”></a>
+<a id=“relationentities”></a>
 ###Membership
 <a id=“membership”></a>
 ####What is it?
