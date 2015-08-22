@@ -1,6 +1,6 @@
 # openhds-rest
 
-This is a reboot of the ![OpenHDS project](https://github.com/OpenHDS) by University of Southern Maine 
+This is a reboot of the ![OpenHDS project](https://github.com/OpenHDS) by the University of Southern Maine's 
 department of Computer Science graduate students ![Benjamin Heasly](https://github.com/benjamin-heasly) and 
 ![Wolfe Lienhardt](https://github.com/nathan-wolfe-lienhardt). 
 
