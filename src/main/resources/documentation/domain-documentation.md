@@ -3,8 +3,8 @@
 Each section below has a brief description of the entity, the other entities it is dependent on, and a list of its required fields.
 
 + [Census Entities](#census-entities)
-	+ [LocationHierarchy](#location-hierarchy)
-	+ [LocationHierarchyLevel](#location-hierarchy-level)
+	+ [LocationHierarchy](#locationhierarchy)
+	+ [LocationHierarchyLevel](#locationhierarchylevel)
 	+ [Location](#location)
 	+ [Individual](#individual)
 	+ [SocialGroup](#socialgroup)
@@ -28,7 +28,7 @@ Each section below has a brief description of the entity, the other entities it 
 
 #Census Entities
 <a id=“census-entities”></a>
-<a id=“location-hierarchy”></a>
+<a id=“locationhierarchy”></a>
 ###LocationHierarchy
 #####What is it?
 `LocationHierarchy` is a node in the tree that represents the study area. For example, at the top of a tree would be the The United States and it would have a child node for each of the 50 states. Each state node could have a child node for its cities and each city could have a child node for its districts and so on. `LocationHierarchy` extends `AuditableExtIdEntity` meaning it is identified by uuid as well as extId. 
@@ -51,7 +51,7 @@ Each section below has a brief description of the entity, the other entities it 
 
 <br>
 ###LocationHierarchyLevel
-<a id=“location-hierarchy-level”></a>
+<a id=“locationhierarchylevel”></a>
 #####What is it?
 The levels of the `LocationHierarchy` tree are defined separately as `LocationHierarchyLevel`s and referenced by each instance of `LocationHierarchy`. From the previous example, the list of `LocationHierarchyLevel`s would be Country, State, City, District.
 ######Required Fields:
