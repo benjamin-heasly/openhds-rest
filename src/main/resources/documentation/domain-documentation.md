@@ -1,5 +1,11 @@
 #Domain Documentation
 
+This is a detailed description of the OpenHDS entities.
+
+For a general description of the OpenHDS go [here](the-openhds-overview.md).
+
+For a description of the OpenHDS registration use cases go [here](registration-use-cases.md).
+
 Each section below has a brief description of the entity, the other entities it is dependent on, and a list of its required fields.
 
 + [Census Entities](#census-entities)
