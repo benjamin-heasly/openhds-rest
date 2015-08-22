@@ -8,19 +8,19 @@ For a description of the OpenHDS registration use cases go [here](registration-u
 
 Each section below has a brief description of the entity, the other entities it is dependent on, and a list of its required fields.
 
-+ [Census Entities](#censusentities)
++ [Census Entities](#census-entities)
 	+ [LocationHierarchy](#locationhierarchy)
 	+ [LocationHierarchyLevel](#locationhierarchylevel)
 	+ [Location](#location)
 	+ [Individual](#individual)
 	+ [SocialGroup](#socialgroup)
 	
-+ [Relation Entities](#relationentities)
++ [Relation Entities](#relation-entities)
 	+ [Membership](#membership)
 	+ [Relationship](#relationship)
 	+ [Residency](#residency)
 	
-+ [Update Entities](#updateentities)
++ [Update Entities](#update-entities)
 	+ [Visit](#visit)
 	+ [Death](#death)
 	+ [InMigration](#inmigration)
@@ -34,7 +34,7 @@ Each section below has a brief description of the entity, the other entities it 
 <br>
 
 #Census Entities
-<a id=“censusentities”></a>
+<a id=“census-entities”></a>
 <a id=“locationhierarchy”></a>
 ###LocationHierarchy
 #####What is it?
@@ -126,7 +126,7 @@ A `SocialGroup` is any cultural or societal group or collective that `Individual
 `String`| groupType
 <br>
 #Relation Entities
-<a id=“relationentities”></a>
+<a id=“relation-entities”></a>
 ###Membership
 <a id=“membership”></a>
 ####What is it?
@@ -190,7 +190,7 @@ A `Residency` models the connection between an `Individual` and a `Location`.
 
 <br>
 #Update Entities
-<a id=“updateentities”></a>
+<a id=“update-entities”></a>
 ###Visit
 <a id=“visit”></a>
 #####What is it?
