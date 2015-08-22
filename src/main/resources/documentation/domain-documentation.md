@@ -23,6 +23,7 @@ Each section below has a brief description of the entity, the other entities it 
 	+ [PregnancyOutcome](#pregnancyoutcome)
 	+ [PregnancyResult](#pregnancyresult)
 
+<br>
 ---
 <br>
 
