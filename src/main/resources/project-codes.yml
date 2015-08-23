@@ -29,6 +29,8 @@ maritalStatus:
   widowed: {codeValue : "WIDOWED", description : "spouse was widowed" }
   livingTogether: {codeValue : "LIVING_TOGETHER", description : "couple is not married by is living together" }
 
+
+#Are these valid values for the membership type? what about a member of a non-family socialgroup?
 membershipType:
   head: {codeValue : "HEAD", description : "head of a social group" }
   spouse: {codeValue : "SPOUSE", description : "married to group head" }

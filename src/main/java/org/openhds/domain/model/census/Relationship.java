@@ -20,11 +20,11 @@ public class Relationship extends AuditableCollectedEntity implements Serializab
 
     private static final long serialVersionUID = -2104326927087468148L;
 
-    @NotNull(message = "relationship type must not be null.")
+    @NotNull(message = "Relationship cannot have a null relationshipType.")
     @Description(description = "The type of the relationship from individual a to individual b.")
     String relationshipType;
 
-    @NotNull(message = "Relationship startDate must not be null.")
+    @NotNull(message = "Relationship cannot have a null startDate.")
     @Description(description = "Start date of the relationship.")
     ZonedDateTime startDate;
 
@@ -34,12 +34,12 @@ public class Relationship extends AuditableCollectedEntity implements Serializab
     @Description(description = "End type of the relationship.")
     String endType;
 
-    @NotNull(message = "Relationship cannot have a null individual A.")
+    @NotNull(message = "Relationship cannot have a null individualA.")
     @ManyToOne
     @Description(description = "One of the individuals participating in the relationship.")
     private Individual individualA;
 
-    @NotNull(message = "Relationship cannot have a null individual B.")
+    @NotNull(message = "Relationship cannot have a null individualB.")
     @ManyToOne
     @Description(description = "One of the individuals participating in the relationship.")
     private Individual individualB;

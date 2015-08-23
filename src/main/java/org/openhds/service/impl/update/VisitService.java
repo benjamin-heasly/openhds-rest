@@ -60,7 +60,7 @@ public class VisitService extends AbstractAuditableExtIdService<Visit, VisitRepo
 
     @Override
     public Set<LocationHierarchy> findEnclosingLocationHierarchies(Visit entity) {
-        return locationHierarchyService.findEnclosingLocationHierarchies(entity.getLocation().getLocationHierarchy());
+        return locationHierarchyService.findEnclosingLocationHierarchies(entity.getLocation().getParent());
     }
 
     @Override

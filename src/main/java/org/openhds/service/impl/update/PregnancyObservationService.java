@@ -73,7 +73,7 @@ public class PregnancyObservationService extends AbstractAuditableCollectedServi
     public Set<LocationHierarchy> findEnclosingLocationHierarchies(PregnancyObservation entity) {
         return locationHierarchyService.findEnclosingLocationHierarchies(entity.getVisit()
                 .getLocation()
-                .getLocationHierarchy());
+                .getParent());
     }
 
     @Override

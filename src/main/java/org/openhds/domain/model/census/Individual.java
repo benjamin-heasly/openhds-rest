@@ -22,7 +22,7 @@ public class Individual extends AuditableExtIdEntity implements Serializable {
 
     private static final long serialVersionUID = 5226650143604788124L;
 
-    @NotNull(message = "Individual must have a firstname.")
+    @NotNull(message = "Individual cannot have a null firstname.")
     @Description(description = "First name of the individual.")
     private String firstName;
 
@@ -32,12 +32,12 @@ public class Individual extends AuditableExtIdEntity implements Serializable {
     @Description(description = "Last name of the individual.")
     private String lastName;
 
+    @NotNull(message = "Individual cannot have a null gender.")
     @Description(description = "The gender of the individual.")
     private String gender;
 
     @Description(description = "Birth date of the individual.")
     private ZonedDateTime dateOfBirth;
-
 
     @ManyToOne
     @Description(description = "The individual's mother.")

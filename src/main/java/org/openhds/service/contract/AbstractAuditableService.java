@@ -156,8 +156,6 @@ public abstract class AbstractAuditableService
     @Override
     public void validate(T entity, ErrorLog errorLog) {
         super.validate(entity, errorLog);
-
-        //TODO: Manual validation for AuditableService
     }
 
     public EntityIterator<T> findByLastModifiedBy(Sort sort, User user) {

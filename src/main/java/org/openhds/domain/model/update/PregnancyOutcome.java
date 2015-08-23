@@ -31,14 +31,16 @@ public class PregnancyOutcome extends AuditableCollectedEntity implements Serial
     @Description(description = "Total number of live births.")
     private int numberOfLiveBirths;
 
+    @NotNull(message = "PregnancyOutcome cannot have a null outcomeDate.")
     @Description(description = "Date of the pregnancy outcome.")
     private ZonedDateTime outcomeDate;
 
+    @NotNull(message = "PregnancyOutcome cannot have a null visit.")
     @ManyToOne
     @Description(description = "Visit that is associated with the pregnancy outcome.")
     private Visit visit;
 
-    @NotNull
+    @NotNull(message = "PregnancyOutcome cannot have a null mother.")
     @ManyToOne
     @Description(description = "Mother of the pregnancy outcome.")
     private Individual mother;

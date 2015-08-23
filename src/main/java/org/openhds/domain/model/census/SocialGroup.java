@@ -7,6 +7,7 @@ import org.openhds.domain.util.Description;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,9 +22,11 @@ public class SocialGroup extends AuditableExtIdEntity implements Serializable {
 
     public final static long serialVersionUID = -5592935530217622317L;
 
+    @NotNull(message = "SocialGroup cannot have a null groupName.")
     @Description(description = "Name of the social group.")
     private String groupName;
 
+    @NotNull(message = "SocialGroup cannot have a null groupType.")
     @Description(description = "Type of the social group.")
     private String groupType;
 

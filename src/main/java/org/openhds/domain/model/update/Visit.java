@@ -22,12 +22,12 @@ public class Visit  extends AuditableExtIdEntity implements Serializable {
     public final static long serialVersionUID = -211408757055967973L;
 
     @Description(description = "Location where the Visit took place.")
-    @NotNull(message = "Visit must have a Location.")
+    @NotNull(message = "Visit cannot have a null location.")
     @ManyToOne
     private Location location;
 
-    @Description(description = "Date when teh visit took place.")
-    @NotNull(message = "Visit must have a visit date")
+    @Description(description = "Date when the visit took place.")
+    @NotNull(message = "Visit cannot have a null visitDate.")
     private ZonedDateTime visitDate;
 
     public Location getLocation() {

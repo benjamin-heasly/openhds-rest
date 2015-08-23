@@ -75,7 +75,7 @@ public class OutMigrationService extends AbstractAuditableCollectedService<OutMi
     public Set<LocationHierarchy> findEnclosingLocationHierarchies(OutMigration entity) {
         return locationHierarchyService.findEnclosingLocationHierarchies(entity.getVisit()
                 .getLocation()
-                .getLocationHierarchy());
+                .getParent());
     }
 
     @Override

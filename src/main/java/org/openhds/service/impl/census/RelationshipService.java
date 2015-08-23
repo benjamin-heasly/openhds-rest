@@ -68,11 +68,11 @@ public class RelationshipService extends AbstractAuditableCollectedService<Relat
         Set<LocationHierarchy> locationHierarchies = new HashSet<>();
 
         for (Residency residency : entity.getIndividualA().collectActiveResidencies(new HashSet<>())) {
-            locationHierarchies.addAll(locationHierarchyService.findEnclosingLocationHierarchies(residency.getLocation().getLocationHierarchy()));
+            locationHierarchies.addAll(locationHierarchyService.findEnclosingLocationHierarchies(residency.getLocation().getParent()));
         }
 
         for (Residency residency : entity.getIndividualB().collectActiveResidencies(new HashSet<>())) {
-            locationHierarchies.addAll(locationHierarchyService.findEnclosingLocationHierarchies(residency.getLocation().getLocationHierarchy()));
+            locationHierarchies.addAll(locationHierarchyService.findEnclosingLocationHierarchies(residency.getLocation().getParent()));
         }
 
         return locationHierarchies;

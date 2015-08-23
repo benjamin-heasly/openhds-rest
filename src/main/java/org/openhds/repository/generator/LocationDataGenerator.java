@@ -206,7 +206,7 @@ public class LocationDataGenerator implements DataGenerator {
         location.setExtId(extId);
         location.setName(extId);
         location.setDescription("sample location");
-        location.setLocationHierarchy(locationHierarchy);
+        location.setParent(locationHierarchy);
 
         locationRepository.save(location);
     }

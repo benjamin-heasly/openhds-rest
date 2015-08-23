@@ -184,7 +184,5 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
             errors.add(new Error(violation.getMessage()));
         }
 
-        //TODO: Manual validation for UuidService
-
     }
 }

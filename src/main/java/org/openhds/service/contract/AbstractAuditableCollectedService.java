@@ -40,8 +40,6 @@ public abstract class AbstractAuditableCollectedService<T extends AuditableColle
         super.validate(entity, errorLog);
         errorLog.setCollectedBy(entity.getCollectedBy());
 
-        //TODO: Manual validation for AuditableCollectedService
-
     }
 
     protected void initPlaceHolderCollectedFields(T entity){

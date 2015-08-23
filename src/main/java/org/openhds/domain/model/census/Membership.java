@@ -21,11 +21,11 @@ public class Membership extends AuditableCollectedEntity implements Serializable
 
     private static final long serialVersionUID = 3668816399895850928L;
 
-    @NotNull
+    @NotNull(message = "Membership cannot have a null startDate.")
     @Description(description = "Start date of the membership.")
     ZonedDateTime startDate;
 
-    @NotNull
+    @NotNull(message = "Membership cannot have a null startType.")
     @Size(min = 1)
     @Description(description = "Start type of the membership.")
     String startType;
@@ -36,10 +36,12 @@ public class Membership extends AuditableCollectedEntity implements Serializable
     @Description(description = "End type of the membership.")
     String endType;
 
+    @NotNull(message = "Membership cannot have a null individual.")
     @ManyToOne
     @Description(description = "Individual the membership is associated with.")
     private Individual individual;
 
+    @NotNull(message = "membership's socialgroup must not be null.")
     @ManyToOne
     @Description(description = "SocialGroup the membership is associated with.")
     private SocialGroup socialGroup;

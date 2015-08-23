@@ -59,7 +59,7 @@ public class ResidencyService extends AbstractAuditableCollectedService<Residenc
 
     @Override
     public Set<LocationHierarchy> findEnclosingLocationHierarchies(Residency entity) {
-        return locationHierarchyService.findEnclosingLocationHierarchies(entity.getLocation().getLocationHierarchy());
+        return locationHierarchyService.findEnclosingLocationHierarchies(entity.getLocation().getParent());
     }
 
     @Override

@@ -30,8 +30,5 @@ public abstract class AbstractAuditableExtIdService<T extends AuditableExtIdEnti
     @Override
     public void validate(T entity, ErrorLog errorLog) {
         super.validate(entity, errorLog);
-
-        //TODO: Manual validation for AuditableExtIdService
-
     }
 }

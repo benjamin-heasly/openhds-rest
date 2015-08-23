@@ -21,12 +21,12 @@ public abstract class AuditableCollectedEntity extends AuditableEntity implement
     @Description(description = "Status of the data.")
     protected String status;
 
-    @NotNull(message = "entity collectedBy may not be null")
+    @NotNull(message = "Entity cannot have a null collectedBy.")
     @ManyToOne
     @Description(description = "The field worker who collected the data, identified by external id.")
     protected FieldWorker collectedBy;
 
-    @NotNull(message = "entity collectionDateTime may not be null")
+    @NotNull(message = "Entity cannot have a null collectionDateTime.")
     @Description(description = "Date of collection/survey.")
     protected ZonedDateTime collectionDateTime;
 

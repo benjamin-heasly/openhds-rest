@@ -64,7 +64,7 @@ public class IndividualService extends AbstractAuditableExtIdService<Individual,
     public Set<LocationHierarchy> findEnclosingLocationHierarchies(Individual entity) {
         Set<LocationHierarchy> locationHierarchies = new HashSet<>();
         for (Residency residency : entity.collectActiveResidencies(new HashSet<>())) {
-            locationHierarchies.addAll(locationHierarchyService.findEnclosingLocationHierarchies(residency.getLocation().getLocationHierarchy()));
+            locationHierarchies.addAll(locationHierarchyService.findEnclosingLocationHierarchies(residency.getLocation().getParent()));
         }
         return locationHierarchies;
     }

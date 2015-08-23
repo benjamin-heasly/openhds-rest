@@ -68,7 +68,7 @@ public class DeathService extends AbstractAuditableCollectedService<Death, Death
     public Set<LocationHierarchy> findEnclosingLocationHierarchies(Death entity) {
         return locationHierarchyService.findEnclosingLocationHierarchies(entity.getVisit()
                 .getLocation()
-                .getLocationHierarchy());
+                .getParent());
     }
 
     @Override

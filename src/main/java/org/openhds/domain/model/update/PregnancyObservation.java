@@ -21,20 +21,20 @@ public class PregnancyObservation extends AuditableCollectedEntity implements Se
 
     public final static long serialVersionUID = -4737117368371754337L;
 
-    @NotNull
+    @NotNull(message = "PregnancyObservation cannot have a null expectedDeliveryDate.")
     @Description(description = "Expected delivery date.")
     private ZonedDateTime expectedDeliveryDate;
 
-    @NotNull
+    @NotNull(message = "PregnancyObservation cannot have a null pregnancyDate.")
     @Description(description = "Recorded date of the start of the pregnancy.")
     private ZonedDateTime pregnancyDate;
 
-    @NotNull
+    @NotNull(message = "PregnancyObservation cannot have a null visit.")
     @ManyToOne
     @Description(description = "The visit when and where this pregnancy was observed.")
     private Visit visit;
 
-    @NotNull
+    @NotNull(message = "PregnancyObservation cannot have a null mother.")
     @ManyToOne
     @Description(description = "The mother who is pregnant.")
     private Individual mother;
