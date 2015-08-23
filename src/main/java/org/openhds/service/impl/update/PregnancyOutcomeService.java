@@ -74,6 +74,8 @@ public class PregnancyOutcomeService extends AbstractAuditableCollectedService<P
         //TODO: check that if not null : gender father is male
 
         //TODO: check that number of live births not greather than children born
+        //TODO: check that the mother has an open residency
+        //TODO: check that the mother is not less than 12 years old
     }
 
     @Override

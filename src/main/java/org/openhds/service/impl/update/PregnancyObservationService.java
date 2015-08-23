@@ -70,8 +70,11 @@ public class PregnancyObservationService extends AbstractAuditableCollectedServi
 
         //TODO: check that expectedDeliveryDate is not in the past
         //TODO: check that pregnancyDate is not in the future
-        //TODO: check that individual is not recorded as dead
-        //TODO: check that individual is female
+        //TODO: check that mother is not recorded as dead
+        //TODO: check that mother is female
+        //TODO: check that the mother has an open residency
+        //TODO: check that the mother is not less than 12 years old
+        //TODO: check that mother's last pregnancyObservation's pregnancyDate is not less than a year away from this one
     }
 
     @Override

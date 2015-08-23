@@ -72,6 +72,7 @@ public class OutMigrationService extends AbstractAuditableCollectedService<OutMi
 
         //TODO: check that individual is not registered as dead
         //TODO: check that migrationDate is not in the future
+        //TODO: check that the individual has an open residency
 
     }
 

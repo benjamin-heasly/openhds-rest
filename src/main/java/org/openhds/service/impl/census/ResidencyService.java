@@ -86,5 +86,6 @@ public class ResidencyService extends AbstractAuditableCollectedService<Residenc
 
         //TODO: if not null : check that endDate is after startDate
         //TODO: check that startDate is not in future
+        //TODO: check that an open residency with same location and individual does not exist
     }
 }

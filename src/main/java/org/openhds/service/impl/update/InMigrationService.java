@@ -73,6 +73,7 @@ public class InMigrationService extends AbstractAuditableCollectedService<InMigr
 
         //TODO: check that migrationDate is not in the future
         //TODO: check that migrated individual is not registered as dead
+        //TODO: check that the individual has an open residency
 
     }
 

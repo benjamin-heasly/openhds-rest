@@ -65,6 +65,7 @@ public class DeathService extends AbstractAuditableCollectedService<Death, Death
 
       //TODO: check that deathDate is not in the future
       //TODO: check that the individual is not already registered as dead
+      //TODO: check that the individual has an open residency
     }
 
     @Override
