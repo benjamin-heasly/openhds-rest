@@ -26,6 +26,7 @@ public class SocialGroupService extends AbstractAuditableExtIdService<SocialGrou
         socialGroup.setUuid(id);
         socialGroup.setGroupName(name);
         socialGroup.setExtId(name);
+        socialGroup.setGroupType(name);
 
         initPlaceHolderCollectedFields(socialGroup);
 

@@ -68,13 +68,19 @@ public class PregnancyOutcomeService extends AbstractAuditableCollectedService<P
     @Override
     public void validate(PregnancyOutcome entity, ErrorLog errorLog) {
         super.validate(entity, errorLog);
+
+        //TODO: check that outcomeDate is not in the future
+        //TODO: check that mother is gender female
+        //TODO: check that if not null : gender father is male
+
+        //TODO: check that number of live births not greather than children born
     }
 
     @Override
     public Set<LocationHierarchy> findEnclosingLocationHierarchies(PregnancyOutcome entity) {
         return locationHierarchyService.findEnclosingLocationHierarchies(entity.getVisit()
                 .getLocation()
-                .getParent());
+                .getLocationHierarchy());
     }
 
     @Override

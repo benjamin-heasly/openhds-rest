@@ -20,7 +20,6 @@ public class LocationHierarchy extends AuditableExtIdEntity implements Serializa
     @Description(description = "The name of this location hierarchy record.")
     private String name;
 
-    @NotNull(message= "LocationHierarchy cannot have a null parent.")
     @Description(description = "Parent location's name.")
     @ManyToOne
     private LocationHierarchy parent;

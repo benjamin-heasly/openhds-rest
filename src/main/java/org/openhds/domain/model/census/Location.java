@@ -48,7 +48,7 @@ public class Location extends AuditableExtIdEntity implements Serializable {
 
     @NotNull(message = "Location cannot have a null parent.")
     @ManyToOne
-    private LocationHierarchy parent;
+    private LocationHierarchy locationHierarchy;
 
     @JsonIgnore
     @Description(description = "The set of all residencies where this Individual lives or lived.")
@@ -141,12 +141,12 @@ public class Location extends AuditableExtIdEntity implements Serializable {
         this.altitude = altitude;
     }
 
-    public LocationHierarchy getParent() {
-        return parent;
+    public LocationHierarchy getLocationHierarchy() {
+        return locationHierarchy;
     }
 
-    public void setParent(LocationHierarchy parent) {
-        this.parent = parent;
+    public void setLocationHierarchy(LocationHierarchy locationHierarchy) {
+        this.locationHierarchy = locationHierarchy;
     }
 
     public Set<Residency> getResidencies() {
@@ -257,7 +257,7 @@ public class Location extends AuditableExtIdEntity implements Serializable {
     public String toString() {
         return "Location{" +
                 "name='" + name + '\'' +
-                ", parent=" + parent +
+                ", locationHierarchy=" + locationHierarchy +
                 ", type='" + type + '\'' +
                 ", longitude='" + longitude + '\'' +
                 ", latitude='" + latitude + '\'' +

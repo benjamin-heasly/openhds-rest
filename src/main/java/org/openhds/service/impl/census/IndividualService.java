@@ -57,6 +57,9 @@ public class IndividualService extends AbstractAuditableExtIdService<Individual,
     public void validate(Individual entity, ErrorLog errorLog) {
         super.validate(entity, errorLog);
 
+        //TODO: check if not null : mother gender female
+        //TODO: check if not null : father gender male
+        //TODO: check it not null : birthday is not in future
     }
 
     // all hierarchies associated with active residencies
@@ -64,7 +67,7 @@ public class IndividualService extends AbstractAuditableExtIdService<Individual,
     public Set<LocationHierarchy> findEnclosingLocationHierarchies(Individual entity) {
         Set<LocationHierarchy> locationHierarchies = new HashSet<>();
         for (Residency residency : entity.collectActiveResidencies(new HashSet<>())) {
-            locationHierarchies.addAll(locationHierarchyService.findEnclosingLocationHierarchies(residency.getLocation().getParent()));
+            locationHierarchies.addAll(locationHierarchyService.findEnclosingLocationHierarchies(residency.getLocation().getLocationHierarchy()));
         }
         return locationHierarchies;
     }

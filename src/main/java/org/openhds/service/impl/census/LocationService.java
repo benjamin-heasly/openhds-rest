@@ -36,7 +36,7 @@ public class LocationService extends AbstractAuditableExtIdService<Location, Loc
         location.setUuid(id);
         location.setName(name);
         location.setExtId(name);
-        location.setParent(locationHierarchyService.getUnknownEntity());
+        location.setLocationHierarchy(locationHierarchyService.getUnknownEntity());
 
         initPlaceHolderCollectedFields(location);
 
@@ -50,7 +50,7 @@ public class LocationService extends AbstractAuditableExtIdService<Location, Loc
 
     @Override
     public Set<LocationHierarchy> findEnclosingLocationHierarchies(Location entity) {
-        return locationHierarchyService.findEnclosingLocationHierarchies(entity.getParent());
+        return locationHierarchyService.findEnclosingLocationHierarchies(entity.getLocationHierarchy());
     }
 
     @Override
@@ -72,7 +72,7 @@ public class LocationService extends AbstractAuditableExtIdService<Location, Loc
 
 
     public Location recordLocation(Location location, String locationHierarchyId, String fieldWorkerId){
-        location.setParent(locationHierarchyService.findOrMakePlaceHolder(locationHierarchyId));
+        location.setLocationHierarchy(locationHierarchyService.findOrMakePlaceHolder(locationHierarchyId));
         location.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
         return createOrUpdate(location);
     }

@@ -36,8 +36,8 @@ public class LocationServiceTest extends AuditableExtIdServiceTest<Location, Loc
         Location location = makeValidEntity("validName", "validId");
 
         //Remember the references and clear them
-        LocationHierarchy locationHierarchy = location.getParent();
-        location.setParent(null);
+        LocationHierarchy locationHierarchy = location.getLocationHierarchy();
+        location.setLocationHierarchy(null);
 
         FieldWorker fieldWorker = location.getCollectedBy();
         location.setCollectedBy(null);
@@ -47,8 +47,8 @@ public class LocationServiceTest extends AuditableExtIdServiceTest<Location, Loc
 
 
         //Check that the originals match the ones pulled out from findOrMakePlaceholder()
-        assertNotNull(location.getParent());
-        assertEquals(location.getParent(), locationHierarchy);
+        assertNotNull(location.getLocationHierarchy());
+        assertEquals(location.getLocationHierarchy(), locationHierarchy);
 
         assertNotNull(location.getCollectedBy());
         assertEquals(location.getCollectedBy(), fieldWorker);
@@ -60,15 +60,15 @@ public class LocationServiceTest extends AuditableExtIdServiceTest<Location, Loc
 
         //Make a new entity with no references
         Location location = makeValidEntity("validName", "validId");
-        location.setParent(null);
+        location.setLocationHierarchy(null);
         location.setCollectedBy(null);
 
         //Pass it in with new reference uuids
         location = service.recordLocation(location, "lucutiunHiararchy", "feldwarker");
 
         //check that they were persisted
-        assertNotNull(location.getParent());
-        assertEquals(location.getParent().getUuid(), "lucutiunHiararchy");
+        assertNotNull(location.getLocationHierarchy());
+        assertEquals(location.getLocationHierarchy().getUuid(), "lucutiunHiararchy");
         assertNotNull(location.getCollectedBy());
         assertEquals(location.getCollectedBy().getUuid(), "feldwarker");
 

@@ -56,11 +56,13 @@ public class VisitService extends AbstractAuditableExtIdService<Visit, VisitRepo
     @Override
     public void validate(Visit entity, ErrorLog errorLog) {
         super.validate(entity, errorLog);
+
+        //TODO: check that visitDate is not in the future
     }
 
     @Override
     public Set<LocationHierarchy> findEnclosingLocationHierarchies(Visit entity) {
-        return locationHierarchyService.findEnclosingLocationHierarchies(entity.getLocation().getParent());
+        return locationHierarchyService.findEnclosingLocationHierarchies(entity.getLocation().getLocationHierarchy());
     }
 
     @Override

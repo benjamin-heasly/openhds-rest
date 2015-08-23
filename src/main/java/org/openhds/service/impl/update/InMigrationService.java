@@ -70,13 +70,17 @@ public class InMigrationService extends AbstractAuditableCollectedService<InMigr
     @Override
     public void validate(InMigration entity, ErrorLog errorLog) {
         super.validate(entity, errorLog);
+
+        //TODO: check that migrationDate is not in the future
+        //TODO: check that migrated individual is not registered as dead
+
     }
 
     @Override
     public Set<LocationHierarchy> findEnclosingLocationHierarchies(InMigration entity) {
         return locationHierarchyService.findEnclosingLocationHierarchies(entity.getVisit()
                 .getLocation()
-                .getParent());
+                .getLocationHierarchy());
     }
 
     @Override

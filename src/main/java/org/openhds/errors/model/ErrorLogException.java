@@ -8,6 +8,7 @@ public class ErrorLogException extends RuntimeException {
     private ErrorLog errorLog;
 
     public ErrorLogException(ErrorLog errorLog){
+        super(errorLog.getDetails());
         this.errorLog = errorLog;
     }
 

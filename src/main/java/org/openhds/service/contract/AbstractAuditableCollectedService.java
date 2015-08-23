@@ -40,6 +40,8 @@ public abstract class AbstractAuditableCollectedService<T extends AuditableColle
         super.validate(entity, errorLog);
         errorLog.setCollectedBy(entity.getCollectedBy());
 
+        //TODO: check that collectionDateTime is not in future
+
     }
 
     protected void initPlaceHolderCollectedFields(T entity){

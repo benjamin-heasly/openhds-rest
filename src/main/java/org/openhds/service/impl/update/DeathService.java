@@ -62,13 +62,16 @@ public class DeathService extends AbstractAuditableCollectedService<Death, Death
     @Override
     public void validate(Death entity, ErrorLog errorLog) {
         super.validate(entity, errorLog);
+
+      //TODO: check that deathDate is not in the future
+      //TODO: check that the individual is not already registered as dead
     }
 
     @Override
     public Set<LocationHierarchy> findEnclosingLocationHierarchies(Death entity) {
         return locationHierarchyService.findEnclosingLocationHierarchies(entity.getVisit()
                 .getLocation()
-                .getParent());
+                .getLocationHierarchy());
     }
 
     @Override

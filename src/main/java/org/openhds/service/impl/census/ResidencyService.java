@@ -59,7 +59,7 @@ public class ResidencyService extends AbstractAuditableCollectedService<Residenc
 
     @Override
     public Set<LocationHierarchy> findEnclosingLocationHierarchies(Residency entity) {
-        return locationHierarchyService.findEnclosingLocationHierarchies(entity.getLocation().getParent());
+        return locationHierarchyService.findEnclosingLocationHierarchies(entity.getLocation().getLocationHierarchy());
     }
 
     @Override
@@ -82,5 +82,9 @@ public class ResidencyService extends AbstractAuditableCollectedService<Residenc
     @Override
     public void validate(Residency entity, ErrorLog errorLog) {
         super.validate(entity, errorLog);
+
+
+        //TODO: if not null : check that endDate is after startDate
+        //TODO: check that startDate is not in future
     }
 }

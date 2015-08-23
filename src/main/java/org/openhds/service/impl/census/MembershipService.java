@@ -43,6 +43,10 @@ public class MembershipService extends AbstractAuditableCollectedService<Members
     @Override
     public void validate(Membership membership, ErrorLog errorLog) {
         super.validate(membership, errorLog);
+
+        //TODO: if not null : check endDate is after startDate
+        //TODO: check startDate is not in future
+
     }
 
     public Membership recordMembership(Membership membership, String individualId, String socialGroupId, String fieldWorkerId){

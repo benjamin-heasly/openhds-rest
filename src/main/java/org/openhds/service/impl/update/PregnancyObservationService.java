@@ -67,13 +67,18 @@ public class PregnancyObservationService extends AbstractAuditableCollectedServi
     @Override
     public void validate(PregnancyObservation entity, ErrorLog errorLog) {
         super.validate(entity, errorLog);
+
+        //TODO: check that expectedDeliveryDate is not in the past
+        //TODO: check that pregnancyDate is not in the future
+        //TODO: check that individual is not recorded as dead
+        //TODO: check that individual is female
     }
 
     @Override
     public Set<LocationHierarchy> findEnclosingLocationHierarchies(PregnancyObservation entity) {
         return locationHierarchyService.findEnclosingLocationHierarchies(entity.getVisit()
                 .getLocation()
-                .getParent());
+                .getLocationHierarchy());
     }
 
     @Override

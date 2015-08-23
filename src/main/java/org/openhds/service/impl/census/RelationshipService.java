@@ -60,6 +60,9 @@ public class RelationshipService extends AbstractAuditableCollectedService<Relat
     @Override
     public void validate(Relationship entity, ErrorLog errorLog) {
         super.validate(entity, errorLog);
+
+        //TODO: if not null : check that endDate is after startDate
+        //TODO: check that startDate is not in future
     }
 
     // all hierarchies associated with active residencies for either individual
@@ -68,11 +71,11 @@ public class RelationshipService extends AbstractAuditableCollectedService<Relat
         Set<LocationHierarchy> locationHierarchies = new HashSet<>();
 
         for (Residency residency : entity.getIndividualA().collectActiveResidencies(new HashSet<>())) {
-            locationHierarchies.addAll(locationHierarchyService.findEnclosingLocationHierarchies(residency.getLocation().getParent()));
+            locationHierarchies.addAll(locationHierarchyService.findEnclosingLocationHierarchies(residency.getLocation().getLocationHierarchy()));
         }
 
         for (Residency residency : entity.getIndividualB().collectActiveResidencies(new HashSet<>())) {
-            locationHierarchies.addAll(locationHierarchyService.findEnclosingLocationHierarchies(residency.getLocation().getParent()));
+            locationHierarchies.addAll(locationHierarchyService.findEnclosingLocationHierarchies(residency.getLocation().getLocationHierarchy()));
         }
 
         return locationHierarchies;

@@ -69,13 +69,17 @@ public class OutMigrationService extends AbstractAuditableCollectedService<OutMi
     @Override
     public void validate(OutMigration entity, ErrorLog errorLog) {
         super.validate(entity, errorLog);
+
+        //TODO: check that individual is not registered as dead
+        //TODO: check that migrationDate is not in the future
+
     }
 
     @Override
     public Set<LocationHierarchy> findEnclosingLocationHierarchies(OutMigration entity) {
         return locationHierarchyService.findEnclosingLocationHierarchies(entity.getVisit()
                 .getLocation()
-                .getParent());
+                .getLocationHierarchy());
     }
 
     @Override
