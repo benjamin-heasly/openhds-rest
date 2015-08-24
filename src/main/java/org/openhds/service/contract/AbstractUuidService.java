@@ -36,6 +36,9 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
     public final static String UNKNOWN_NAME = "UNKNOWN_NAME";
     public final static String UNKNOWN_ENTITY_UUID = "UNKNOWN";
 
+    protected final Sort UUID_SORT = new Sort("uuid");
+
+
     protected final V repository;
 
     @Autowired

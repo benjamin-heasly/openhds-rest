@@ -39,7 +39,11 @@ public class SocialGroupService extends AbstractAuditableExtIdService<SocialGrou
     }
 
     @Override
-    public void validate(SocialGroup entity, ErrorLog errorLog) {
-        super.validate(entity, errorLog);
+    public void validate(SocialGroup socialGroup, ErrorLog errorLog) {
+        super.validate(socialGroup, errorLog);
+
+        if(!projectCodeService.isValueInCodeGroup(socialGroup.getGroupType(), projectCodeService.SOCIALGROUP_TYPE)) {
+            errorLog.appendError("SocialGroup cannot have a type of: ["+socialGroup.getGroupType()+"].");
+        }
     }
 }

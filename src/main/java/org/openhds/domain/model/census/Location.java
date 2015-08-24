@@ -31,6 +31,7 @@ public class Location extends AuditableExtIdEntity implements Serializable {
     @Description(description = "Name of the location.")
     private String name;
 
+    @NotNull(message = "Location cannot have a null type.")
     @Description(description = "The type of Location.")
     private String type;
 

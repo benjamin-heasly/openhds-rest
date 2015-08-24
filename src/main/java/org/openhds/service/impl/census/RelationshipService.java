@@ -6,16 +6,20 @@ import org.openhds.domain.model.census.Relationship;
 import org.openhds.domain.model.census.Residency;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.census.RelationshipRepository;
+import org.openhds.repository.results.EntityIterator;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.management.relation.Relation;
 import javax.persistence.criteria.*;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -58,11 +62,37 @@ public class RelationshipService extends AbstractAuditableCollectedService<Relat
     }
 
     @Override
-    public void validate(Relationship entity, ErrorLog errorLog) {
-        super.validate(entity, errorLog);
+    public void validate(Relationship relationship, ErrorLog errorLog) {
+        super.validate(relationship, errorLog);
 
-        //TODO: if not null : check that endDate is after startDate
-        //TODO: check that startDate is not in future
+      if(relationship.getStartDate().isAfter(relationship.getCollectionDateTime())){
+        errorLog.appendError("Relationship cannot have a startDate in the future.");
+      }
+
+      if(null != relationship.getEndDate() &&
+          relationship.getStartDate().isAfter(relationship.getEndDate())){
+        errorLog.appendError("Relationship cannot have a startDate before its endDate.");
+      }
+
+      if(!projectCodeService.isValueInCodeGroup(relationship.getRelationshipType(), projectCodeService.RELATIONSHIP_TYPE)) {
+        errorLog.appendError("Relationship cannot have a type of: ["+relationship.getRelationshipType()+"].");
+      }
+
+      Iterator<Relationship> relationshipIterator = findByIndividualAAndIndividualB(UUID_SORT, relationship.getIndividualA(), relationship.getIndividualB()).iterator();
+      Relationship existingRelationship;
+
+      while(relationshipIterator.hasNext()){
+        existingRelationship = relationshipIterator.next();
+
+        if(null != relationship.getUuid()
+            && !relationship.getUuid().equals(existingRelationship.getUuid())
+            && null == existingRelationship.getEndDate()
+            && relationship.getRelationshipType().equals(existingRelationship.getRelationshipType())){
+
+          errorLog.appendError("Individual cannot have two Relationships to same person of the same type.");
+        }
+      }
+
     }
 
     // all hierarchies associated with active residencies for either individual
@@ -87,11 +117,11 @@ public class RelationshipService extends AbstractAuditableCollectedService<Relat
                                                                ZonedDateTime modifiedAfter,
                                                                ZonedDateTime modifiedBefore) {
         return locationHierarchyService.findOtherByEnclosingLocationHierarchy(pageable,
-                locationHierarchyUuid,
-                modifiedAfter,
-                modifiedBefore,
-                RelationshipService::enclosed,
-                repository);
+            locationHierarchyUuid,
+            modifiedAfter,
+            modifiedBefore,
+            RelationshipService::enclosed,
+            repository);
     }
 
     // relationships where either individual has an active residency at an enclosed location
@@ -123,6 +153,19 @@ public class RelationshipService extends AbstractAuditableCollectedService<Relat
                 residencyJoin.get("location").get("locationHierarchy").in(enclosing)));
 
         return cb.exists(subquery);
+    }
+
+
+    public EntityIterator<Relationship> findByIndividualA(Sort sort, Individual individualA) {
+      return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndIndividualA(individualA, pageable), sort);
+    }
+
+    public EntityIterator<Relationship> findByIndividualB(Sort sort, Individual individualB) {
+      return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndIndividualB(individualB, pageable), sort);
+    }
+
+    public EntityIterator<Relationship> findByIndividualAAndIndividualB(Sort sort, Individual individualA, Individual individualB) {
+      return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndIndividualAAndIndividualB(individualA, individualB, pageable), sort);
     }
 
 }

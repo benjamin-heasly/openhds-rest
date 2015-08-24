@@ -33,7 +33,7 @@ public class Individual extends AuditableExtIdEntity implements Serializable {
     @Description(description = "Last name of the individual.")
     private String lastName;
 
-    //@NotNull(message = "Individual cannot have a null gender.")
+    @NotNull(message = "Individual cannot have a null gender.")
     @Description(description = "The gender of the individual.")
     private String gender;
 

@@ -54,12 +54,27 @@ public class IndividualService extends AbstractAuditableExtIdService<Individual,
     }
 
     @Override
-    public void validate(Individual entity, ErrorLog errorLog) {
-        super.validate(entity, errorLog);
+    public void validate(Individual individual, ErrorLog errorLog) {
+        super.validate(individual, errorLog);
 
-        //TODO: check if not null : mother gender female
-        //TODO: check if not null : father gender male
-        //TODO: check it not null : birthday is not in future
+        if(null != individual.getFather() &&
+            !individual.getFather().getGender().equals(projectCodeService.getValueForCodeName(projectCodeService.GENDER_MALE))){
+            errorLog.appendError("Individual cannot have a non-male Father.");
+        }
+
+        if(null != individual.getMother() &&
+            !individual.getMother().getGender().equals(projectCodeService.getValueForCodeName(projectCodeService.GENDER_FEMALE))){
+            errorLog.appendError("Individual cannot have a non-female Mother.");
+        }
+
+        if(null != individual.getDateOfBirth() &&
+            individual.getDateOfBirth().isAfter(individual.getCollectionDateTime())){
+            errorLog.appendError("Individual cannot have a birthday in the future.");
+        }
+
+        if(!projectCodeService.isValueInCodeGroup(individual.getGender(), projectCodeService.GENDER)){
+            errorLog.appendError("Individual cannot have a gender of: ["+individual.getGender()+"].");
+        }
 
     }
 

@@ -44,8 +44,13 @@ public class LocationService extends AbstractAuditableExtIdService<Location, Loc
     }
 
     @Override
-    public void validate(Location entity, ErrorLog errorLog) {
-        super.validate(entity, errorLog);
+    public void validate(Location location, ErrorLog errorLog) {
+        super.validate(location, errorLog);
+
+        if(!projectCodeService.isValueInCodeGroup(location.getType(), projectCodeService.LOCATION_TYPE)){
+            errorLog.appendError("Location cannot have a type of: ["+location.getType()+"].");
+        }
+
     }
 
     @Override
