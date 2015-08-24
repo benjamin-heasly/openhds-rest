@@ -60,6 +60,7 @@ public class IndividualService extends AbstractAuditableExtIdService<Individual,
         //TODO: check if not null : mother gender female
         //TODO: check if not null : father gender male
         //TODO: check it not null : birthday is not in future
+
     }
 
     // all hierarchies associated with active residencies

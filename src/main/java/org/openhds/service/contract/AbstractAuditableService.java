@@ -9,6 +9,7 @@ import org.openhds.repository.queries.QueryRange;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.security.model.User;
 import org.openhds.security.model.UserHelper;
+import org.openhds.service.impl.ProjectCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,9 @@ import java.util.Set;
 public abstract class AbstractAuditableService
         <T extends AuditableEntity, V extends AuditableRepository<T>>
         extends AbstractUuidService<T, V> {
+
+    @Autowired
+    protected ProjectCodeService projectCodeService;
 
     public AbstractAuditableService(V repository) {
         super(repository);
