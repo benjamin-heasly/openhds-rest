@@ -26,19 +26,7 @@ public class LoggingAspect {
     @Pointcut("execution(* org.openhds.resource..register*(..))")
     public void resourceRegister(){}
 
-    @Pointcut("execution(* org.openhds.resource..*(..)) && @annotation(org.springframework.web.bind.annotation.RequestMapping)")
-    public void resourceRequestMapping(){}
-
-    @Pointcut("execution(* org.openhds.service..record*(..))")
-    public void serviceRecord(){}
-
-    @Pointcut("execution(* org.openhds.service..find*(..))")
-    public void serviceFind(){}
-
-    @Pointcut("execution(* org.openhds.service..create*(..)) || execution(* org.openhds.service..persist*(..))")
-    public void serviceCreate(){}
-
-    @Before("resourceRegister() || resourceRequestMapping() || serviceRecord() ")
+    @Before("resourceRegister()")
     public void nameAndArgs(JoinPoint joinPoint) throws Throwable {
         StringBuilder stringBuilder = new StringBuilder();
         printMethodName(stringBuilder, joinPoint);
@@ -46,7 +34,13 @@ public class LoggingAspect {
         log.info(stringBuilder.toString());
     }
 
-    @Around("serviceFind() || serviceCreate()")
+    @Pointcut("execution(* org.openhds.service..record*(..))")
+    public void serviceRecord(){}
+
+    @Pointcut("execution(* org.openhds.service..find*(..))")
+    public void serviceFind(){}
+
+    @Around("serviceFind() || serviceRecord()")
     private Object executionTime(ProceedingJoinPoint joinPoint) throws Throwable {
         // time the method execution
         StopWatch stopWatch = new StopWatch();
@@ -65,13 +59,14 @@ public class LoggingAspect {
     }
 
     private static void printMethodName(StringBuilder stringBuilder, JoinPoint joinPoint) {
-        stringBuilder.append(joinPoint.getTarget().getClass().getName())
+        stringBuilder.append("\n  ")
+                .append(joinPoint.getTarget().getClass().getName())
                 .append(".")
                 .append(joinPoint.getSignature().getName());
     }
 
     private static void printMethodArgs(StringBuilder stringBuilder, JoinPoint joinPoint) {
-        stringBuilder.append("\n").append("  with args:");
+        stringBuilder.append("\n  ").append("with args:");
         for (Object object : joinPoint.getArgs()) {
             stringBuilder.append("\n    ")
                     .append(object);
@@ -79,13 +74,13 @@ public class LoggingAspect {
     }
 
     private static void printResult(StringBuilder stringBuilder, Object result) {
-        stringBuilder.append("\n").append("  with result:");
+        stringBuilder.append("\n  ").append("with result:");
         stringBuilder.append("\n    ")
                 .append(result);
     }
 
     private static void printExecutionTime(StringBuilder stringBuilder, StopWatch stopWatch) {
-        stringBuilder.append("\n").append("  execution took ")
+        stringBuilder.append("\n  ").append("execution took ")
                 .append(stopWatch.getTotalTimeMillis())
                 .append(" ms");
     }
