@@ -39,6 +39,7 @@ public class IndividualService extends AbstractAuditableExtIdService<Individual,
         individual.setUuid(id);
         individual.setFirstName(name);
         individual.setExtId(name);
+        individual.setGender("MALE");
 
         initPlaceHolderCollectedFields(individual);
 

@@ -36,6 +36,7 @@ public class LocationService extends AbstractAuditableExtIdService<Location, Loc
         location.setUuid(id);
         location.setName(name);
         location.setExtId(name);
+        location.setType("RURAL");
         location.setLocationHierarchy(locationHierarchyService.getUnknownEntity());
 
         initPlaceHolderCollectedFields(location);
