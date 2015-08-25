@@ -11,7 +11,10 @@ import java.util.List;
 
 @Description(description = "Collection of atomic OpenHDS system events")
 @Entity
-@Table(name = "events")
+@Table(name = "events", indexes={
+        @Index(columnList = "deleted"),
+        @Index(columnList = "lastModifiedDate"),
+        @Index(columnList = "entityType")})
 public class Event extends AuditableEntity implements Serializable {
 
     public static final String DEFAULT_ACTION = "default-action";

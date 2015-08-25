@@ -17,7 +17,11 @@ import java.util.Set;
  */
 @Description(description = "A distinct individual within the study area.")
 @Entity
-@Table(name = "individual")
+@Table(name = "individual", indexes={
+        @Index(columnList = "deleted"),
+        @Index(columnList = "lastModifiedDate"),
+        @Index(columnList = "collected_by_uuid"),
+        @Index(columnList = "extId")})
 public class Individual extends AuditableExtIdEntity implements Serializable {
 
     private static final long serialVersionUID = 5226650143604788124L;

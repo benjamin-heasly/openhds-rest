@@ -5,10 +5,7 @@ import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.model.census.Individual;
 import org.openhds.domain.util.Description;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -20,7 +17,11 @@ import java.util.List;
  */
 @Description(description = "A pregnancy outcome for a female individual. This contains a list of pregnancy results.")
 @Entity
-@Table(name = "PregnancyOutcome")
+@Table(name = "PregnancyOutcome", indexes={
+        @Index(columnList = "deleted"),
+        @Index(columnList = "lastModifiedDate"),
+        @Index(columnList = "collected_by_uuid"),
+        @Index(columnList = "visit_uuid")})
 public class PregnancyOutcome extends AuditableCollectedEntity implements Serializable {
 
     private static final long serialVersionUID = 5179378759539398625L;

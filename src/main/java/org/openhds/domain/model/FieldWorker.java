@@ -5,6 +5,7 @@ import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
@@ -12,7 +13,9 @@ import java.io.Serializable;
 
 @Description(description = "A Field Worker represents a surveyor working in the study area.")
 @Entity
-@Table(name = "fieldworker")
+@Table(name = "fieldworker", indexes={
+        @Index(columnList = "deleted"),
+        @Index(columnList = "lastModifiedDate")})
 public class FieldWorker extends AuditableEntity implements Serializable {
 
     private static final long serialVersionUID = -7550088299362704483L;

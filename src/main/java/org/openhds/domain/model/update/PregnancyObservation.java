@@ -5,6 +5,7 @@ import org.openhds.domain.model.census.Individual;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -16,7 +17,11 @@ import java.time.ZonedDateTime;
  */
 @Description(description = "A Pregnancy Observation is used to monitor a pregnancy. It contains information about the mother and the expected delivery date.")
 @Entity
-@Table(name = "pregnancyobservation")
+@Table(name = "pregnancyobservation", indexes={
+        @Index(columnList = "deleted"),
+        @Index(columnList = "lastModifiedDate"),
+        @Index(columnList = "collected_by_uuid"),
+        @Index(columnList = "visit_uuid")})
 public class PregnancyObservation extends AuditableCollectedEntity implements Serializable {
 
     public final static long serialVersionUID = -4737117368371754337L;
