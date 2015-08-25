@@ -20,8 +20,7 @@ public class LoggingAspect {
 
     private final Log log = LogFactory.getLog(this.getClass());
 
-
-    @Around("execution(* org.openhds.service..*.*(..))")
+    @Around("execution(* org.openhds.service..find*(..))")
     public Object logTimeMethod(ProceedingJoinPoint joinPoint) throws Throwable {
 
         // time the method execution
