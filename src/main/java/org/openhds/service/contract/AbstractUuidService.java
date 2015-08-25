@@ -1,5 +1,7 @@
 package org.openhds.service.contract;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.errors.model.Error;
 import org.openhds.errors.model.ErrorLog;
@@ -35,6 +37,8 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
 
     public final static String UNKNOWN_NAME = "UNKNOWN_NAME";
     public final static String UNKNOWN_ENTITY_UUID = "UNKNOWN";
+
+    private final Log log = LogFactory.getLog(this.getClass());
 
     protected final V repository;
 
@@ -123,6 +127,9 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
 
         T entity = makePlaceHolder(id);
         entity.setUuid(id);
+
+        log.info("Making placeholder: " + entity);
+
         return createOrUpdate(entity);
     }
 
