@@ -42,6 +42,7 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-security")
     compile("org.springframework.boot:spring-boot-starter-mail")
+    compile("org.springframework.boot:spring-boot-starter-aop")
     compile("com.fasterxml.jackson.datatype:jackson-datatype-hibernate4:2.4.0")
     compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.4.0")
     compile("com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.4.0")

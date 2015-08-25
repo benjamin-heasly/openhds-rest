@@ -1,5 +1,7 @@
 package org.openhds.repository.generator;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +16,8 @@ import java.util.ListIterator;
  */
 @Component
 public class MasterDataGenerator implements DataGenerator {
+
+    private final Log log = LogFactory.getLog(this.getClass());
 
     private List<DataGenerator> dataGenerators = new ArrayList<>();
 
@@ -41,17 +45,17 @@ public class MasterDataGenerator implements DataGenerator {
 
     @Override
     public void generateData(int size) {
-        System.out.println("Generating data with size " + size + ".");
+        log.info("Generating data with size " + size + ".");
         for (DataGenerator dataGenerator : dataGenerators) {
-            System.out.println("Start generating " + dataGenerator.getClass().getSimpleName());
+            log.info("Start generating " + dataGenerator.getClass().getSimpleName());
             dataGenerator.generateData(size);
         }
-        System.out.println("Done generating data.");
+        log.info("Done generating data.");
     }
 
     @Override
     public void clearData() {
-        System.out.println("Clearing data!");
+        log.info("Clearing data!");
         ListIterator<DataGenerator> listIterator = dataGenerators.listIterator(dataGenerators.size());
         while (listIterator.hasPrevious()) {
             listIterator.previous().clearData();
