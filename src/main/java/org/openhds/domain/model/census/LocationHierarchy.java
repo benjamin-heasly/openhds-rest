@@ -14,8 +14,7 @@ import java.io.Serializable;
 @Entity
 @Table(name = "locationhierarchy", indexes={
         @Index(columnList = "lastModifiedDate"),
-        @Index(columnList = "extId"),
-        @Index(columnList = "parent_uuid")})
+        @Index(columnList = "extId")})
 public class LocationHierarchy extends AuditableExtIdEntity implements Serializable {
 
     private static final long serialVersionUID = -5334850119671675888L;

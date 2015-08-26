@@ -20,8 +20,7 @@ import java.util.Set;
 @Entity
 @Table(name = "location", indexes={
         @Index(columnList = "lastModifiedDate"),
-        @Index(columnList = "extId"),
-        @Index(columnList = "location_hierarchy_uuid")})
+        @Index(columnList = "extId")})
 public class Location extends AuditableExtIdEntity implements Serializable {
 
     public final static long serialVersionUID = 169551578162260199L;
