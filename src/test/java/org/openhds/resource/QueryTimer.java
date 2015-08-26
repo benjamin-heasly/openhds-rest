@@ -3,6 +3,7 @@ package org.openhds.resource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openhds.OpenHdsRestApplication;
@@ -32,10 +33,11 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
  * <p>
  * Do some representative REST queries and print the execution times.
  * <p>
- * By default, small SAMPLE_DATA_SIZE=0, so that this doesn't slow the tests.
+ * By default, ignore this during tests.
  * <p>
- * When running by hand, increase SAMPLE_DATA_SIZE to see how things scale.  SAMPLE_DATA_SIZE=5 -> million+ records.
+ * When running by hand, comment out the @Ignore.
  */
+@Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = {OpenHdsRestApplication.class})
 @WebAppConfiguration
