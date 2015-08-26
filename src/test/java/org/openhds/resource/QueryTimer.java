@@ -61,7 +61,10 @@ public class QueryTimer {
                 .build();
 
         masterDataGenerator.clearData();
+        log.info("Generate data with size " + SAMPLE_DATA_SIZE);
         masterDataGenerator.generateData(SAMPLE_DATA_SIZE);
+        log.info("Generate data done");
+
     }
 
     @Test
@@ -83,8 +86,8 @@ public class QueryTimer {
             queryTimes.add(i, stopWatch.getLastTaskTimeMillis());
         }
 
-        log.info("Query: " + requestPath);
-        log.info("  execution times (ms): " + queryTimes.toString());
+        log.info("  Query: GET " + requestPath);
+        log.info("    execution times (ms): " + queryTimes.toString());
     }
 
     private void doQuery(String requestPath) throws Exception {
