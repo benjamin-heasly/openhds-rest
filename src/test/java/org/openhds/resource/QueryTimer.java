@@ -6,9 +6,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openhds.OpenHdsRestApplication;
+import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.repository.generator.MasterDataGenerator;
+import org.openhds.service.impl.census.LocationHierarchyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -16,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.StopWatch;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,11 +30,11 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 
 /**
  * Created by ben on 8/26/15.
- *
+ * <p>
  * Do some representative REST queries and print the execution times.
- *
+ * <p>
  * By default, small SAMPLE_DATA_SIZE=0, so that this doesn't slow the tests.
- *
+ * <p>
  * When running by hand, increase SAMPLE_DATA_SIZE to see how things scale.  SAMPLE_DATA_SIZE=5 -> million+ records.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -46,6 +50,10 @@ public class QueryTimer {
 
     private final StopWatch stopWatch = new StopWatch();
 
+    private ZonedDateTime startTime;
+
+    private ZonedDateTime endTime;
+
     private MockMvc mockMvc;
 
     @Autowired
@@ -53,6 +61,9 @@ public class QueryTimer {
 
     @Autowired
     private MasterDataGenerator masterDataGenerator;
+
+    @Autowired
+    private LocationHierarchyService locationHierarchyService;
 
     @Before
     public void setup() throws Exception {
@@ -62,32 +73,45 @@ public class QueryTimer {
 
         masterDataGenerator.clearData();
         log.info("Generate data with size " + SAMPLE_DATA_SIZE);
+        startTime = ZonedDateTime.now();
+        stopWatch.start();
         masterDataGenerator.generateData(SAMPLE_DATA_SIZE);
-        log.info("Generate data done");
-
+        stopWatch.stop();
+        endTime = ZonedDateTime.now();
+        log.info("  execution time (ms): " + stopWatch.getLastTaskTimeMillis());
     }
 
     @Test
     @WithMockUser
     public void severalQueries() throws Exception {
+
+        LocationHierarchy locationHierarchy = locationHierarchyService.findByExtId(new Sort("uuid"), "hierarchy-0-1")
+                .iterator()
+                .next();
+
         timeQuery("/individuals");
+        timeQuery("/locationHierarchies");
+
         timeQuery("/individuals/external/location-0-member");
-        timeQuery("/individuals/bylocationhierarchy?locationHierarchyUuid=UNKNOWN");
+        timeQuery("/locationHierarchies/external/hierarchy-0-1");
+
+        timeQuery("/locationHierarchies/bylocationhierarchy?locationHierarchyUuid=" + locationHierarchy.getUuid());
+        timeQuery("/individuals/bydate?afterDate=" + startTime + "&beforeDate=" + endTime);
 
     }
 
     // repeat the given query and print the execution times
     private void timeQuery(String requestPath) throws Exception {
         List<Long> queryTimes = new ArrayList<>(QUERY_REPS);
-        for (int i=0; i<QUERY_REPS; i++) {
+        for (int i = 0; i < QUERY_REPS; i++) {
             stopWatch.start();
             doQuery(requestPath);
             stopWatch.stop();
             queryTimes.add(i, stopWatch.getLastTaskTimeMillis());
         }
 
-        log.info("  Query: GET " + requestPath);
-        log.info("    execution times (ms): " + queryTimes.toString());
+        log.info("Query: GET " + requestPath);
+        log.info("  execution times (ms): " + queryTimes.toString());
     }
 
     private void doQuery(String requestPath) throws Exception {
