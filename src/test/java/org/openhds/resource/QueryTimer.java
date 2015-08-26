@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @WebAppConfiguration
 public class QueryTimer {
 
-    private static final int SAMPLE_DATA_SIZE = 2;
+    private static final int SAMPLE_DATA_SIZE = 3;
 
     private static final int QUERY_REPS = 10;
 
