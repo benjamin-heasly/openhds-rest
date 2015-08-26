@@ -15,11 +15,7 @@ import java.time.ZonedDateTime;
  */
 @Description(description = "An OutMigration represents a migration out of the study area.")
 @Entity
-@Table(name = "outmigration", indexes={
-        @Index(columnList = "deleted"),
-        @Index(columnList = "lastModifiedDate"),
-        @Index(columnList = "collected_by_uuid"),
-        @Index(columnList = "visit_uuid")})
+@Table(name = "outmigration", indexes={@Index(columnList = "lastModifiedDate")})
 public class OutMigration extends AuditableCollectedEntity implements Serializable {
 
     public final static long serialVersionUID = 6736599408170070468L;

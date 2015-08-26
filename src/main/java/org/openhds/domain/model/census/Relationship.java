@@ -16,12 +16,7 @@ import java.time.ZonedDateTime;
  */
 @Description(description = "A record of two Individuals having some relationship for some time interval.")
 @Entity
-@Table(name = "relationship", indexes={
-        @Index(columnList = "deleted"),
-        @Index(columnList = "lastModifiedDate"),
-        @Index(columnList = "collected_by_uuid"),
-        @Index(columnList = "individualA_uuid"),
-        @Index(columnList = "individualB_uuid")})
+@Table(name = "relationship", indexes={@Index(columnList = "lastModifiedDate")})
 public class Relationship extends AuditableCollectedEntity implements Serializable {
 
     private static final long serialVersionUID = -2104326927087468148L;

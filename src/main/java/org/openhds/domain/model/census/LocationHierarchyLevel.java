@@ -12,9 +12,7 @@ import java.io.Serializable;
 
 @Description(description = "A LocationHierarchyLevel represents one tier in the representation of the study area geography.")
 @Entity
-@Table(name = "locationhierarchylevel", indexes={
-        @Index(columnList = "deleted"),
-        @Index(columnList = "lastModifiedDate")})
+@Table(name = "locationhierarchylevel", indexes={@Index(columnList = "lastModifiedDate")})
 public class LocationHierarchyLevel extends AuditableEntity implements Serializable {
 
     private static final long serialVersionUID = -1070569257732332545L;

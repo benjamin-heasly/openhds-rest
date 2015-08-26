@@ -10,10 +10,7 @@ import javax.validation.constraints.NotNull;
 
 @Description(description = "Metadata regarding an atomic event in OpenHDS")
 @Entity
-@Table(name = "eventmetadata", indexes={
-        @Index(columnList = "deleted"),
-        @Index(columnList = "lastModifiedDate"),
-        @Index(columnList = "system")})
+@Table(name = "eventmetadata", indexes={@Index(columnList = "lastModifiedDate")})
 public class EventMetadata extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;

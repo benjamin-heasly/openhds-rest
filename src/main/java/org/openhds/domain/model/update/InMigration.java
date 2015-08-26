@@ -15,11 +15,7 @@ import java.time.ZonedDateTime;
  */
 @Description(description = "An InMigration represents a migration into the study area. It contains information about the Individual who is in-migrating to a particular Residency. It also contains information about the origin, date, and reason the Indiviudal is migrating as well as the Visit that is associated with the migration.")
 @Entity
-@Table(name = "inmigration", indexes={
-        @Index(columnList = "deleted"),
-        @Index(columnList = "lastModifiedDate"),
-        @Index(columnList = "collected_by_uuid"),
-        @Index(columnList = "visit_uuid")})
+@Table(name = "inmigration", indexes={@Index(columnList = "lastModifiedDate")})
 public class InMigration extends AuditableCollectedEntity implements Serializable {
 
     public final static long serialVersionUID = 7889700709284952892L;

@@ -13,9 +13,7 @@ import java.io.Serializable;
 @Description(description = "A node in treelike representation of the study area geography.")
 @Entity
 @Table(name = "locationhierarchy", indexes={
-        @Index(columnList = "deleted"),
         @Index(columnList = "lastModifiedDate"),
-        @Index(columnList = "collected_by_uuid"),
         @Index(columnList = "extId"),
         @Index(columnList = "parent_uuid")})
 public class LocationHierarchy extends AuditableExtIdEntity implements Serializable {

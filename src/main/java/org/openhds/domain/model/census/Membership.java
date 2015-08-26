@@ -17,10 +17,7 @@ import java.time.ZonedDateTime;
  */
 @Description(description = "A record of an Individual belonging to a SocialGroup for some time interval.")
 @Entity
-@Table(name = "membership", indexes={
-        @Index(columnList = "deleted"),
-        @Index(columnList = "lastModifiedDate"),
-        @Index(columnList = "collected_by_uuid")})
+@Table(name = "membership", indexes={@Index(columnList = "lastModifiedDate")})
 public class Membership extends AuditableCollectedEntity implements Serializable {
 
     private static final long serialVersionUID = 3668816399895850928L;

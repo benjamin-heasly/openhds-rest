@@ -14,11 +14,7 @@ import java.io.Serializable;
 
 @Description(description = "A pregnancy result is recorded within a pregnancy outcome (i.e. stillborn, birth, etc).")
 @Entity
-@Table(name = "PregnancyResult", indexes={
-        @Index(columnList = "deleted"),
-        @Index(columnList = "lastModifiedDate"),
-        @Index(columnList = "collected_by_uuid"),
-        @Index(columnList = "pregnancy_outcome_uuid")})
+@Table(name = "PregnancyResult", indexes={@Index(columnList = "lastModifiedDate")})
 public class PregnancyResult extends AuditableCollectedEntity implements Serializable{
 
     private static final long serialVersionUID = -3113139461022105832L;

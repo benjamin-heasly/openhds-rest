@@ -16,11 +16,7 @@ import java.time.ZonedDateTime;
  */
 @Description(description = "A record of an Individual living at a Location for some time interval.")
 @Entity
-@Table(name = "residency", indexes={
-        @Index(columnList = "deleted"),
-        @Index(columnList = "lastModifiedDate"),
-        @Index(columnList = "collected_by_uuid"),
-        @Index(columnList = "location_uuid")})
+@Table(name = "residency", indexes={@Index(columnList = "lastModifiedDate")})
 public class Residency extends AuditableCollectedEntity implements Serializable {
 
     private static final long serialVersionUID = -8660806978131352923L;

@@ -13,9 +13,7 @@ import java.io.Serializable;
 
 @Description(description = "A Field Worker represents a surveyor working in the study area.")
 @Entity
-@Table(name = "fieldworker", indexes={
-        @Index(columnList = "deleted"),
-        @Index(columnList = "lastModifiedDate")})
+@Table(name = "fieldworker", indexes={@Index(columnList = "lastModifiedDate")})
 public class FieldWorker extends AuditableEntity implements Serializable {
 
     private static final long serialVersionUID = -7550088299362704483L;

@@ -2,6 +2,7 @@ package org.openhds.resource.controller;
 
 import org.junit.Test;
 import org.openhds.resource.contract.AuditableExtIdRestController;
+import org.openhds.resource.contract.RestControllerTestSupport;
 import org.springframework.hateoas.Link;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MvcResult;

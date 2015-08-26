@@ -1,4 +1,4 @@
-package org.openhds.resource.controller;
+package org.openhds.resource.contract;
 
 import com.jayway.jsonpath.JsonPath;
 import org.junit.After;

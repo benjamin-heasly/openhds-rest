@@ -18,11 +18,8 @@ import java.time.ZonedDateTime;
 @Description(description = "A Visit represents a FieldWorker's observation of a specific Location within the study area at a particular date.")
 @Entity
 @Table(name = "visit", indexes={
-        @Index(columnList = "deleted"),
         @Index(columnList = "lastModifiedDate"),
-        @Index(columnList = "collected_by_uuid"),
-        @Index(columnList = "extId"),
-        @Index(columnList = "location_uuid")})
+        @Index(columnList = "extId")})
 public class Visit  extends AuditableExtIdEntity implements Serializable {
 
     public final static long serialVersionUID = -211408757055967973L;

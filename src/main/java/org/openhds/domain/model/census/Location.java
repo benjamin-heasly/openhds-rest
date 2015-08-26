@@ -19,9 +19,7 @@ import java.util.Set;
 @Description(description = "A distinct Location in the study area, at a particular LocationHierarchy.")
 @Entity
 @Table(name = "location", indexes={
-        @Index(columnList = "deleted"),
         @Index(columnList = "lastModifiedDate"),
-        @Index(columnList = "collected_by_uuid"),
         @Index(columnList = "extId"),
         @Index(columnList = "location_hierarchy_uuid")})
 public class Location extends AuditableExtIdEntity implements Serializable {

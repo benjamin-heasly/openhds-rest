@@ -12,12 +12,7 @@ import java.util.List;
 
 @Description(description = "A log entry containing multiple errors.")
 @Entity
-@Table(name = "errorlog", indexes={
-        @Index(columnList = "deleted"),
-        @Index(columnList = "lastModifiedDate"),
-        @Index(columnList = "collected_by_uuid"),
-        @Index(columnList = "entityType"),
-        @Index(columnList = "resolutionStatus")})
+@Table(name = "errorlog", indexes={@Index(columnList = "lastModifiedDate")})
 public class ErrorLog extends AuditableCollectedEntity implements Serializable {
 
     private static final long serialVersionUID = 2447734552586256198L;

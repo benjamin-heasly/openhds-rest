@@ -18,9 +18,7 @@ import java.util.Set;
 @Description(description = "A distinct group of people like a family or other organization.")
 @Entity
 @Table(name = "socialGroup", indexes={
-        @Index(columnList = "deleted"),
         @Index(columnList = "lastModifiedDate"),
-        @Index(columnList = "collected_by_uuid"),
         @Index(columnList = "extId")})
 public class SocialGroup extends AuditableExtIdEntity implements Serializable {
 

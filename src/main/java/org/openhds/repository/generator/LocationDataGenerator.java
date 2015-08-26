@@ -2,6 +2,7 @@ package org.openhds.repository.generator;
 
 import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.contract.AuditableEntity;
+import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.census.Location;
 import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.domain.model.census.LocationHierarchyLevel;
@@ -56,9 +57,9 @@ public class LocationDataGenerator implements DataGenerator {
     private final LocationService locationService;
     private final LocationRepository locationRepository;
 
-    private final FieldWorkerService fieldWorkerService;
+    private final User user;
 
-    private final UserService userService;
+    private final FieldWorker fieldWorker;
 
     @Autowired
     public LocationDataGenerator(LocationHierarchyLevelService locationHierarchyLevelService,
@@ -76,8 +77,9 @@ public class LocationDataGenerator implements DataGenerator {
         this.locationHierarchyRepository = locationHierarchyRepository;
         this.locationService = locationService;
         this.locationRepository = locationRepository;
-        this.fieldWorkerService = fieldWorkerService;
-        this.userService = userService;
+
+        this.user = userService.getUnknownEntity();
+        this.fieldWorker = fieldWorkerService.getUnknownEntity();
     }
 
     @Override
@@ -212,7 +214,6 @@ public class LocationDataGenerator implements DataGenerator {
     }
 
     private void setAuditableFields(AuditableEntity entity) {
-        User user = userService.getUnknownEntity();
         ZonedDateTime now = ZonedDateTime.now();
 
         //Check to see if we're creating or updating the entity
@@ -229,7 +230,7 @@ public class LocationDataGenerator implements DataGenerator {
     }
 
     private void setCollectedFields(AuditableCollectedEntity entity) {
-        entity.setCollectedBy(fieldWorkerService.getUnknownEntity());
+        entity.setCollectedBy(fieldWorker);
         entity.setCollectionDateTime(ZonedDateTime.now());
     }
 

@@ -17,11 +17,7 @@ import java.util.List;
  */
 @Description(description = "A pregnancy outcome for a female individual. This contains a list of pregnancy results.")
 @Entity
-@Table(name = "PregnancyOutcome", indexes={
-        @Index(columnList = "deleted"),
-        @Index(columnList = "lastModifiedDate"),
-        @Index(columnList = "collected_by_uuid"),
-        @Index(columnList = "visit_uuid")})
+@Table(name = "PregnancyOutcome", indexes={@Index(columnList = "lastModifiedDate")})
 public class PregnancyOutcome extends AuditableCollectedEntity implements Serializable {
 
     private static final long serialVersionUID = 5179378759539398625L;
