@@ -19,7 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.StopWatch;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,17 +41,13 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 @WebAppConfiguration
 public class QueryTimer {
 
-    private static final int SAMPLE_DATA_SIZE = 3;
+    private static final int SAMPLE_DATA_SIZE = 2;
 
     private static final int QUERY_REPS = 10;
 
     private final Log log = LogFactory.getLog(this.getClass());
 
     private final StopWatch stopWatch = new StopWatch();
-
-    private ZonedDateTime startTime;
-
-    private ZonedDateTime endTime;
 
     private MockMvc mockMvc;
 
@@ -73,11 +68,9 @@ public class QueryTimer {
 
         masterDataGenerator.clearData();
         log.info("Generate data with size " + SAMPLE_DATA_SIZE);
-        startTime = ZonedDateTime.now();
         stopWatch.start();
         masterDataGenerator.generateData(SAMPLE_DATA_SIZE);
         stopWatch.stop();
-        endTime = ZonedDateTime.now();
         log.info("  execution time (ms): " + stopWatch.getLastTaskTimeMillis());
     }
 
@@ -90,14 +83,12 @@ public class QueryTimer {
                 .next();
 
         timeQuery("/individuals");
-        timeQuery("/locationHierarchies");
-
         timeQuery("/individuals/external/location-0-member");
+        timeQuery("/individuals/?sort=lastModifiedDate");
+
+        timeQuery("/locationHierarchies");
         timeQuery("/locationHierarchies/external/hierarchy-0-1");
-
         timeQuery("/locationHierarchies/bylocationhierarchy?locationHierarchyUuid=" + locationHierarchy.getUuid());
-        timeQuery("/individuals/bydate?afterDate=" + startTime + "&beforeDate=" + endTime);
-
     }
 
     // repeat the given query and print the execution times

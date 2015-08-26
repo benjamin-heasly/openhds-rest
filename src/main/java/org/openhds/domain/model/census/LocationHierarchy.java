@@ -1,14 +1,14 @@
 package org.openhds.domain.model.census;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.openhds.domain.contract.AuditableExtIdEntity;
 import org.openhds.domain.util.Description;
 
-import javax.persistence.Entity;
-import javax.persistence.Index;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Description(description = "A node in treelike representation of the study area geography.")
 @Entity
@@ -26,6 +26,11 @@ public class LocationHierarchy extends AuditableExtIdEntity implements Serializa
     @Description(description = "Parent location's name.")
     @ManyToOne
     private LocationHierarchy parent;
+
+    @JsonIgnore
+    @Description(description = "The set of all location hierarchies of which this is the parent.")
+    @OneToMany(mappedBy = "parent")
+    private Set<LocationHierarchy> children = new HashSet<>();
 
     @Description(description = "Level of the location hierarchy.")
     @ManyToOne
@@ -47,6 +52,14 @@ public class LocationHierarchy extends AuditableExtIdEntity implements Serializa
 
     public void setParent(LocationHierarchy parent) {
         this.parent = parent;
+    }
+
+    public Set<LocationHierarchy> getChildren() {
+        return children;
+    }
+
+    public void setChildren(Set<LocationHierarchy> children) {
+        this.children = children;
     }
 
     public String getName() {

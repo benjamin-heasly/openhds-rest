@@ -12,6 +12,7 @@ import org.openhds.service.contract.AbstractAuditableExtIdService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -106,7 +107,7 @@ public class LocationHierarchyService extends AbstractAuditableExtIdService<
         return makePage(findByEnclosingLocationHierarchy(locationHierarchyUuid, modifiedAfter, modifiedBefore), pageable);
     }
 
-    // find descendants of the given subtree root--whole subtree in memory!
+    // find descendants of the given subtree root--all location hierarchies in memory!!
     public List<LocationHierarchy> findByEnclosingLocationHierarchy(String locationHierarchyUuid,
                                                                     ZonedDateTime modifiedAfter,
                                                                     ZonedDateTime modifiedBefore) {
@@ -114,6 +115,9 @@ public class LocationHierarchyService extends AbstractAuditableExtIdService<
         List<LocationHierarchy> subtree = new ArrayList<>();
 
         if (null != locationHierarchy) {
+            // fetch all location hierarchies into memory!
+            List<LocationHierarchy> fetch = repository.findAll(new Sort("uuid"));
+
             collectSubtree(locationHierarchy, subtree, modifiedAfter, modifiedBefore);
         }
 
@@ -131,8 +135,7 @@ public class LocationHierarchyService extends AbstractAuditableExtIdService<
         }
 
         subtree.add(root);
-        List<LocationHierarchy> children = findByParent(root);
-        for (LocationHierarchy child : children) {
+        for (LocationHierarchy child : root.getChildren()) {
             collectSubtree(child, subtree, modifiedAfter, modifiedBefore);
         }
         return subtree;
@@ -145,7 +148,7 @@ public class LocationHierarchyService extends AbstractAuditableExtIdService<
                                                                                      ZonedDateTime modifiedBefore,
                                                                                      Specifications.LocationSpecification<T> locationSpecification,
                                                                                      AuditableRepository<T> otherRepository) {
-        // whole hierarchy subtree in memory!
+        // all location hierarchies in memory!!
         List<LocationHierarchy> enclosing = findByEnclosingLocationHierarchy(locationHierarchyUuid, modifiedAfter, modifiedBefore);
 
         // page of results associated with the subtree
