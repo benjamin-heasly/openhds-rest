@@ -29,6 +29,9 @@ public abstract class AuditableEntity implements UuidIdentifiable, Serializable 
     @Column(length = 36)
     protected String uuid;
 
+    @Description(description = "Marker for whether or not the entity is a placeholder entity.")
+    protected boolean isPlaceholder = false;
+
     @Description(description = "Marker for soft delete / void of the record.")
     protected boolean deleted = false;
 
@@ -80,6 +83,13 @@ public abstract class AuditableEntity implements UuidIdentifiable, Serializable 
 
     public void setVoidReason(String voidReason) {
         this.voidReason = voidReason;
+    }
+
+    public boolean isPlaceholder() {
+        return isPlaceholder;
+    }
+    public void setIsPlaceholder(boolean isPlaceholder) {
+        this.isPlaceholder = isPlaceholder;
     }
 
     @XmlTransient

@@ -41,14 +41,14 @@ public abstract class AuditableServiceTest
 
     @Test(expected = ErrorLogException.class)
     @WithUserDetails
-    public void updateWithOldLastModified() {
+    public void updateWithOldLastModified() throws Exception {
         String id = "testId";
 
         //Create original and keep reference to it.
         T oldEntity = service.createOrUpdate(makeValidEntity("testEntity", id));
 
         //Update with new info
-        T newEntity = service.createOrUpdate(makeValidEntity("blahg", id));
+        T newEntity = service.createOrUpdate(makeValidEntityWithDelay("blahg", id));
 
         //Try to persist oldEntity again w/ out of date lastModifiedDate
         service.createOrUpdate(oldEntity);

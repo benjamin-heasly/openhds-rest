@@ -1,12 +1,10 @@
 package org.openhds.domain.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 

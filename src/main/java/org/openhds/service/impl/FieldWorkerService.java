@@ -27,6 +27,7 @@ public class FieldWorkerService extends AbstractAuditableService<FieldWorker, Fi
     public FieldWorker makePlaceHolder(String id, String name) {
         FieldWorker fieldWorker = new FieldWorker();
         fieldWorker.setUuid(id);
+        fieldWorker.setIsPlaceholder(true);
         fieldWorker.setFieldWorkerId(name);
         fieldWorker.setPasswordHash(name);
         return fieldWorker;

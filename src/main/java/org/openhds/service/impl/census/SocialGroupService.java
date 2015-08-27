@@ -1,13 +1,12 @@
 package org.openhds.service.impl.census;
 
+import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.SocialGroup;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.census.SocialGroupRepository;
 import org.openhds.service.contract.AbstractAuditableExtIdService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.time.ZonedDateTime;
 
 /**
  * Created by bsh on 7/13/15.
@@ -24,9 +23,10 @@ public class SocialGroupService extends AbstractAuditableExtIdService<SocialGrou
     public SocialGroup makePlaceHolder(String id, String name) {
         SocialGroup socialGroup = new SocialGroup();
         socialGroup.setUuid(id);
+        socialGroup.setIsPlaceholder(true);
         socialGroup.setGroupName(name);
         socialGroup.setExtId(name);
-        socialGroup.setGroupType(name);
+        socialGroup.setGroupType(projectCodeService.findByCodeGroup(ProjectCode.SOCIALGROUP_TYPE).get(0).getCodeValue());
 
         initPlaceHolderCollectedFields(socialGroup);
 
@@ -42,7 +42,7 @@ public class SocialGroupService extends AbstractAuditableExtIdService<SocialGrou
     public void validate(SocialGroup socialGroup, ErrorLog errorLog) {
         super.validate(socialGroup, errorLog);
 
-        if(!projectCodeService.isValueInCodeGroup(socialGroup.getGroupType(), projectCodeService.SOCIALGROUP_TYPE)) {
+        if(!projectCodeService.isValueInCodeGroup(socialGroup.getGroupType(), ProjectCode.SOCIALGROUP_TYPE)) {
             errorLog.appendError("SocialGroup cannot have a type of: ["+socialGroup.getGroupType()+"].");
         }
     }

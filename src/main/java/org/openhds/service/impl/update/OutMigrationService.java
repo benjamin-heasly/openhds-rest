@@ -45,6 +45,7 @@ public class OutMigrationService extends AbstractAuditableCollectedService<OutMi
     public OutMigration makePlaceHolder(String id, String name) {
         OutMigration outMigration = new OutMigration();
         outMigration.setUuid(id);
+        outMigration.setIsPlaceholder(true);
         outMigration.setVisit(visitService.getUnknownEntity());
         outMigration.setIndividual(individualService.getUnknownEntity());
         outMigration.setResidency(residencyService.getUnknownEntity());
@@ -67,12 +68,21 @@ public class OutMigrationService extends AbstractAuditableCollectedService<OutMi
     }
 
     @Override
-    public void validate(OutMigration entity, ErrorLog errorLog) {
-        super.validate(entity, errorLog);
+    public void validate(OutMigration outMigration, ErrorLog errorLog) {
+        super.validate(outMigration, errorLog);
 
-        //TODO: check that individual is not registered as dead
-        //TODO: check that migrationDate is not in the future
-        //TODO: check that the individual has an open residency
+        if(outMigration.getMigrationDate().isAfter(outMigration.getCollectionDateTime())){
+          errorLog.appendError("OutMigration cannot have a migrationDate in the future.");
+        }
+
+        if(!outMigration.getIndividual().isPlaceholder() && !outMigration.getIndividual().hasOpenResidency()){
+          errorLog.appendError("Individual must have an open residency to a part of an OutMigration.");
+        }
+
+        //TODO: not working with current data generation design
+//        if(null != outMigration.getIndividual().getDeath()){
+//          errorLog.appendError("Individual cannot be part of an OutMigration if recorded as dead.");
+//        }
 
     }
 

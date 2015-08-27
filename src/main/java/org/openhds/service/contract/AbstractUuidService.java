@@ -56,7 +56,7 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
 
     public abstract T makePlaceHolder(String id, String name);
 
-    public T makePlaceHolder(String id){
+    public T makePlaceHolder(String id) {
         return makePlaceHolder(id, PLACEHOLDER_NAME);
     }
 
@@ -119,6 +119,7 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
         return repository.exists(id);
     }
 
+
     public T findOrMakePlaceHolder(String id){
         if (exists(id)) {
             return findOne(id);
@@ -133,6 +134,7 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
 
         ErrorLog errorLog = new ErrorLog();
         errorLog.setEntityType(entity.getClass().getSimpleName());
+        verify(entity, errorLog);
         validate(entity, errorLog);
 
         if (!errorLog.getErrors().isEmpty()) {
@@ -178,6 +180,12 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
 
     public void validate(T entity, ErrorLog errorLog) {
 
+    }
+
+    //This method 'verifies' that the data is 'whole' so to speak by firing off all the JSR-annotations,
+    //the majority of which are @NotNull. This allows the rest of the validation to make checks to fields
+    //without checking for nulls everywhere as well as catching would-be nulls ahead of time with an errorlog
+    protected void verify(T entity, ErrorLog errorLog){
         //Fire JSR-303 annotations
         Set<ConstraintViolation<T>> violations = validator.validate(entity);
 
@@ -187,5 +195,9 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
             errors.add(new Error(violation.getMessage()));
         }
 
+        if (!errorLog.getErrors().isEmpty()) {
+            errorLogger.log(errorLog);
+            throw new ErrorLogException(errorLog);
+        }
     }
 }

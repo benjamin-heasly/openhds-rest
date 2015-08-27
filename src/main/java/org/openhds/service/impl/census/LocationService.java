@@ -1,5 +1,6 @@
 package org.openhds.service.impl.census;
 
+import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.Location;
 import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.errors.model.ErrorLog;
@@ -34,9 +35,10 @@ public class LocationService extends AbstractAuditableExtIdService<Location, Loc
     public Location makePlaceHolder(String id, String name) {
         Location location = new Location();
         location.setUuid(id);
+        location.setIsPlaceholder(true);
         location.setName(name);
         location.setExtId(name);
-        location.setType("RURAL");
+        location.setType(projectCodeService.findByCodeGroup(ProjectCode.LOCATION_TYPE).get(0).getCodeValue());
         location.setLocationHierarchy(locationHierarchyService.getUnknownEntity());
 
         initPlaceHolderCollectedFields(location);
@@ -48,7 +50,7 @@ public class LocationService extends AbstractAuditableExtIdService<Location, Loc
     public void validate(Location location, ErrorLog errorLog) {
         super.validate(location, errorLog);
 
-        if(!projectCodeService.isValueInCodeGroup(location.getType(), projectCodeService.LOCATION_TYPE)){
+        if(!projectCodeService.isValueInCodeGroup(location.getType(), ProjectCode.LOCATION_TYPE)){
             errorLog.appendError("Location cannot have a type of: ["+location.getType()+"].");
         }
 

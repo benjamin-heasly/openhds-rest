@@ -1,25 +1,22 @@
 package org.openhds.service.impl.census;
 
+import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.Individual;
 import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.domain.model.census.Relationship;
 import org.openhds.domain.model.census.Residency;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.census.RelationshipRepository;
-import org.openhds.repository.results.EntityIterator;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import javax.management.relation.Relation;
 import javax.persistence.criteria.*;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -44,7 +41,8 @@ public class RelationshipService extends AbstractAuditableCollectedService<Relat
     public Relationship makePlaceHolder(String id, String name) {
         Relationship relationship = new Relationship();
         relationship.setUuid(id);
-        relationship.setRelationshipType(name);
+        relationship.setIsPlaceholder(true);
+        relationship.setRelationshipType(projectCodeService.findByCodeGroup(ProjectCode.RELATIONSHIP_TYPE).get(0).getCodeValue());
         relationship.setStartDate(ZonedDateTime.now());
         relationship.setIndividualA(individualService.getUnknownEntity());
         relationship.setIndividualB(individualService.getUnknownEntity());
@@ -74,23 +72,8 @@ public class RelationshipService extends AbstractAuditableCollectedService<Relat
         errorLog.appendError("Relationship cannot have a startDate before its endDate.");
       }
 
-      if(!projectCodeService.isValueInCodeGroup(relationship.getRelationshipType(), projectCodeService.RELATIONSHIP_TYPE)) {
+      if(!projectCodeService.isValueInCodeGroup(relationship.getRelationshipType(), ProjectCode.RELATIONSHIP_TYPE)) {
         errorLog.appendError("Relationship cannot have a type of: ["+relationship.getRelationshipType()+"].");
-      }
-
-      Iterator<Relationship> relationshipIterator = findByIndividualAAndIndividualB(UUID_SORT, relationship.getIndividualA(), relationship.getIndividualB()).iterator();
-      Relationship existingRelationship;
-
-      while(relationshipIterator.hasNext()){
-        existingRelationship = relationshipIterator.next();
-
-        if(null != relationship.getUuid()
-            && !relationship.getUuid().equals(existingRelationship.getUuid())
-            && null == existingRelationship.getEndDate()
-            && relationship.getRelationshipType().equals(existingRelationship.getRelationshipType())){
-
-          errorLog.appendError("Individual cannot have two Relationships to same person of the same type.");
-        }
       }
 
     }
@@ -153,19 +136,6 @@ public class RelationshipService extends AbstractAuditableCollectedService<Relat
                 residencyJoin.get("location").get("locationHierarchy").in(enclosing)));
 
         return cb.exists(subquery);
-    }
-
-
-    public EntityIterator<Relationship> findByIndividualA(Sort sort, Individual individualA) {
-      return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndIndividualA(individualA, pageable), sort);
-    }
-
-    public EntityIterator<Relationship> findByIndividualB(Sort sort, Individual individualB) {
-      return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndIndividualB(individualB, pageable), sort);
-    }
-
-    public EntityIterator<Relationship> findByIndividualAAndIndividualB(Sort sort, Individual individualA, Individual individualB) {
-      return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndIndividualAAndIndividualB(individualA, individualB, pageable), sort);
     }
 
 }

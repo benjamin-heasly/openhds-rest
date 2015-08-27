@@ -38,6 +38,7 @@ public class VisitService extends AbstractAuditableExtIdService<Visit, VisitRepo
     public Visit makePlaceHolder(String id, String name) {
         Visit visit = new Visit();
         visit.setUuid(id);
+        visit.setIsPlaceholder(true);
         visit.setExtId(name);
         visit.setLocation(locationService.getUnknownEntity());
         visit.setVisitDate(ZonedDateTime.now().minusYears(1));
@@ -54,10 +55,12 @@ public class VisitService extends AbstractAuditableExtIdService<Visit, VisitRepo
     }
 
     @Override
-    public void validate(Visit entity, ErrorLog errorLog) {
-        super.validate(entity, errorLog);
+    public void validate(Visit visit, ErrorLog errorLog) {
+        super.validate(visit, errorLog);
 
-        //TODO: check that visitDate is not in the future
+        if(visit.getVisitDate().isAfter(visit.getCollectionDateTime())){
+            errorLog.appendError("Visit cannot have a visitDate in the future.");
+        }
     }
 
     @Override

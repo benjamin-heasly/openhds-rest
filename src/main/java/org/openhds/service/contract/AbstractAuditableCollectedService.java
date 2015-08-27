@@ -46,7 +46,7 @@ public abstract class AbstractAuditableCollectedService<T extends AuditableColle
 
     protected void initPlaceHolderCollectedFields(T entity){
         entity.setCollectedBy(fieldWorkerService.getUnknownEntity());
-        entity.setCollectionDateTime(ZonedDateTime.now());
+        entity.setCollectionDateTime(ZonedDateTime.now().plusHours(1));
     }
 
 }

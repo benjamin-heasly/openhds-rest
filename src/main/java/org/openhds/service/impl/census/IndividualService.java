@@ -1,5 +1,6 @@
 package org.openhds.service.impl.census;
 
+import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.Individual;
 import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.domain.model.census.Residency;
@@ -37,9 +38,10 @@ public class IndividualService extends AbstractAuditableExtIdService<Individual,
     public Individual makePlaceHolder(String id, String name) {
         Individual individual = new Individual();
         individual.setUuid(id);
+        individual.setIsPlaceholder(true);
         individual.setFirstName(name);
         individual.setExtId(name);
-        individual.setGender("MALE");
+        individual.setGender("FEMALE");
 
         initPlaceHolderCollectedFields(individual);
 
@@ -59,12 +61,12 @@ public class IndividualService extends AbstractAuditableExtIdService<Individual,
         super.validate(individual, errorLog);
 
         if(null != individual.getFather() &&
-            !individual.getFather().getGender().equals(projectCodeService.getValueForCodeName(projectCodeService.GENDER_MALE))){
+            !individual.getFather().getGender().equals(projectCodeService.getValueForCodeName(ProjectCode.GENDER_MALE))){
             errorLog.appendError("Individual cannot have a non-male Father.");
         }
 
         if(null != individual.getMother() &&
-            !individual.getMother().getGender().equals(projectCodeService.getValueForCodeName(projectCodeService.GENDER_FEMALE))){
+            !individual.getMother().getGender().equals(projectCodeService.getValueForCodeName(ProjectCode.GENDER_FEMALE))){
             errorLog.appendError("Individual cannot have a non-female Mother.");
         }
 
@@ -73,7 +75,7 @@ public class IndividualService extends AbstractAuditableExtIdService<Individual,
             errorLog.appendError("Individual cannot have a birthday in the future.");
         }
 
-        if(!projectCodeService.isValueInCodeGroup(individual.getGender(), projectCodeService.GENDER)){
+        if(!projectCodeService.isValueInCodeGroup(individual.getGender(), ProjectCode.GENDER)){
             errorLog.appendError("Individual cannot have a gender of: ["+individual.getGender()+"].");
         }
 

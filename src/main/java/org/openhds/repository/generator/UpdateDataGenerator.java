@@ -172,7 +172,6 @@ public class UpdateDataGenerator implements DataGenerator {
         Visit visit = generateVisit(location);
         generateOutMigration(visit, individual, residency);
         generateInMigration(visit, individual, residency);
-        generateDeath(visit, individual);
         generatePregnancyObservation(visit, individual);
         generatePregnancyOutcomeAndResult(visit, individual);
     }

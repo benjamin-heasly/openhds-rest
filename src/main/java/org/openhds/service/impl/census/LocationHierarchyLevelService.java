@@ -35,6 +35,7 @@ public class LocationHierarchyLevelService extends AbstractAuditableService<Loca
     public LocationHierarchyLevel makePlaceHolder(String id, String name) {
         LocationHierarchyLevel locationHierarchyLevel = new LocationHierarchyLevel();
         locationHierarchyLevel.setUuid(id);
+        locationHierarchyLevel.setIsPlaceholder(true);
         locationHierarchyLevel.setName(name);
         locationHierarchyLevel.setKeyIdentifier(id.hashCode());
         return locationHierarchyLevel;

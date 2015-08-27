@@ -15,15 +15,6 @@ import java.util.List;
 @Component
 public class ProjectCodeService extends AbstractUuidService<ProjectCode, ProjectCodeRepository> {
 
-    public static String GENDER = "gender";
-    public static String GENDER_MALE = "male";
-    public static String GENDER_FEMALE = "female";
-    public static String LOCATION_TYPE = "locationType";
-    public static String MEMBERSHIP_TYPE = "membershipType";
-    public static String SOCIALGROUP_TYPE = "socialGroupType";
-    public static String RELATIONSHIP_TYPE = "relationshipType";
-
-
     @Autowired
     public ProjectCodeService(ProjectCodeRepository projectCodeRepository) {
         super(projectCodeRepository);

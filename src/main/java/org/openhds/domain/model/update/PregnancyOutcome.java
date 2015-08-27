@@ -25,12 +25,6 @@ public class PregnancyOutcome extends AuditableCollectedEntity implements Serial
 
     private static final long serialVersionUID = 5179378759539398625L;
 
-    @Description(description = "Total number of children born, including live and still births.")
-    private int childrenBorn;
-
-    @Description(description = "Total number of live births.")
-    private int numberOfLiveBirths;
-
     @NotNull(message = "PregnancyOutcome cannot have a null outcomeDate.")
     @Description(description = "Date of the pregnancy outcome.")
     private ZonedDateTime outcomeDate;
@@ -53,22 +47,6 @@ public class PregnancyOutcome extends AuditableCollectedEntity implements Serial
     @OneToMany(mappedBy = "pregnancyOutcome")
     @Description(description = "List of all outcomes for the pregnancy.")
     private List<PregnancyResult> pregnancyResults = new ArrayList<>();
-
-    public int getChildrenBorn() {
-        return childrenBorn;
-    }
-
-    public void setChildrenBorn(int childrenBorn) {
-        this.childrenBorn = childrenBorn;
-    }
-
-    public int getNumberOfLiveBirths() {
-        return numberOfLiveBirths;
-    }
-
-    public void setNumberOfLiveBirths(int numberOfLiveBirths) {
-        this.numberOfLiveBirths = numberOfLiveBirths;
-    }
 
     public ZonedDateTime getOutcomeDate() {
         return outcomeDate;
@@ -114,8 +92,6 @@ public class PregnancyOutcome extends AuditableCollectedEntity implements Serial
     public String toString() {
         return "PregnancyOutcome{" +
                 "visit=" + visit +
-                ", childrenBorn=" + childrenBorn +
-                ", numberOfLiveBirths=" + numberOfLiveBirths +
                 ", outcomeDate=" + outcomeDate +
                 "} " + super.toString();
     }

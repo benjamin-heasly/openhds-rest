@@ -1,5 +1,6 @@
 package org.openhds.service.impl.update;
 
+import org.openhds.domain.model.census.Individual;
 import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.domain.model.update.Death;
 import org.openhds.errors.model.ErrorLog;
@@ -41,6 +42,7 @@ public class DeathService extends AbstractAuditableCollectedService<Death, Death
     public Death makePlaceHolder(String id, String name) {
         Death death = new Death();
         death.setUuid(id);
+        death.setIsPlaceholder(true);
         death.setIndividual(individualService.getUnknownEntity());
         death.setVisit(visitService.getUnknownEntity());
         death.setDeathDate(ZonedDateTime.now().minusYears(1));
@@ -60,12 +62,23 @@ public class DeathService extends AbstractAuditableCollectedService<Death, Death
     }
 
     @Override
-    public void validate(Death entity, ErrorLog errorLog) {
-        super.validate(entity, errorLog);
+    public void validate(Death death, ErrorLog errorLog) {
+        super.validate(death, errorLog);
 
-      //TODO: check that deathDate is not in the future
-      //TODO: check that the individual is not already registered as dead
-      //TODO: check that the individual has an open residency
+        if(death.getDeathDate().isAfter(death.getCollectionDateTime())){
+          errorLog.appendError("Death cannot have a deathDate in the future.");
+        }
+
+        Individual deadIndividual = death.getIndividual();
+        if(!deadIndividual.isPlaceholder() && !death.getIndividual().hasOpenResidency()){
+          errorLog.appendError("Individual must have an open residency to be recorded as dead.");
+        }
+
+        //TODO: not working with current data generation design
+//        Death existingDeath = death.getIndividual().getDeath();
+//        if(null != existingDeath &&  null != death.getUuid() && !existingDeath.equals(death)){
+//          errorLog.appendError("Individual cannot have multiple deaths.");
+//        }
     }
 
     @Override

@@ -7,7 +7,6 @@ import org.openhds.repository.generator.MasterDataGenerator;
 import org.openhds.resource.converter.EntityCollectionMessageWriter;
 import org.openhds.resource.converter.JsonArrayDelimiter;
 import org.openhds.resource.converter.XmlElementDelimiter;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.YamlMapFactoryBean;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

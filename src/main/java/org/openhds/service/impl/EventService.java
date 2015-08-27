@@ -34,6 +34,7 @@ public class EventService extends AbstractAuditableService<Event, EventRepositor
     public Event makePlaceHolder(String id, String name) {
         Event event = new Event();
         event.setUuid(id);
+        event.setIsPlaceholder(true);
         event.setEntityType(name);
         event.setActionType(name);
         return event;
@@ -105,6 +106,7 @@ public class EventService extends AbstractAuditableService<Event, EventRepositor
         setAuditableFields(event);
 
         ErrorLog errorLog = new ErrorLog();
+        verify(event, errorLog);
         validate(event, errorLog);
         if (!errorLog.getErrors().isEmpty()) {
             throw new ErrorLogException(errorLog);

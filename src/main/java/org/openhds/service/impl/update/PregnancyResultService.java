@@ -1,5 +1,6 @@
 package org.openhds.service.impl.update;
 
+import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.domain.model.update.PregnancyResult;
 import org.openhds.errors.model.ErrorLog;
@@ -41,6 +42,7 @@ public class PregnancyResultService extends AbstractAuditableCollectedService<Pr
     public PregnancyResult makePlaceHolder(String id, String name) {
         PregnancyResult pregnancyResult = new PregnancyResult();
         pregnancyResult.setUuid(id);
+        pregnancyResult.setIsPlaceholder(true);
         pregnancyResult.setPregnancyOutcome(pregnancyOutcomeService.getUnknownEntity());
         pregnancyResult.setType(name);
         pregnancyResult.setChild(individualService.getUnknownEntity());
@@ -64,8 +66,18 @@ public class PregnancyResultService extends AbstractAuditableCollectedService<Pr
     }
 
     @Override
-    public void validate(PregnancyResult entity, ErrorLog errorLog) {
-        super.validate(entity, errorLog);
+    public void validate(PregnancyResult pregnancyResult, ErrorLog errorLog) {
+        super.validate(pregnancyResult, errorLog);
+
+        //TODO: are these valid concerns?
+//        if(!projectCodeService.isValueInCodeGroup(pregnancyResult.getType(), ProjectCode.PREGNANCY_RESULT_TYPE)) {
+//          errorLog.appendError("PregnancyResult cannot have a type of: ["+pregnancyResult.getType()+"].");
+//        }
+//
+//        if(null != pregnancyResult.getChild()
+//            && !pregnancyResult.getType().equals(projectCodeService.getValueForCodeName(ProjectCode.PREGNANCY_RESULT_LIVE_BIRTH))){
+//          errorLog.appendError("PregnancyResult that results in a child cannot have a type of: ["+pregnancyResult.getType()+"].");
+//        }
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.openhds.service.impl.update;
 
+import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.domain.model.update.InMigration;
 import org.openhds.errors.model.ErrorLog;
@@ -45,11 +46,12 @@ public class InMigrationService extends AbstractAuditableCollectedService<InMigr
     public InMigration makePlaceHolder(String id, String name) {
         InMigration inMigration = new InMigration();
         inMigration.setUuid(id);
+        inMigration.setIsPlaceholder(true);
         inMigration.setVisit(visitService.getUnknownEntity());
         inMigration.setIndividual(individualService.getUnknownEntity());
         inMigration.setResidency(residencyService.getUnknownEntity());
         inMigration.setMigrationDate(ZonedDateTime.now().minusYears(1));
-        inMigration.setMigrationType(name);
+        inMigration.setMigrationType(projectCodeService.findByCodeGroup(ProjectCode.MIGRATION_TYPE).get(0).getCodeValue());
         inMigration.setReason(name);
         inMigration.setOrigin(name);
 
@@ -68,12 +70,26 @@ public class InMigrationService extends AbstractAuditableCollectedService<InMigr
     }
 
     @Override
-    public void validate(InMigration entity, ErrorLog errorLog) {
-        super.validate(entity, errorLog);
+    public void validate(InMigration inMigration, ErrorLog errorLog) {
+        super.validate(inMigration, errorLog);
 
-        //TODO: check that migrationDate is not in the future
-        //TODO: check that migrated individual is not registered as dead
-        //TODO: check that the individual has an open residency
+        if(inMigration.getMigrationDate().isAfter(inMigration.getCollectionDateTime())){
+          errorLog.appendError("InMigration cannot have a migrationDate in the future.");
+        }
+
+        if(!projectCodeService.isValueInCodeGroup(inMigration.getMigrationType(), ProjectCode.MIGRATION_TYPE)) {
+          errorLog.appendError("InMigration cannot have a type of: ["+inMigration.getMigrationType()+"].");
+        }
+
+        //TODO: not working with current data generation design
+//        if(null != inMigration.getIndividual().getDeath()){
+//          errorLog.appendError("Individual cannot be part of an InMigration if recorded as dead.");
+//        }
+
+        //TODO: Should this be a requirement?
+//        if(inMigration.getIndividual().hasOpenResidency()){
+//          errorLog.appendError("Individual must not have an open residency to a part of an InMigration.");
+//        }
 
     }
 

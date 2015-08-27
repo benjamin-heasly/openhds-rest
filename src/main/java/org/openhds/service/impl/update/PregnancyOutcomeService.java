@@ -1,5 +1,6 @@
 package org.openhds.service.impl.update;
 
+import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.domain.model.update.PregnancyOutcome;
 import org.openhds.errors.model.ErrorLog;
@@ -41,7 +42,9 @@ public class PregnancyOutcomeService extends AbstractAuditableCollectedService<P
     public PregnancyOutcome makePlaceHolder(String id, String name) {
         PregnancyOutcome pregnancyOutcome = new PregnancyOutcome();
         pregnancyOutcome.setUuid(id);
+        pregnancyOutcome.setIsPlaceholder(true);
         pregnancyOutcome.setFather(individualService.getUnknownEntity());
+        pregnancyOutcome.getFather().setGender("MALE");
         pregnancyOutcome.setMother(individualService.getUnknownEntity());
         pregnancyOutcome.setVisit(visitService.getUnknownEntity());
         pregnancyOutcome.setOutcomeDate(ZonedDateTime.now().minusYears(1));
@@ -66,16 +69,34 @@ public class PregnancyOutcomeService extends AbstractAuditableCollectedService<P
     }
 
     @Override
-    public void validate(PregnancyOutcome entity, ErrorLog errorLog) {
-        super.validate(entity, errorLog);
+    public void validate(PregnancyOutcome pregnancyOutcome, ErrorLog errorLog) {
+        super.validate(pregnancyOutcome, errorLog);
 
-        //TODO: check that outcomeDate is not in the future
-        //TODO: check that mother is gender female
-        //TODO: check that if not null : gender father is male
+        if(pregnancyOutcome.getOutcomeDate().isAfter(pregnancyOutcome.getCollectionDateTime())){
+          errorLog.appendError("PregnancyOutcome cannot have an outcomeDate in the future.");
+        }
 
-        //TODO: check that number of live births not greather than children born
-        //TODO: check that the mother has an open residency
-        //TODO: check that the mother is not less than 12 years old
+        if(!pregnancyOutcome.getMother().getGender().equals(projectCodeService.getValueForCodeName(ProjectCode.GENDER_FEMALE))){
+          errorLog.appendError("PregnancyOutcome cannot have a non-female Mother.");
+        }
+
+        //TODO: not working with current data generation design
+//        if(null != pregnancyOutcome.getFather()
+//            && !pregnancyOutcome.getFather().getGender().equals(projectCodeService.getValueForCodeName(ProjectCode.GENDER_MALE))){
+//          errorLog.appendError("PregnancyOutcome cannot have a non-male Father.");
+//        }
+
+        if(!pregnancyOutcome.getMother().isPlaceholder() && !pregnancyOutcome.getMother().hasOpenResidency()){
+          errorLog.appendError("PregnancyOutcome cannot have a mother without an open residency .");
+        }
+
+        ZonedDateTime dateOfBirth = pregnancyOutcome.getMother().getDateOfBirth();
+        if(null != dateOfBirth) {
+          int motherAge = ZonedDateTime.now().getYear() - dateOfBirth.getYear();
+          if (motherAge < Integer.parseInt(projectCodeService.getValueForCodeName(ProjectCode.MIN_AGE_OF_PREGNANCY))) {
+            errorLog.appendError("PregnancyOutcome cannot have a  mother under age of 12.");
+          }
+        }
     }
 
     @Override
