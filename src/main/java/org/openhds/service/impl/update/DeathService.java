@@ -76,7 +76,6 @@ public class DeathService extends AbstractAuditableCollectedService<Death, Death
           errorLog.appendError("Individual must have an open residency to be recorded as dead.");
         }
 
-        //TODO: not working with current data generation design
         Death existingDeath = death.getIndividual().getDeath();
         if(null != existingDeath
             && existingDeath.getStatus().equals(AuditableEntity.NORMAL_STATUS)

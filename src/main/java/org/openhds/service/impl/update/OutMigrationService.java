@@ -80,7 +80,6 @@ public class OutMigrationService extends AbstractAuditableCollectedService<OutMi
           errorLog.appendError("Individual must have an open residency to a part of an OutMigration.");
         }
 
-        //TODO: not working with current data generation design
         if(outMigration.getIndividual().getStatus().equals(AuditableEntity.NORMAL_STATUS) && null != outMigration.getIndividual().getDeath()){
           errorLog.appendError("Individual cannot be part of an OutMigration if recorded as dead.");
         }

@@ -82,15 +82,9 @@ public class InMigrationService extends AbstractAuditableCollectedService<InMigr
           errorLog.appendError("InMigration cannot have a type of: ["+inMigration.getMigrationType()+"].");
         }
 
-        //TODO: not working with current data generation design
         if(inMigration.getIndividual().getStatus().equals(AuditableEntity.NORMAL_STATUS) && null != inMigration.getIndividual().getDeath()){
           errorLog.appendError("Individual cannot be part of an InMigration if recorded as dead.");
         }
-
-        //TODO: Should this be a requirement?
-//        if(inMigration.getIndividual().hasOpenResidency()){
-//          errorLog.appendError("Individual must not have an open residency to a part of an InMigration.");
-//        }
 
     }
 

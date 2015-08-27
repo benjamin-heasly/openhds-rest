@@ -81,13 +81,6 @@ public class PregnancyOutcomeService extends AbstractAuditableCollectedService<P
           errorLog.appendError("PregnancyOutcome cannot have a non-female Mother.");
         }
 
-        //TODO: not working with current data generation design
-//        if(null != pregnancyOutcome.getFather()
-//            && pregnancyOutcome.getFather().getStatus().equals(AuditableEntity.NORMAL_STATUS)
-//            && !pregnancyOutcome.getFather().getGender().equals(projectCodeService.getValueForCodeName(ProjectCode.GENDER_MALE))){
-//          errorLog.appendError("PregnancyOutcome cannot have a non-male Father.");
-//        }
-
         if(pregnancyOutcome.getMother().getStatus().equals(AuditableEntity.NORMAL_STATUS) && !pregnancyOutcome.getMother().hasOpenResidency()){
           errorLog.appendError("PregnancyOutcome cannot have a mother without an open residency .");
         }

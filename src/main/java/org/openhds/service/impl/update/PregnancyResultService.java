@@ -68,15 +68,6 @@ public class PregnancyResultService extends AbstractAuditableCollectedService<Pr
     public void validate(PregnancyResult pregnancyResult, ErrorLog errorLog) {
         super.validate(pregnancyResult, errorLog);
 
-        //TODO: are these valid concerns?
-//        if(!projectCodeService.isValueInCodeGroup(pregnancyResult.getType(), ProjectCode.PREGNANCY_RESULT_TYPE)) {
-//          errorLog.appendError("PregnancyResult cannot have a type of: ["+pregnancyResult.getType()+"].");
-//        }
-//
-//        if(null != pregnancyResult.getChild()
-//            && !pregnancyResult.getType().equals(projectCodeService.getValueForCodeName(ProjectCode.PREGNANCY_RESULT_LIVE_BIRTH))){
-//          errorLog.appendError("PregnancyResult that results in a child cannot have a type of: ["+pregnancyResult.getType()+"].");
-//        }
     }
 
     @Override

@@ -81,7 +81,6 @@ public class PregnancyObservationService extends AbstractAuditableCollectedServi
           errorLog.appendError("PregnancyObservation cannot have an pregnancyDate in the future.");
         }
 
-        //TODO: not working with current data generation design
         if(pregnancyObservation.getMother().getStatus().equals(AuditableEntity.NORMAL_STATUS) && null != pregnancyObservation.getMother().getDeath()){
           errorLog.appendError("PregnancyObservation cannot have a mother registered as dead.");
         }
