@@ -1,5 +1,6 @@
 package org.openhds.service.impl.update;
 
+import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.domain.model.update.PregnancyOutcome;
@@ -42,7 +43,7 @@ public class PregnancyOutcomeService extends AbstractAuditableCollectedService<P
     public PregnancyOutcome makePlaceHolder(String id, String name) {
         PregnancyOutcome pregnancyOutcome = new PregnancyOutcome();
         pregnancyOutcome.setUuid(id);
-        pregnancyOutcome.setIsPlaceholder(true);
+        pregnancyOutcome.setStatus(name);
         pregnancyOutcome.setFather(individualService.getUnknownEntity());
         pregnancyOutcome.getFather().setGender("MALE");
         pregnancyOutcome.setMother(individualService.getUnknownEntity());
@@ -64,7 +65,7 @@ public class PregnancyOutcomeService extends AbstractAuditableCollectedService<P
         pregnancyOutcome.setFather(individualService.findOrMakePlaceHolder(fatherId));
         pregnancyOutcome.setVisit(visitService.findOrMakePlaceHolder(visitId));
         pregnancyOutcome.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
-
+        pregnancyOutcome.setStatus(pregnancyOutcome.NORMAL_STATUS);
         return createOrUpdate(pregnancyOutcome);
     }
 
@@ -82,11 +83,12 @@ public class PregnancyOutcomeService extends AbstractAuditableCollectedService<P
 
         //TODO: not working with current data generation design
 //        if(null != pregnancyOutcome.getFather()
+//            && pregnancyOutcome.getFather().getStatus().equals(AuditableEntity.NORMAL_STATUS)
 //            && !pregnancyOutcome.getFather().getGender().equals(projectCodeService.getValueForCodeName(ProjectCode.GENDER_MALE))){
 //          errorLog.appendError("PregnancyOutcome cannot have a non-male Father.");
 //        }
 
-        if(!pregnancyOutcome.getMother().isPlaceholder() && !pregnancyOutcome.getMother().hasOpenResidency()){
+        if(pregnancyOutcome.getMother().getStatus().equals(AuditableEntity.NORMAL_STATUS) && !pregnancyOutcome.getMother().hasOpenResidency()){
           errorLog.appendError("PregnancyOutcome cannot have a mother without an open residency .");
         }
 

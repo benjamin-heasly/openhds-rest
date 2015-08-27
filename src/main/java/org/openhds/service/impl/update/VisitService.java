@@ -38,7 +38,7 @@ public class VisitService extends AbstractAuditableExtIdService<Visit, VisitRepo
     public Visit makePlaceHolder(String id, String name) {
         Visit visit = new Visit();
         visit.setUuid(id);
-        visit.setIsPlaceholder(true);
+        visit.setStatus(name);
         visit.setExtId(name);
         visit.setLocation(locationService.getUnknownEntity());
         visit.setVisitDate(ZonedDateTime.now().minusYears(1));
@@ -51,6 +51,7 @@ public class VisitService extends AbstractAuditableExtIdService<Visit, VisitRepo
     public Visit recordVisit(Visit visit, String locationId, String fieldWorkerId){
         visit.setLocation(locationService.findOrMakePlaceHolder(locationId));
         visit.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
+        visit.setStatus(visit.NORMAL_STATUS);
         return createOrUpdate(visit);
     }
 

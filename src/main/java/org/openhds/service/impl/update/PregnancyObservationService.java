@@ -1,5 +1,6 @@
 package org.openhds.service.impl.update;
 
+import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.domain.model.update.PregnancyObservation;
@@ -43,7 +44,7 @@ public class PregnancyObservationService extends AbstractAuditableCollectedServi
     public PregnancyObservation makePlaceHolder(String id, String name) {
         PregnancyObservation pregnancyObservation = new PregnancyObservation();
         pregnancyObservation.setUuid(id);
-        pregnancyObservation.setIsPlaceholder(true);
+        pregnancyObservation.setStatus(name);
         pregnancyObservation.setVisit(visitService.getUnknownEntity());
         pregnancyObservation.setMother(individualService.getUnknownEntity());
         pregnancyObservation.setPregnancyDate(ZonedDateTime.now().minusMonths(5));
@@ -62,7 +63,7 @@ public class PregnancyObservationService extends AbstractAuditableCollectedServi
         pregnancyObservation.setMother(individualService.findOrMakePlaceHolder(motherId));
         pregnancyObservation.setVisit(visitService.findOrMakePlaceHolder(visitId));
         pregnancyObservation.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
-
+        pregnancyObservation.setStatus(pregnancyObservation.NORMAL_STATUS);
         return createOrUpdate(pregnancyObservation);
     }
 
@@ -81,15 +82,15 @@ public class PregnancyObservationService extends AbstractAuditableCollectedServi
         }
 
         //TODO: not working with current data generation design
-//        if(null != pregnancyObservation.getMother().getDeath()){
-//          errorLog.appendError("PregnancyObservation cannot have a mother registered as dead.");
-//        }
+        if(pregnancyObservation.getMother().getStatus().equals(AuditableEntity.NORMAL_STATUS) && null != pregnancyObservation.getMother().getDeath()){
+          errorLog.appendError("PregnancyObservation cannot have a mother registered as dead.");
+        }
 
         if(!pregnancyObservation.getMother().getGender().equals(projectCodeService.getValueForCodeName(ProjectCode.GENDER_FEMALE))){
           errorLog.appendError("PregnancyObservation cannot have a non-female Mother.");
         }
 
-        if(!pregnancyObservation.getMother().isPlaceholder() && !pregnancyObservation.getMother().hasOpenResidency()){
+        if(pregnancyObservation.getMother().getStatus().equals(AuditableEntity.NORMAL_STATUS) && !pregnancyObservation.getMother().hasOpenResidency()){
           errorLog.appendError("PregnancyObservation cannot have a mother without an open residency .");
         }
 

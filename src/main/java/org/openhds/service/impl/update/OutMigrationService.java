@@ -1,5 +1,6 @@
 package org.openhds.service.impl.update;
 
+import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.domain.model.update.OutMigration;
 import org.openhds.errors.model.ErrorLog;
@@ -45,7 +46,7 @@ public class OutMigrationService extends AbstractAuditableCollectedService<OutMi
     public OutMigration makePlaceHolder(String id, String name) {
         OutMigration outMigration = new OutMigration();
         outMigration.setUuid(id);
-        outMigration.setIsPlaceholder(true);
+        outMigration.setStatus(name);
         outMigration.setVisit(visitService.getUnknownEntity());
         outMigration.setIndividual(individualService.getUnknownEntity());
         outMigration.setResidency(residencyService.getUnknownEntity());
@@ -63,7 +64,7 @@ public class OutMigrationService extends AbstractAuditableCollectedService<OutMi
         outMigration.setResidency(residencyService.findOrMakePlaceHolder(residencyId));
         outMigration.setVisit(visitService.findOrMakePlaceHolder(visitId));
         outMigration.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
-
+        outMigration.setStatus(outMigration.NORMAL_STATUS);
         return createOrUpdate(outMigration);
     }
 
@@ -75,14 +76,14 @@ public class OutMigrationService extends AbstractAuditableCollectedService<OutMi
           errorLog.appendError("OutMigration cannot have a migrationDate in the future.");
         }
 
-        if(!outMigration.getIndividual().isPlaceholder() && !outMigration.getIndividual().hasOpenResidency()){
+        if(outMigration.getIndividual().getStatus().equals(AuditableEntity.NORMAL_STATUS) && !outMigration.getIndividual().hasOpenResidency()){
           errorLog.appendError("Individual must have an open residency to a part of an OutMigration.");
         }
 
         //TODO: not working with current data generation design
-//        if(null != outMigration.getIndividual().getDeath()){
-//          errorLog.appendError("Individual cannot be part of an OutMigration if recorded as dead.");
-//        }
+        if(outMigration.getIndividual().getStatus().equals(AuditableEntity.NORMAL_STATUS) && null != outMigration.getIndividual().getDeath()){
+          errorLog.appendError("Individual cannot be part of an OutMigration if recorded as dead.");
+        }
 
     }
 

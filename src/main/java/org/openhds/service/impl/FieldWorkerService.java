@@ -27,7 +27,7 @@ public class FieldWorkerService extends AbstractAuditableService<FieldWorker, Fi
     public FieldWorker makePlaceHolder(String id, String name) {
         FieldWorker fieldWorker = new FieldWorker();
         fieldWorker.setUuid(id);
-        fieldWorker.setIsPlaceholder(true);
+        fieldWorker.setStatus(name);
         fieldWorker.setFieldWorkerId(name);
         fieldWorker.setPasswordHash(name);
         return fieldWorker;
@@ -47,6 +47,7 @@ public class FieldWorkerService extends AbstractAuditableService<FieldWorker, Fi
 
     public FieldWorker recordFieldWorker(FieldWorker fieldWorker, String password) {
         fieldWorker.setPasswordHash(passwordEncoder.encode(password));
+        fieldWorker.setStatus(fieldWorker.NORMAL_STATUS);
         return createOrUpdate(fieldWorker);
     }
 }

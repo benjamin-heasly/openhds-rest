@@ -34,7 +34,7 @@ public class EventService extends AbstractAuditableService<Event, EventRepositor
     public Event makePlaceHolder(String id, String name) {
         Event event = new Event();
         event.setUuid(id);
-        event.setIsPlaceholder(true);
+        event.setStatus(name);
         event.setEntityType(name);
         event.setActionType(name);
         return event;

@@ -38,7 +38,7 @@ public class IndividualService extends AbstractAuditableExtIdService<Individual,
     public Individual makePlaceHolder(String id, String name) {
         Individual individual = new Individual();
         individual.setUuid(id);
-        individual.setIsPlaceholder(true);
+        individual.setStatus(name);
         individual.setFirstName(name);
         individual.setExtId(name);
         individual.setGender("FEMALE");
@@ -50,9 +50,7 @@ public class IndividualService extends AbstractAuditableExtIdService<Individual,
 
     public Individual recordIndividual(Individual individual, String fieldWorkerId) {
         individual.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
-
-        //TODO: Handle side effect creation for things like socialgroup and membership etc.
-
+        individual.setStatus(individual.NORMAL_STATUS);
         return createOrUpdate(individual);
     }
 

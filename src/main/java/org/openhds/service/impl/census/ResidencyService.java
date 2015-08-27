@@ -39,7 +39,7 @@ public class ResidencyService extends AbstractAuditableCollectedService<Residenc
     public Residency makePlaceHolder(String id, String name) {
         Residency residency = new Residency();
         residency.setUuid(id);
-        residency.setIsPlaceholder(true);
+        residency.setStatus(name);
         residency.setStartDate(ZonedDateTime.now().minusYears(1));
         residency.setStartType(name);
         residency.setIndividual(individualService.getUnknownEntity());
@@ -55,6 +55,7 @@ public class ResidencyService extends AbstractAuditableCollectedService<Residenc
         residency.setIndividual(individualService.findOrMakePlaceHolder(individualId));
         residency.setLocation(locationService.findOrMakePlaceHolder(locationId));
         residency.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
+        residency.setStatus(residency.NORMAL_STATUS);
         return createOrUpdate(residency);
     }
 

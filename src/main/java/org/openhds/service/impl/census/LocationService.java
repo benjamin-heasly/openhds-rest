@@ -35,7 +35,7 @@ public class LocationService extends AbstractAuditableExtIdService<Location, Loc
     public Location makePlaceHolder(String id, String name) {
         Location location = new Location();
         location.setUuid(id);
-        location.setIsPlaceholder(true);
+        location.setStatus(name);
         location.setName(name);
         location.setExtId(name);
         location.setType(projectCodeService.findByCodeGroup(ProjectCode.LOCATION_TYPE).get(0).getCodeValue());
@@ -82,6 +82,7 @@ public class LocationService extends AbstractAuditableExtIdService<Location, Loc
     public Location recordLocation(Location location, String locationHierarchyId, String fieldWorkerId){
         location.setLocationHierarchy(locationHierarchyService.findOrMakePlaceHolder(locationHierarchyId));
         location.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
+        location.setStatus(location.NORMAL_STATUS);
         return createOrUpdate(location);
     }
 }

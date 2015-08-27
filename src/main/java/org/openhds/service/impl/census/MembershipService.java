@@ -30,7 +30,7 @@ public class MembershipService extends AbstractAuditableCollectedService<Members
     public Membership makePlaceHolder(String id, String name) {
         Membership membership = new Membership();
         membership.setUuid(id);
-        membership.setIsPlaceholder(true);
+        membership.setStatus(name);
         membership.setSocialGroup(socialGroupService.getUnknownEntity());
         membership.setIndividual(individualService.getUnknownEntity());
         membership.setStartDate(ZonedDateTime.now().minusYears(1));
@@ -60,6 +60,7 @@ public class MembershipService extends AbstractAuditableCollectedService<Members
         membership.setIndividual(individualService.findOrMakePlaceHolder(individualId));
         membership.setSocialGroup(socialGroupService.findOrMakePlaceHolder(socialGroupId));
         membership.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
+        membership.setStatus(membership.NORMAL_STATUS);
         return createOrUpdate(membership);
     }
 

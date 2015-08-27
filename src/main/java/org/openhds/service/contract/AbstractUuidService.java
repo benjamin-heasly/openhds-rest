@@ -1,5 +1,6 @@
 package org.openhds.service.contract;
 
+import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.errors.model.Error;
 import org.openhds.errors.model.ErrorLog;
@@ -31,9 +32,6 @@ import java.util.Set;
  */
 public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends UuidIdentifiableRepository<T>> {
 
-    public final static String PLACEHOLDER_NAME = "PLACEHOLDER_NAME";
-
-    public final static String UNKNOWN_NAME = "UNKNOWN_NAME";
     public final static String UNKNOWN_ENTITY_UUID = "UNKNOWN";
 
     protected final Sort UUID_SORT = new Sort("uuid");
@@ -57,11 +55,11 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
     public abstract T makePlaceHolder(String id, String name);
 
     public T makePlaceHolder(String id) {
-        return makePlaceHolder(id, PLACEHOLDER_NAME);
+        return makePlaceHolder(id, AuditableEntity.PLACEHOLDER_STATUS);
     }
 
     protected T makeUnknownEntity(){
-        return makePlaceHolder(UNKNOWN_ENTITY_UUID, UNKNOWN_NAME);
+        return makePlaceHolder(UNKNOWN_ENTITY_UUID, AuditableEntity.UNKNOWN_STATUS);
     }
 
     private T persistUnknownEntity() {

@@ -1,5 +1,6 @@
 package org.openhds.service.impl.update;
 
+import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.domain.model.update.InMigration;
@@ -46,7 +47,7 @@ public class InMigrationService extends AbstractAuditableCollectedService<InMigr
     public InMigration makePlaceHolder(String id, String name) {
         InMigration inMigration = new InMigration();
         inMigration.setUuid(id);
-        inMigration.setIsPlaceholder(true);
+        inMigration.setStatus(name);
         inMigration.setVisit(visitService.getUnknownEntity());
         inMigration.setIndividual(individualService.getUnknownEntity());
         inMigration.setResidency(residencyService.getUnknownEntity());
@@ -65,7 +66,7 @@ public class InMigrationService extends AbstractAuditableCollectedService<InMigr
         inMigration.setResidency(residencyService.findOrMakePlaceHolder(residencyId));
         inMigration.setVisit(visitService.findOrMakePlaceHolder(visitId));
         inMigration.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
-
+        inMigration.setStatus(inMigration.NORMAL_STATUS);
         return createOrUpdate(inMigration);
     }
 
@@ -82,9 +83,9 @@ public class InMigrationService extends AbstractAuditableCollectedService<InMigr
         }
 
         //TODO: not working with current data generation design
-//        if(null != inMigration.getIndividual().getDeath()){
-//          errorLog.appendError("Individual cannot be part of an InMigration if recorded as dead.");
-//        }
+        if(inMigration.getIndividual().getStatus().equals(AuditableEntity.NORMAL_STATUS) && null != inMigration.getIndividual().getDeath()){
+          errorLog.appendError("Individual cannot be part of an InMigration if recorded as dead.");
+        }
 
         //TODO: Should this be a requirement?
 //        if(inMigration.getIndividual().hasOpenResidency()){

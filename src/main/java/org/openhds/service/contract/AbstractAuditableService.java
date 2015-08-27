@@ -25,8 +25,6 @@ public abstract class AbstractAuditableService
         <T extends AuditableEntity, V extends AuditableRepository<T>>
         extends AbstractUuidService<T, V> {
 
-    public final static String PLACEHOLDER_STATUS = "PLACEHOLDER";
-
     @Autowired
     protected ProjectCodeService projectCodeService;
 
