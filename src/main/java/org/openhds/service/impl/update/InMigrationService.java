@@ -47,7 +47,7 @@ public class InMigrationService extends AbstractAuditableCollectedService<InMigr
     public InMigration makePlaceHolder(String id, String name) {
         InMigration inMigration = new InMigration();
         inMigration.setUuid(id);
-        inMigration.setStatus(name);
+        inMigration.setEntityStatus(name);
         inMigration.setVisit(visitService.getUnknownEntity());
         inMigration.setIndividual(individualService.getUnknownEntity());
         inMigration.setResidency(residencyService.getUnknownEntity());
@@ -66,7 +66,7 @@ public class InMigrationService extends AbstractAuditableCollectedService<InMigr
         inMigration.setResidency(residencyService.findOrMakePlaceHolder(residencyId));
         inMigration.setVisit(visitService.findOrMakePlaceHolder(visitId));
         inMigration.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
-        inMigration.setStatus(inMigration.NORMAL_STATUS);
+        inMigration.setEntityStatus(inMigration.NORMAL_STATUS);
         return createOrUpdate(inMigration);
     }
 
@@ -82,7 +82,7 @@ public class InMigrationService extends AbstractAuditableCollectedService<InMigr
           errorLog.appendError("InMigration cannot have a type of: ["+inMigration.getMigrationType()+"].");
         }
 
-        if(inMigration.getIndividual().getStatus().equals(AuditableEntity.NORMAL_STATUS) && null != inMigration.getIndividual().getDeath()){
+        if(inMigration.getIndividual().getEntityStatus().equals(AuditableEntity.NORMAL_STATUS) && null != inMigration.getIndividual().getDeath()){
           errorLog.appendError("Individual cannot be part of an InMigration if recorded as dead.");
         }
 

@@ -43,7 +43,7 @@ public class DeathService extends AbstractAuditableCollectedService<Death, Death
     public Death makePlaceHolder(String id, String name) {
         Death death = new Death();
         death.setUuid(id);
-        death.setStatus(name);
+        death.setEntityStatus(name);
         death.setIndividual(individualService.getUnknownEntity());
         death.setVisit(visitService.getUnknownEntity());
         death.setDeathDate(ZonedDateTime.now().minusYears(1));
@@ -59,7 +59,7 @@ public class DeathService extends AbstractAuditableCollectedService<Death, Death
         death.setIndividual(individualService.findOrMakePlaceHolder(individualId));
         death.setVisit(visitService.findOrMakePlaceHolder(visitId));
         death.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
-        death.setStatus(death.NORMAL_STATUS);
+        death.setEntityStatus(death.NORMAL_STATUS);
         return createOrUpdate(death);
     }
 
@@ -72,13 +72,13 @@ public class DeathService extends AbstractAuditableCollectedService<Death, Death
         }
 
         Individual deadIndividual = death.getIndividual();
-        if(deadIndividual.getStatus().equals(AuditableEntity.NORMAL_STATUS) && !death.getIndividual().hasOpenResidency()){
+        if(deadIndividual.getEntityStatus().equals(AuditableEntity.NORMAL_STATUS) && !death.getIndividual().hasOpenResidency()){
           errorLog.appendError("Individual must have an open residency to be recorded as dead.");
         }
 
         Death existingDeath = death.getIndividual().getDeath();
         if(null != existingDeath
-            && existingDeath.getStatus().equals(AuditableEntity.NORMAL_STATUS)
+            && existingDeath.getEntityStatus().equals(AuditableEntity.NORMAL_STATUS)
             &&  null != death.getUuid()
             && !existingDeath.equals(death)){
           errorLog.appendError("Individual cannot have multiple deaths.");

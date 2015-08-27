@@ -41,7 +41,7 @@ public class RelationshipService extends AbstractAuditableCollectedService<Relat
     public Relationship makePlaceHolder(String id, String name) {
         Relationship relationship = new Relationship();
         relationship.setUuid(id);
-        relationship.setStatus(name);
+        relationship.setEntityStatus(name);
         relationship.setRelationshipType(projectCodeService.findByCodeGroup(ProjectCode.RELATIONSHIP_TYPE).get(0).getCodeValue());
         relationship.setStartDate(ZonedDateTime.now());
         relationship.setIndividualA(individualService.getUnknownEntity());
@@ -56,7 +56,7 @@ public class RelationshipService extends AbstractAuditableCollectedService<Relat
         relationship.setIndividualA(individualService.findOrMakePlaceHolder(individualAId));
         relationship.setIndividualB(individualService.findOrMakePlaceHolder(individualBId));
         relationship.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
-        relationship.setStatus(relationship.NORMAL_STATUS);
+        relationship.setEntityStatus(relationship.NORMAL_STATUS);
         return createOrUpdate(relationship);
     }
 

@@ -46,7 +46,7 @@ public class OutMigrationService extends AbstractAuditableCollectedService<OutMi
     public OutMigration makePlaceHolder(String id, String name) {
         OutMigration outMigration = new OutMigration();
         outMigration.setUuid(id);
-        outMigration.setStatus(name);
+        outMigration.setEntityStatus(name);
         outMigration.setVisit(visitService.getUnknownEntity());
         outMigration.setIndividual(individualService.getUnknownEntity());
         outMigration.setResidency(residencyService.getUnknownEntity());
@@ -64,7 +64,7 @@ public class OutMigrationService extends AbstractAuditableCollectedService<OutMi
         outMigration.setResidency(residencyService.findOrMakePlaceHolder(residencyId));
         outMigration.setVisit(visitService.findOrMakePlaceHolder(visitId));
         outMigration.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
-        outMigration.setStatus(outMigration.NORMAL_STATUS);
+        outMigration.setEntityStatus(outMigration.NORMAL_STATUS);
         return createOrUpdate(outMigration);
     }
 
@@ -76,11 +76,11 @@ public class OutMigrationService extends AbstractAuditableCollectedService<OutMi
           errorLog.appendError("OutMigration cannot have a migrationDate in the future.");
         }
 
-        if(outMigration.getIndividual().getStatus().equals(AuditableEntity.NORMAL_STATUS) && !outMigration.getIndividual().hasOpenResidency()){
+        if(outMigration.getIndividual().getEntityStatus().equals(AuditableEntity.NORMAL_STATUS) && !outMigration.getIndividual().hasOpenResidency()){
           errorLog.appendError("Individual must have an open residency to a part of an OutMigration.");
         }
 
-        if(outMigration.getIndividual().getStatus().equals(AuditableEntity.NORMAL_STATUS) && null != outMigration.getIndividual().getDeath()){
+        if(outMigration.getIndividual().getEntityStatus().equals(AuditableEntity.NORMAL_STATUS) && null != outMigration.getIndividual().getDeath()){
           errorLog.appendError("Individual cannot be part of an OutMigration if recorded as dead.");
         }
 

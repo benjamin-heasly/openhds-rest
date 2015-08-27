@@ -176,6 +176,7 @@ public class UpdateDataGenerator implements DataGenerator {
         generateInMigration(visit, individual, residency);
         generatePregnancyObservation(visit, individual);
         generatePregnancyOutcomeAndResult(visit, individual);
+        generateDeath(visit, individual);
     }
 
     private void generateOutMigration(Visit visit, Individual individual, Residency residency) {

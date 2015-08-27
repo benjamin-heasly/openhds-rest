@@ -23,7 +23,7 @@ public class SocialGroupService extends AbstractAuditableExtIdService<SocialGrou
     public SocialGroup makePlaceHolder(String id, String name) {
         SocialGroup socialGroup = new SocialGroup();
         socialGroup.setUuid(id);
-        socialGroup.setStatus(name);
+        socialGroup.setEntityStatus(name);
         socialGroup.setGroupName(name);
         socialGroup.setExtId(name);
         socialGroup.setGroupType(projectCodeService.findByCodeGroup(ProjectCode.SOCIALGROUP_TYPE).get(0).getCodeValue());
@@ -35,7 +35,7 @@ public class SocialGroupService extends AbstractAuditableExtIdService<SocialGrou
 
     public SocialGroup recordSocialGroup(SocialGroup socialGroup, String fieldWorkerId){
         socialGroup.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
-        socialGroup.setStatus(socialGroup.NORMAL_STATUS);
+        socialGroup.setEntityStatus(socialGroup.NORMAL_STATUS);
         return createOrUpdate(socialGroup);
     }
 

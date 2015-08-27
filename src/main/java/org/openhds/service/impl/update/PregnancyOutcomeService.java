@@ -43,7 +43,7 @@ public class PregnancyOutcomeService extends AbstractAuditableCollectedService<P
     public PregnancyOutcome makePlaceHolder(String id, String name) {
         PregnancyOutcome pregnancyOutcome = new PregnancyOutcome();
         pregnancyOutcome.setUuid(id);
-        pregnancyOutcome.setStatus(name);
+        pregnancyOutcome.setEntityStatus(name);
         pregnancyOutcome.setFather(individualService.getUnknownEntity());
         pregnancyOutcome.getFather().setGender("MALE");
         pregnancyOutcome.setMother(individualService.getUnknownEntity());
@@ -65,7 +65,7 @@ public class PregnancyOutcomeService extends AbstractAuditableCollectedService<P
         pregnancyOutcome.setFather(individualService.findOrMakePlaceHolder(fatherId));
         pregnancyOutcome.setVisit(visitService.findOrMakePlaceHolder(visitId));
         pregnancyOutcome.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
-        pregnancyOutcome.setStatus(pregnancyOutcome.NORMAL_STATUS);
+        pregnancyOutcome.setEntityStatus(pregnancyOutcome.NORMAL_STATUS);
         return createOrUpdate(pregnancyOutcome);
     }
 
@@ -81,7 +81,7 @@ public class PregnancyOutcomeService extends AbstractAuditableCollectedService<P
           errorLog.appendError("PregnancyOutcome cannot have a non-female Mother.");
         }
 
-        if(pregnancyOutcome.getMother().getStatus().equals(AuditableEntity.NORMAL_STATUS) && !pregnancyOutcome.getMother().hasOpenResidency()){
+        if(pregnancyOutcome.getMother().getEntityStatus().equals(AuditableEntity.NORMAL_STATUS) && !pregnancyOutcome.getMother().hasOpenResidency()){
           errorLog.appendError("PregnancyOutcome cannot have a mother without an open residency .");
         }
 

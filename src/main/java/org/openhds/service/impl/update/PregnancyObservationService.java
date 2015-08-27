@@ -44,7 +44,7 @@ public class PregnancyObservationService extends AbstractAuditableCollectedServi
     public PregnancyObservation makePlaceHolder(String id, String name) {
         PregnancyObservation pregnancyObservation = new PregnancyObservation();
         pregnancyObservation.setUuid(id);
-        pregnancyObservation.setStatus(name);
+        pregnancyObservation.setEntityStatus(name);
         pregnancyObservation.setVisit(visitService.getUnknownEntity());
         pregnancyObservation.setMother(individualService.getUnknownEntity());
         pregnancyObservation.setPregnancyDate(ZonedDateTime.now().minusMonths(5));
@@ -63,7 +63,7 @@ public class PregnancyObservationService extends AbstractAuditableCollectedServi
         pregnancyObservation.setMother(individualService.findOrMakePlaceHolder(motherId));
         pregnancyObservation.setVisit(visitService.findOrMakePlaceHolder(visitId));
         pregnancyObservation.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
-        pregnancyObservation.setStatus(pregnancyObservation.NORMAL_STATUS);
+        pregnancyObservation.setEntityStatus(pregnancyObservation.NORMAL_STATUS);
         return createOrUpdate(pregnancyObservation);
     }
 
@@ -81,7 +81,7 @@ public class PregnancyObservationService extends AbstractAuditableCollectedServi
           errorLog.appendError("PregnancyObservation cannot have an pregnancyDate in the future.");
         }
 
-        if(pregnancyObservation.getMother().getStatus().equals(AuditableEntity.NORMAL_STATUS) && null != pregnancyObservation.getMother().getDeath()){
+        if(pregnancyObservation.getMother().getEntityStatus().equals(AuditableEntity.NORMAL_STATUS) && null != pregnancyObservation.getMother().getDeath()){
           errorLog.appendError("PregnancyObservation cannot have a mother registered as dead.");
         }
 
@@ -89,7 +89,7 @@ public class PregnancyObservationService extends AbstractAuditableCollectedServi
           errorLog.appendError("PregnancyObservation cannot have a non-female Mother.");
         }
 
-        if(pregnancyObservation.getMother().getStatus().equals(AuditableEntity.NORMAL_STATUS) && !pregnancyObservation.getMother().hasOpenResidency()){
+        if(pregnancyObservation.getMother().getEntityStatus().equals(AuditableEntity.NORMAL_STATUS) && !pregnancyObservation.getMother().hasOpenResidency()){
           errorLog.appendError("PregnancyObservation cannot have a mother without an open residency .");
         }
 

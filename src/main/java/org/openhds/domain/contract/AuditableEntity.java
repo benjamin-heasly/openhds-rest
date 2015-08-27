@@ -34,7 +34,7 @@ public abstract class AuditableEntity implements UuidIdentifiable, Serializable 
     protected String uuid;
 
     @Description(description = "Marker for whether or not the entity is a placeholder or unk entity.")
-    protected String statuss = NORMAL_STATUS;
+    protected String entityStatus = NORMAL_STATUS;
 
     @Description(description = "Marker for soft delete / void of the record.")
     protected boolean deleted = false;
@@ -89,11 +89,11 @@ public abstract class AuditableEntity implements UuidIdentifiable, Serializable 
         this.voidReason = voidReason;
     }
 
-    public String getStatus() {
-        return statuss;
+    public String getEntityStatus() {
+        return entityStatus;
     }
-    public void setStatus(String status) {
-        this.statuss = status;
+    public void setEntityStatus(String entityStatus) {
+        this.entityStatus = entityStatus;
     }
 
     @XmlTransient

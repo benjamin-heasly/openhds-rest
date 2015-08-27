@@ -38,7 +38,7 @@ public class IndividualService extends AbstractAuditableExtIdService<Individual,
     public Individual makePlaceHolder(String id, String name) {
         Individual individual = new Individual();
         individual.setUuid(id);
-        individual.setStatus(name);
+        individual.setEntityStatus(name);
         individual.setFirstName(name);
         individual.setExtId(name);
         individual.setGender("FEMALE");
@@ -50,7 +50,7 @@ public class IndividualService extends AbstractAuditableExtIdService<Individual,
 
     public Individual recordIndividual(Individual individual, String fieldWorkerId) {
         individual.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
-        individual.setStatus(individual.NORMAL_STATUS);
+        individual.setEntityStatus(individual.NORMAL_STATUS);
         return createOrUpdate(individual);
     }
 
