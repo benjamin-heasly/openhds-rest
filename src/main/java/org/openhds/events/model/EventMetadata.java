@@ -4,12 +4,13 @@ import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 @Description(description = "Metadata regarding an atomic event in OpenHDS")
 @Entity
-@Table(name = "eventmetadata")
+@Table(name = "eventmetadata", indexes={@Index(columnList = "lastModifiedDate")})
 public class EventMetadata extends AuditableEntity {
 
     private static final long serialVersionUID = 1L;

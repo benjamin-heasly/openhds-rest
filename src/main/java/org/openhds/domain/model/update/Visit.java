@@ -5,6 +5,7 @@ import org.openhds.domain.model.census.Location;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -16,7 +17,9 @@ import java.time.ZonedDateTime;
  */
 @Description(description = "A Visit represents a FieldWorker's observation of a specific Location within the study area at a particular date.")
 @Entity
-@Table(name = "visit")
+@Table(name = "visit", indexes={
+        @Index(columnList = "lastModifiedDate"),
+        @Index(columnList = "extId")})
 public class Visit  extends AuditableExtIdEntity implements Serializable {
 
     public final static long serialVersionUID = -211408757055967973L;

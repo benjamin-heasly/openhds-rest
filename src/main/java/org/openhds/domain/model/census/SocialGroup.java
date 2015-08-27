@@ -5,6 +5,7 @@ import org.openhds.domain.contract.AuditableExtIdEntity;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.io.Serializable;
@@ -16,7 +17,9 @@ import java.util.Set;
  */
 @Description(description = "A distinct group of people like a family or other organization.")
 @Entity
-@Table(name = "socialGroup")
+@Table(name = "socialGroup", indexes={
+        @Index(columnList = "lastModifiedDate"),
+        @Index(columnList = "extId")})
 public class SocialGroup extends AuditableExtIdEntity implements Serializable {
 
     public final static long serialVersionUID = -5592935530217622317L;
