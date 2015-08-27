@@ -2,6 +2,7 @@ package org.openhds.repository.generator;
 
 import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.contract.AuditableEntity;
+import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.census.*;
 import org.openhds.repository.concrete.census.*;
 import org.openhds.security.model.User;
@@ -53,9 +54,9 @@ public class FamilyDataGenerator implements DataGenerator {
 
     private final LocationService locationService;
 
-    private final FieldWorkerService fieldWorkerService;
+    private final User user;
 
-    private final UserService userService;
+    private final FieldWorker fieldWorker;
 
     @Autowired
     public FamilyDataGenerator(IndividualRepository individualRepository,
@@ -82,8 +83,9 @@ public class FamilyDataGenerator implements DataGenerator {
         this.relationshipRepository = relationshipRepository;
         this.relationshipService = relationshipService;
         this.locationService = locationService;
-        this.fieldWorkerService = fieldWorkerService;
-        this.userService = userService;
+
+        this.user = userService.getUnknownEntity();
+        this.fieldWorker = fieldWorkerService.getUnknownEntity();
     }
 
     @Override
@@ -218,7 +220,6 @@ public class FamilyDataGenerator implements DataGenerator {
     }
 
     private void setAuditableFields(AuditableEntity entity) {
-        User user = userService.getUnknownEntity();
         ZonedDateTime now = ZonedDateTime.now();
 
         //Check to see if we're creating or updating the entity
@@ -235,7 +236,7 @@ public class FamilyDataGenerator implements DataGenerator {
     }
 
     private void setCollectedFields(AuditableCollectedEntity entity) {
-        entity.setCollectedBy(fieldWorkerService.getUnknownEntity());
+        entity.setCollectedBy(fieldWorker);
         entity.setCollectionDateTime(ZonedDateTime.now());
     }
 

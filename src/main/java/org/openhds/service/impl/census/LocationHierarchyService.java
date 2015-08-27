@@ -122,22 +122,6 @@ public class LocationHierarchyService extends AbstractAuditableExtIdService<
         return subtree;
     }
 
-    // find other entities joined to the location hierarchy subtree at the given root
-    public <T extends AuditableEntity> Page<T> findOtherByEnclosingLocationHierarchy(Pageable pageable,
-                                                                                     String locationHierarchyUuid,
-                                                                                     ZonedDateTime modifiedAfter,
-                                                                                     ZonedDateTime modifiedBefore,
-                                                                                     Specifications.LocationSpecification<T> locationSpecification,
-                                                                                     AuditableRepository<T> otherRepository) {
-        // whole hierarchy subtree in memory!
-        List<LocationHierarchy> enclosing = findByEnclosingLocationHierarchy(locationHierarchyUuid, modifiedAfter, modifiedBefore);
-
-        // page of results associated with the subtree
-        QueryRange<ZonedDateTime> dateRange = new QueryRange<>("lastModifiedDate", modifiedAfter, modifiedBefore);
-        Specification<T> enclosedAndInRange = Specifications.withRange(locationSpecification.getSpecification(enclosing), dateRange);
-        return otherRepository.findAll(enclosedAndInRange, pageable);
-    }
-
     // recursively add descendants of the given subtree root
     public List<LocationHierarchy> collectSubtree(LocationHierarchy root,
                                                   List<LocationHierarchy> subtree,
@@ -154,6 +138,22 @@ public class LocationHierarchyService extends AbstractAuditableExtIdService<
             collectSubtree(child, subtree, modifiedAfter, modifiedBefore);
         }
         return subtree;
+    }
+
+    // find other entities joined to the location hierarchy subtree at the given root
+    public <T extends AuditableEntity> Page<T> findOtherByEnclosingLocationHierarchy(Pageable pageable,
+                                                                                     String locationHierarchyUuid,
+                                                                                     ZonedDateTime modifiedAfter,
+                                                                                     ZonedDateTime modifiedBefore,
+                                                                                     Specifications.LocationSpecification<T> locationSpecification,
+                                                                                     AuditableRepository<T> otherRepository) {
+        // all location hierarchies in memory!!
+        List<LocationHierarchy> enclosing = findByEnclosingLocationHierarchy(locationHierarchyUuid, modifiedAfter, modifiedBefore);
+
+        // page of results associated with the subtree
+        QueryRange<ZonedDateTime> dateRange = new QueryRange<>("lastModifiedDate", modifiedAfter, modifiedBefore);
+        Specification<T> enclosedAndInRange = Specifications.withRange(locationSpecification.getSpecification(enclosing), dateRange);
+        return otherRepository.findAll(enclosedAndInRange, pageable);
     }
 
     // add all ancestors of the given hierarchy

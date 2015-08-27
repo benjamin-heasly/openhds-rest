@@ -1,17 +1,14 @@
 package org.openhds.service;
 
-import javassist.tools.reflect.Sample;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openhds.OpenHdsRestApplication;
 import org.openhds.SampleDataTestSetup;
 import org.openhds.domain.contract.UuidIdentifiable;
-import org.openhds.repository.generator.MasterDataGenerator;
 import org.openhds.repository.queries.QueryRange;
 import org.openhds.repository.queries.QueryValue;
 import org.openhds.service.contract.AbstractUuidService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.test.context.support.WithSecurityContextTestExecutionListener;

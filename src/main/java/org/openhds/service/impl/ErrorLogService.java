@@ -1,5 +1,7 @@
 package org.openhds.service.impl;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.errors.model.ErrorLogException;
@@ -14,6 +16,8 @@ import java.time.ZonedDateTime;
 
 @Service
 public class ErrorLogService extends AbstractAuditableCollectedService<ErrorLog, ErrorLogRepository> {
+
+    private final Log log = LogFactory.getLog(this.getClass());
 
     @Autowired
     public ErrorLogService(ErrorLogRepository repository) {
@@ -46,10 +50,13 @@ public class ErrorLogService extends AbstractAuditableCollectedService<ErrorLog,
         checkNonStaleModifiedDate(errorLog);
         setAuditableFields(errorLog);
 
+        log.info("Creating error log: " + errorLog);
+
         ErrorLog errorLogforErrorLog = new ErrorLog();
         verify(errorLog, errorLogforErrorLog);
         validate(errorLog, errorLogforErrorLog);
         if (!errorLogforErrorLog.getErrors().isEmpty()) {
+            log.info("Error while creating error log: " + errorLogforErrorLog);
             throw new ErrorLogException(errorLogforErrorLog);
         }
 

@@ -1,6 +1,8 @@
 package org.openhds.service.contract;
 
 import org.openhds.domain.contract.AuditableEntity;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.openhds.domain.contract.UuidIdentifiable;
 import org.openhds.errors.model.Error;
 import org.openhds.errors.model.ErrorLog;
@@ -36,6 +38,7 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
 
     protected final Sort UUID_SORT = new Sort("uuid");
 
+    private final Log log = LogFactory.getLog(this.getClass());
 
     protected final V repository;
 
@@ -125,6 +128,9 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
 
         T entity = makePlaceHolder(id);
         entity.setUuid(id);
+
+        log.info("Making placeholder: " + entity);
+
         return createOrUpdate(entity);
     }
 

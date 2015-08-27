@@ -107,8 +107,8 @@ public class RequiredDataGenerator implements DataGenerator {
         user.setDescription("default user with root role (all privileges)");
         user.getRoles().add(userService.findRoleByName("root-role"));
 
-        userService.createOrUpdate(user);
-
+        // save with repository instead of service for speed
+        userRepository.save(user);
     }
 
     // trigger services to create unknown entities ahead of time, for predictable entity counts
@@ -128,9 +128,10 @@ public class RequiredDataGenerator implements DataGenerator {
             return;
         }
 
+        // save with repository instead of service for speed
         Arrays.stream(Privilege.Grant.values())
                 .map(Privilege::new)
-                .forEach(userService::createOrUpdate);
+                .forEach(privilegeRepository::save);
     }
 
     private void generateRoles() {
@@ -144,7 +145,9 @@ public class RequiredDataGenerator implements DataGenerator {
         role.setPrivileges(Arrays.stream(Privilege.Grant.values())
                 .map(Privilege::new)
                 .collect(toSet()));
-        userService.createOrUpdate(role);
+
+        // save with repository instead of service for speed
+        roleRepository.save(role);
     }
 
     private void generateUsers() {

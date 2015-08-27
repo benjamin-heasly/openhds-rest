@@ -4,6 +4,7 @@ import org.openhds.domain.contract.AuditableCollectedEntity;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -15,7 +16,7 @@ import java.time.ZonedDateTime;
  */
 @Description(description = "A record of two Individuals having some relationship for some time interval.")
 @Entity
-@Table(name = "relationship")
+@Table(name = "relationship", indexes={@Index(columnList = "lastModifiedDate")})
 public class Relationship extends AuditableCollectedEntity implements Serializable {
 
     private static final long serialVersionUID = -2104326927087468148L;

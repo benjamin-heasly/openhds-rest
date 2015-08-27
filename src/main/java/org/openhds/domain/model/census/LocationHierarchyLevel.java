@@ -5,13 +5,14 @@ import org.openhds.domain.util.Description;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Index;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Description(description = "A LocationHierarchyLevel represents one tier in the representation of the study area geography.")
 @Entity
-@Table(name = "locationhierarchylevel")
+@Table(name = "locationhierarchylevel", indexes={@Index(columnList = "lastModifiedDate")})
 public class LocationHierarchyLevel extends AuditableEntity implements Serializable {
 
     private static final long serialVersionUID = -1070569257732332545L;

@@ -5,10 +5,7 @@ import org.openhds.domain.model.census.Individual;
 import org.openhds.domain.model.census.Residency;
 import org.openhds.domain.util.Description;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -18,7 +15,7 @@ import java.time.ZonedDateTime;
  */
 @Description(description = "An OutMigration represents a migration out of the study area.")
 @Entity
-@Table(name = "outmigration")
+@Table(name = "outmigration", indexes={@Index(columnList = "lastModifiedDate")})
 public class OutMigration extends AuditableCollectedEntity implements Serializable {
 
     public final static long serialVersionUID = 6736599408170070468L;

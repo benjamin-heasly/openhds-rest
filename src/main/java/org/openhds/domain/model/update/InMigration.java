@@ -5,10 +5,7 @@ import org.openhds.domain.model.census.Individual;
 import org.openhds.domain.model.census.Residency;
 import org.openhds.domain.util.Description;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.ZonedDateTime;
@@ -18,7 +15,7 @@ import java.time.ZonedDateTime;
  */
 @Description(description = "An InMigration represents a migration into the study area. It contains information about the Individual who is in-migrating to a particular Residency. It also contains information about the origin, date, and reason the Indiviudal is migrating as well as the Visit that is associated with the migration.")
 @Entity
-@Table(name = "inmigration")
+@Table(name = "inmigration", indexes={@Index(columnList = "lastModifiedDate")})
 public class InMigration extends AuditableCollectedEntity implements Serializable {
 
     public final static long serialVersionUID = 7889700709284952892L;

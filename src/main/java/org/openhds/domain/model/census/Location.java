@@ -5,10 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.openhds.domain.contract.AuditableExtIdEntity;
 import org.openhds.domain.util.Description;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -21,7 +18,9 @@ import java.util.Set;
  */
 @Description(description = "A distinct Location in the study area, at a particular LocationHierarchy.")
 @Entity
-@Table(name = "location")
+@Table(name = "location", indexes={
+        @Index(columnList = "lastModifiedDate"),
+        @Index(columnList = "extId")})
 public class Location extends AuditableExtIdEntity implements Serializable {
 
     public final static long serialVersionUID = 169551578162260199L;
