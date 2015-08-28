@@ -21,8 +21,8 @@ import java.time.ZonedDateTime;
 public abstract class AuditableEntity implements UuidIdentifiable, Serializable {
 
     public final static String PLACEHOLDER_STATUS = "PLACEHOLDER_STATUS";
-    public final static String UNKNOWN_STATUS = "UNKNOWN_STATUS";
     public final static String NORMAL_STATUS = "NORMAL_STATUS";
+    public final static String NEW_STATUS = "NEW_STATUS";
 
     private static final long serialVersionUID = -4703049354466276068L;
 
@@ -34,7 +34,7 @@ public abstract class AuditableEntity implements UuidIdentifiable, Serializable 
     protected String uuid;
 
     @Description(description = "Marker for whether or not the entity is a placeholder or unk entity.")
-    protected String entityStatus = NORMAL_STATUS;
+    protected String entityStatus = NEW_STATUS;
 
     @Description(description = "Marker for soft delete / void of the record.")
     protected boolean deleted = false;

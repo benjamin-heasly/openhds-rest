@@ -119,7 +119,7 @@ public class EventService extends AbstractAuditableService<Event, EventRepositor
         if (null == event.findMetadataForSystem(system)) {
             EventMetadata defaultMetadata = new EventMetadata();
             defaultMetadata.setSystem(system);
-            defaultMetadata.setEntityStatus(Event.DEFAULT_STATUS);
+            defaultMetadata.setStatus(Event.DEFAULT_STATUS);
             event.getEventMetadata().add(defaultMetadata);
         }
     }
@@ -138,7 +138,7 @@ public class EventService extends AbstractAuditableService<Event, EventRepositor
         for (EventMetadata eventMetadata : event.getEventMetadata()) {
             if (eventMetadata.getSystem().equals(system)) {
                 eventMetadata.setNumTimesRead(eventMetadata.getNumTimesRead() + 1);
-                eventMetadata.setEntityStatus(Event.READ_STATUS);
+                eventMetadata.setStatus(Event.READ_STATUS);
             }
         }
 
