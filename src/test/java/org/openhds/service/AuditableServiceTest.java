@@ -9,7 +9,6 @@ import org.openhds.service.contract.AbstractAuditableService;
 import org.openhds.service.impl.census.LocationHierarchyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.List;

@@ -46,10 +46,6 @@ public class UserService extends AbstractUuidService<User, UserRepository> {
         return user;
     }
 
-    @Override
-    public void validate(User user, ErrorLog errorLog) {
-        super.validate(user, errorLog);
-    }
 
     public User findByUsername(String username) {
         return repository.findByUsername(username).get();

@@ -1,12 +1,10 @@
 package org.openhds.service.contract;
 
-import org.openhds.domain.contract.AuditableEntity;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openhds.domain.contract.UuidIdentifiable;
+import org.openhds.errors.model.*;
 import org.openhds.errors.model.Error;
-import org.openhds.errors.model.ErrorLog;
-import org.openhds.errors.model.ErrorLogException;
 import org.openhds.errors.util.ErrorLogger;
 import org.openhds.events.model.Event;
 import org.openhds.events.util.EventPublisher;
@@ -38,7 +36,7 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
 
     protected final Sort UUID_SORT = new Sort("uuid");
 
-    private final Log log = LogFactory.getLog(this.getClass());
+    protected final Log log = LogFactory.getLog(this.getClass());
 
     protected final V repository;
 
@@ -57,12 +55,8 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
 
     public abstract T makePlaceHolder(String id, String name);
 
-    public T makePlaceHolder(String id) {
-        return makePlaceHolder(id, AuditableEntity.PLACEHOLDER_STATUS);
-    }
-
     protected T makeUnknownEntity(){
-        return makePlaceHolder(UNKNOWN_ENTITY_UUID, AuditableEntity.UNKNOWN_STATUS);
+        return makePlaceHolder(UNKNOWN_ENTITY_UUID, UuidIdentifiable.UNKNOWN_STATUS);
     }
 
     private T persistUnknownEntity() {
@@ -120,41 +114,21 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
         return repository.exists(id);
     }
 
-
-    public T findOrMakePlaceHolder(String id){
-        if (exists(id)) {
-            return findOne(id);
-        }
-
-        T entity = makePlaceHolder(id);
-        entity.setUuid(id);
-
-        log.info("Making placeholder: " + entity);
-
-        return createOrUpdate(entity);
-    }
-
+    //This createOrUpdate provides basic logging of JSR-303 annotation validation
     public T createOrUpdate(T entity) {
 
-        ErrorLog errorLog = new ErrorLog();
-        errorLog.setEntityType(entity.getClass().getSimpleName());
-        verify(entity, errorLog);
-        validate(entity, errorLog);
-
-        if (!errorLog.getErrors().isEmpty()) {
-            errorLogger.log(errorLog);
-            throw new ErrorLogException(errorLog);
-        }
-
+        verify(entity, new ErrorLog());
         T saved = repository.save(entity);
+        logEvent(saved);
+        return saved;
+    }
 
+    protected void logEvent(T entity){
         Event event = new Event();
         event.setActionType(Event.PERSIST_ACTION);
-        event.setEntityType(saved.getClass().getSimpleName());
-        event.setEventData(saved.toString());
+        event.setEntityType(entity.getClass().getSimpleName());
+        event.setEventData(entity.toString());
         eventPublisher.publish(event);
-
-        return saved;
     }
 
     public EntityIterator<T> findByMultipleValues(Sort sort, QueryValue... queryValues) {
@@ -180,10 +154,6 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
     // Iterate entities based on paged queries.
     protected EntityIterator<T> iteratorFromPageable(PageIterator.PagedQueryable<T> pagedQueryable, Sort sort) {
         return new PagingEntityIterator<>(new PageIterator<>(pagedQueryable, sort));
-    }
-
-    public void validate(T entity, ErrorLog errorLog) {
-
     }
 
     //This method 'verifies' that the data is 'whole' so to speak by firing off all the JSR-annotations,

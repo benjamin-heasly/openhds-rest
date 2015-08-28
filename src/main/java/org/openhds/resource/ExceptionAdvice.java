@@ -1,6 +1,5 @@
 package org.openhds.resource;
 
-import org.openhds.errors.model.ErrorLog;
 import org.openhds.errors.model.ErrorLogException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.hateoas.VndErrors;

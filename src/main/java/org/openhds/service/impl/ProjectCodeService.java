@@ -30,11 +30,6 @@ public class ProjectCodeService extends AbstractUuidService<ProjectCode, Project
         return projectCode;
     }
 
-    @Override
-    public void validate(ProjectCode projectCode, ErrorLog errorLog) {
-        super.validate(projectCode, errorLog);
-    }
-
     public ProjectCode createCode(String name, String value, String group, String description) {
         ProjectCode projectCode = new ProjectCode();
         projectCode.setCodeName(name);

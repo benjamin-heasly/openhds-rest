@@ -1,14 +1,11 @@
 package org.openhds.resource.contract;
 
 import com.jayway.jsonpath.JsonPath;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openhds.OpenHdsRestApplication;
 import org.openhds.SampleDataTestSetup;
-import org.openhds.repository.generator.MasterDataGenerator;
-import org.openhds.repository.generator.RequiredDataGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.hateoas.MediaTypes;
