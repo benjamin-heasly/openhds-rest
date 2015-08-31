@@ -28,18 +28,19 @@ public class Death extends AuditableCollectedEntity implements Serializable {
     @Description(description = "Cause of the death.")
     private String deathCause;
 
-    @NotNull(message = "You must provide a Death date")
+    @NotNull(message = "Death cannot have a null deathDate.")
     @Description(description = "Date of the Death.")
     private ZonedDateTime deathDate;
 
     @Description(description = "Age of death in number of data.")
     private int ageAtDeath;
 
+    @NotNull(message = "Death cannot have a null visit.")
     @ManyToOne
     @Description(description = "Visit associated with the death, identified by external id.")
     private Visit visit;
 
-    @NotNull(message = "Individual may not be null in a death.")
+    @NotNull(message = "Death cannot have a null individual.")
     @ManyToOne
     @Description(description = "Individual who has died.")
     private Individual individual;

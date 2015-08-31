@@ -1,5 +1,7 @@
 package org.openhds.service.impl.update;
 
+import org.openhds.domain.contract.AuditableEntity;
+import org.openhds.domain.model.census.Individual;
 import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.domain.model.update.Death;
 import org.openhds.errors.model.ErrorLog;
@@ -41,6 +43,7 @@ public class DeathService extends AbstractAuditableCollectedService<Death, Death
     public Death makePlaceHolder(String id, String name) {
         Death death = new Death();
         death.setUuid(id);
+        death.setEntityStatus(name);
         death.setIndividual(individualService.getUnknownEntity());
         death.setVisit(visitService.getUnknownEntity());
         death.setDeathDate(ZonedDateTime.now().minusYears(1));
@@ -56,12 +59,30 @@ public class DeathService extends AbstractAuditableCollectedService<Death, Death
         death.setIndividual(individualService.findOrMakePlaceHolder(individualId));
         death.setVisit(visitService.findOrMakePlaceHolder(visitId));
         death.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
+        death.setEntityStatus(death.NORMAL_STATUS);
         return createOrUpdate(death);
     }
 
     @Override
-    public void validate(Death entity, ErrorLog errorLog) {
-        super.validate(entity, errorLog);
+    public void validate(Death death, ErrorLog errorLog) {
+        super.validate(death, errorLog);
+
+        if(death.getDeathDate().isAfter(death.getCollectionDateTime())){
+          errorLog.appendError("Death cannot have a deathDate in the future.");
+        }
+
+        Individual deadIndividual = death.getIndividual();
+        if(deadIndividual.getEntityStatus().equals(AuditableEntity.NORMAL_STATUS) && !death.getIndividual().hasOpenResidency()){
+          errorLog.appendError("Individual must have an open residency to be recorded as dead.");
+        }
+
+        Death existingDeath = death.getIndividual().getDeath();
+        if(null != existingDeath
+            && existingDeath.getEntityStatus().equals(AuditableEntity.NORMAL_STATUS)
+            &&  null != death.getUuid()
+            && !existingDeath.equals(death)){
+          errorLog.appendError("Individual cannot have multiple deaths.");
+        }
     }
 
     @Override

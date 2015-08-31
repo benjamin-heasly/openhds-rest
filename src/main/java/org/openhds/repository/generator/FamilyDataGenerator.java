@@ -127,8 +127,8 @@ public class FamilyDataGenerator implements DataGenerator {
             return;
         }
 
-        for (Location locaiton : locations) {
-            addFamily(locaiton, size);
+        for (Location location : locations) {
+            addFamily(location, size);
         }
     }
 
@@ -171,6 +171,7 @@ public class FamilyDataGenerator implements DataGenerator {
         individual.setExtId(name);
         individual.setFirstName(name);
         individual.setLastName(name);
+        individual.setGender("FEMALE");
 
         // save using repository, not service, for performance
         return individualRepository.save(individual);

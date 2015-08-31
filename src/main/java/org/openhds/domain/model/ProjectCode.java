@@ -21,6 +21,19 @@ import java.io.Serializable;
 @Table(name = "projectcode")
 public class ProjectCode implements UuidIdentifiable, Serializable {
 
+
+    public static final String GENDER = "gender";
+    public static final String GENDER_MALE = "male";
+    public static final String GENDER_FEMALE = "female";
+    public static final String LOCATION_TYPE = "locationType";
+    public static final String MEMBERSHIP_TYPE = "membershipType";
+    public static final String SOCIALGROUP_TYPE = "socialGroupType";
+    public static final String RELATIONSHIP_TYPE = "relationshipType";
+    public static final String MIGRATION_TYPE = "migrationType";
+    public static final String MIN_AGE_OF_PREGNANCY = "minAgeOfPregnancy";
+    public static final String PREGNANCY_RESULT_TYPE = "pregnancyResultType";
+    public static final String PREGNANCY_RESULT_LIVE_BIRTH = "liveBirth";
+
     @Id
     @GeneratedValue(generator = "uuidIfMissing")
     @GenericGenerator(name = "uuidIfMissing",

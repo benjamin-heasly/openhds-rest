@@ -30,6 +30,7 @@ public class MembershipService extends AbstractAuditableCollectedService<Members
     public Membership makePlaceHolder(String id, String name) {
         Membership membership = new Membership();
         membership.setUuid(id);
+        membership.setEntityStatus(name);
         membership.setSocialGroup(socialGroupService.getUnknownEntity());
         membership.setIndividual(individualService.getUnknownEntity());
         membership.setStartDate(ZonedDateTime.now().minusYears(1));
@@ -43,12 +44,23 @@ public class MembershipService extends AbstractAuditableCollectedService<Members
     @Override
     public void validate(Membership membership, ErrorLog errorLog) {
         super.validate(membership, errorLog);
+
+        if(membership.getStartDate().isAfter(membership.getCollectionDateTime())){
+            errorLog.appendError("Membership cannot have a startDate in the future.");
+        }
+
+        if(null != membership.getEndDate() &&
+            membership.getStartDate().isAfter(membership.getEndDate())){
+            errorLog.appendError("Membership cannot have a startDate before its endDate.");
+        }
+
     }
 
     public Membership recordMembership(Membership membership, String individualId, String socialGroupId, String fieldWorkerId){
         membership.setIndividual(individualService.findOrMakePlaceHolder(individualId));
         membership.setSocialGroup(socialGroupService.findOrMakePlaceHolder(socialGroupId));
         membership.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
+        membership.setEntityStatus(membership.NORMAL_STATUS);
         return createOrUpdate(membership);
     }
 

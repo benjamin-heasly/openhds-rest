@@ -1,5 +1,6 @@
 package org.openhds.service.impl.census;
 
+import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.Individual;
 import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.domain.model.census.Residency;
@@ -37,8 +38,10 @@ public class IndividualService extends AbstractAuditableExtIdService<Individual,
     public Individual makePlaceHolder(String id, String name) {
         Individual individual = new Individual();
         individual.setUuid(id);
+        individual.setEntityStatus(name);
         individual.setFirstName(name);
         individual.setExtId(name);
+        individual.setGender("FEMALE");
 
         initPlaceHolderCollectedFields(individual);
 
@@ -47,15 +50,32 @@ public class IndividualService extends AbstractAuditableExtIdService<Individual,
 
     public Individual recordIndividual(Individual individual, String fieldWorkerId) {
         individual.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
-
-        //TODO: Handle side effect creation for things like socialgroup and membership etc.
-
+        individual.setEntityStatus(individual.NORMAL_STATUS);
         return createOrUpdate(individual);
     }
 
     @Override
-    public void validate(Individual entity, ErrorLog errorLog) {
-        super.validate(entity, errorLog);
+    public void validate(Individual individual, ErrorLog errorLog) {
+        super.validate(individual, errorLog);
+
+        if(null != individual.getFather() &&
+            !individual.getFather().getGender().equals(projectCodeService.getValueForCodeName(ProjectCode.GENDER_MALE))){
+            errorLog.appendError("Individual cannot have a non-male Father.");
+        }
+
+        if(null != individual.getMother() &&
+            !individual.getMother().getGender().equals(projectCodeService.getValueForCodeName(ProjectCode.GENDER_FEMALE))){
+            errorLog.appendError("Individual cannot have a non-female Mother.");
+        }
+
+        if(null != individual.getDateOfBirth() &&
+            individual.getDateOfBirth().isAfter(individual.getCollectionDateTime())){
+            errorLog.appendError("Individual cannot have a birthday in the future.");
+        }
+
+        if(!projectCodeService.isValueInCodeGroup(individual.getGender(), ProjectCode.GENDER)){
+            errorLog.appendError("Individual cannot have a gender of: ["+individual.getGender()+"].");
+        }
 
     }
 

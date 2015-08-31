@@ -2,19 +2,26 @@ package org.openhds.service.contract;
 
 import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.domain.model.census.LocationHierarchy;
+import org.openhds.errors.model.Error;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.errors.model.ErrorLogException;
+import org.openhds.errors.util.ErrorLogger;
+import org.openhds.events.model.Event;
 import org.openhds.repository.contract.AuditableRepository;
 import org.openhds.repository.queries.QueryRange;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.security.model.User;
 import org.openhds.security.model.UserHelper;
+import org.openhds.service.impl.ProjectCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -24,6 +31,9 @@ public abstract class AbstractAuditableService
         <T extends AuditableEntity, V extends AuditableRepository<T>>
         extends AbstractUuidService<T, V> {
 
+    @Autowired
+    protected ProjectCodeService projectCodeService;
+
     public AbstractAuditableService(V repository) {
         super(repository);
     }
@@ -31,13 +41,46 @@ public abstract class AbstractAuditableService
     @Autowired
     private UserHelper userHelper;
 
+    public T makePlaceHolder(String id) {
+        return makePlaceHolder(id, AuditableEntity.PLACEHOLDER_STATUS);
+    }
+
+    public T findOrMakePlaceHolder(String id){
+        if (exists(id)) {
+            return findOne(id);
+        }
+
+        T entity = makePlaceHolder(id);
+        entity.setUuid(id);
+
+        log.info("Making placeholder: " + entity);
+
+        return createOrUpdate(entity);
+    }
+
     @Override
     public T createOrUpdate(T entity) {
 
         checkNonStaleModifiedDate(entity);
         setAuditableFields(entity);
 
-        return super.createOrUpdate(entity);
+        ErrorLog errorLog = new ErrorLog();
+        errorLog.setEntityType(entity.getClass().getSimpleName());
+        verify(entity, errorLog);
+
+        String entityStatus = entity.getEntityStatus();
+        if(entityStatus.equals(entity.NORMAL_STATUS) || entityStatus.equals(entity.NEW_STATUS)) {
+            validate(entity, errorLog);
+        }
+
+        if (!errorLog.getErrors().isEmpty()) {
+            errorLogger.log(errorLog);
+            throw new ErrorLogException(errorLog);
+        }
+
+        T saved = repository.save(entity);
+        logEvent(saved);
+        return saved;
     }
 
     @Override
@@ -153,11 +196,8 @@ public abstract class AbstractAuditableService
         return iteratorFromPageable(pageable -> repository.findByDeletedFalseAndVoidBy(user, pageable), sort);
     }
 
-    @Override
     public void validate(T entity, ErrorLog errorLog) {
-        super.validate(entity, errorLog);
 
-        //TODO: Manual validation for AuditableService
     }
 
     public EntityIterator<T> findByLastModifiedBy(Sort sort, User user) {
@@ -193,4 +233,5 @@ public abstract class AbstractAuditableService
             throw new ErrorLogException(errorLog);
         }
     }
+
 }

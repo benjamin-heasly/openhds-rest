@@ -20,13 +20,13 @@ public class OutMigration extends AuditableCollectedEntity implements Serializab
 
     public final static long serialVersionUID = 6736599408170070468L;
 
-    @NotNull
+    @NotNull(message="OutMigration cannot have a null individual.")
     @ManyToOne
     @Description(description = "The Individual who is out-migrating.")
     private Individual individual;
 
     @OneToOne
-    @NotNull
+    @NotNull(message="OutMigration cannot have a null residency.")
     @Description(description = "The residency the Individual is leaving.")
     private Residency residency;
 
@@ -36,12 +36,12 @@ public class OutMigration extends AuditableCollectedEntity implements Serializab
     @Description(description = "Reason for out-migrating.")
     private String reason;
 
-    @NotNull
+    @NotNull(message = "OutMigration cannot have a null visit.")
     @ManyToOne
     @Description(description = "The visit when and where the out-migration was recorded.")
     private Visit visit;
 
-    @NotNull
+    @NotNull(message = "OutMigration cannot have a null migrationDate.")
     @Description(description = "Date of the out-migration.")
     private ZonedDateTime migrationDate;
 

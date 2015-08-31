@@ -19,7 +19,7 @@ public class LocationHierarchy extends AuditableExtIdEntity implements Serializa
 
     private static final long serialVersionUID = -5334850119671675888L;
 
-    @NotNull(message = "location hierarchy name may not be null")
+    @NotNull(message = "LocationHierarchy cannot have a null name.")
     @Description(description = "The name of this location hierarchy record.")
     private String name;
 
@@ -32,6 +32,7 @@ public class LocationHierarchy extends AuditableExtIdEntity implements Serializa
     @OneToMany(mappedBy = "parent")
     private Set<LocationHierarchy> children = new HashSet<>();
 
+    @NotNull(message = "LocationHierarchy cannot have a null level.")
     @Description(description = "Level of the location hierarchy.")
     @ManyToOne
     private LocationHierarchyLevel level;

@@ -1,5 +1,7 @@
 package org.openhds.service.impl.update;
 
+import org.openhds.domain.contract.AuditableEntity;
+import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.domain.model.update.PregnancyObservation;
 import org.openhds.errors.model.ErrorLog;
@@ -42,6 +44,7 @@ public class PregnancyObservationService extends AbstractAuditableCollectedServi
     public PregnancyObservation makePlaceHolder(String id, String name) {
         PregnancyObservation pregnancyObservation = new PregnancyObservation();
         pregnancyObservation.setUuid(id);
+        pregnancyObservation.setEntityStatus(name);
         pregnancyObservation.setVisit(visitService.getUnknownEntity());
         pregnancyObservation.setMother(individualService.getUnknownEntity());
         pregnancyObservation.setPregnancyDate(ZonedDateTime.now().minusMonths(5));
@@ -60,13 +63,44 @@ public class PregnancyObservationService extends AbstractAuditableCollectedServi
         pregnancyObservation.setMother(individualService.findOrMakePlaceHolder(motherId));
         pregnancyObservation.setVisit(visitService.findOrMakePlaceHolder(visitId));
         pregnancyObservation.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
-
+        pregnancyObservation.setEntityStatus(pregnancyObservation.NORMAL_STATUS);
         return createOrUpdate(pregnancyObservation);
     }
 
     @Override
-    public void validate(PregnancyObservation entity, ErrorLog errorLog) {
-        super.validate(entity, errorLog);
+    public void validate(PregnancyObservation pregnancyObservation, ErrorLog errorLog) {
+        super.validate(pregnancyObservation, errorLog);
+
+        //TODO: check that mother's last pregnancyObservation's pregnancyDate is not less than a year away from this one
+
+        if(pregnancyObservation.getExpectedDeliveryDate().isBefore(pregnancyObservation.getCollectionDateTime())){
+          errorLog.appendError("PregnancyObservation cannot have an expectedDeliverDate in the past.");
+        }
+
+        if(pregnancyObservation.getPregnancyDate().isAfter(pregnancyObservation.getCollectionDateTime())){
+          errorLog.appendError("PregnancyObservation cannot have an pregnancyDate in the future.");
+        }
+
+        if(pregnancyObservation.getMother().getEntityStatus().equals(AuditableEntity.NORMAL_STATUS) && null != pregnancyObservation.getMother().getDeath()){
+          errorLog.appendError("PregnancyObservation cannot have a mother registered as dead.");
+        }
+
+        if(!pregnancyObservation.getMother().getGender().equals(projectCodeService.getValueForCodeName(ProjectCode.GENDER_FEMALE))){
+          errorLog.appendError("PregnancyObservation cannot have a non-female Mother.");
+        }
+
+        if(pregnancyObservation.getMother().getEntityStatus().equals(AuditableEntity.NORMAL_STATUS) && !pregnancyObservation.getMother().hasOpenResidency()){
+          errorLog.appendError("PregnancyObservation cannot have a mother without an open residency .");
+        }
+
+      ZonedDateTime dateOfBirth = pregnancyObservation.getMother().getDateOfBirth();
+      if(null != dateOfBirth) {
+        int motherAge = ZonedDateTime.now().getYear() - dateOfBirth.getYear();
+        if (motherAge < Integer.parseInt(projectCodeService.getValueForCodeName(ProjectCode.MIN_AGE_OF_PREGNANCY))) {
+          errorLog.appendError("PregnancyObservation cannot have a mother under the age of 12.");
+        }
+      }
+
     }
 
     @Override

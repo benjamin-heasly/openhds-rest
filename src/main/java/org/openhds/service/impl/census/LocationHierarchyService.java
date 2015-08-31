@@ -48,6 +48,7 @@ public class LocationHierarchyService extends AbstractAuditableExtIdService<
         locationHierarchy.setLevel(locationHierarchyLevelService.getUnknownEntity());
         locationHierarchy.setParent(getHierarchyRoot());
         locationHierarchy.setUuid(id);
+        locationHierarchy.setEntityStatus(name);
         locationHierarchy.setName(name);
         locationHierarchy.setExtId(name);
 
@@ -86,6 +87,7 @@ public class LocationHierarchyService extends AbstractAuditableExtIdService<
         locationHierarchy.setParent(findOrMakePlaceHolder(parentId));
         locationHierarchy.setLevel(locationHierarchyLevelService.findOrMakePlaceHolder(levelId));
         locationHierarchy.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
+        locationHierarchy.setEntityStatus(locationHierarchy.NORMAL_STATUS);
         return createOrUpdate(locationHierarchy);
     }
 

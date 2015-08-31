@@ -40,13 +40,11 @@ public abstract class AbstractAuditableCollectedService<T extends AuditableColle
         super.validate(entity, errorLog);
         errorLog.setCollectedBy(entity.getCollectedBy());
 
-        //TODO: Manual validation for AuditableCollectedService
-
     }
 
     protected void initPlaceHolderCollectedFields(T entity){
         entity.setCollectedBy(fieldWorkerService.getUnknownEntity());
-        entity.setCollectionDateTime(ZonedDateTime.now());
+        entity.setCollectionDateTime(ZonedDateTime.now().plusHours(1));
     }
 
 }

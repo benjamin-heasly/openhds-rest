@@ -18,28 +18,17 @@ public abstract class AuditableCollectedEntity extends AuditableEntity implement
 
     private static final long serialVersionUID = 3558979775991767767L;
 
-    @Description(description = "Status of the data.")
-    protected String status;
-
-    @NotNull(message = "entity collectedBy may not be null")
+    @NotNull(message = "Entity cannot have a null collectedBy.")
     @ManyToOne
     @Description(description = "The field worker who collected the data, identified by external id.")
     protected FieldWorker collectedBy;
 
-    @NotNull(message = "entity collectionDateTime may not be null")
+    @NotNull(message = "Entity cannot have a null collectionDateTime.")
     @Description(description = "Date of collection/survey.")
     protected ZonedDateTime collectionDateTime;
 
     @Description(description = "Error message if the entity failed validation.")
     protected String statusMessage;
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
 
     public FieldWorker getCollectedBy() {
         return collectedBy;
@@ -68,7 +57,6 @@ public abstract class AuditableCollectedEntity extends AuditableEntity implement
     @Override
     public String toString() {
         return "AuditableCollectedEntity{" +
-                "status='" + status + '\'' +
                 ", collectionDateTime=" + collectionDateTime +
                 ", statusMessage='" + statusMessage + '\'' +
                 "} " + super.toString();

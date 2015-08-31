@@ -109,7 +109,7 @@ public class PregnancyResultServiceTest extends AuditableCollectedServiceTest<Pr
 
         //make the "real" entity to overwrite the old one.
         PregnancyOutcome pregnancyOutcome = pregnancyOutcomeService.makePlaceHolder("prugnuncyOotkum");
-        pregnancyOutcome.setChildrenBorn(11);
+        pregnancyOutcome.setVoidReason("blegh");
 
         pregnancyOutcomeService.createOrUpdate(pregnancyOutcome);
 
@@ -117,7 +117,7 @@ public class PregnancyResultServiceTest extends AuditableCollectedServiceTest<Pr
         pregnancyResult = service.findOne("validId");
 
         //cheggerout
-        assertEquals(pregnancyResult.getPregnancyOutcome().getChildrenBorn(), 11);
+        assertEquals(pregnancyResult.getPregnancyOutcome().getVoidReason(), "blegh");
 
     }
 

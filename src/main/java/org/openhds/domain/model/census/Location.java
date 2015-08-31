@@ -25,11 +25,12 @@ public class Location extends AuditableExtIdEntity implements Serializable {
 
     public final static long serialVersionUID = 169551578162260199L;
 
-    @NotNull(message = "location name may not be null")
+    @NotNull(message = "Location cannot have a null name.")
     @Size(min = 1)
     @Description(description = "Name of the location.")
     private String name;
 
+    @NotNull(message = "Location cannot have a null type.")
     @Description(description = "The type of Location.")
     private String type;
 
@@ -45,14 +46,16 @@ public class Location extends AuditableExtIdEntity implements Serializable {
     @Description(description = "The altitude for the Location")
     private String altitude;
 
+    @NotNull(message = "Location cannot have a null parent.")
     @ManyToOne
-    private LocationHierarchy locationHierarchy = new LocationHierarchy();
+    private LocationHierarchy locationHierarchy;
 
     @JsonIgnore
     @Description(description = "The set of all residencies where this Individual lives or lived.")
     @OneToMany(mappedBy = "location")
     private Set<Residency> residencies = new HashSet<>();
 
+    //TODO: Do we want to keep these? trim them down?
     // Extensions for bioko island project
     @Description(description = "The number of this building within a sector")
     private String buildingNumber;

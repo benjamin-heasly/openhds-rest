@@ -1,5 +1,7 @@
 package org.openhds.service.impl.update;
 
+import org.openhds.domain.contract.AuditableEntity;
+import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.domain.model.update.InMigration;
 import org.openhds.errors.model.ErrorLog;
@@ -45,11 +47,12 @@ public class InMigrationService extends AbstractAuditableCollectedService<InMigr
     public InMigration makePlaceHolder(String id, String name) {
         InMigration inMigration = new InMigration();
         inMigration.setUuid(id);
+        inMigration.setEntityStatus(name);
         inMigration.setVisit(visitService.getUnknownEntity());
         inMigration.setIndividual(individualService.getUnknownEntity());
         inMigration.setResidency(residencyService.getUnknownEntity());
         inMigration.setMigrationDate(ZonedDateTime.now().minusYears(1));
-        inMigration.setMigrationType(name);
+        inMigration.setMigrationType(projectCodeService.findByCodeGroup(ProjectCode.MIGRATION_TYPE).get(0).getCodeValue());
         inMigration.setReason(name);
         inMigration.setOrigin(name);
 
@@ -63,13 +66,26 @@ public class InMigrationService extends AbstractAuditableCollectedService<InMigr
         inMigration.setResidency(residencyService.findOrMakePlaceHolder(residencyId));
         inMigration.setVisit(visitService.findOrMakePlaceHolder(visitId));
         inMigration.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
-
+        inMigration.setEntityStatus(inMigration.NORMAL_STATUS);
         return createOrUpdate(inMigration);
     }
 
     @Override
-    public void validate(InMigration entity, ErrorLog errorLog) {
-        super.validate(entity, errorLog);
+    public void validate(InMigration inMigration, ErrorLog errorLog) {
+        super.validate(inMigration, errorLog);
+
+        if(inMigration.getMigrationDate().isAfter(inMigration.getCollectionDateTime())){
+          errorLog.appendError("InMigration cannot have a migrationDate in the future.");
+        }
+
+        if(!projectCodeService.isValueInCodeGroup(inMigration.getMigrationType(), ProjectCode.MIGRATION_TYPE)) {
+          errorLog.appendError("InMigration cannot have a type of: ["+inMigration.getMigrationType()+"].");
+        }
+
+        if(inMigration.getIndividual().getEntityStatus().equals(AuditableEntity.NORMAL_STATUS) && null != inMigration.getIndividual().getDeath()){
+          errorLog.appendError("Individual cannot be part of an InMigration if recorded as dead.");
+        }
+
     }
 
     @Override

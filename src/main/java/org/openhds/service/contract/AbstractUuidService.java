@@ -3,9 +3,8 @@ package org.openhds.service.contract;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openhds.domain.contract.UuidIdentifiable;
+import org.openhds.errors.model.*;
 import org.openhds.errors.model.Error;
-import org.openhds.errors.model.ErrorLog;
-import org.openhds.errors.model.ErrorLogException;
 import org.openhds.errors.util.ErrorLogger;
 import org.openhds.events.model.Event;
 import org.openhds.events.util.EventPublisher;
@@ -33,12 +32,11 @@ import java.util.Set;
  */
 public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends UuidIdentifiableRepository<T>> {
 
-    public final static String PLACEHOLDER_NAME = "PLACEHOLDER_NAME";
-
-    public final static String UNKNOWN_NAME = "UNKNOWN_NAME";
     public final static String UNKNOWN_ENTITY_UUID = "UNKNOWN";
 
-    private final Log log = LogFactory.getLog(this.getClass());
+    protected final Sort UUID_SORT = new Sort("uuid");
+
+    protected final Log log = LogFactory.getLog(this.getClass());
 
     protected final V repository;
 
@@ -57,12 +55,8 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
 
     public abstract T makePlaceHolder(String id, String name);
 
-    public T makePlaceHolder(String id){
-        return makePlaceHolder(id, PLACEHOLDER_NAME);
-    }
-
     protected T makeUnknownEntity(){
-        return makePlaceHolder(UNKNOWN_ENTITY_UUID, UNKNOWN_NAME);
+        return makePlaceHolder(UNKNOWN_ENTITY_UUID, UuidIdentifiable.UNKNOWN_STATUS);
     }
 
     private T persistUnknownEntity() {
@@ -120,39 +114,21 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
         return repository.exists(id);
     }
 
-    public T findOrMakePlaceHolder(String id){
-        if (exists(id)) {
-            return findOne(id);
-        }
-
-        T entity = makePlaceHolder(id);
-        entity.setUuid(id);
-
-        log.info("Making placeholder: " + entity);
-
-        return createOrUpdate(entity);
-    }
-
+    //This createOrUpdate provides basic logging of JSR-303 annotation validation
     public T createOrUpdate(T entity) {
 
-        ErrorLog errorLog = new ErrorLog();
-        errorLog.setEntityType(entity.getClass().getSimpleName());
-        validate(entity, errorLog);
-
-        if (!errorLog.getErrors().isEmpty()) {
-            errorLogger.log(errorLog);
-            throw new ErrorLogException(errorLog);
-        }
-
+        verify(entity, new ErrorLog());
         T saved = repository.save(entity);
+        logEvent(saved);
+        return saved;
+    }
 
+    protected void logEvent(T entity){
         Event event = new Event();
         event.setActionType(Event.PERSIST_ACTION);
-        event.setEntityType(saved.getClass().getSimpleName());
-        event.setEventData(saved.toString());
+        event.setEntityType(entity.getClass().getSimpleName());
+        event.setEventData(entity.toString());
         eventPublisher.publish(event);
-
-        return saved;
     }
 
     public EntityIterator<T> findByMultipleValues(Sort sort, QueryValue... queryValues) {
@@ -180,8 +156,10 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
         return new PagingEntityIterator<>(new PageIterator<>(pagedQueryable, sort));
     }
 
-    public void validate(T entity, ErrorLog errorLog) {
-
+    //This method 'verifies' that the data is 'whole' so to speak by firing off all the JSR-annotations,
+    //the majority of which are @NotNull. This allows the rest of the validation to make checks to fields
+    //without checking for nulls everywhere as well as catching would-be nulls ahead of time with an errorlog
+    protected void verify(T entity, ErrorLog errorLog){
         //Fire JSR-303 annotations
         Set<ConstraintViolation<T>> violations = validator.validate(entity);
 
@@ -191,7 +169,9 @@ public abstract class AbstractUuidService<T extends UuidIdentifiable, V extends 
             errors.add(new Error(violation.getMessage()));
         }
 
-        //TODO: Manual validation for UuidService
-
+        if (!errorLog.getErrors().isEmpty()) {
+            errorLogger.log(errorLog);
+            throw new ErrorLogException(errorLog);
+        }
     }
 }

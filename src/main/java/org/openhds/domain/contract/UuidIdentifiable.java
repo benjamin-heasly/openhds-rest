@@ -7,6 +7,8 @@ package org.openhds.domain.contract;
  */
 public interface UuidIdentifiable {
 
+    public final static String UNKNOWN_STATUS = "UNKNOWN_STATUS";
+
     String getUuid();
 
     void setUuid(String uuid);

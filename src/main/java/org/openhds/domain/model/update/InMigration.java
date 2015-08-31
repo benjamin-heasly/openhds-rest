@@ -26,28 +26,28 @@ public class InMigration extends AuditableCollectedEntity implements Serializabl
     @Description(description = "Reason why the individual in-migrated.")
     private String reason;
 
-    @NotNull
+    @NotNull(message = "InMigration cannot have a null migrationType.")
     @Description(description = "The type of in-migration, like internal vs external.")
     private String migrationType;
 
-    @NotNull
+    @NotNull(message = "InMigration cannnot have a null migrationDate.")
     @Description(description = "Date of the in-migration.")
     private ZonedDateTime migrationDate;
 
-    @NotNull
+    @NotNull(message = "InMigration cannot have a null visit.")
     @ManyToOne
     @Description(description = "The visit when and where the in-migration was recorded.")
     private Visit visit;
 
-    @NotNull
+    @NotNull(message = "InMigration cannot have a null individual.")
     @ManyToOne
     @Description(description = "Individual who is migrating in/into the study area.")
     private Individual individual;
 
     @OneToOne
-    @NotNull
+    @NotNull(message = "InMigration cannot have a null residency.")
     @Description(description = "The residency the individual is in-migrating to.")
-    private Residency residency = new Residency();
+    private Residency residency;
 
     public String getOrigin() {
         return origin;

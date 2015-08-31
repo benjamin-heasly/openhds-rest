@@ -20,6 +20,10 @@ import java.time.ZonedDateTime;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class AuditableEntity implements UuidIdentifiable, Serializable {
 
+    public final static String PLACEHOLDER_STATUS = "PLACEHOLDER_STATUS";
+    public final static String NORMAL_STATUS = "NORMAL_STATUS";
+    public final static String NEW_STATUS = "NEW_STATUS";
+
     private static final long serialVersionUID = -4703049354466276068L;
 
     @Id
@@ -28,6 +32,9 @@ public abstract class AuditableEntity implements UuidIdentifiable, Serializable 
             strategy = "org.openhds.repository.util.IfMissingUuidGenerator")
     @Column(length = 36)
     protected String uuid;
+
+    @Description(description = "Marker for whether or not the entity is a placeholder or unk entity.")
+    protected String entityStatus = NEW_STATUS;
 
     @Description(description = "Marker for soft delete / void of the record.")
     protected boolean deleted = false;
@@ -80,6 +87,13 @@ public abstract class AuditableEntity implements UuidIdentifiable, Serializable 
 
     public void setVoidReason(String voidReason) {
         this.voidReason = voidReason;
+    }
+
+    public String getEntityStatus() {
+        return entityStatus;
+    }
+    public void setEntityStatus(String entityStatus) {
+        this.entityStatus = entityStatus;
     }
 
     @XmlTransient

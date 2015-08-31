@@ -1,5 +1,6 @@
 package org.openhds.service.impl.census;
 
+import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.Individual;
 import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.domain.model.census.Relationship;
@@ -40,7 +41,8 @@ public class RelationshipService extends AbstractAuditableCollectedService<Relat
     public Relationship makePlaceHolder(String id, String name) {
         Relationship relationship = new Relationship();
         relationship.setUuid(id);
-        relationship.setRelationshipType(name);
+        relationship.setEntityStatus(name);
+        relationship.setRelationshipType(projectCodeService.findByCodeGroup(ProjectCode.RELATIONSHIP_TYPE).get(0).getCodeValue());
         relationship.setStartDate(ZonedDateTime.now());
         relationship.setIndividualA(individualService.getUnknownEntity());
         relationship.setIndividualB(individualService.getUnknownEntity());
@@ -54,12 +56,27 @@ public class RelationshipService extends AbstractAuditableCollectedService<Relat
         relationship.setIndividualA(individualService.findOrMakePlaceHolder(individualAId));
         relationship.setIndividualB(individualService.findOrMakePlaceHolder(individualBId));
         relationship.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
+        relationship.setEntityStatus(relationship.NORMAL_STATUS);
         return createOrUpdate(relationship);
     }
 
     @Override
-    public void validate(Relationship entity, ErrorLog errorLog) {
-        super.validate(entity, errorLog);
+    public void validate(Relationship relationship, ErrorLog errorLog) {
+        super.validate(relationship, errorLog);
+
+      if(relationship.getStartDate().isAfter(relationship.getCollectionDateTime())){
+        errorLog.appendError("Relationship cannot have a startDate in the future.");
+      }
+
+      if(null != relationship.getEndDate() &&
+          relationship.getStartDate().isAfter(relationship.getEndDate())){
+        errorLog.appendError("Relationship cannot have a startDate before its endDate.");
+      }
+
+      if(!projectCodeService.isValueInCodeGroup(relationship.getRelationshipType(), ProjectCode.RELATIONSHIP_TYPE)) {
+        errorLog.appendError("Relationship cannot have a type of: ["+relationship.getRelationshipType()+"].");
+      }
+
     }
 
     // all hierarchies associated with active residencies for either individual
@@ -84,11 +101,11 @@ public class RelationshipService extends AbstractAuditableCollectedService<Relat
                                                                ZonedDateTime modifiedAfter,
                                                                ZonedDateTime modifiedBefore) {
         return locationHierarchyService.findOtherByEnclosingLocationHierarchy(pageable,
-                locationHierarchyUuid,
-                modifiedAfter,
-                modifiedBefore,
-                RelationshipService::enclosed,
-                repository);
+            locationHierarchyUuid,
+            modifiedAfter,
+            modifiedBefore,
+            RelationshipService::enclosed,
+            repository);
     }
 
     // relationships where either individual has an active residency at an enclosed location

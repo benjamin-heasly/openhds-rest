@@ -41,6 +41,7 @@ public class PregnancyResultService extends AbstractAuditableCollectedService<Pr
     public PregnancyResult makePlaceHolder(String id, String name) {
         PregnancyResult pregnancyResult = new PregnancyResult();
         pregnancyResult.setUuid(id);
+        pregnancyResult.setEntityStatus(name);
         pregnancyResult.setPregnancyOutcome(pregnancyOutcomeService.getUnknownEntity());
         pregnancyResult.setType(name);
         pregnancyResult.setChild(individualService.getUnknownEntity());
@@ -58,14 +59,15 @@ public class PregnancyResultService extends AbstractAuditableCollectedService<Pr
         pregnancyResult.setPregnancyOutcome(pregnancyOutcomeService.findOrMakePlaceHolder(pregnancyOutcomeId));
         pregnancyResult.setChild(individualService.findOrMakePlaceHolder(childId));
         pregnancyResult.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
-
+        pregnancyResult.setEntityStatus(pregnancyResult.NORMAL_STATUS);
         return createOrUpdate(pregnancyResult);
 
     }
 
     @Override
-    public void validate(PregnancyResult entity, ErrorLog errorLog) {
-        super.validate(entity, errorLog);
+    public void validate(PregnancyResult pregnancyResult, ErrorLog errorLog) {
+        super.validate(pregnancyResult, errorLog);
+
     }
 
     @Override

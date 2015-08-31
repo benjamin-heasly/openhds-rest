@@ -39,6 +39,7 @@ public class ResidencyService extends AbstractAuditableCollectedService<Residenc
     public Residency makePlaceHolder(String id, String name) {
         Residency residency = new Residency();
         residency.setUuid(id);
+        residency.setEntityStatus(name);
         residency.setStartDate(ZonedDateTime.now().minusYears(1));
         residency.setStartType(name);
         residency.setIndividual(individualService.getUnknownEntity());
@@ -54,6 +55,7 @@ public class ResidencyService extends AbstractAuditableCollectedService<Residenc
         residency.setIndividual(individualService.findOrMakePlaceHolder(individualId));
         residency.setLocation(locationService.findOrMakePlaceHolder(locationId));
         residency.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
+        residency.setEntityStatus(residency.NORMAL_STATUS);
         return createOrUpdate(residency);
     }
 
@@ -68,11 +70,11 @@ public class ResidencyService extends AbstractAuditableCollectedService<Residenc
                                                             ZonedDateTime modifiedAfter,
                                                             ZonedDateTime modifiedBefore) {
         return locationHierarchyService.findOtherByEnclosingLocationHierarchy(pageable,
-                locationHierarchyUuid,
-                modifiedAfter,
-                modifiedBefore,
-                ResidencyService::enclosed,
-                repository);
+            locationHierarchyUuid,
+            modifiedAfter,
+            modifiedBefore,
+            ResidencyService::enclosed,
+            repository);
     }
 
     private static Specification<Residency> enclosed(final List<LocationHierarchy> enclosing) {
@@ -80,7 +82,29 @@ public class ResidencyService extends AbstractAuditableCollectedService<Residenc
     }
 
     @Override
-    public void validate(Residency entity, ErrorLog errorLog) {
-        super.validate(entity, errorLog);
+    public void validate(Residency residency, ErrorLog errorLog) {
+        super.validate(residency, errorLog);
+
+        if (residency.getStartDate().isAfter(residency.getCollectionDateTime())) {
+            errorLog.appendError("Residency cannot have a startDate in the future.");
+        }
+
+        if (null != residency.getEndDate() &&
+            residency.getStartDate().isAfter(residency.getEndDate())) {
+            errorLog.appendError("Residency cannot have a startDate before its endDate.");
+        }
+
+        Set<Residency> residencies = residency.getIndividual().getResidencies();
+        if (null != residencies){
+            for(Residency existingResidency : residencies){
+                if(null != residency.getUuid()
+                && !existingResidency.equals(residency)
+                && null != existingResidency.getEndDate()){
+                    errorLog.appendError("Individual cannot have more than one open residency.");
+                }
+            }
+        }
+
     }
+
 }

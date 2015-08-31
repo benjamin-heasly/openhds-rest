@@ -2,6 +2,7 @@ package org.openhds.domain.model.census;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.openhds.domain.contract.AuditableExtIdEntity;
+import org.openhds.domain.model.update.Death;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.*;
@@ -24,7 +25,7 @@ public class Individual extends AuditableExtIdEntity implements Serializable {
 
     private static final long serialVersionUID = 5226650143604788124L;
 
-    @NotNull(message = "Individual must have a firstname.")
+    @NotNull(message = "Individual cannot have a null firstname.")
     @Description(description = "First name of the individual.")
     private String firstName;
 
@@ -34,12 +35,12 @@ public class Individual extends AuditableExtIdEntity implements Serializable {
     @Description(description = "Last name of the individual.")
     private String lastName;
 
+    @NotNull(message = "Individual cannot have a null gender.")
     @Description(description = "The gender of the individual.")
     private String gender;
 
     @Description(description = "Birth date of the individual.")
     private ZonedDateTime dateOfBirth;
-
 
     @ManyToOne
     @Description(description = "The individual's mother.")
@@ -68,6 +69,11 @@ public class Individual extends AuditableExtIdEntity implements Serializable {
     @OneToMany(mappedBy = "individualB")
     @Description(description = "The set of all relationships another individual may have with this individual.")
     private Set<Relationship> relationshipsAsIndividualB = new HashSet<>();
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "individual")
+    @Description(description = "The death registered for this individual.")
+    private Death death;
 
     public String getFirstName() {
         return firstName;
@@ -171,6 +177,12 @@ public class Individual extends AuditableExtIdEntity implements Serializable {
         return collectedResidencies;
     }
 
+    public Death getDeath() {
+        return death;
+    }
+    public void setDeath(Death death) {
+        this.death = death;
+    }
     @Override
     public String toString() {
         return "Individual{" +
@@ -181,4 +193,16 @@ public class Individual extends AuditableExtIdEntity implements Serializable {
                 ", dateOfBirth=" + dateOfBirth +
                 "} " + super.toString();
     }
+
+    public boolean hasOpenResidency(){
+        if (null != residencies) {
+            for (Residency existingResidency : residencies) {
+                if(null == existingResidency.getEndDate()){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }

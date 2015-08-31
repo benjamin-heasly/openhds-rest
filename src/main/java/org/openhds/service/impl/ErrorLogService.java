@@ -28,6 +28,7 @@ public class ErrorLogService extends AbstractAuditableCollectedService<ErrorLog,
     public ErrorLog makePlaceHolder(String id, String name) {
         ErrorLog errorLog = new ErrorLog();
         errorLog.setUuid(id);
+        errorLog.setEntityStatus(name);
         errorLog.appendError(name);
 
         initPlaceHolderCollectedFields(errorLog);
@@ -52,6 +53,7 @@ public class ErrorLogService extends AbstractAuditableCollectedService<ErrorLog,
         log.info("Creating error log: " + errorLog);
 
         ErrorLog errorLogforErrorLog = new ErrorLog();
+        verify(errorLog, errorLogforErrorLog);
         validate(errorLog, errorLogforErrorLog);
         if (!errorLogforErrorLog.getErrors().isEmpty()) {
             log.info("Error while creating error log: " + errorLogforErrorLog);

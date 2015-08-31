@@ -25,6 +25,7 @@ public class Residency extends AuditableCollectedEntity implements Serializable 
     @Description(description = "Residency start date.")
     ZonedDateTime startDate;
 
+    @NotNull(message = "Residency cannot have a null startType.")
     @Description(description = "Residency start type.")
     String startType;
 
@@ -39,7 +40,7 @@ public class Residency extends AuditableCollectedEntity implements Serializable 
     @Description(description = "Individual who resides at the Location.")
     private Individual individual;
 
-    @NotNull(message = "Residency cannot have a null Location.")
+    @NotNull(message = "Residency cannot have a null location.")
     @ManyToOne
     @Description(description = "Location where the Individual resides.")
     private Location location;

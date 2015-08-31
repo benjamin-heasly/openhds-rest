@@ -1,5 +1,6 @@
 package org.openhds.service.impl.census;
 
+import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.Location;
 import org.openhds.domain.model.census.LocationHierarchy;
 import org.openhds.errors.model.ErrorLog;
@@ -34,8 +35,10 @@ public class LocationService extends AbstractAuditableExtIdService<Location, Loc
     public Location makePlaceHolder(String id, String name) {
         Location location = new Location();
         location.setUuid(id);
+        location.setEntityStatus(name);
         location.setName(name);
         location.setExtId(name);
+        location.setType(projectCodeService.findByCodeGroup(ProjectCode.LOCATION_TYPE).get(0).getCodeValue());
         location.setLocationHierarchy(locationHierarchyService.getUnknownEntity());
 
         initPlaceHolderCollectedFields(location);
@@ -44,8 +47,13 @@ public class LocationService extends AbstractAuditableExtIdService<Location, Loc
     }
 
     @Override
-    public void validate(Location entity, ErrorLog errorLog) {
-        super.validate(entity, errorLog);
+    public void validate(Location location, ErrorLog errorLog) {
+        super.validate(location, errorLog);
+
+        if(!projectCodeService.isValueInCodeGroup(location.getType(), ProjectCode.LOCATION_TYPE)){
+            errorLog.appendError("Location cannot have a type of: ["+location.getType()+"].");
+        }
+
     }
 
     @Override
@@ -74,6 +82,7 @@ public class LocationService extends AbstractAuditableExtIdService<Location, Loc
     public Location recordLocation(Location location, String locationHierarchyId, String fieldWorkerId){
         location.setLocationHierarchy(locationHierarchyService.findOrMakePlaceHolder(locationHierarchyId));
         location.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
+        location.setEntityStatus(location.NORMAL_STATUS);
         return createOrUpdate(location);
     }
 }

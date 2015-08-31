@@ -10,7 +10,7 @@ import org.springframework.data.domain.Sort;
 
 /**
  * Created by wolfe on 6/11/15.
- */
+*/
 public abstract class AbstractAuditableExtIdService<T extends AuditableExtIdEntity, V extends AuditableExtIdRepository<T>>
         extends AbstractAuditableCollectedService<T, V> {
 
@@ -30,8 +30,5 @@ public abstract class AbstractAuditableExtIdService<T extends AuditableExtIdEnti
     @Override
     public void validate(T entity, ErrorLog errorLog) {
         super.validate(entity, errorLog);
-
-        //TODO: Manual validation for AuditableExtIdService
-
     }
 }

@@ -10,7 +10,6 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.NoSuchElementException;
-import java.util.Scanner;
 
 /**
  * Created by ben on 8/13/15.

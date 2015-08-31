@@ -19,7 +19,7 @@ public class PregnancyResult extends AuditableCollectedEntity implements Seriali
 
     private static final long serialVersionUID = -3113139461022105832L;
 
-    @NotNull(message = "PregnancyResult must not have a null type.")
+    @NotNull(message = "PregnancyResult cannot have a null type.")
     @Description(description="Pregnancy outcome type.")
     private String type;
 
@@ -27,7 +27,7 @@ public class PregnancyResult extends AuditableCollectedEntity implements Seriali
     @Description(description="The child that of the pregnancy.")
     private Individual child;
 
-    @NotNull(message = "A PregnancyResult must not have a null PregnancyOutome.")
+    @NotNull(message = "A PregnancyResult cannot have a null pregnancyOutome.")
     @ManyToOne
     @Description(description = "The pregnancyOutcome that this pregnancy result came from.")
     private PregnancyOutcome pregnancyOutcome;
