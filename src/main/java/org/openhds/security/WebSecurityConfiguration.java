@@ -71,8 +71,7 @@ public class WebSecurityConfiguration {
                     HttpServletRequest request = (HttpServletRequest) servletRequest;
                     HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-                    // TODO: for now, allow all origins
-                    response.setHeader("Access-Control-Allow-Origin", "*");
+                    response.setHeader("Access-Control-Allow-Origin", ((HttpServletRequest) servletRequest).getHeader("Origin"));
 
                     // TODO: are these the verbs and headers we really want?
                     response.setHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS,DELETE");
