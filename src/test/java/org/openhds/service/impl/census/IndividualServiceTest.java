@@ -18,14 +18,6 @@ import static org.junit.Assert.assertNotNull;
  */
 public class IndividualServiceTest extends AuditableExtIdServiceTest<Individual, IndividualService> {
 
-    public static final String FIELDWORKER_ID = "feldwarker";
-    public static final String SOCIALGROUP_ID = "suculgrup";
-    public static final String LOCATION_ID = "lucutun";
-    public static final String INDIVIDUAL_ID = "induuvudu";
-    public static final String RELATIONSHIP_ID = "relutuup";
-    public static final String RESIDENCY_ID = "rsususndy";
-    public static final String MEMBERSHIP_ID = "mumburshub";
-
     @Autowired
     private LocationHierarchyService locationHierarchyService;
     @Autowired
@@ -93,7 +85,6 @@ public class IndividualServiceTest extends AuditableExtIdServiceTest<Individual,
 
         Individual fancyIndividual = makeValidEntity("FancyMan", "FancyId");
         String relationshipType = projectCodeService.findByCodeGroup(ProjectCode.RELATIONSHIP_TYPE).get(0).getCodeValue();
-        ZonedDateTime collectionDateTime = ZonedDateTime.now().plusHours(1);
         ZonedDateTime recordTime = ZonedDateTime.now().minusHours(1);
 
         service.recordIndividual(fancyIndividual,

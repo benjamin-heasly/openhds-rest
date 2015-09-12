@@ -69,29 +69,29 @@ public class IndividualService extends AbstractAuditableExtIdService<Individual,
     public Individual recordIndividual(Individual individual,
                                        ZonedDateTime recordTime,
                                        String relationToHead,
-                                       String headOfHouseholdUuid,
-                                       String relationshipUuid,
-                                       String locationUuid,
-                                       String socialGroupUuid,
-                                       String fieldWorkerUuid,
-                                       String motherUuid,
-                                       String fatherUuid,
-                                       String membershipUuid,
-                                       String residencyUuid){
+                                       String headOfHouseholdId,
+                                       String relationshipId,
+                                       String locationId,
+                                       String socialGroupId,
+                                       String fieldWorkerId,
+                                       String motherId,
+                                       String fatherId,
+                                       String membershipId,
+                                       String residencyId){
 
         String startType = "individualRegistration";
 
-        FieldWorker collectedBy = fieldWorkerService.findOrMakePlaceHolder(fieldWorkerUuid);
+        FieldWorker collectedBy = fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId);
         ZonedDateTime collectionDateTime = individual.getCollectionDateTime();
 
-        individual.setMother(findOrMakePlaceHolder(motherUuid));
-        individual.setFather(findOrMakePlaceHolder(fatherUuid));
+        individual.setMother(findOrMakePlaceHolder(motherId));
+        individual.setFather(findOrMakePlaceHolder(fatherId));
         individual.setCollectedBy(collectedBy);
         individual.setStatusMessage(individual.NORMAL_STATUS);
         individual = createOrUpdate(individual);
 
-        Relationship relationship = relationshipService.findOrMakePlaceHolder(relationshipUuid);
-        Individual headOfHousehold = findOrMakePlaceHolder(headOfHouseholdUuid);
+        Relationship relationship = relationshipService.findOrMakePlaceHolder(relationshipId);
+        Individual headOfHousehold = findOrMakePlaceHolder(headOfHouseholdId);
         relationship.setIndividualA(individual);
         relationship.setIndividualB(headOfHousehold);
         relationship.setRelationshipType(relationToHead);
@@ -101,9 +101,9 @@ public class IndividualService extends AbstractAuditableExtIdService<Individual,
         relationship.setEntityStatus(relationship.NORMAL_STATUS);
         relationshipService.createOrUpdate(relationship);
 
-        Membership membership = membershipService.findOrMakePlaceHolder(membershipUuid);
+        Membership membership = membershipService.findOrMakePlaceHolder(membershipId);
         membership.setIndividual(individual);
-        membership.setSocialGroup(socialGroupService.findOrMakePlaceHolder(socialGroupUuid));
+        membership.setSocialGroup(socialGroupService.findOrMakePlaceHolder(socialGroupId));
         membership.setStartType(startType);
         membership.setStartDate(recordTime);
         membership.setEntityStatus(membership.NORMAL_STATUS);
@@ -111,9 +111,9 @@ public class IndividualService extends AbstractAuditableExtIdService<Individual,
         membership.setCollectionDateTime(collectionDateTime);
         membershipService.createOrUpdate(membership);
 
-        Residency residency = residencyService.makePlaceHolder(residencyUuid);
+        Residency residency = residencyService.makePlaceHolder(residencyId);
         residency.setIndividual(individual);
-        residency.setLocation(locationService.findOrMakePlaceHolder(locationUuid));
+        residency.setLocation(locationService.findOrMakePlaceHolder(locationId));
         residency.setCollectedBy(collectedBy);
         residency.setCollectionDateTime(collectionDateTime);
         residency.setStartType(startType);

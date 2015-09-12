@@ -9,6 +9,8 @@ import org.openhds.service.AuditableCollectedServiceTest;
 import org.openhds.service.impl.census.IndividualService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.ZonedDateTime;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -119,6 +121,14 @@ public class PregnancyResultServiceTest extends AuditableCollectedServiceTest<Pr
         //cheggerout
         assertEquals(pregnancyResult.getPregnancyOutcome().getVoidReason(), "blegh");
 
+    }
+
+    @Test
+    public void complexRecordValid(){
+        PregnancyResult pregnancyResult = makeValidEntity("validName", "validId");
+        ZonedDateTime recordTime = ZonedDateTime.now().minusHours(1);
+
+        service.recordPregnancyResult(pregnancyResult, recordTime, PREGNANCY_OUTCOME_ID, INDIVIDUAL_ID, FIELDWORKER_ID, MEMBERSHIP_ID, RESIDENCY_ID);
     }
 
 }

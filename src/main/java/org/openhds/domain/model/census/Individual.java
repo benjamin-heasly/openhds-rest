@@ -205,4 +205,15 @@ public class Individual extends AuditableExtIdEntity implements Serializable {
         return false;
     }
 
+    public boolean hasOpenMembership(){
+        if (null != memberships) {
+            for (Membership existingMembership : memberships) {
+                if(null == existingMembership.getEndDate()){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }
