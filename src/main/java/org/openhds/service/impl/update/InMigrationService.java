@@ -3,6 +3,7 @@ package org.openhds.service.impl.update;
 import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.LocationHierarchy;
+import org.openhds.domain.model.census.Residency;
 import org.openhds.domain.model.update.InMigration;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.update.InMigationRepository;
@@ -67,7 +68,18 @@ public class InMigrationService extends AbstractAuditableCollectedService<InMigr
         inMigration.setVisit(visitService.findOrMakePlaceHolder(visitId));
         inMigration.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
         inMigration.setEntityStatus(inMigration.NORMAL_STATUS);
-        return createOrUpdate(inMigration);
+
+        InMigration persistedInMigration = createOrUpdate(inMigration);
+
+        Residency residency = persistedInMigration.getResidency();
+        residency.setEntityStatus(residency.NORMAL_STATUS);
+        residency.setStartDate(inMigration.getMigrationDate());
+        residency.setStartType("inMigration");
+        residency.setCollectedBy(inMigration.getCollectedBy());
+        residency.setCollectionDateTime(inMigration.getCollectionDateTime());
+        residencyService.createOrUpdate(residency);
+
+        return persistedInMigration;
     }
 
     @Override

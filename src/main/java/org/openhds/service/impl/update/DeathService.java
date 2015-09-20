@@ -59,7 +59,7 @@ public class DeathService extends AbstractAuditableCollectedService<Death, Death
         return death;
     }
 
-    public Death recordDeath(Death death, ZonedDateTime recordTime, String individualId, String visitId, String fieldWorkerId){
+    public Death recordDeath(Death death, String individualId, String visitId, String fieldWorkerId){
         death.setIndividual(individualService.findOrMakePlaceHolder(individualId));
         death.setVisit(visitService.findOrMakePlaceHolder(visitId));
         death.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
@@ -101,19 +101,19 @@ public class DeathService extends AbstractAuditableCollectedService<Death, Death
             }
 
             for(Membership membership : deadIndividual.getMemberships()){
-              membership.setEndDate(recordTime);
+              membership.setEndDate(persistedDeath.getDeathDate());
               membership.setEndType(endType);
             }
             for(Relationship relationship : deadIndividual.getRelationshipsAsIndividualA()){
-              relationship.setEndDate(recordTime);
+              relationship.setEndDate(persistedDeath.getDeathDate());
               relationship.setEndType(endType);
             }
             for(Relationship relationship : deadIndividual.getRelationshipsAsIndividualB()){
-              relationship.setEndDate(recordTime);
+              relationship.setEndDate(persistedDeath.getDeathDate());
               relationship.setEndType(endType);
             }
             for(Residency residency : deadIndividual.getResidencies()){
-              residency.setEndDate(recordTime);
+              residency.setEndDate(persistedDeath.getDeathDate());
               residency.setEndType(endType);
             }
 

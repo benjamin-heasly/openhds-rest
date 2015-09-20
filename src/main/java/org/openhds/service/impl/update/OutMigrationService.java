@@ -2,6 +2,7 @@ package org.openhds.service.impl.update;
 
 import org.openhds.domain.contract.AuditableEntity;
 import org.openhds.domain.model.census.LocationHierarchy;
+import org.openhds.domain.model.census.Residency;
 import org.openhds.domain.model.update.OutMigration;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.update.OutMigationRepository;
@@ -65,7 +66,17 @@ public class OutMigrationService extends AbstractAuditableCollectedService<OutMi
         outMigration.setVisit(visitService.findOrMakePlaceHolder(visitId));
         outMigration.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
         outMigration.setEntityStatus(outMigration.NORMAL_STATUS);
-        return createOrUpdate(outMigration);
+
+        OutMigration persistedOutMigration = createOrUpdate(outMigration);
+      
+        Residency residency = persistedOutMigration.getResidency();
+            if(residency.getEntityStatus().equals(residency.NORMAL_STATUS)){
+                residency.setEndType("outMigration");
+                residency.setEndDate(persistedOutMigration.getMigrationDate());
+                residencyService.createOrUpdate(residency);
+            }
+
+        return persistedOutMigration;
     }
 
     @Override
