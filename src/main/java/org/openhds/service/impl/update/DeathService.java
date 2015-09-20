@@ -1,9 +1,10 @@
 package org.openhds.service.impl.update;
 
 import org.openhds.domain.contract.AuditableEntity;
-import org.openhds.domain.model.census.Individual;
-import org.openhds.domain.model.census.LocationHierarchy;
+import org.openhds.domain.model.census.*;
 import org.openhds.domain.model.update.Death;
+import org.openhds.domain.model.update.PregnancyObservation;
+import org.openhds.domain.model.update.PregnancyOutcome;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.update.DeathRepository;
 import org.openhds.service.contract.AbstractAuditableCollectedService;
@@ -35,6 +36,9 @@ public class DeathService extends AbstractAuditableCollectedService<Death, Death
     private VisitService visitService;
 
     @Autowired
+    private PregnancyOutcomeService pregnancyOutcomeService;
+
+    @Autowired
     public DeathService(DeathRepository repository) {
         super(repository);
     }
@@ -55,12 +59,67 @@ public class DeathService extends AbstractAuditableCollectedService<Death, Death
         return death;
     }
 
-    public Death recordDeath(Death death, String individualId, String visitId, String fieldWorkerId){
+    public Death recordDeath(Death death, ZonedDateTime recordTime, String individualId, String visitId, String fieldWorkerId){
         death.setIndividual(individualService.findOrMakePlaceHolder(individualId));
         death.setVisit(visitService.findOrMakePlaceHolder(visitId));
         death.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
         death.setEntityStatus(death.NORMAL_STATUS);
-        return createOrUpdate(death);
+        Death persistedDeath = createOrUpdate(death);
+
+        String endType = "death";
+
+        Individual deadIndividual = persistedDeath.getIndividual();
+        if (deadIndividual.getEntityStatus().equals(deadIndividual.NORMAL_STATUS)){
+
+            ZonedDateTime latestPregnancyObservation = null;
+            for(PregnancyObservation pregnancyObservation : deadIndividual.getPregnancyObservations()){
+                if(null == latestPregnancyObservation || latestPregnancyObservation.isBefore(pregnancyObservation.getPregnancyDate())){
+                  latestPregnancyObservation = pregnancyObservation.getPregnancyDate();
+                }
+            }
+
+            ZonedDateTime latestPregnancyOutcome = null;
+            for(PregnancyOutcome pregnancyOutcome : deadIndividual.getPregnancyOutcomes()){
+                if(null == latestPregnancyOutcome || latestPregnancyOutcome.isBefore(pregnancyOutcome.getOutcomeDate())){
+                  latestPregnancyOutcome = pregnancyOutcome.getOutcomeDate();
+                }
+            }
+
+            if(null != latestPregnancyObservation
+                && null != latestPregnancyOutcome
+                && latestPregnancyObservation.isAfter(latestPregnancyOutcome)){
+
+                PregnancyOutcome pregnancyOutcome = new PregnancyOutcome();
+                pregnancyOutcome.setCollectedBy(persistedDeath.getCollectedBy());
+                pregnancyOutcome.setCollectionDateTime(persistedDeath.getCollectionDateTime());
+                pregnancyOutcome.setEntityStatus(pregnancyOutcome.NORMAL_STATUS);
+                pregnancyOutcome.setMother(deadIndividual);
+                pregnancyOutcome.setOutcomeDate(persistedDeath.getDeathDate());
+                pregnancyOutcome.setVisit(persistedDeath.getVisit());
+                pregnancyOutcomeService.createOrUpdate(pregnancyOutcome);
+
+            }
+
+            for(Membership membership : deadIndividual.getMemberships()){
+              membership.setEndDate(recordTime);
+              membership.setEndType(endType);
+            }
+            for(Relationship relationship : deadIndividual.getRelationshipsAsIndividualA()){
+              relationship.setEndDate(recordTime);
+              relationship.setEndType(endType);
+            }
+            for(Relationship relationship : deadIndividual.getRelationshipsAsIndividualB()){
+              relationship.setEndDate(recordTime);
+              relationship.setEndType(endType);
+            }
+            for(Residency residency : deadIndividual.getResidencies()){
+              residency.setEndDate(recordTime);
+              residency.setEndType(endType);
+            }
+
+        }
+
+        return persistedDeath;
     }
 
     @Override

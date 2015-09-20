@@ -3,6 +3,8 @@ package org.openhds.domain.model.census;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.openhds.domain.contract.AuditableExtIdEntity;
 import org.openhds.domain.model.update.Death;
+import org.openhds.domain.model.update.PregnancyObservation;
+import org.openhds.domain.model.update.PregnancyOutcome;
 import org.openhds.domain.util.Description;
 
 import javax.persistence.*;
@@ -74,6 +76,16 @@ public class Individual extends AuditableExtIdEntity implements Serializable {
     @OneToOne(mappedBy = "individual")
     @Description(description = "The death registered for this individual.")
     private Death death;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "mother")
+    @Description(description = "The set of all pregnancyObservations that have this individual as the mother.")
+    private Set<PregnancyObservation> pregnancyObservations = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "mother")
+    @Description(description = "The set of all pregnancyOutcomes that have this individual as the mother.")
+    private Set<PregnancyOutcome> pregnancyOutcomes = new HashSet<>();
 
     public String getFirstName() {
         return firstName;
@@ -163,6 +175,19 @@ public class Individual extends AuditableExtIdEntity implements Serializable {
         this.relationshipsAsIndividualB = relationshipsAsIndividualB;
     }
 
+    public Set<PregnancyObservation> getPregnancyObservations() {
+        return pregnancyObservations;
+    }
+    public void setPregnancyObservations(Set<PregnancyObservation> pregnancyObservations) {
+        this.pregnancyObservations = pregnancyObservations;
+    }
+
+    public Set<PregnancyOutcome> getPregnancyOutcomes() {
+        return pregnancyOutcomes;
+    }
+    public void setPregnancyOutcomes(Set<PregnancyOutcome> pregnancyOutcomes) {
+        this.pregnancyOutcomes = pregnancyOutcomes;
+    }
     public Set<Residency> collectActiveResidencies(Set<Residency> collectedResidencies) {
         if (null == collectedResidencies) {
             return null;

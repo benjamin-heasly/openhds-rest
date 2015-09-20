@@ -9,6 +9,8 @@ import org.openhds.service.AuditableCollectedServiceTest;
 import org.openhds.service.impl.census.IndividualService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.ZonedDateTime;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -50,7 +52,7 @@ public class DeathServiceTest extends AuditableCollectedServiceTest<Death, Death
         death.setIndividual(null);
 
         // pass it all into the record method
-        death = service.recordDeath(death, individual.getUuid(), visit.getUuid(), fieldWorker.getUuid());
+        death = service.recordDeath(death, ZonedDateTime.now(), individual.getUuid(), visit.getUuid(), fieldWorker.getUuid());
 
 
         //Check that the originals match the ones pulled out from findOrMakePlaceholder()
@@ -75,7 +77,7 @@ public class DeathServiceTest extends AuditableCollectedServiceTest<Death, Death
         death.setIndividual(null);
 
         //Pass it in with new reference uuids
-        death = service.recordDeath(death, "induvudual", "vusut", "feldwarker");
+        death = service.recordDeath(death, ZonedDateTime.now(), "induvudual", "vusut", "feldwarker");
 
         //check that they were persisted
         assertNotNull(death.getCollectedBy());

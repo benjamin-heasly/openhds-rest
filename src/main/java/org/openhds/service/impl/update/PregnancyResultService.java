@@ -114,6 +114,7 @@ public class PregnancyResultService extends AbstractAuditableCollectedService<Pr
             child.setMother(mother);
             individualService.createOrUpdate(child);
 
+            // make residency same as mom's
             if(mother.getEntityStatus().equals(Individual.NORMAL_STATUS)){
                 for(Residency residency : mother.getResidencies()){
                     if(null != residency.getEndDate()){
@@ -131,6 +132,7 @@ public class PregnancyResultService extends AbstractAuditableCollectedService<Pr
                     }
                 }
 
+                //make membership same as mom's
                 for(Membership membership : mother.getMemberships()){
                     if(null != membership.getEndDate()){
                         Membership childMembership = new Membership();
