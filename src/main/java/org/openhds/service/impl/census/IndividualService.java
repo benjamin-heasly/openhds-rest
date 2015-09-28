@@ -1,9 +1,8 @@
 package org.openhds.service.impl.census;
 
+import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.ProjectCode;
-import org.openhds.domain.model.census.Individual;
-import org.openhds.domain.model.census.LocationHierarchy;
-import org.openhds.domain.model.census.Residency;
+import org.openhds.domain.model.census.*;
 import org.openhds.errors.model.ErrorLog;
 import org.openhds.repository.concrete.census.IndividualRepository;
 import org.openhds.service.contract.AbstractAuditableExtIdService;
@@ -13,8 +12,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.management.relation.Relation;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Subquery;
+import java.lang.reflect.Field;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -28,6 +29,17 @@ public class IndividualService extends AbstractAuditableExtIdService<Individual,
 
     @Autowired
     private LocationHierarchyService locationHierarchyService;
+    @Autowired
+    private RelationshipService relationshipService;
+    @Autowired
+    private ResidencyService residencyService;
+    @Autowired
+    private MembershipService membershipService;
+    @Autowired
+    private SocialGroupService socialGroupService;
+    @Autowired
+    private LocationService locationService;
+
 
     @Autowired
     public IndividualService(IndividualRepository repository) {
@@ -52,6 +64,64 @@ public class IndividualService extends AbstractAuditableExtIdService<Individual,
         individual.setCollectedBy(fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId));
         individual.setEntityStatus(individual.NORMAL_STATUS);
         return createOrUpdate(individual);
+    }
+
+    public Individual recordIndividual(Individual individual,
+                                       ZonedDateTime recordTime,
+                                       String relationToHead,
+                                       String headOfHouseholdId,
+                                       String relationshipId,
+                                       String locationId,
+                                       String socialGroupId,
+                                       String fieldWorkerId,
+                                       String motherId,
+                                       String fatherId,
+                                       String membershipId,
+                                       String residencyId){
+
+        String startType = "individualRegistration";
+
+        FieldWorker collectedBy = fieldWorkerService.findOrMakePlaceHolder(fieldWorkerId);
+        ZonedDateTime collectionDateTime = individual.getCollectionDateTime();
+
+        individual.setMother(findOrMakePlaceHolder(motherId));
+        individual.setFather(findOrMakePlaceHolder(fatherId));
+        individual.setCollectedBy(collectedBy);
+        individual.setStatusMessage(individual.NORMAL_STATUS);
+        individual = createOrUpdate(individual);
+
+        Relationship relationship = relationshipService.findOrMakePlaceHolder(relationshipId);
+        Individual headOfHousehold = findOrMakePlaceHolder(headOfHouseholdId);
+        relationship.setIndividualA(individual);
+        relationship.setIndividualB(headOfHousehold);
+        relationship.setRelationshipType(relationToHead);
+        relationship.setCollectedBy(collectedBy);
+        relationship.setCollectionDateTime(collectionDateTime);
+        relationship.setStartDate(recordTime);
+        relationship.setEntityStatus(relationship.NORMAL_STATUS);
+        relationshipService.createOrUpdate(relationship);
+
+        Membership membership = membershipService.findOrMakePlaceHolder(membershipId);
+        membership.setIndividual(individual);
+        membership.setSocialGroup(socialGroupService.findOrMakePlaceHolder(socialGroupId));
+        membership.setStartType(startType);
+        membership.setStartDate(recordTime);
+        membership.setEntityStatus(membership.NORMAL_STATUS);
+        membership.setCollectedBy(collectedBy);
+        membership.setCollectionDateTime(collectionDateTime);
+        membershipService.createOrUpdate(membership);
+
+        Residency residency = residencyService.makePlaceHolder(residencyId);
+        residency.setIndividual(individual);
+        residency.setLocation(locationService.findOrMakePlaceHolder(locationId));
+        residency.setCollectedBy(collectedBy);
+        residency.setCollectionDateTime(collectionDateTime);
+        residency.setStartType(startType);
+        residency.setStartDate(recordTime);
+        residency.setEntityStatus(residency.NORMAL_STATUS);
+        residencyService.createOrUpdate(residency);
+
+        return individual;
     }
 
     @Override

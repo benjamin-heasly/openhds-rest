@@ -20,6 +20,14 @@ public abstract class AuditableCollectedServiceTest
         <T extends AuditableCollectedEntity, U extends AbstractAuditableCollectedService<T, ?>>
         extends AuditableServiceTest<T, U> {
 
+    public static final String FIELDWORKER_ID = "feldwarker";
+    public static final String SOCIALGROUP_ID = "suculgrup";
+    public static final String LOCATION_ID = "lucutun";
+    public static final String INDIVIDUAL_ID = "induuvudu";
+    public static final String RELATIONSHIP_ID = "relutuup";
+    public static final String RESIDENCY_ID = "rsususndy";
+    public static final String MEMBERSHIP_ID = "mumburshub";
+    public static final String PREGNANCY_OUTCOME_ID = "prugnuncy_ootkoom";
 
     @Autowired
     protected FieldWorkerService fieldWorkerService;
