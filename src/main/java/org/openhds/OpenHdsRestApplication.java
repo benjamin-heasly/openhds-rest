@@ -49,8 +49,7 @@ public class OpenHdsRestApplication {
                                                 Environment environment) {
         return (args) -> {
             if (!environment.containsProperty(SAMPLE_DATA_SIZE_PROPERTY)) {
-                // start normally
-                // TODO: create default user on first time startup?
+            	masterDataGenerator.generateRequiredData();
                 return;
             }
 

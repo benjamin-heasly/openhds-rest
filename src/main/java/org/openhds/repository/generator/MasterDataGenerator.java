@@ -43,6 +43,11 @@ public class MasterDataGenerator implements DataGenerator {
         }
     }
 
+    public void generateRequiredData()	{
+    	DataGenerator dataGenerator = dataGenerators.get(0);
+    	dataGenerator.generateData();
+    }
+
     @Override
     public void generateData(int size) {
         log.info("Generating data with size " + size + ".");
