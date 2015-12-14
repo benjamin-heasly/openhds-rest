@@ -9,10 +9,14 @@ import org.openhds.service.impl.census.IndividualService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.ResourceSupport;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
+
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
 /**
  * Created by Wolfe on 7/13/2015.
@@ -21,6 +25,8 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/individuals")
 @ExposesResourceFor(Individual.class)
 public class IndividualRestController extends AuditableExtIdRestController<Individual,IndividualRegistration, IndividualService>{
+
+    public static final String REL_HOUSEHOLD = "household";
 
     private final FieldWorkerService fieldWorkerService;
 
@@ -31,6 +37,15 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
         super(individualService);
         this.individualService = individualService;
         this.fieldWorkerService = fieldWorkerService;
+    }
+
+    @Override
+    public void addCollectionResourceLinks(ResourceSupport resource) {
+        super.addCollectionResourceLinks(resource);
+
+        resource.add(linkTo(methodOn(this.getClass())
+                .insertHousehold(null, null))
+                .withRel(REL_HOUSEHOLD));
     }
 
     @Override
@@ -46,7 +61,7 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
 
     @RequestMapping(value = "/household", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
-    Resource insert(@RequestBody IndividualHouseholdRegistration registration, HttpServletResponse response) {
+    protected Resource insertHousehold(@RequestBody IndividualHouseholdRegistration registration, HttpServletResponse response) {
         Individual entity = register(registration);
         addLocationHeader(response, entity);
         return entityLinkAssembler.toResource(entity);
@@ -54,7 +69,7 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
 
     @RequestMapping(value = "/household/{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.CREATED)
-    Resource replace(@RequestBody IndividualHouseholdRegistration registration, @PathVariable String id) {
+    protected Resource replaceHousehold(@RequestBody IndividualHouseholdRegistration registration, @PathVariable String id) {
         Individual entity = register(registration, id);
         return entityLinkAssembler.toResource(entity);
     }
