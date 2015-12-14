@@ -135,7 +135,7 @@ public abstract class UuidIdentifiableRestController<
         service.delete(id, reason);
     }
 
-    private void addLocationHeader(HttpServletResponse response, T entity) {
+    protected void addLocationHeader(HttpServletResponse response, T entity) {
         response.setHeader(HttpHeaders.LOCATION, ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(entity.getUuid()).toUri().toString());

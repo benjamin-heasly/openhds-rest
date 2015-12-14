@@ -2,13 +2,17 @@ package org.openhds.resource.controller.census;
 
 import org.openhds.domain.model.census.Individual;
 import org.openhds.resource.contract.AuditableExtIdRestController;
+import org.openhds.resource.registration.census.IndividualHouseholdRegistration;
 import org.openhds.resource.registration.census.IndividualRegistration;
 import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.census.IndividualService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ExposesResourceFor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.hateoas.Resource;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Created by Wolfe on 7/13/2015.
@@ -39,4 +43,41 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
         registration.getIndividual().setUuid(id);
         return register(registration);
     }
+
+    @RequestMapping(value = "/household", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    Resource insert(@RequestBody IndividualHouseholdRegistration registration, HttpServletResponse response) {
+        Individual entity = register(registration);
+        addLocationHeader(response, entity);
+        return entityLinkAssembler.toResource(entity);
+    }
+
+    @RequestMapping(value = "/household/{id}", method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.CREATED)
+    Resource replace(@RequestBody IndividualHouseholdRegistration registration, @PathVariable String id) {
+        Individual entity = register(registration, id);
+        return entityLinkAssembler.toResource(entity);
+    }
+
+    protected Individual register(IndividualHouseholdRegistration registration) {
+        return individualService.recordIndividual(
+                registration.getIndividual(),
+                registration.getRegistrationDateTime(),
+                registration.getRelationToHead(),
+                registration.getHeadOfHouseholdId(),
+                registration.getRelationshipId(),
+                registration.getLocationId(),
+                registration.getSocialGroupId(),
+                registration.getCollectedByUuid(),
+                registration.getMotherId(),
+                registration.getFatherId(),
+                registration.getMembershipId(),
+                registration.getResidencyId());
+    }
+
+    protected Individual register(IndividualHouseholdRegistration registration, String id) {
+        registration.getIndividual().setUuid(id);
+        return register(registration);
+    }
+
 }
