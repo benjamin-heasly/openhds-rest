@@ -40,7 +40,7 @@ public abstract class UuidIdentifiableRestControllerTest<
 
     protected abstract void initialize(U service, V controller);
 
-    protected T makeValidEntity(String name, String id){
+    protected T makeValidEntity(String name, String id) {
         return service.makePlaceHolder(id, name);
     }
 
@@ -162,6 +162,41 @@ public abstract class UuidIdentifiableRestControllerTest<
                 .contentType(regularJson)
                 .content(toJson(makeRegistration(makeInvalidEntity()))))
                 .andExpect(status().is4xxClientError());
+    }
+
+
+    @Test
+    @WithUserDetails
+    public void postSampleRegistrationJson() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get(getResourceUrl() + "/sampleRegistration")
+                .param("id", "samplePostId")
+                .param("name", "samplePostName")
+                .accept(regularJson))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(regularJson))
+                .andReturn();
+
+        this.mockMvc.perform(post(getResourceUrl())
+                .contentType(regularJson)
+                .content(mvcResult.getResponse().getContentAsString()))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    @WithUserDetails
+    public void postSampleRegistrationXml() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get(getResourceUrl() + "/sampleRegistration")
+                .param("id", "samplePostId")
+                .param("name", "samplePostName")
+                .accept(regularXml))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(regularXml))
+                .andReturn();
+
+        this.mockMvc.perform(post(getResourceUrl())
+                .contentType(regularXml)
+                .content(mvcResult.getResponse().getContentAsString()))
+                .andExpect(status().isCreated());
     }
 
     // PUT
@@ -300,6 +335,30 @@ public abstract class UuidIdentifiableRestControllerTest<
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(regularXml))
                 .andExpect(xpath("/" + controller.getResourceName() + "/*").nodeCount((int) service.countAll()));
+    }
+
+    @Test
+    @WithUserDetails
+    public void getSampleRegistrationJson() throws Exception {
+        mockMvc.perform(get(getResourceUrl() + "/sampleRegistration")
+                .param("id", "sampleId")
+                .param("name", "sampleName")
+                .accept(regularJson))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(regularJson))
+                .andExpect(jsonPath("$." + controller.getEntityFieldName() + ".uuid").value("sampleId"));
+    }
+
+    @Test
+    @WithUserDetails
+    public void getSampleRegistrationXml() throws Exception {
+        mockMvc.perform(get(getResourceUrl() + "/sampleRegistration")
+                .param("id", "sampleId")
+                .param("name", "sampleName")
+                .accept(regularXml))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(regularXml))
+                .andExpect(xpath("/*/" + controller.getEntityFieldName() + "/" + "uuid").string("sampleId"));
     }
 
     // DELETE

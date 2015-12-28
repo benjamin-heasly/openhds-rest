@@ -66,6 +66,13 @@ public abstract class UuidIdentifiableRestController<
         return (Class<T>) controllerRegistry.getControllersToEntities().get(this.getClass());
     }
 
+    // class name with lower case leading character
+    public String getEntityFieldName() {
+        Class<?> entityClass = controllerRegistry.getControllersToEntities().get(this.getClass());
+        String className = entityClass.getSimpleName();
+        return className.toLowerCase().charAt(0) + className.substring(1);
+    }
+
     public U getSampleRegistration(T entity) {
         U registration = makeSampleRegistration(entity);
         registration.setCollectedByUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
