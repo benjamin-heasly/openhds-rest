@@ -1,27 +1,20 @@
 package org.openhds.resource.controller.census;
 
 import org.junit.Test;
-import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.Individual;
 import org.openhds.resource.contract.AuditableExtIdRestControllerTest;
-import org.openhds.resource.registration.Registration;
-import org.openhds.resource.registration.census.IndividualHouseholdRegistration;
-import org.openhds.resource.registration.census.IndividualRegistration;
 import org.openhds.service.impl.ProjectCodeService;
 import org.openhds.service.impl.census.IndividualService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.time.ZonedDateTime;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.openhds.service.contract.AbstractUuidService.UNKNOWN_ENTITY_UUID;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 /**
@@ -69,7 +62,7 @@ public class IndividualRestControllerTest extends AuditableExtIdRestControllerTe
 
         MvcResult mvcResult = this.mockMvc.perform(post(getHouseholdUrl())
                 .contentType(regularJson)
-                .content(toJson(makeHouseholdRegistration(entity))))
+                .content(toJson(controller.getHouseholdSampleRegistration(entity))))
                 .andExpect(status().isCreated())
                 .andReturn();
 
@@ -85,12 +78,46 @@ public class IndividualRestControllerTest extends AuditableExtIdRestControllerTe
         MvcResult mvcResult = this.mockMvc.perform(post(getHouseholdUrl())
                 .contentType(regularXml)
                 .accept(regularXml)
-                .content(toXml(makeHouseholdRegistration(entity))))
+                .content(toXml(controller.getHouseholdSampleRegistration(entity))))
                 .andExpect(status().isCreated())
                 .andReturn();
 
         Individual responseEntity = fromXml(controller.getEntityClass(), mvcResult.getResponse().getContentAsString());
         verifyEntityExistsWithNameAndId(responseEntity, "test registration", entity.getUuid());
+    }
+
+    @Test
+    @WithUserDetails
+    public void postHouseholdSampleRegistrationJson() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get(getHouseholdUrl() + "/sampleRegistration")
+                .param("id", "sampleHouseholdPostId")
+                .param("name", "sampleHouseholdPostName")
+                .accept(regularJson))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(regularJson))
+                .andReturn();
+
+        this.mockMvc.perform(post(getHouseholdUrl())
+                .contentType(regularJson)
+                .content(mvcResult.getResponse().getContentAsString()))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    @WithUserDetails
+    public void postHouseholdSampleRegistrationXml() throws Exception {
+        MvcResult mvcResult = mockMvc.perform(get(getHouseholdUrl() + "/sampleRegistration")
+                .param("id", "sampleHouseholdPostId")
+                .param("name", "sampleHouseholdPostName")
+                .accept(regularXml))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(regularXml))
+                .andReturn();
+
+        this.mockMvc.perform(post(getHouseholdUrl())
+                .contentType(regularXml)
+                .content(mvcResult.getResponse().getContentAsString()))
+                .andExpect(status().isCreated());
     }
 
     // PUT household
@@ -103,7 +130,7 @@ public class IndividualRestControllerTest extends AuditableExtIdRestControllerTe
 
         MvcResult mvcResult = this.mockMvc.perform(put(getHouseholdUrl() + uuid)
                 .contentType(regularJson)
-                .content(toJson(makeHouseholdRegistration(entity))))
+                .content(toJson(controller.getHouseholdSampleRegistration(entity))))
                 .andExpect(status().isCreated())
                 .andReturn();
 
@@ -120,7 +147,7 @@ public class IndividualRestControllerTest extends AuditableExtIdRestControllerTe
         MvcResult mvcResult = this.mockMvc.perform(put(getHouseholdUrl() + uuid)
                 .contentType(regularXml)
                 .accept(regularXml)
-                .content(toXml(makeHouseholdRegistration(entity))))
+                .content(toXml(controller.getHouseholdSampleRegistration(entity))))
                 .andExpect(status().isCreated())
                 .andReturn();
 
@@ -128,25 +155,28 @@ public class IndividualRestControllerTest extends AuditableExtIdRestControllerTe
         verifyEntityExistsWithNameAndId(responseEntity, "test registration", uuid);
     }
 
-    protected IndividualHouseholdRegistration makeHouseholdRegistration(Individual entity) {
-        IndividualHouseholdRegistration registration = new IndividualHouseholdRegistration();
-
-        ZonedDateTime recordTime = ZonedDateTime.now().minusHours(1);
-        String relationshipType = projectCodeService.findByCodeGroup(ProjectCode.RELATIONSHIP_TYPE).get(0).getCodeValue();
-
-        registration.setIndividual(entity);
-        registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
-        registration.setRegistrationDateTime(recordTime);
-        registration.setRelationToHead(relationshipType);
-        registration.setHeadOfHouseholdId(UNKNOWN_ENTITY_UUID);
-        registration.setRelationshipId(UNKNOWN_ENTITY_UUID);
-        registration.setLocationId(UNKNOWN_ENTITY_UUID);
-        registration.setSocialGroupId(UNKNOWN_ENTITY_UUID);
-        registration.setFatherId(UNKNOWN_ENTITY_UUID);
-        registration.setMotherId(UNKNOWN_ENTITY_UUID);
-        registration.setMembershipId(UNKNOWN_ENTITY_UUID);
-        registration.setResidencyId(UNKNOWN_ENTITY_UUID);
-
-        return registration;
+    @Test
+    @WithUserDetails
+    public void getHouseholdSampleRegistrationJson() throws Exception {
+        mockMvc.perform(get(getHouseholdUrl() + "/sampleRegistration")
+                .param("id", "sampleHouseholdId")
+                .param("name", "sampleHouseholdName")
+                .accept(regularJson))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(regularJson))
+                .andExpect(jsonPath("$." + controller.getEntityFieldName() + ".uuid").value("sampleHouseholdId"));
     }
+
+    @Test
+    @WithUserDetails
+    public void getHouseholdSampleRegistrationXml() throws Exception {
+        mockMvc.perform(get(getHouseholdUrl() + "/sampleRegistration")
+                .param("id", "sampleHouseholdId")
+                .param("name", "sampleHouseholdName")
+                .accept(regularXml))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(regularXml))
+                .andExpect(xpath("/*/" + controller.getEntityFieldName() + "/" + "uuid").string("sampleHouseholdId"));
+    }
+
 }

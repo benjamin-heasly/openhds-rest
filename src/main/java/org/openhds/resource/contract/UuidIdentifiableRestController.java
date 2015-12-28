@@ -102,7 +102,6 @@ public abstract class UuidIdentifiableRestController<
                         .readSample(null, null))
                         .withRel(REL_SAMPLE),
                 "id", "name"));
-
     }
 
     // convert a page of results to a resource with links, using the given self link
