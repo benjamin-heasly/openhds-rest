@@ -1,6 +1,7 @@
 package org.openhds.resource.contract;
 
 import org.openhds.domain.contract.UuidIdentifiable;
+import org.openhds.domain.util.ShallowCopier;
 import org.openhds.repository.contract.UuidIdentifiableRepository;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.repository.results.PageIterator;
@@ -42,6 +43,8 @@ public abstract class UuidIdentifiableRestController<
         V extends AbstractUuidService<T, ? extends UuidIdentifiableRepository<T>>> {
 
     public static final String REL_BULK = "bulk";
+
+    public static final String REL_SAMPLE = "sampleRegistration";
 
     private final V service;
 
@@ -88,6 +91,11 @@ public abstract class UuidIdentifiableRestController<
     public void addCollectionResourceLinks(ResourceSupport resource) {
         resource.add(linkTo(this.getClass()).withRel(EntityLinkAssembler.REL_COLLECTION));
         resource.add(linkTo(methodOn(this.getClass()).readBulk(null)).withRel(REL_BULK));
+        resource.add(withTemplateParams(linkTo(methodOn(this.getClass())
+                        .readSample(null, null))
+                        .withRel(REL_SAMPLE),
+                "id", "name"));
+
     }
 
     // convert a page of results to a resource with links, using the given self link
@@ -125,6 +133,13 @@ public abstract class UuidIdentifiableRestController<
         EntityIterator<T> entityIterator = new PagingEntityIterator<>(pageIterator);
         entityIterator.setCollectionName(getResourceName());
         return new ShallowCopyIterator<>(entityIterator);
+    }
+
+    @RequestMapping(value = "/sampleRegistration", method = RequestMethod.GET)
+    public Registration<T> readSample(@RequestParam(required = false, defaultValue = AbstractUuidService.UNKNOWN_ENTITY_UUID) String id,
+                                      @RequestParam(required = false, defaultValue = "unknown") String name) {
+        T entity = ShallowCopier.makeShallowCopy(service.makePlaceHolder(id, name), null);
+        return getSampleRegistration(entity);
     }
 
     @RequestMapping(method = RequestMethod.POST)
