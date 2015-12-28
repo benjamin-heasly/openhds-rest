@@ -48,14 +48,6 @@ public class UserRestControllerTest extends UuidIdentifiableRestControllerTest
         assertEquals(entity.getUsername(), savedUser.getUsername());
     }
 
-    @Override
-    protected Registration<User> makeRegistration(User entity) {
-        UserRegistration registration = new UserRegistration();
-        registration.setUser(entity);
-        registration.setPassword("password");
-        return registration;
-    }
-
     @Test
     @WithUserDetails
     public void registeredPasswordIsHashed() throws Exception {

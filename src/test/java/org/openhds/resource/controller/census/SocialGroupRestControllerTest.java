@@ -41,11 +41,4 @@ public class SocialGroupRestControllerTest extends AuditableExtIdRestControllerT
         assertEquals(entity.getGroupName(), savedSocialGroup.getGroupName());
     }
 
-    @Override
-    protected Registration<SocialGroup> makeRegistration(SocialGroup entity) {
-        SocialGroupRegistration registration = new SocialGroupRegistration();
-        registration.setSocialGroup(entity);
-        registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
-        return registration;
-    }
 }

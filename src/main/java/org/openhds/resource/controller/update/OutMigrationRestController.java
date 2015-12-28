@@ -3,6 +3,7 @@ package org.openhds.resource.controller.update;
 import org.openhds.domain.model.update.OutMigration;
 import org.openhds.resource.contract.AuditableCollectedRestController;
 import org.openhds.resource.registration.update.OutMigrationRegistration;
+import org.openhds.service.contract.AbstractUuidService;
 import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.census.IndividualService;
 import org.openhds.service.impl.census.ResidencyService;
@@ -46,6 +47,16 @@ public class OutMigrationRestController extends AuditableCollectedRestController
         this.individualService = individualService;
         this.residencyService = residencyService;
         this.fieldWorkerService = fieldWorkerService;
+    }
+
+    @Override
+    protected OutMigrationRegistration makeSampleRegistration(OutMigration entity) {
+        OutMigrationRegistration registration = new OutMigrationRegistration();
+        registration.setOutMigration(entity);
+        registration.setVisitUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        registration.setIndividualUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        registration.setResidencyUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        return registration;
     }
 
     @Override

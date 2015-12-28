@@ -50,13 +50,4 @@ public class ResidencyRestControllerTest extends AuditableCollectedRestControlle
 
     }
 
-    @Override
-    protected Registration<Residency> makeRegistration(Residency entity) {
-        ResidencyRegistration registration = new ResidencyRegistration();
-        registration.setResidency(entity);
-        registration.setIndividualUuid(individualService.findAll(UUID_SORT).toList().get(0).getUuid());
-        registration.setLocationUuid(locationService.findAll(UUID_SORT).toList().get(0).getUuid());
-        registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
-        return registration;
-    }
 }

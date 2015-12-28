@@ -3,6 +3,7 @@ package org.openhds.resource.controller.update;
 import org.openhds.domain.model.update.Death;
 import org.openhds.resource.contract.AuditableCollectedRestController;
 import org.openhds.resource.registration.update.DeathRegistration;
+import org.openhds.service.contract.AbstractUuidService;
 import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.census.IndividualService;
 import org.openhds.service.impl.update.DeathService;
@@ -42,6 +43,15 @@ public class DeathRestController extends AuditableCollectedRestController<
         this.fieldWorkerService = fieldWorkerService;
         this.visitService = visitService;
         this.individualService = individualService;
+    }
+
+    @Override
+    protected DeathRegistration makeSampleRegistration(Death entity) {
+        DeathRegistration registration = new DeathRegistration();
+        registration.setDeath(entity);
+        registration.setIndividualUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        registration.setVisitUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        return registration;
     }
 
     @Override

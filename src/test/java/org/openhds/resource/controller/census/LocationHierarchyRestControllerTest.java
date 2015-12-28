@@ -48,13 +48,4 @@ public class LocationHierarchyRestControllerTest extends AuditableExtIdRestContr
 
     }
 
-    @Override
-    protected Registration<LocationHierarchy> makeRegistration(LocationHierarchy entity) {
-        LocationHierarchyRegistration registration = new LocationHierarchyRegistration();
-        registration.setLocationHierarchy(entity);
-        registration.setLevelUuid(locationHierarchyLevelService.findAll(UUID_SORT).toList().get(0).getUuid());
-        registration.setParentUuid(service.getHierarchyRoot().getUuid());
-        registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
-        return registration;
-    }
 }

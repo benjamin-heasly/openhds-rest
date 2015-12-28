@@ -69,4 +69,5 @@ public abstract class Registration<T extends UuidIdentifiable> {
     public void setCollectedByUuid(String collectedByUuid) {
         this.collectedByUuid = collectedByUuid;
     }
+
 }

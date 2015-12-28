@@ -7,6 +7,7 @@ import org.openhds.repository.queries.QueryValue;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.resource.contract.AuditableCollectedRestController;
 import org.openhds.resource.registration.ErrorLogRegistration;
+import org.openhds.service.contract.AbstractUuidService;
 import org.openhds.service.impl.ErrorLogService;
 import org.openhds.service.impl.FieldWorkerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,13 @@ public class ErrorLogRestController extends AuditableCollectedRestController<
         if (property != null && !property.trim().isEmpty()) {
             properties.add(new QueryValue(propertyName, property));
         }
+    }
+
+    @Override
+    protected ErrorLogRegistration makeSampleRegistration(ErrorLog entity) {
+        ErrorLogRegistration errorLogRegistration = new ErrorLogRegistration();
+        errorLogRegistration.setErrorLog(entity);
+        return errorLogRegistration;
     }
 
     @Override

@@ -29,6 +29,14 @@ public class ProjectCodeResource extends UuidIdentifiableRestController<
     }
 
     @Override
+    protected ProjectCodeRegistration makeSampleRegistration(ProjectCode entity) {
+        ProjectCodeRegistration projectCodeRegistration = new ProjectCodeRegistration();
+        projectCodeRegistration.setProjectCode(entity);
+        return projectCodeRegistration;
+
+    }
+
+    @Override
     protected ProjectCode register(ProjectCodeRegistration registration) {
         return projectCodeService.createOrUpdate(registration.getProjectCode());
     }

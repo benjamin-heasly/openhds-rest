@@ -49,15 +49,4 @@ public class PregnancyObservationRestControllerTest extends AuditableCollectedRe
         assertEquals(entity.getStatusMessage(), savedInMigration.getStatusMessage());
     }
 
-    @Override
-    protected Registration<PregnancyObservation> makeRegistration(PregnancyObservation entity) {
-        PregnancyObservationRegistration registration = new PregnancyObservationRegistration();
-        registration.setPregnancyObservation(entity);
-
-        registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
-        registration.setVisitUuid(visitService.findAll(UUID_SORT).toList().get(0).getUuid());
-        registration.setMotherUuid(individualService.findAll(UUID_SORT).toList().get(0).getUuid());
-
-        return registration;
-    }
 }

@@ -48,14 +48,6 @@ public class FieldWorkerRestControllerTest extends AuditableRestControllerTest<
         assertEquals(entity.getFieldWorkerId(), savedFieldWorker.getFieldWorkerId());
     }
 
-    @Override
-    protected Registration<FieldWorker> makeRegistration(FieldWorker entity) {
-        FieldWorkerRegistration registration = new FieldWorkerRegistration();
-        registration.setFieldWorker(entity);
-        registration.setPassword("password");
-        return registration;
-    }
-
     @Test
     @WithUserDetails
     public void registeredPasswordIsHashed() throws Exception {

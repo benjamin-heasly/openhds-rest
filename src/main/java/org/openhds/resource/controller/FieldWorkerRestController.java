@@ -29,6 +29,14 @@ public class FieldWorkerRestController extends AuditableRestController<
     }
 
     @Override
+    protected FieldWorkerRegistration makeSampleRegistration(FieldWorker entity) {
+        FieldWorkerRegistration registration = new FieldWorkerRegistration();
+        registration.setFieldWorker(entity);
+        registration.setPassword("password");
+        return registration;
+    }
+
+    @Override
     protected FieldWorker register(FieldWorkerRegistration registration) {
         return fieldWorkerService.recordFieldWorker(registration.getFieldWorker(), registration.getPassword());
     }

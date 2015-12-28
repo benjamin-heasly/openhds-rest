@@ -48,14 +48,6 @@ public class ErrorLogRestControllerTest extends AuditableCollectedRestController
         assertEquals(entity.getDataPayload(), savedErrorLog.getDataPayload());
     }
 
-    @Override
-    protected Registration<ErrorLog> makeRegistration(ErrorLog entity) {
-        ErrorLogRegistration errorLogRegistration = new ErrorLogRegistration();
-        errorLogRegistration.setErrorLog(entity);
-        errorLogRegistration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
-        return errorLogRegistration;
-    }
-
     @Test
     @WithUserDetails
     public void query() throws Exception {

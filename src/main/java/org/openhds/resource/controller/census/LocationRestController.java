@@ -3,6 +3,7 @@ package org.openhds.resource.controller.census;
 import org.openhds.domain.model.census.Location;
 import org.openhds.resource.contract.AuditableExtIdRestController;
 import org.openhds.resource.registration.census.LocationRegistration;
+import org.openhds.service.contract.AbstractUuidService;
 import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.census.LocationHierarchyService;
 import org.openhds.service.impl.census.LocationService;
@@ -36,6 +37,16 @@ public class LocationRestController extends AuditableExtIdRestController<
         this.locationService = locationService;
         this.locationHierarchyService = locationHierarchyService;
         this.fieldWorkerService = fieldWorkerService;
+    }
+
+    @Override
+    protected LocationRegistration makeSampleRegistration(Location entity) {
+        LocationRegistration registration = new LocationRegistration();
+        registration.setLocation(entity);
+        registration.setLocationHierarchyUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        registration.setCollectedByUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        return registration;
+
     }
 
     @Override

@@ -45,12 +45,4 @@ public class VisitRestControllerTest extends AuditableExtIdRestControllerTest
         assertEquals(entity.getExtId(), savedVisit.getExtId());
     }
 
-    @Override
-    protected Registration<Visit> makeRegistration(Visit entity) {
-        VisitRegistration registration = new VisitRegistration();
-        registration.setVisit(entity);
-        registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
-        registration.setLocationUuid(locationService.findAll(UUID_SORT).toList().get(0).getUuid());
-        return registration;
-    }
 }

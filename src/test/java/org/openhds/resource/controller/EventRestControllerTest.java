@@ -50,13 +50,6 @@ public class EventRestControllerTest extends AuditableRestControllerTest
         assertEquals(entity.getEventData(), savedEvent.getEventData());
     }
 
-    @Override
-    protected Registration<Event> makeRegistration(Event entity) {
-        EventRegistration eventRegistration = new EventRegistration();
-        eventRegistration.setEvent(entity);
-        return eventRegistration;
-    }
-
     @Test
     @WithUserDetails
     public void queryIncrementsReadCount() throws Exception {

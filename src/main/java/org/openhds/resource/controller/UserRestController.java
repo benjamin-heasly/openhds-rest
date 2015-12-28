@@ -29,6 +29,14 @@ public class UserRestController extends UuidIdentifiableRestController<
     }
 
     @Override
+    protected UserRegistration makeSampleRegistration(User entity) {
+        UserRegistration registration = new UserRegistration();
+        registration.setUser(entity);
+        registration.setPassword("password");
+        return registration;
+    }
+
+    @Override
     protected User register(UserRegistration registration) {
         return userService.recordUser(registration.getUser(), registration.getPassword());
     }

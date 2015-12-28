@@ -51,15 +51,4 @@ public class MembershipRestControllerTest extends AuditableCollectedRestControll
         assertEquals(id, entity.getUuid());
     }
 
-    @Override
-    protected Registration<Membership> makeRegistration(Membership entity) {
-        MembershipRegistration registration = new MembershipRegistration();
-        registration.setMembership(entity);
-
-        registration.setIndividualUuid(individualService.findAll(UUID_SORT).toList().get(0).getUuid());
-        registration.setSocialGroupUuid(socialGroupService.findAll(UUID_SORT).toList().get(0).getUuid());
-        registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
-
-        return registration;
-    }
 }

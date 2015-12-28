@@ -3,6 +3,7 @@ package org.openhds.resource.controller.census;
 import org.openhds.domain.model.census.Residency;
 import org.openhds.resource.contract.AuditableCollectedRestController;
 import org.openhds.resource.registration.census.ResidencyRegistration;
+import org.openhds.service.contract.AbstractUuidService;
 import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.census.IndividualService;
 import org.openhds.service.impl.census.LocationService;
@@ -41,6 +42,17 @@ public class ResidencyRestController extends AuditableCollectedRestController<
         this.individualService = individualService;
         this.locationService = locationService;
         this.fieldWorkerService = fieldWorkerService;
+    }
+
+    @Override
+    protected ResidencyRegistration makeSampleRegistration(Residency entity) {
+        ResidencyRegistration registration = new ResidencyRegistration();
+        registration.setResidency(entity);
+        registration.setIndividualUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        registration.setLocationUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        registration.setCollectedByUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        return registration;
+
     }
 
     @Override

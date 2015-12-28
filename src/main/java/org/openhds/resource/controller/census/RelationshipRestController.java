@@ -3,6 +3,7 @@ package org.openhds.resource.controller.census;
 import org.openhds.domain.model.census.Relationship;
 import org.openhds.resource.contract.AuditableCollectedRestController;
 import org.openhds.resource.registration.census.RelationshipRegistration;
+import org.openhds.service.contract.AbstractUuidService;
 import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.census.IndividualService;
 import org.openhds.service.impl.census.RelationshipService;
@@ -37,6 +38,17 @@ public class RelationshipRestController extends AuditableCollectedRestController
         this.relationshipService = relationshipService;
         this.individualService = individualService;
         this.fieldWorkerService = fieldWorkerService;
+    }
+
+    @Override
+    protected RelationshipRegistration makeSampleRegistration(Relationship entity) {
+        RelationshipRegistration registration = new RelationshipRegistration();
+        registration.setRelationship(entity);
+        registration.setIndividualAUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        registration.setIndividualBUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        registration.setCollectedByUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        return registration;
+
     }
 
     @Override

@@ -56,14 +56,6 @@ public class IndividualRestControllerTest extends AuditableExtIdRestControllerTe
         assertEquals(entity.getFirstName(), savedIndividual.getFirstName());
     }
 
-    @Override
-    protected Registration<Individual> makeRegistration(Individual entity) {
-        IndividualRegistration registration = new IndividualRegistration();
-        registration.setIndividual(entity);
-        registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
-        return registration;
-    }
-
     // POST household
 
     protected String getHouseholdUrl() {

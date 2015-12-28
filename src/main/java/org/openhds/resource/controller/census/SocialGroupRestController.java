@@ -34,6 +34,14 @@ public class SocialGroupRestController extends AuditableExtIdRestController<
     }
 
     @Override
+    protected SocialGroupRegistration makeSampleRegistration(SocialGroup entity) {
+        SocialGroupRegistration registration = new SocialGroupRegistration();
+        registration.setSocialGroup(entity);
+        return registration;
+
+    }
+
+    @Override
     protected SocialGroup register(SocialGroupRegistration registration) {
         return socialGroupService.recordSocialGroup(registration.getSocialGroup(), registration.getCollectedByUuid());
     }

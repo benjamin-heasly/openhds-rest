@@ -3,6 +3,7 @@ package org.openhds.resource.controller.census;
 import org.openhds.domain.model.census.Membership;
 import org.openhds.resource.contract.AuditableCollectedRestController;
 import org.openhds.resource.registration.census.MembershipRegistration;
+import org.openhds.service.contract.AbstractUuidService;
 import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.census.IndividualService;
 import org.openhds.service.impl.census.MembershipService;
@@ -41,6 +42,16 @@ class MembershipRestController extends AuditableCollectedRestController<
         this.individualService = individualService;
         this.socialGroupService = socialGroupService;
         this.fieldWorkerService = fieldWorkerService;
+    }
+
+    @Override
+    protected MembershipRegistration makeSampleRegistration(Membership entity) {
+        MembershipRegistration registration = new MembershipRegistration();
+        registration.setMembership(entity);
+        registration.setIndividualUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        registration.setSocialGroupUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        registration.setCollectedByUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        return registration;
     }
 
     @Override

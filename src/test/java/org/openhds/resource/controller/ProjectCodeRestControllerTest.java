@@ -43,10 +43,4 @@ public class ProjectCodeRestControllerTest extends UuidIdentifiableRestControlle
 
     }
 
-    @Override
-    protected Registration<ProjectCode> makeRegistration(ProjectCode entity) {
-        ProjectCodeRegistration projectCodeRegistration = new ProjectCodeRegistration();
-        projectCodeRegistration.setProjectCode(entity);
-        return projectCodeRegistration;
-    }
 }

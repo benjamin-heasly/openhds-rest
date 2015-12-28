@@ -48,14 +48,17 @@ public abstract class UuidIdentifiableRestControllerTest<
 
     protected abstract void verifyEntityExistsWithNameAndId(T entity, String name, String id);
 
-    protected abstract Registration<T> makeRegistration(T entity);
-
     protected String getResourceUrl() {
         return "/" + controller.getResourceName() + "/";
     }
 
     protected T findAnyExisting() {
         return service.findAll(UUID_SORT).toList().get(0);
+    }
+
+    protected Registration<T> makeRegistration(T entity) {
+        Registration<T> registration = controller.getSampleRegistration(entity);
+        return registration;
     }
 
     protected T makeUpdateEntity(String name) {

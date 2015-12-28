@@ -49,6 +49,13 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
     }
 
     @Override
+    protected IndividualRegistration makeSampleRegistration(Individual entity) {
+        IndividualRegistration registration = new IndividualRegistration();
+        registration.setIndividual(entity);
+        return registration;
+    }
+
+    @Override
     protected Individual register(IndividualRegistration registration) {
         return individualService.recordIndividual(registration.getIndividual(), registration.getCollectedByUuid());
     }

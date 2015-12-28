@@ -53,16 +53,4 @@ public class InMigrationRestControllerTest extends AuditableCollectedRestControl
         assertEquals(entity.getMigrationType(), savedInMigration.getMigrationType());
     }
 
-    @Override
-    protected Registration<InMigration> makeRegistration(InMigration entity) {
-        InMigrationRegistration registration = new InMigrationRegistration();
-        registration.setInMigration(entity);
-
-        registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
-        registration.setVisitUuid(visitService.findAll(UUID_SORT).toList().get(0).getUuid());
-        registration.setIndividualUuid(individualService.findAll(UUID_SORT).toList().get(0).getUuid());
-        registration.setResidencyUuid(residencyService.findAll(UUID_SORT).toList().get(0).getUuid());
-
-        return registration;
-    }
 }

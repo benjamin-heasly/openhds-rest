@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletResponse;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -62,7 +63,19 @@ public abstract class UuidIdentifiableRestController<
         return (Class<T>) controllerRegistry.getControllersToEntities().get(this.getClass());
     }
 
+    public U getSampleRegistration(T entity) {
+        U registration = makeSampleRegistration(entity);
+        registration.setCollectedByUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        registration.setRegistrationDateTime(ZonedDateTime.now());
+        registration.setRegistrationSystemName("systemName");
+        registration.setRegistrationVersion(1);
+        registration.setRegistrationVersionName("versionName");
+        return registration;
+    }
+
     // templates to be implemented with entity services, etc.
+    protected abstract U makeSampleRegistration(T entity);
+
     protected abstract T register(U registration);
 
     protected abstract T register(U registration, String id);

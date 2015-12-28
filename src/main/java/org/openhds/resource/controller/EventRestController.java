@@ -64,6 +64,13 @@ public class EventRestController extends AuditableRestController<
     }
 
     @Override
+    protected EventRegistration makeSampleRegistration(Event entity) {
+        EventRegistration eventRegistration = new EventRegistration();
+        eventRegistration.setEvent(entity);
+        return eventRegistration;
+    }
+
+    @Override
     protected Event register(EventRegistration registration) {
         return eventService.createOrUpdate(registration.getEvent());
     }

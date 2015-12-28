@@ -3,6 +3,7 @@ package org.openhds.resource.controller.update;
 import org.openhds.domain.model.update.Visit;
 import org.openhds.resource.contract.AuditableExtIdRestController;
 import org.openhds.resource.registration.update.VisitRegistration;
+import org.openhds.service.contract.AbstractUuidService;
 import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.census.LocationService;
 import org.openhds.service.impl.update.VisitService;
@@ -36,6 +37,14 @@ public class VisitRestController extends AuditableExtIdRestController<
         this.visitService = visitService;
         this.locationService = locationService;
         this.fieldWorkerService = fieldWorkerService;
+    }
+
+    @Override
+    protected VisitRegistration makeSampleRegistration(Visit entity) {
+        VisitRegistration registration = new VisitRegistration();
+        registration.setVisit(entity);
+        registration.setLocationUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        return registration;
     }
 
     @Override

@@ -46,13 +46,4 @@ public class RelationshipRestControllerTest extends AuditableCollectedRestContro
         assertEquals(entity.getRelationshipType(), savedRelationship.getRelationshipType());
     }
 
-    @Override
-    protected Registration<Relationship> makeRegistration(Relationship entity) {
-        RelationshipRegistration registration = new RelationshipRegistration();
-        registration.setRelationship(entity);
-        registration.setIndividualAUuid(individualService.findAll(UUID_SORT).toList().get(0).getUuid());
-        registration.setIndividualBUuid(individualService.findAll(UUID_SORT).toList().get(0).getUuid());
-        registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
-        return registration;
-    }
 }

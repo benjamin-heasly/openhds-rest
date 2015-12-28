@@ -3,6 +3,7 @@ package org.openhds.resource.controller.update;
 import org.openhds.domain.model.update.PregnancyOutcome;
 import org.openhds.resource.contract.AuditableCollectedRestController;
 import org.openhds.resource.registration.update.PregnancyOutcomeRegistration;
+import org.openhds.service.contract.AbstractUuidService;
 import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.census.IndividualService;
 import org.openhds.service.impl.update.PregnancyOutcomeService;
@@ -36,6 +37,16 @@ public class PregnancyOutcomeRestController extends AuditableCollectedRestContro
         this.individualService = individualService;
         this.fieldWorkerService = fieldWorkerService;
         this.visitService = visitService;
+    }
+
+    @Override
+    protected PregnancyOutcomeRegistration makeSampleRegistration(PregnancyOutcome entity) {
+        PregnancyOutcomeRegistration registration = new PregnancyOutcomeRegistration();
+        registration.setPregnancyOutcome(entity);
+        registration.setMotherUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        registration.setFatherUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        registration.setVisitUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        return registration;
     }
 
     @Override

@@ -51,16 +51,4 @@ public class PregnancyResultRestControllerTest extends AuditableCollectedRestCon
 
     }
 
-    @Override
-    protected Registration<PregnancyResult> makeRegistration(PregnancyResult entity) {
-        PregnancyResultRegistration registration = new PregnancyResultRegistration();
-        registration.setPregnancyResult(entity);
-
-        registration.setChildUuid(individualService.findAll(UUID_SORT).toList().get(0).getUuid());
-        registration.setPregnancyOutcomeUuid(pregnancyOutcomeService.findAll(UUID_SORT).toList().get(0).getUuid());
-        registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
-
-        return registration;
-    }
-
 }

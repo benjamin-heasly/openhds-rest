@@ -47,13 +47,4 @@ public class DeathRestControllerTest extends AuditableCollectedRestControllerTes
         assertEquals(entity.getDeathDate(), entity.getDeathDate());
     }
 
-    @Override
-    protected Registration<Death> makeRegistration(Death entity) {
-        DeathRegistration registration = new DeathRegistration();
-        registration.setDeath(entity);
-        registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
-        registration.setIndividualUuid(individualService.findAll(UUID_SORT).toList().get(0).getUuid());
-        registration.setVisitUuid(visitService.findAll(UUID_SORT).toList().get(0).getUuid());
-        return registration;
-    }
 }

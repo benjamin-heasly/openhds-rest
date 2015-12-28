@@ -44,10 +44,4 @@ public class LocationHierarchyLevelRestControllerTest extends AuditableRestContr
 
     }
 
-    @Override
-    protected Registration<LocationHierarchyLevel> makeRegistration(LocationHierarchyLevel entity) {
-        LocationHierarchyLevelRegistration registration = new LocationHierarchyLevelRegistration();
-        registration.setLocationHierarchyLevel(entity);
-        return registration;
-    }
 }

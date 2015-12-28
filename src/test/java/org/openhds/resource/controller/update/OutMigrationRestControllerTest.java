@@ -53,16 +53,4 @@ public class OutMigrationRestControllerTest extends AuditableCollectedRestContro
         assertEquals(entity.getReason(), savedOutMigration.getReason());
     }
 
-    @Override
-    protected Registration<OutMigration> makeRegistration(OutMigration entity) {
-        OutMigrationRegistration registration = new OutMigrationRegistration();
-        registration.setOutMigration(entity);
-
-        registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
-        registration.setVisitUuid(visitService.findAll(UUID_SORT).toList().get(0).getUuid());
-        registration.setIndividualUuid(individualService.findAll(UUID_SORT).toList().get(0).getUuid());
-        registration.setResidencyUuid(residencyService.findAll(UUID_SORT).toList().get(0).getUuid());
-
-        return registration;
-    }
 }

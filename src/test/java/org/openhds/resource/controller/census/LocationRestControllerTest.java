@@ -46,12 +46,4 @@ public class LocationRestControllerTest extends AuditableExtIdRestControllerTest
 
     }
 
-    @Override
-    protected Registration<Location> makeRegistration(Location entity) {
-        LocationRegistration registration = new LocationRegistration();
-        registration.setLocation(entity);
-        registration.setLocationHierarchyUuid(locationHierarchyService.findAll(UUID_SORT).toList().get(0).getUuid());
-        registration.setCollectedByUuid(fieldWorkerService.findAll(UUID_SORT).toList().get(0).getUuid());
-        return registration;
-    }
 }
