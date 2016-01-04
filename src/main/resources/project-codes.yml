@@ -38,7 +38,7 @@ membershipType:
   brotherOrSisterOfHead: {codeValue : "BROTHER_OR_SISTER", description : "sibling of group head" }
   parentOfHead: {codeValue : "PARENT", description : "parent of group head" }
   grandchildOfHead: {codeValue : "GRANDCHILD", description : "grandchild of group head" }
-  notRelatedOfHead: {codeValue : "NOT_RELATED", description : "not related to group head" }
+  notRelatedToHead: {codeValue : "NOT_RELATED", description : "not related to group head" }
   otherRelativeOfHead: {codeValue : "OTHER_RELATIVE", description : "other relative of group head" }
   unknownMembership: {codeValue : "UNKNOWN", description : "unknown relationship to group head" }
 
