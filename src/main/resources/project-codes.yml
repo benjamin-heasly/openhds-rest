@@ -40,7 +40,7 @@ membershipType:
   grandchildOfHead: {codeValue : "GRANDCHILD", description : "grandchild of group head" }
   notRelatedOfHead: {codeValue : "NOT_RELATED", description : "not related to group head" }
   otherRelativeOfHead: {codeValue : "OTHER_RELATIVE", description : "other relative of group head" }
-  unknownMembershipToHead: {codeValue : "UNKNOWN", description : "unknown relationship to group head" }
+  unknownMembership: {codeValue : "UNKNOWN", description : "unknown relationship to group head" }
 
 relationshipType:
   self: {codeValue : "SELF", description : "individual's relationship to self" }
