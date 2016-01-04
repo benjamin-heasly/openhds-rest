@@ -74,14 +74,14 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
         registration.setIndividual(entity);
 
         registration.setRelationToHead(projectCodeService.findByCodeGroup(ProjectCode.RELATIONSHIP_TYPE).get(0).getCodeValue());
-        registration.setHeadOfHouseholdId(AbstractUuidService.UNKNOWN_ENTITY_UUID);
-        registration.setRelationshipId(AbstractUuidService.UNKNOWN_ENTITY_UUID);
-        registration.setLocationId(AbstractUuidService.UNKNOWN_ENTITY_UUID);
-        registration.setSocialGroupId(AbstractUuidService.UNKNOWN_ENTITY_UUID);
-        registration.setMotherId(AbstractUuidService.UNKNOWN_ENTITY_UUID);
-        registration.setFatherId(AbstractUuidService.UNKNOWN_ENTITY_UUID);
-        registration.setMembershipId(AbstractUuidService.UNKNOWN_ENTITY_UUID);
-        registration.setResidencyId(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        registration.setHeadOfHouseholdUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        registration.setRelationshipUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        registration.setLocationUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        registration.setSocialGroupUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        registration.setMotherUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        registration.setFatherUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        registration.setMembershipUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
+        registration.setResidencyUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
 
         registration.setCollectedByUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
         registration.setRegistrationDateTime(ZonedDateTime.now());
@@ -129,15 +129,15 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
                 registration.getIndividual(),
                 registration.getRegistrationDateTime(),
                 registration.getRelationToHead(),
-                registration.getHeadOfHouseholdId(),
-                registration.getRelationshipId(),
-                registration.getLocationId(),
-                registration.getSocialGroupId(),
+                registration.getHeadOfHouseholdUuid(),
+                registration.getRelationshipUuid(),
+                registration.getLocationUuid(),
+                registration.getSocialGroupUuid(),
                 registration.getCollectedByUuid(),
-                registration.getMotherId(),
-                registration.getFatherId(),
-                registration.getMembershipId(),
-                registration.getResidencyId());
+                registration.getMotherUuid(),
+                registration.getFatherUuid(),
+                registration.getMembershipUuid(),
+                registration.getResidencyUuid());
     }
 
     protected Individual register(IndividualHouseholdRegistration registration, String id) {

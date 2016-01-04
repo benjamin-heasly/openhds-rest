@@ -9,14 +9,14 @@ public class IndividualHouseholdRegistration extends Registration<Individual> {
 
     private Individual individual;
     private String relationToHead;
-    private String headOfHouseholdId;
-    private String relationshipId;
-    private String locationId;
-    private String socialGroupId;
-    private String motherId;
-    private String fatherId;
-    private String membershipId;
-    private String residencyId;
+    private String headOfHouseholdUuid;
+    private String relationshipUuid;
+    private String locationUuid;
+    private String socialGroupUuid;
+    private String motherUuid;
+    private String fatherUuid;
+    private String membershipUuid;
+    private String residencyUuid;
 
     public Individual getIndividual() {
         return individual;
@@ -34,67 +34,67 @@ public class IndividualHouseholdRegistration extends Registration<Individual> {
         this.relationToHead = relationToHead;
     }
 
-    public String getHeadOfHouseholdId() {
-        return headOfHouseholdId;
+    public String getHeadOfHouseholdUuid() {
+        return headOfHouseholdUuid;
     }
 
-    public void setHeadOfHouseholdId(String headOfHouseholdId) {
-        this.headOfHouseholdId = headOfHouseholdId;
+    public void setHeadOfHouseholdUuid(String headOfHouseholdUuid) {
+        this.headOfHouseholdUuid = headOfHouseholdUuid;
     }
 
-    public String getRelationshipId() {
-        return relationshipId;
+    public String getRelationshipUuid() {
+        return relationshipUuid;
     }
 
-    public void setRelationshipId(String relationshipId) {
-        this.relationshipId = relationshipId;
+    public void setRelationshipUuid(String relationshipUuid) {
+        this.relationshipUuid = relationshipUuid;
     }
 
-    public String getLocationId() {
-        return locationId;
+    public String getLocationUuid() {
+        return locationUuid;
     }
 
-    public void setLocationId(String locationId) {
-        this.locationId = locationId;
+    public void setLocationUuid(String locationUuid) {
+        this.locationUuid = locationUuid;
     }
 
-    public String getSocialGroupId() {
-        return socialGroupId;
+    public String getSocialGroupUuid() {
+        return socialGroupUuid;
     }
 
-    public void setSocialGroupId(String socialGroupId) {
-        this.socialGroupId = socialGroupId;
+    public void setSocialGroupUuid(String socialGroupUuid) {
+        this.socialGroupUuid = socialGroupUuid;
     }
 
-    public String getMotherId() {
-        return motherId;
+    public String getMotherUuid() {
+        return motherUuid;
     }
 
-    public void setMotherId(String motherId) {
-        this.motherId = motherId;
+    public void setMotherUuid(String motherUuid) {
+        this.motherUuid = motherUuid;
     }
 
-    public String getFatherId() {
-        return fatherId;
+    public String getFatherUuid() {
+        return fatherUuid;
     }
 
-    public void setFatherId(String fatherId) {
-        this.fatherId = fatherId;
+    public void setFatherUuid(String fatherUuid) {
+        this.fatherUuid = fatherUuid;
     }
 
-    public String getMembershipId() {
-        return membershipId;
+    public String getMembershipUuid() {
+        return membershipUuid;
     }
 
-    public void setMembershipId(String membershipId) {
-        this.membershipId = membershipId;
+    public void setMembershipUuid(String membershipUuid) {
+        this.membershipUuid = membershipUuid;
     }
 
-    public String getResidencyId() {
-        return residencyId;
+    public String getResidencyUuid() {
+        return residencyUuid;
     }
 
-    public void setResidencyId(String residencyId) {
-        this.residencyId = residencyId;
+    public void setResidencyUuid(String residencyUuid) {
+        this.residencyUuid = residencyUuid;
     }
 }
