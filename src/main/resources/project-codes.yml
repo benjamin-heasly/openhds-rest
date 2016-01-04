@@ -32,15 +32,15 @@ maritalStatus:
 
 #Are these valid values for the membership type? what about a member of a non-family socialgroup?
 membershipType:
-  head: {codeValue : "HEAD", description : "head of a social group" }
-  spouse: {codeValue : "SPOUSE", description : "married to group head" }
-  sonOrDaughter: {codeValue : "SON_OR_DAUGHTER", description : "child of group head" }
-  brotherOrSister: {codeValue : "BROTHER_OR_SISTER", description : "sibling of group head" }
-  parent: {codeValue : "PARENT", description : "parent of group head" }
-  grandchild: {codeValue : "GRANDCHILD", description : "grandchild of group head" }
-  notRelated: {codeValue : "NOT_RELATED", description : "not related to group head" }
-  otherRelative: {codeValue : "OTHER_RELATIVE", description : "other relative of group head" }
-  unknownMembership: {codeValue : "UNKNOWN", description : "unknown relationship to group head" }
+  head: {codeValue : "SELF", description : "head of a social group" }
+  spouseOfHead: {codeValue : "SPOUSE", description : "married to group head" }
+  sonOrDaughterOfHead: {codeValue : "SON_OR_DAUGHTER", description : "child of group head" }
+  brotherOrSisterOfHead: {codeValue : "BROTHER_OR_SISTER", description : "sibling of group head" }
+  parentOfHead: {codeValue : "PARENT", description : "parent of group head" }
+  grandchildOfHead: {codeValue : "GRANDCHILD", description : "grandchild of group head" }
+  notRelatedOfHead: {codeValue : "NOT_RELATED", description : "not related to group head" }
+  otherRelativeOfHead: {codeValue : "OTHER_RELATIVE", description : "other relative of group head" }
+  unknownMembershipToHead: {codeValue : "UNKNOWN", description : "unknown relationship to group head" }
 
 relationshipType:
   self: {codeValue : "SELF", description : "individual's relationship to self" }
