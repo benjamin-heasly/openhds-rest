@@ -46,6 +46,10 @@ public abstract class AbstractAuditableService
     }
 
     public T findOrMakePlaceHolder(String id){
+        if (null == id) {
+            return getUnknownEntity();
+        }
+
         if (exists(id)) {
             return findOne(id);
         }

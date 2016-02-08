@@ -126,6 +126,7 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
     }
 
     protected Individual register(IndividualHouseholdRegistration registration) {
+        checkRegistrationFields(registration.getIndividual(), registration);
         return individualService.recordIndividual(
                 registration.getIndividual(),
                 registration.getRegistrationDateTime(),

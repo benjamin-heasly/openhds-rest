@@ -137,13 +137,21 @@ public class FamilyDataGenerator implements DataGenerator {
         SocialGroup socialGroup = generateSocialGroup(location.getExtId());
 
         // always create the group head, then add more family members
-        Individual head = generateIndividual(location.getName() + "-head");
+        Individual head = generateIndividual(location.getName() + "-head", "FEMALE");
         generateRelationship(head, head, "self");
         generateMembership(head, socialGroup, "self");
         generateResidency(head, location);
 
         for (int i = 1; i < size; i++) {
-            Individual member = generateIndividual(location.getName() + "-member");
+            // mix of male and female
+            String gender;
+            if (0 == i%2) {
+                gender = "FEMALE";
+            } else {
+                gender = "MALE";
+            }
+
+            Individual member = generateIndividual(location.getName() + "-member", gender);
             generateRelationship(member, head, "household-member");
             generateMembership(member, socialGroup, "household-member");
             generateResidency(member, location);
@@ -163,7 +171,7 @@ public class FamilyDataGenerator implements DataGenerator {
         return socialGroupRepository.save(socialGroup);
     }
 
-    private Individual generateIndividual(String name) {
+    private Individual generateIndividual(String name, String gender) {
         Individual individual = new Individual();
         setAuditableFields(individual);
         setCollectedFields(individual);
@@ -171,7 +179,7 @@ public class FamilyDataGenerator implements DataGenerator {
         individual.setExtId(name);
         individual.setFirstName(name);
         individual.setLastName(name);
-        individual.setGender("FEMALE");
+        individual.setGender(gender);
 
         // save using repository, not service, for performance
         return individualRepository.save(individual);

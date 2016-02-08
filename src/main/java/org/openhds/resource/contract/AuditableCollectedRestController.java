@@ -21,7 +21,8 @@ public abstract class AuditableCollectedRestController<
         this.service = service;
     }
 
-    protected void checkRegistrationFields(T entity, U registration) {
+    // use Registration<T> instead of U so that concrete subclass can have multiple flavors of registration
+    protected void checkRegistrationFields(T entity, Registration<T> registration) {
         if (null == entity || null == registration) {
             return;
         }
