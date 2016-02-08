@@ -35,6 +35,8 @@ public class RequiredDataGenerator implements DataGenerator {
     private static final String DEFAULT_USER_UUID = "DEFAULT_USER";
     private static final String DEFAULT_USER_USERNAME = "user";
     private static final String DEFAULT_USER_PASSWORD = "password";
+    private static final String DEFAULT_FIELD_WORKER_USERNAME = "fieldworker";
+    private static final String DEFAULT_FIELD_WORKER_PASSWORD = "password";
 
     private final UserService userService;
     private final UserRepository userRepository;
@@ -165,8 +167,8 @@ public class RequiredDataGenerator implements DataGenerator {
         FieldWorker fieldWorker = new FieldWorker();
         fieldWorker.setFirstName("default fieldworker");
         fieldWorker.setLastName("default fieldworker");
-        fieldWorker.setFieldWorkerId("fieldworker");
-        fieldWorker.setPasswordHash(passwordEncoder.encode("password"));
+        fieldWorker.setFieldWorkerId(DEFAULT_FIELD_WORKER_USERNAME);
+        fieldWorker.setPasswordHash(passwordEncoder.encode(DEFAULT_FIELD_WORKER_PASSWORD));
         fieldWorkerService.createOrUpdate(fieldWorker);
     }
 
