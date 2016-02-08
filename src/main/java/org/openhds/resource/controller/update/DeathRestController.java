@@ -56,6 +56,7 @@ public class DeathRestController extends AuditableCollectedRestController<
 
     @Override
     protected Death register(DeathRegistration registration) {
+        checkRegistrationFields(registration.getDeath(), registration);
         return deathService.recordDeath(registration.getDeath(),
                 registration.getIndividualUuid(),
                 registration.getVisitUuid(),

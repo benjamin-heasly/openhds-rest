@@ -43,6 +43,7 @@ public class SocialGroupRestController extends AuditableExtIdRestController<
 
     @Override
     protected SocialGroup register(SocialGroupRegistration registration) {
+        checkRegistrationFields(registration.getSocialGroup(), registration);
         return socialGroupService.recordSocialGroup(registration.getSocialGroup(), registration.getCollectedByUuid());
     }
 

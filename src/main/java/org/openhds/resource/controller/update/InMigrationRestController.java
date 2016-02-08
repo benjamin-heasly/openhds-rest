@@ -61,6 +61,7 @@ public class InMigrationRestController extends AuditableCollectedRestController<
 
     @Override
     protected InMigration register(InMigrationRegistration registration) {
+        checkRegistrationFields(registration.getInMigration(), registration);
         return inMigrationService.recordInMigration(registration.getInMigration(),
                 registration.getIndividualUuid(),
                 registration.getResidencyUuid(),

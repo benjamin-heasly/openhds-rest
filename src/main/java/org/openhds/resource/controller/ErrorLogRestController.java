@@ -74,6 +74,7 @@ public class ErrorLogRestController extends AuditableCollectedRestController<
     @Override
     protected ErrorLog register(ErrorLogRegistration registration) {
         ErrorLog errorLog = registration.getErrorLog();
+        checkRegistrationFields(errorLog, registration);
         errorLog.setCollectedBy(fieldWorkerService.findOne(registration.getCollectedByUuid()));
         return errorLogService.createOrUpdate(errorLog);
     }

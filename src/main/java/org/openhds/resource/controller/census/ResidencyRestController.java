@@ -57,6 +57,7 @@ public class ResidencyRestController extends AuditableCollectedRestController<
 
     @Override
     protected Residency register(ResidencyRegistration registration) {
+        checkRegistrationFields(registration.getResidency(), registration);
         return residencyService.recordResidency(registration.getResidency(),
                 registration.getIndividualUuid(),
                 registration.getLocationUuid(),

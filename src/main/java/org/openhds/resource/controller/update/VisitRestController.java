@@ -49,6 +49,7 @@ public class VisitRestController extends AuditableExtIdRestController<
 
     @Override
     protected Visit register(VisitRegistration registration) {
+        checkRegistrationFields(registration.getVisit(), registration);
         return visitService.recordVisit(registration.getVisit(),
                 registration.getLocationUuid(),
                 registration.getCollectedByUuid());

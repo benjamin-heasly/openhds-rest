@@ -56,6 +56,7 @@ class MembershipRestController extends AuditableCollectedRestController<
 
     @Override
     protected Membership register(MembershipRegistration registration) {
+        checkRegistrationFields(registration.getMembership(), registration);
         return membershipService.recordMembership(registration.getMembership(),
                 registration.getIndividualUuid(),
                 registration.getSocialGroupUuid(),

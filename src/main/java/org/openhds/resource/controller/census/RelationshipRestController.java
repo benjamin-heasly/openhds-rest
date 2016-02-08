@@ -53,6 +53,7 @@ public class RelationshipRestController extends AuditableCollectedRestController
 
     @Override
     protected Relationship register(RelationshipRegistration registration) {
+        checkRegistrationFields(registration.getRelationship(), registration);
         return relationshipService.recordRelationship(registration.getRelationship(),
                 registration.getIndividualAUuid(),
                 registration.getIndividualBUuid(),

@@ -51,6 +51,7 @@ public class LocationRestController extends AuditableExtIdRestController<
 
     @Override
     protected Location register(LocationRegistration registration) {
+        checkRegistrationFields(registration.getLocation(), registration);
         return locationService.recordLocation(registration.getLocation(),
                 registration.getLocationHierarchyUuid(),
                 registration.getCollectedByUuid());

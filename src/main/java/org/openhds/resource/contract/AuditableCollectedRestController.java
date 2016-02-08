@@ -21,4 +21,14 @@ public abstract class AuditableCollectedRestController<
         this.service = service;
     }
 
+    protected void checkRegistrationFields(T entity, U registration) {
+        if (null == entity || null == registration) {
+            return;
+        }
+
+        if (null == entity.getCollectionDateTime()) {
+            entity.setCollectionDateTime(registration.getRegistrationDateTime());
+        }
+    }
+
 }

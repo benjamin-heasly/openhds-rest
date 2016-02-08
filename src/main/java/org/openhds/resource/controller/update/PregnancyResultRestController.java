@@ -56,6 +56,7 @@ public class PregnancyResultRestController extends AuditableCollectedRestControl
 
     @Override
     protected PregnancyResult register(PregnancyResultRegistration registration) {
+        checkRegistrationFields(registration.getPregnancyResult(), registration);
         return pregnancyResultService.recordPregnancyResult(registration.getPregnancyResult(),
                 registration.getPregnancyOutcomeUuid(),
                 registration.getChildUuid(),

@@ -93,6 +93,7 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
 
     @Override
     protected Individual register(IndividualRegistration registration) {
+        checkRegistrationFields(registration.getIndividual(), registration);
         return individualService.recordIndividual(registration.getIndividual(), registration.getCollectedByUuid());
     }
 
