@@ -67,6 +67,11 @@ eclipse {
     }
 }
 
+test {
+    maxHeapSize = "2048m"
+    jvmArgs "-XX:MaxPermSize=1024m"
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '2.3'
 }
