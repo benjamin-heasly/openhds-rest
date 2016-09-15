@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/benjamin-heasly/openhds-rest.svg?branch=master)](https://travis-ci.org/benjamin-heasly/openhds-rest)
+
 # openhds-rest
 
 This is a reboot of the [OpenHDS project](https://github.com/OpenHDS) by the University of Southern Maine's 
