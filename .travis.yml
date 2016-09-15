@@ -1,7 +1,7 @@
 language: java
 jdk:
 - oraclejdk8
-script: ./gradlew check --info
+script: ./gradlew test --stacktrace
 deploy:
   provider: heroku
   api_key:
