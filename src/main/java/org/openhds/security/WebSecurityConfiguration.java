@@ -1,12 +1,15 @@
 package org.openhds.security;
 
+import org.apache.catalina.filters.CorsFilter;
+import org.openhds.SimpleCORSFilter;
 import org.openhds.repository.concrete.UserRepository;
 import org.openhds.security.model.UserDetailsWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,11 +18,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Created by Ben on 5/18/15.
@@ -61,8 +66,11 @@ public class WebSecurityConfiguration {
         @Override
         protected void configure(HttpSecurity httpSecurity) throws Exception {
             httpSecurity.authorizeRequests()
-                    .antMatchers("/swagger-ui.html").permitAll().anyRequest()
-                    .authenticated().and()
+                    .antMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                    .and()
+                    .addFilterBefore(new SimpleCORSFilter(), ChannelProcessingFilter.class)
+                    .authorizeRequests()
+                    .and()
                     .authorizeRequests()
                     .antMatchers("/**").hasRole("USER")
                     .and()
@@ -75,6 +83,21 @@ public class WebSecurityConfiguration {
     @Configuration
     public static class FilterRegistrationConfig {
 
+        @Value("${permitted.urls}")
+        String permittedUrls;
+
+        //TODO: This needs tests
+        private boolean isAllowed(String origin) {
+            // Allow from everywhere if not specified
+            return permittedUrls == null
+                    || origin != null
+                    && Arrays.stream(permittedUrls.split(","))
+                    .filter(
+                            addr -> addr.trim().toLowerCase().equals(origin.toLowerCase())
+                    ).findFirst()
+                    .isPresent();
+        }
+
         @Bean
         public FilterRegistrationBean corsFilter() {
             return new FilterRegistrationBean(new Filter() {
@@ -86,21 +109,25 @@ public class WebSecurityConfiguration {
                     HttpServletRequest request = (HttpServletRequest) servletRequest;
                     HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-                    response.setHeader("Access-Control-Allow-Origin", ((HttpServletRequest) servletRequest).getHeader("Origin"));
+                    final String origin = ((HttpServletRequest) servletRequest).getHeader("Origin");
+                    if(isAllowed(origin)) {
+                        response.setHeader("Access-Control-Allow-Origin", origin);
+                    } else {
+                        response.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
+                    }
 
                     // TODO: are these the verbs and headers we really want?
-                    response.setHeader("Access-Control-Allow-Methods", "POST,GET,OPTIONS,DELETE");
+                    response.setHeader("Access-Control-Allow-Methods", "POST,PUT,GET,OPTIONS,DELETE");
                     response.setHeader("Access-Control-Max-Age", Long.toString(60 * 60));
                     response.setHeader("Access-Control-Allow-Credentials", "true");
                     response.setHeader("Access-Control-Allow-Headers",
                             "Origin,Accept,X-Requested-With,Content-Type,Access-Control-Request-Method,Access-Control-Request-Headers,Authorization");
 
                     // always allow OPTIONS but filter other verbs
-                    if ("OPTIONS".equals(request.getMethod())) {
-                        response.setStatus(HttpStatus.OK.value());
-                    } else {
-                        filterChain.doFilter(servletRequest, servletResponse);
+                    if ("OPTIONS" .equals(request.getMethod())) {
+                        response.setStatus(200);
                     }
+                    filterChain.doFilter(servletRequest, servletResponse);
                 }
 
                 @Override
