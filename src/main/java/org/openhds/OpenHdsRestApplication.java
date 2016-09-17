@@ -12,8 +12,10 @@ import org.openhds.resource.converter.XmlElementDelimiter;
 import org.springframework.beans.factory.config.YamlMapFactoryBean;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;
@@ -26,6 +28,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.validation.Validator;
@@ -35,9 +38,12 @@ import java.util.List;
  * Created by Ben on 5/4/15.
  */
 @SpringBootApplication
+@Configuration
 @EnableJpaRepositories
 @EnableSpringDataWebSupport
 @EnableEntityLinks
+@EnableAutoConfiguration
+@ComponentScan({"org.openhds"})
 public class OpenHdsRestApplication {
 
     private static final String SAMPLE_DATA_SIZE_PROPERTY = "sampleDataSize";
@@ -121,6 +127,18 @@ public class OpenHdsRestApplication {
             converters.add(jsonConverter());
             converters.add(xmlConverter());
         }
+
+        @Override
+        public void addResourceHandlers(ResourceHandlerRegistry registry) {
+            /**
+             * Setup Swagger UI
+             */
+            registry.addResourceHandler("swagger-ui.html")
+                    .addResourceLocations("classpath:/META-INF/resources/");
+            registry.addResourceHandler("/webjars/**")
+                    .addResourceLocations("classpath:/META-INF/resources/webjars/");
+        }
+
     }
 
     private static void configureObjectMapper(ObjectMapper mapper) {

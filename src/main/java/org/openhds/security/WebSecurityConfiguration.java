@@ -61,6 +61,9 @@ public class WebSecurityConfiguration {
         @Override
         protected void configure(HttpSecurity httpSecurity) throws Exception {
             httpSecurity.authorizeRequests()
+                    .antMatchers("/swagger-ui.html").permitAll().anyRequest()
+                    .authenticated().and()
+                    .authorizeRequests()
                     .antMatchers("/**").hasRole("USER")
                     .and()
                     .httpBasic()
