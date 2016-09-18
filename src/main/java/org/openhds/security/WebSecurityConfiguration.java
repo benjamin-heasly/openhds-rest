@@ -1,6 +1,5 @@
 package org.openhds.security;
 
-import org.apache.catalina.filters.CorsFilter;
 import org.openhds.SimpleCORSFilter;
 import org.openhds.repository.concrete.UserRepository;
 import org.openhds.security.model.UserDetailsWrapper;
@@ -24,7 +23,6 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 
 /**
  * Created by Ben on 5/18/15.
@@ -86,18 +84,6 @@ public class WebSecurityConfiguration {
         @Value("${permitted.urls}")
         String permittedUrls;
 
-        //TODO: This needs tests
-        private boolean isAllowed(String origin) {
-            // Allow from everywhere if not specified
-            return permittedUrls == null
-                    || origin != null
-                    && Arrays.stream(permittedUrls.split(","))
-                    .filter(
-                            addr -> addr.trim().toLowerCase().equals(origin.toLowerCase())
-                    ).findFirst()
-                    .isPresent();
-        }
-
         @Bean
         public FilterRegistrationBean corsFilter() {
             return new FilterRegistrationBean(new Filter() {
@@ -110,13 +96,12 @@ public class WebSecurityConfiguration {
                     HttpServletResponse response = (HttpServletResponse) servletResponse;
 
                     final String origin = ((HttpServletRequest) servletRequest).getHeader("Origin");
-                    if(isAllowed(origin)) {
+                    if(HostValidator.isAllowed(origin, permittedUrls)) {
                         response.setHeader("Access-Control-Allow-Origin", origin);
                     } else {
                         response.setHeader("Access-Control-Allow-Origin", "http://localhost:8080");
                     }
 
-                    // TODO: are these the verbs and headers we really want?
                     response.setHeader("Access-Control-Allow-Methods", "POST,PUT,GET,OPTIONS,DELETE");
                     response.setHeader("Access-Control-Max-Age", Long.toString(60 * 60));
                     response.setHeader("Access-Control-Allow-Credentials", "true");
