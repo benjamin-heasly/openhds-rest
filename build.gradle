@@ -69,6 +69,10 @@ eclipse {
     }
 }
 
+test {
+    maxHeapSize = "2048m"
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '2.3'
 }
