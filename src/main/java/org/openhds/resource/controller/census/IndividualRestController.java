@@ -156,7 +156,7 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
     }
 
 
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
     public EntityIterator<Individual> individualLookup(@RequestParam Map<String, String> fields) {
         List<QueryValue> collect = fields.entrySet().stream().map(f -> new QueryValue(f.getKey(), f.getValue())).collect(Collectors.toList());
         QueryValue[] queryFields = {};
