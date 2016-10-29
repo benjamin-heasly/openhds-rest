@@ -192,7 +192,7 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
     public List<Individual> findByFieldWorker(@RequestParam String fieldWorkerId) {
         EntityIterator<FieldWorker> fieldWorkers = fieldWorkerService.findByFieldWorkerId(new Sort("fieldWorkerId"), fieldWorkerId);
 
-        // This is hacky because we get back an entity iterator
+        // This is hacky because we get back an entity iterator and it's not readily streamable
         List <Individual> results = new ArrayList<>();
 
         for(FieldWorker fw: fieldWorkers) {

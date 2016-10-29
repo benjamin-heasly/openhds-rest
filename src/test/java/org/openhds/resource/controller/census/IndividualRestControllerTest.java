@@ -2,7 +2,6 @@ package org.openhds.resource.controller.census;
 
 import org.junit.Test;
 import org.openhds.domain.model.census.Individual;
-import org.openhds.repository.results.EntityIterator;
 import org.openhds.resource.contract.AuditableExtIdRestControllerTest;
 import org.openhds.service.impl.ProjectCodeService;
 import org.openhds.service.impl.census.IndividualService;
@@ -10,12 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -184,12 +180,32 @@ public class IndividualRestControllerTest extends AuditableExtIdRestControllerTe
     }
 
     @Test
-    public void lookupByMultipleFields() {
-        Map<String, String> lookupFields = new HashMap<>();
-        lookupFields.put("firstName", "location-3-head");
-        EntityIterator<Individual> individuals = controller.search(lookupFields);
-        assertEquals(0, individuals.toList().size());
-        assertFalse(true);
+    @WithUserDetails
+    public void lookupByMultipleFields() throws Exception {
+        mockMvc.perform(get(getResourceUrl() + "/search")
+                .param("firstName", "location-3-head")
+                .accept(regularJson))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(regularJson));
     }
 
+    @Test
+    @WithUserDetails
+    public void lookupByLocation() throws Exception {
+        mockMvc.perform(get(getResourceUrl() + "/findByLocation")
+                .param("locationUuid", "sampleHouseholdId")
+                .accept(regularJson))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(regularJson));
+    }
+
+    @Test
+    @WithUserDetails
+    public void lookupByFieldWorker() throws Exception {
+        mockMvc.perform(get(getResourceUrl() + "/findByFieldWorker")
+                .param("fieldWorkerId", "fieldworker")
+                .accept(regularJson))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(regularJson));
+    }
 }
