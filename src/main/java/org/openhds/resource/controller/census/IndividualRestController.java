@@ -163,11 +163,11 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
 
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public EntityIterator<Individual> search(@RequestParam Map<String, String> fields) {
+    public List<Individual> search(@RequestParam Map<String, String> fields) {
         List<QueryValue> collect = fields.entrySet().stream().map(f -> new QueryValue(f.getKey(), f.getValue())).collect(Collectors.toList());
         QueryValue[] queryFields = {};
         queryFields = collect.toArray(queryFields);
-        return individualService.findByMultipleValues(new Sort("firstName"), queryFields);
+        return individualService.findByMultipleValues(new Sort("firstName"), queryFields).toList();
     }
 
     @RequestMapping(value = "/findByLocation", method = RequestMethod.GET)
