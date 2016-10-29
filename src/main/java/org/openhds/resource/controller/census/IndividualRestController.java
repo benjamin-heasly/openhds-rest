@@ -1,8 +1,11 @@
 package org.openhds.resource.controller.census;
 
+import javafx.util.Pair;
 import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.Individual;
 import org.openhds.domain.util.ShallowCopier;
+import org.openhds.repository.queries.QueryValue;
+import org.openhds.repository.results.EntityIterator;
 import org.openhds.resource.contract.AuditableExtIdRestController;
 import org.openhds.resource.registration.census.IndividualHouseholdRegistration;
 import org.openhds.resource.registration.census.IndividualRegistration;
@@ -11,6 +14,7 @@ import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.ProjectCodeService;
 import org.openhds.service.impl.census.IndividualService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceSupport;
@@ -19,6 +23,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -145,6 +153,15 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
     protected Individual register(IndividualHouseholdRegistration registration, String id) {
         registration.getIndividual().setUuid(id);
         return register(registration);
+    }
+
+
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    public EntityIterator<Individual> individualLookup(@RequestParam Map<String, String> fields) {
+        List<QueryValue> collect = fields.entrySet().stream().map(f -> new QueryValue(f.getKey(), f.getValue())).collect(Collectors.toList());
+        QueryValue[] queryFields = {};
+        queryFields = collect.toArray(queryFields);
+        return individualService.findByMultipleValues(new Sort("firstName"), queryFields);
     }
 
 }
