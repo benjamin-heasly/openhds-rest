@@ -187,7 +187,7 @@ public class IndividualRestControllerTest extends AuditableExtIdRestControllerTe
     public void lookupByMultipleFields() {
         Map<String, String> lookupFields = new HashMap<>();
         lookupFields.put("firstName", "location-3-head");
-        EntityIterator<Individual> individuals = controller.individualLookup(lookupFields);
+        EntityIterator<Individual> individuals = controller.search(lookupFields);
         assertEquals(0, individuals.toList().size());
         assertFalse(true);
     }
