@@ -1,5 +1,6 @@
 package org.openhds.resource.controller.census;
 
+import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.Individual;
 import org.openhds.domain.model.census.Location;
@@ -185,5 +186,21 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
                 .map(residency -> residency.getIndividual().getUuid())
                 .map(uuid -> individualService.findOne(uuid))
                 .collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/findByFieldWorker", method = RequestMethod.GET)
+    public List<Individual> findByFieldWorker(@RequestParam String fieldWorkerId) {
+        EntityIterator<FieldWorker> fieldWorkers = fieldWorkerService.findByFieldWorkerId(new Sort("fieldWorkerId"), fieldWorkerId);
+
+        // This is hacky because we get back an entity iterator
+        List <Individual> results = new ArrayList<>();
+
+        for(FieldWorker fw: fieldWorkers) {
+            EntityIterator<Individual> individuals = individualService.findByCollectedBy(new Sort("uuid"), fw);
+            for(Individual individual: individuals) {
+                results.add(individual);
+            }
+        }
+        return results;
     }
 }
