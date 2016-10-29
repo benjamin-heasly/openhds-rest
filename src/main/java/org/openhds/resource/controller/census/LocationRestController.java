@@ -12,7 +12,6 @@ import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
 /**
  * Created by Ben on 5/18/15.
  */
@@ -63,5 +62,4 @@ public class LocationRestController extends AuditableExtIdRestController<
         registration.getLocation().setUuid(id);
         return register(registration);
     }
-
 }
