@@ -152,7 +152,7 @@ public class User implements Serializable, UuidIdentifiable {
         return "User{" +
                 "uuid='" + uuid + '\'' +
                 ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastNameq + '\'' +
+                ", lastName='" + lastName + '\'' +
                 ", description='" + description + '\'' +
                 ", username='" + username + '\'' +
                 ", roles=" + roles +
