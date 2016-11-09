@@ -1,8 +1,13 @@
 package org.openhds.resource.controller.census;
 
+import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.Individual;
+import org.openhds.domain.model.census.Location;
+import org.openhds.domain.model.census.Residency;
 import org.openhds.domain.util.ShallowCopier;
+import org.openhds.repository.queries.QueryValue;
+import org.openhds.repository.results.EntityIterator;
 import org.openhds.resource.contract.AuditableExtIdRestController;
 import org.openhds.resource.registration.census.IndividualHouseholdRegistration;
 import org.openhds.resource.registration.census.IndividualRegistration;
@@ -10,7 +15,9 @@ import org.openhds.service.contract.AbstractUuidService;
 import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.ProjectCodeService;
 import org.openhds.service.impl.census.IndividualService;
+import org.openhds.service.impl.census.ResidencyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceSupport;
@@ -19,6 +26,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -41,12 +52,15 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
 
     private final IndividualService individualService;
 
+    private final ResidencyService residencyService;
+
     @Autowired
-    public IndividualRestController(IndividualService individualService, FieldWorkerService fieldWorkerService, ProjectCodeService projectCodeService) {
+    public IndividualRestController(IndividualService individualService, FieldWorkerService fieldWorkerService, ProjectCodeService projectCodeService, ResidencyService residencyService) {
         super(individualService);
         this.individualService = individualService;
         this.fieldWorkerService = fieldWorkerService;
         this.projectCodeService = projectCodeService;
+        this.residencyService = residencyService;
     }
 
     @Override
@@ -147,4 +161,46 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
         return register(registration);
     }
 
+
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    public List<Individual> search(@RequestParam Map<String, String> fields) {
+        List<QueryValue> collect = fields.entrySet().stream().map(f -> new QueryValue(f.getKey(), f.getValue())).collect(Collectors.toList());
+        QueryValue[] queryFields = {};
+        queryFields = collect.toArray(queryFields);
+        return individualService.findByMultipleValues(new Sort("firstName"), queryFields).toList();
+    }
+
+    @RequestMapping(value = "/findByLocation", method = RequestMethod.GET)
+    public List<Individual> findByLocation(@RequestParam String locationUuid) {
+        EntityIterator<Residency> residencies = residencyService.findAll(new Sort("uuid"));
+
+        List<Residency> filteredResidencies = new ArrayList<>();
+        for (Residency residency: residencies) {
+            if(residency.getLocation().getUuid().equals(locationUuid)) {
+                filteredResidencies.add(residency);
+            }
+        }
+
+        // TODO: This executes a query for each uuid. It should be batched.
+        return filteredResidencies.stream()
+                .map(residency -> residency.getIndividual().getUuid())
+                .map(uuid -> individualService.findOne(uuid))
+                .collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/findByFieldWorker", method = RequestMethod.GET)
+    public List<Individual> findByFieldWorker(@RequestParam String fieldWorkerId) {
+        EntityIterator<FieldWorker> fieldWorkers = fieldWorkerService.findByFieldWorkerId(new Sort("fieldWorkerId"), fieldWorkerId);
+
+        // This is hacky because we get back an entity iterator and it's not readily streamable
+        List <Individual> results = new ArrayList<>();
+
+        for(FieldWorker fw: fieldWorkers) {
+            EntityIterator<Individual> individuals = individualService.findByCollectedBy(new Sort("uuid"), fw);
+            for(Individual individual: individuals) {
+                results.add(individual);
+            }
+        }
+        return results;
+    }
 }

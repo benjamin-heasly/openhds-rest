@@ -179,4 +179,33 @@ public class IndividualRestControllerTest extends AuditableExtIdRestControllerTe
                 .andExpect(xpath("/*/" + controller.getEntityFieldName() + "/" + "uuid").string("sampleHouseholdId"));
     }
 
+    @Test
+    @WithUserDetails
+    public void lookupByMultipleFields() throws Exception {
+        mockMvc.perform(get(getResourceUrl() + "/search")
+                .param("firstName", "location-3-head")
+                .accept(regularJson))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(regularJson));
+    }
+
+    @Test
+    @WithUserDetails
+    public void lookupByLocation() throws Exception {
+        mockMvc.perform(get(getResourceUrl() + "/findByLocation")
+                .param("locationUuid", "sampleHouseholdId")
+                .accept(regularJson))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(regularJson));
+    }
+
+    @Test
+    @WithUserDetails
+    public void lookupByFieldWorker() throws Exception {
+        mockMvc.perform(get(getResourceUrl() + "/findByFieldWorker")
+                .param("fieldWorkerId", "fieldworker")
+                .accept(regularJson))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(regularJson));
+    }
 }
