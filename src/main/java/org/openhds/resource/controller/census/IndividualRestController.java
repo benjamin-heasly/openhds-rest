@@ -3,6 +3,7 @@ package org.openhds.resource.controller.census;
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.*;
+import org.openhds.domain.model.update.InMigration;
 import org.openhds.domain.util.ShallowCopier;
 import org.openhds.repository.queries.QueryValue;
 import org.openhds.repository.results.EntityIterator;
@@ -16,6 +17,7 @@ import org.openhds.service.impl.census.IndividualService;
 import org.openhds.service.impl.census.MembershipService;
 import org.openhds.service.impl.census.RelationshipService;
 import org.openhds.service.impl.census.ResidencyService;
+import org.openhds.service.impl.update.InMigrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.ExposesResourceFor;
@@ -58,11 +60,14 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
 
     private final RelationshipService relationshipService;
 
+    private final InMigrationService inMigrationService;
+
 
     @Autowired
     public IndividualRestController(IndividualService individualService, FieldWorkerService fieldWorkerService,
                                     ProjectCodeService projectCodeService, ResidencyService residencyService,
-                                    MembershipService membershipService, RelationshipService relationshipService) {
+                                    MembershipService membershipService, RelationshipService relationshipService,
+                                    InMigrationService inMigrationService) {
         super(individualService);
         this.individualService = individualService;
         this.fieldWorkerService = fieldWorkerService;
@@ -70,6 +75,7 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
         this.residencyService = residencyService;
         this.membershipService = membershipService;
         this.relationshipService = relationshipService;
+        this.inMigrationService = inMigrationService;
     }
 
     @Override
@@ -236,6 +242,34 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
         }
         return filteredRelationships;
     }
+
+    private class EventStructure {
+        public List<InMigration> inMigrations;
+        private EventStructure(List<InMigration> inMigrations){
+            this.inMigrations = inMigrations;
+
+        }
+    }
+
+    @RequestMapping(value = "/getEvents", method = RequestMethod.GET)
+    public EventStructure getEvents(@RequestParam String individualUuid) {
+        EntityIterator<InMigration> inMigrations = inMigrationService.findAll(new Sort("uuid"));
+
+
+
+        List<InMigration> filteredInMigrations = new ArrayList<>();
+        for (InMigration inMigration: inMigrations) {
+            if(     inMigration.getIndividual().getUuid().equals(individualUuid) ) {
+                filteredInMigrations.add(inMigration);
+            }
+        }
+
+        EventStructure events = new EventStructure(filteredInMigrations.subList(0,20));
+
+        return events;
+    }
+
+
 
     @RequestMapping(value = "/findByFieldWorker", method = RequestMethod.GET)
     public List<Individual> findByFieldWorker(@RequestParam String fieldWorkerId) {
