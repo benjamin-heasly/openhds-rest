@@ -2,9 +2,7 @@ package org.openhds.resource.controller.census;
 
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.ProjectCode;
-import org.openhds.domain.model.census.Individual;
-import org.openhds.domain.model.census.Location;
-import org.openhds.domain.model.census.Residency;
+import org.openhds.domain.model.census.*;
 import org.openhds.domain.util.ShallowCopier;
 import org.openhds.repository.queries.QueryValue;
 import org.openhds.repository.results.EntityIterator;
@@ -15,6 +13,8 @@ import org.openhds.service.contract.AbstractUuidService;
 import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.ProjectCodeService;
 import org.openhds.service.impl.census.IndividualService;
+import org.openhds.service.impl.census.MembershipService;
+import org.openhds.service.impl.census.RelationshipService;
 import org.openhds.service.impl.census.ResidencyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -54,13 +54,22 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
 
     private final ResidencyService residencyService;
 
+    private final MembershipService membershipService;
+
+    private final RelationshipService relationshipService;
+
+
     @Autowired
-    public IndividualRestController(IndividualService individualService, FieldWorkerService fieldWorkerService, ProjectCodeService projectCodeService, ResidencyService residencyService) {
+    public IndividualRestController(IndividualService individualService, FieldWorkerService fieldWorkerService,
+                                    ProjectCodeService projectCodeService, ResidencyService residencyService,
+                                    MembershipService membershipService, RelationshipService relationshipService) {
         super(individualService);
         this.individualService = individualService;
         this.fieldWorkerService = fieldWorkerService;
         this.projectCodeService = projectCodeService;
         this.residencyService = residencyService;
+        this.membershipService = membershipService;
+        this.relationshipService = relationshipService;
     }
 
     @Override
@@ -186,6 +195,33 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
                 .map(residency -> residency.getIndividual().getUuid())
                 .map(uuid -> individualService.findOne(uuid))
                 .collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/getMemberships", method = RequestMethod.GET)
+    public List<Membership> getMembershipsForIndividual(@RequestParam String individualUuid) {
+        EntityIterator<Membership> memberships = membershipService.findAll(new Sort("uuid"));
+
+        List<Membership> filteredMemberships = new ArrayList<>();
+        for (Membership membership: memberships) {
+            if(membership.getIndividual().getUuid().equals(individualUuid)) {
+                filteredMemberships.add(membership);
+            }
+        }
+        return filteredMemberships;
+    }
+
+    @RequestMapping(value = "/getRelationships", method = RequestMethod.GET)
+    public List<Relationship> getRelationshipsForIndividual(@RequestParam String individualUuid) {
+        EntityIterator<Relationship> relationships = relationshipService.findAll(new Sort("uuid"));
+
+        List<Relationship> filteredRelationships = new ArrayList<>();
+        for (Relationship relationship: relationships) {
+            if(     relationship.getIndividualA().getUuid().equals(individualUuid) ||
+                    relationship.getIndividualB().getUuid().equals(individualUuid) ) {
+                filteredRelationships.add(relationship);
+            }
+        }
+        return filteredRelationships;
     }
 
     @RequestMapping(value = "/findByFieldWorker", method = RequestMethod.GET)
