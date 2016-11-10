@@ -197,6 +197,19 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
                 .collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "/getResidencies", method = RequestMethod.GET)
+    public List<Residency> getResidencies(@RequestParam String individualUuid) {
+        EntityIterator<Residency> residencies = residencyService.findAll(new Sort("uuid"));
+
+        List<Residency> filteredResidencies = new ArrayList<>();
+        for (Residency residency: residencies) {
+            if(residency.getIndividual().getUuid().equals(individualUuid)) {
+                filteredResidencies.add(residency);
+            }
+        }
+        return filteredResidencies;
+    }
+
     @RequestMapping(value = "/getMemberships", method = RequestMethod.GET)
     public List<Membership> getMembershipsForIndividual(@RequestParam String individualUuid) {
         EntityIterator<Membership> memberships = membershipService.findAll(new Sort("uuid"));
