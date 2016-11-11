@@ -3,7 +3,7 @@ package org.openhds.resource.controller.census;
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.*;
-import org.openhds.domain.model.update.InMigration;
+import org.openhds.domain.model.update.*;
 import org.openhds.domain.util.ShallowCopier;
 import org.openhds.repository.queries.QueryValue;
 import org.openhds.repository.results.EntityIterator;
@@ -17,7 +17,7 @@ import org.openhds.service.impl.census.IndividualService;
 import org.openhds.service.impl.census.MembershipService;
 import org.openhds.service.impl.census.RelationshipService;
 import org.openhds.service.impl.census.ResidencyService;
-import org.openhds.service.impl.update.InMigrationService;
+import org.openhds.service.impl.update.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.ExposesResourceFor;
@@ -62,12 +62,22 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
 
     private final InMigrationService inMigrationService;
 
+    private final OutMigrationService outMigrationService;
+
+    private final DeathService deathService;
+
+    private final PregnancyObservationService pregnancyObservationService;
+
+    private final PregnancyOutcomeService pregnancyOutcomeService;
+
 
     @Autowired
     public IndividualRestController(IndividualService individualService, FieldWorkerService fieldWorkerService,
                                     ProjectCodeService projectCodeService, ResidencyService residencyService,
                                     MembershipService membershipService, RelationshipService relationshipService,
-                                    InMigrationService inMigrationService) {
+                                    InMigrationService inMigrationService, OutMigrationService outMigrationService,
+                                    DeathService deathService, PregnancyObservationService pregnancyObservationService,
+                                    PregnancyOutcomeService pregnancyOutcomeService) {
         super(individualService);
         this.individualService = individualService;
         this.fieldWorkerService = fieldWorkerService;
@@ -76,6 +86,11 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
         this.membershipService = membershipService;
         this.relationshipService = relationshipService;
         this.inMigrationService = inMigrationService;
+        this.outMigrationService = outMigrationService;
+        this.deathService = deathService;
+        this.pregnancyObservationService = pregnancyObservationService;
+        this.pregnancyOutcomeService = pregnancyOutcomeService;
+
     }
 
     @Override
@@ -243,20 +258,44 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
         return filteredRelationships;
     }
 
+
     private class EventStructure {
         public List<InMigration> inMigrations;
-        private EventStructure(List<InMigration> inMigrations){
+        public List<OutMigration> outMigrations;
+        public List<Death> deaths;
+        public List<PregnancyObservation> pregnancyObservations;
+        public List<PregnancyOutcome> pregnancyOutcomes;
+
+        // male
+        private EventStructure(List<InMigration> inMigrations, List<OutMigration> outMigrations,
+                               List<Death> deaths){
             this.inMigrations = inMigrations;
+            this.outMigrations = outMigrations;
+            this.deaths = deaths;
+        }
+
+        // female
+        private EventStructure(List<InMigration> inMigrations, List<OutMigration> outMigrations,
+                               List<Death> deaths, List<PregnancyObservation> pregnancyObservations,
+                               List<PregnancyOutcome> pregnancyOutcomes ){
+            this.inMigrations = inMigrations;
+            this.outMigrations = outMigrations;
+            this.deaths = deaths;
+            this.pregnancyObservations = pregnancyObservations;
+            this.pregnancyOutcomes = pregnancyOutcomes;
 
         }
+
     }
+
 
     @RequestMapping(value = "/getEvents", method = RequestMethod.GET)
     public EventStructure getEvents(@RequestParam String individualUuid) {
+
+        Individual indiv = individualService.findOne(individualUuid);
+
+        // InMigrations
         EntityIterator<InMigration> inMigrations = inMigrationService.findAll(new Sort("uuid"));
-
-
-
         List<InMigration> filteredInMigrations = new ArrayList<>();
         for (InMigration inMigration: inMigrations) {
             if(     inMigration.getIndividual().getUuid().equals(individualUuid) ) {
@@ -264,9 +303,60 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
             }
         }
 
-        EventStructure events = new EventStructure(filteredInMigrations.subList(0,20));
+        // OutMigrations
+        EntityIterator<OutMigration> outMigrations = outMigrationService.findAll(new Sort("uuid"));
+        List<OutMigration> filteredOutMigrations = new ArrayList<>();
+        for (OutMigration outMigration: outMigrations) {
+            if(     outMigration.getIndividual().getUuid().equals(individualUuid) ) {
+                filteredOutMigrations.add(outMigration);
+            }
+        }
 
-        return events;
+        // Deaths
+        EntityIterator<Death> deaths = deathService.findAll(new Sort("uuid"));
+        List<Death> filteredDeaths = new ArrayList<>();
+        for (Death death: deaths) {
+            if(     death.getIndividual().getUuid().equals(individualUuid) ) {
+                filteredDeaths.add(death);
+            }
+        }
+
+        if(indiv.getGender().equals(("MALE"))){
+            EventStructure events = new EventStructure(filteredInMigrations, filteredOutMigrations, filteredDeaths);
+            return events;
+
+        }
+        else{
+            // Pregnancy Observations
+            EntityIterator<PregnancyObservation> pregnancyObservations = pregnancyObservationService.findAll(new Sort("uuid"));
+            List<PregnancyObservation> filteredPregnancyObservations = new ArrayList<>();
+            for (PregnancyObservation pregnancyObservation: pregnancyObservations) {
+                if(     pregnancyObservation.getMother().getUuid().equals(individualUuid) ) {
+                    filteredPregnancyObservations.add(pregnancyObservation);
+                }
+            }
+
+            // Pregnancy Outcomes
+            EntityIterator<PregnancyOutcome> pregnancyOutcomes = pregnancyOutcomeService.findAll(new Sort("uuid"));
+            List<PregnancyOutcome> filteredPregnancyOutcomes = new ArrayList<>();
+            for (PregnancyOutcome pregnancyOutcome: pregnancyOutcomes) {
+                if(     pregnancyOutcome.getMother().getUuid().equals(individualUuid) ) {
+                    filteredPregnancyOutcomes.add(pregnancyOutcome);
+                }
+            }
+
+            EventStructure events = new EventStructure(filteredInMigrations, filteredOutMigrations, filteredDeaths,
+                    filteredPregnancyObservations, filteredPregnancyOutcomes);
+            return events;
+
+        }
+    }
+
+    @RequestMapping(value = "/quickTest", method = RequestMethod.GET)
+    public Individual quickTest(@RequestParam String individualUuid) {
+
+
+        return individualService.findOne(individualUuid);
     }
 
 
