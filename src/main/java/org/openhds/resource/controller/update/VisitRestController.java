@@ -105,6 +105,21 @@ public class VisitRestController extends AuditableExtIdRestController<
         return results;
     }
 
+
+    @RequestMapping(value = "/findByLocation", method = RequestMethod.GET)
+    public List<Visit> findByLocation(@RequestParam String locationUuid) {
+
+        EntityIterator<Visit> visits = visitService.findAll(new Sort("uuid"));
+        List<Visit> filteredVisits = new ArrayList<>();
+        for (Visit visit: visits) {
+            if(     visit.getLocation().getUuid().equals(locationUuid) ) {
+                filteredVisits.add(visit);
+            }
+        }
+
+        return filteredVisits;
+    }
+
     private class EventStructure {
         public List<InMigration> inMigrations;
         public List<OutMigration> outMigrations;
@@ -187,7 +202,7 @@ public class VisitRestController extends AuditableExtIdRestController<
 
         return new EventStructure(filteredInMigrations, filteredOutMigrations, filteredDeaths,
                 filteredPregnancyObservations, filteredPregnancyOutcomes);
-        
+
 
 
     }
