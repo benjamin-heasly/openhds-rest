@@ -105,17 +105,17 @@ public class RequiredDataGenerator implements DataGenerator {
 
     public void createDefaultUser() {
         User user = userFactory.defaultUser();
-        userService.recordUser(user, DEFAULT_USER_PASSWORD);
+        userService.recordUserWeakPassword(user, DEFAULT_USER_PASSWORD);
     }
 
     public void createDataWorkerUser() {
         User dataWorker = userFactory.defaultDataWorker();
-        userService.recordUser(dataWorker, DEFAULT_USER_PASSWORD);
+        userService.recordUserWeakPassword(dataWorker, DEFAULT_USER_PASSWORD);
     }
 
     public void createDataManagerUser() {
         User dataManager = userFactory.defaultDataManager();
-        userService.recordUser(dataManager, DEFAULT_USER_PASSWORD);
+        userService.recordUserWeakPassword(dataManager, DEFAULT_USER_PASSWORD);
     }
 
     // trigger services to create unknown entities ahead of time, for predictable entity counts
