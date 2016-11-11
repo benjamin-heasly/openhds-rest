@@ -1,14 +1,14 @@
 package org.openhds.resource.controller.update;
 
 import org.openhds.domain.model.FieldWorker;
-import org.openhds.domain.model.update.Visit;
+import org.openhds.domain.model.update.*;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.resource.contract.AuditableExtIdRestController;
 import org.openhds.resource.registration.update.VisitRegistration;
 import org.openhds.service.contract.AbstractUuidService;
 import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.census.LocationService;
-import org.openhds.service.impl.update.VisitService;
+import org.openhds.service.impl.update.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.ExposesResourceFor;
@@ -37,14 +37,34 @@ public class VisitRestController extends AuditableExtIdRestController<
 
     private final FieldWorkerService fieldWorkerService;
 
+    private final InMigrationService inMigrationService;
+
+    private final OutMigrationService outMigrationService;
+
+    private final DeathService deathService;
+
+    private final PregnancyObservationService pregnancyObservationService;
+
+    private final PregnancyOutcomeService pregnancyOutcomeService;
+
     @Autowired
     public VisitRestController(VisitService visitService,
                                LocationService locationService,
-                               FieldWorkerService fieldWorkerService) {
+                               FieldWorkerService fieldWorkerService,
+                               InMigrationService inMigrationService, OutMigrationService outMigrationService,
+                               DeathService deathService, PregnancyObservationService pregnancyObservationService,
+                               PregnancyOutcomeService pregnancyOutcomeService) {
         super(visitService);
         this.visitService = visitService;
         this.locationService = locationService;
         this.fieldWorkerService = fieldWorkerService;
+        this.inMigrationService = inMigrationService;
+        this.outMigrationService = outMigrationService;
+        this.deathService = deathService;
+        this.pregnancyObservationService = pregnancyObservationService;
+        this.pregnancyOutcomeService = pregnancyOutcomeService;
+
+
     }
 
     @Override
@@ -84,5 +104,93 @@ public class VisitRestController extends AuditableExtIdRestController<
         }
         return results;
     }
+
+    private class EventStructure {
+        public List<InMigration> inMigrations;
+        public List<OutMigration> outMigrations;
+        public List<Death> deaths;
+        public List<PregnancyObservation> pregnancyObservations;
+        public List<PregnancyOutcome> pregnancyOutcomes;
+
+        // male
+        private EventStructure(List<InMigration> inMigrations, List<OutMigration> outMigrations,
+                               List<Death> deaths){
+            this.inMigrations = inMigrations;
+            this.outMigrations = outMigrations;
+            this.deaths = deaths;
+        }
+
+        // female
+        private EventStructure(List<InMigration> inMigrations, List<OutMigration> outMigrations,
+                               List<Death> deaths, List<PregnancyObservation> pregnancyObservations,
+                               List<PregnancyOutcome> pregnancyOutcomes ){
+            this.inMigrations = inMigrations;
+            this.outMigrations = outMigrations;
+            this.deaths = deaths;
+            this.pregnancyObservations = pregnancyObservations;
+            this.pregnancyOutcomes = pregnancyOutcomes;
+
+        }
+
+    }
+
+
+    @RequestMapping(value = "/getEvents", method = RequestMethod.GET)
+    public EventStructure getEvents(@RequestParam String visitUuid) {
+
+
+        // InMigrations
+        EntityIterator<InMigration> inMigrations = inMigrationService.findAll(new Sort("uuid"));
+        List<InMigration> filteredInMigrations = new ArrayList<>();
+        for (InMigration inMigration: inMigrations) {
+            if(     inMigration.getVisit().getUuid().equals(visitUuid) ) {
+                filteredInMigrations.add(inMigration);
+            }
+        }
+
+        // OutMigrations
+        EntityIterator<OutMigration> outMigrations = outMigrationService.findAll(new Sort("uuid"));
+        List<OutMigration> filteredOutMigrations = new ArrayList<>();
+        for (OutMigration outMigration: outMigrations) {
+            if(     outMigration.getVisit().getUuid().equals(visitUuid)) {
+                filteredOutMigrations.add(outMigration);
+            }
+        }
+
+        // Deaths
+        EntityIterator<Death> deaths = deathService.findAll(new Sort("uuid"));
+        List<Death> filteredDeaths = new ArrayList<>();
+        for (Death death: deaths) {
+            if(     death.getVisit().getUuid().equals(visitUuid) ) {
+                filteredDeaths.add(death);
+            }
+        }
+
+
+        // Pregnancy Observations
+        EntityIterator<PregnancyObservation> pregnancyObservations = pregnancyObservationService.findAll(new Sort("uuid"));
+        List<PregnancyObservation> filteredPregnancyObservations = new ArrayList<>();
+        for (PregnancyObservation pregnancyObservation: pregnancyObservations) {
+            if(     pregnancyObservation.getVisit().getUuid().equals(visitUuid) ) {
+                filteredPregnancyObservations.add(pregnancyObservation);
+            }
+        }
+
+        // Pregnancy Outcomes
+        EntityIterator<PregnancyOutcome> pregnancyOutcomes = pregnancyOutcomeService.findAll(new Sort("uuid"));
+        List<PregnancyOutcome> filteredPregnancyOutcomes = new ArrayList<>();
+        for (PregnancyOutcome pregnancyOutcome: pregnancyOutcomes) {
+            if(     pregnancyOutcome.getVisit().getUuid().equals(visitUuid) ) {
+                filteredPregnancyOutcomes.add(pregnancyOutcome);
+            }
+        }
+
+        return new EventStructure(filteredInMigrations, filteredOutMigrations, filteredDeaths,
+                filteredPregnancyObservations, filteredPregnancyOutcomes);
+        
+
+
+    }
+
 
 }
