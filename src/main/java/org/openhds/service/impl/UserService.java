@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,10 @@ public class UserService extends AbstractUuidService<User, UserRepository> {
 
     @Autowired
     private PrivilegeRepository privilegeRepository;
+
+    //For default users
+    private final PasswordEncoder weakPasswordEncoder = new BCryptPasswordEncoder(4);
+
 
     @Autowired
     public UserService(UserRepository userRepository) {
@@ -97,4 +102,15 @@ public class UserService extends AbstractUuidService<User, UserRepository> {
         return createOrUpdate(user);
     }
 
+    /**
+     *
+     * @param user
+     * @param password
+     * @return created user
+     * WARNING: This should only be used for default testing/setup accounts
+     */
+    public User recordUserWeakPassword(User user, String password) {
+        user.setPasswordHash(weakPasswordEncoder.encode(password));
+        return createOrUpdate(user);
+    }
 }

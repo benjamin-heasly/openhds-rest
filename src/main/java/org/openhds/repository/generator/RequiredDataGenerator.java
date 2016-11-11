@@ -1,11 +1,13 @@
 package org.openhds.repository.generator;
 
+import com.google.common.collect.Lists;
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.repository.concrete.*;
 import org.openhds.repository.util.ProjectCodeLoader;
 import org.openhds.security.model.Privilege;
 import org.openhds.security.model.Role;
 import org.openhds.security.model.User;
+import org.openhds.security.model.UserFactory;
 import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.ProjectCodeService;
 import org.openhds.service.impl.UserService;
@@ -15,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static java.util.stream.Collectors.toSet;
 
@@ -32,8 +35,6 @@ import static java.util.stream.Collectors.toSet;
 @Component
 public class RequiredDataGenerator implements DataGenerator {
 
-    private static final String DEFAULT_USER_UUID = "DEFAULT_USER";
-    private static final String DEFAULT_USER_USERNAME = "user";
     private static final String DEFAULT_USER_PASSWORD = "password";
     private static final String DEFAULT_FIELD_WORKER_USERNAME = "fieldworker";
     private static final String DEFAULT_FIELD_WORKER_PASSWORD = "password";
@@ -52,6 +53,9 @@ public class RequiredDataGenerator implements DataGenerator {
 
     // weak, fast hashing for default user and testing
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(4);
+
+    @Autowired
+    private UserFactory userFactory;
 
     @Autowired
     public RequiredDataGenerator(UserService userService,
@@ -100,17 +104,18 @@ public class RequiredDataGenerator implements DataGenerator {
     }
 
     public void createDefaultUser() {
-        User user = new User();
-        user.setUuid(DEFAULT_USER_UUID);
-        user.setUsername(DEFAULT_USER_USERNAME);
-        user.setPasswordHash(passwordEncoder.encode(DEFAULT_USER_PASSWORD));
-        user.setFirstName("default user");
-        user.setLastName("default user");
-        user.setDescription("default user with root role (all privileges)");
-        user.getRoles().add(userService.findRoleByName("root-role"));
+        User user = userFactory.defaultUser();
+        userService.recordUserWeakPassword(user, DEFAULT_USER_PASSWORD);
+    }
 
-        // save with repository instead of service for speed
-        userRepository.save(user);
+    public void createDataWorkerUser() {
+        User dataWorker = userFactory.defaultDataWorker();
+        userService.recordUserWeakPassword(dataWorker, DEFAULT_USER_PASSWORD);
+    }
+
+    public void createDataManagerUser() {
+        User dataManager = userFactory.defaultDataManager();
+        userService.recordUserWeakPassword(dataManager, DEFAULT_USER_PASSWORD);
     }
 
     // trigger services to create unknown entities ahead of time, for predictable entity counts
@@ -136,15 +141,11 @@ public class RequiredDataGenerator implements DataGenerator {
                 .forEach(privilegeRepository::save);
     }
 
-    private void generateRoles() {
-        if (0 < userService.countRoles()) {
-            return;
-        }
-
+    private void generateRole(String name, String description, Privilege.Grant[] grants) {
         Role role = new Role();
-        role.setName("root-role");
-        role.setDescription("role with every privilege");
-        role.setPrivileges(Arrays.stream(Privilege.Grant.values())
+        role.setName(name);
+        role.setDescription(description);
+        role.setPrivileges(Arrays.stream(grants)
                 .map(Privilege::new)
                 .collect(toSet()));
 
@@ -152,11 +153,39 @@ public class RequiredDataGenerator implements DataGenerator {
         roleRepository.save(role);
     }
 
+    private void generateRoles() {
+        int roleCount = 3;
+        if (roleCount <= userService.countRoles()) {
+            return;
+        }
+
+        generateRole("root-role", "role with every privilege", Privilege.Grant.values());
+
+        Privilege.Grant[] dataWorkerGrants = {
+                Privilege.Grant.ROLE_CREATE_ENTITY,
+                Privilege.Grant.ROLE_VIEW_ENTITY,
+                Privilege.Grant.ROLE_USER
+        };
+        generateRole("data-worker", "role with read and write privilege", dataWorkerGrants);
+
+        Privilege.Grant[] dataManagerGrants = {
+                Privilege.Grant.ROLE_CREATE_ENTITY,
+                Privilege.Grant.ROLE_VIEW_ENTITY,
+                Privilege.Grant.ROLE_USER,
+                Privilege.Grant.ROLE_EDIT_ENTITY,
+                Privilege.Grant.ROLE_DELETE_ENTITY
+        };
+
+        generateRole("data-manager", "role with read, write and edit privilege", dataManagerGrants);
+    }
+
     private void generateUsers() {
         if (userService.hasRecords()) {
             return;
         }
         createDefaultUser();
+        createDataWorkerUser();
+        createDataManagerUser();
     }
 
     private void generateFieldWorkers() {
