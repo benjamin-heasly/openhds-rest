@@ -2,6 +2,7 @@ package org.openhds.resource.controller.update;
 
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.update.*;
+import org.openhds.domain.util.VisitEvents;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.resource.contract.AuditableExtIdRestController;
 import org.openhds.resource.registration.update.VisitRegistration;
@@ -105,7 +106,6 @@ public class VisitRestController extends AuditableExtIdRestController<
         return results;
     }
 
-
     @RequestMapping(value = "/findByLocation", method = RequestMethod.GET)
     public List<Visit> findByLocation(@RequestParam String locationUuid) {
 
@@ -116,43 +116,11 @@ public class VisitRestController extends AuditableExtIdRestController<
                 filteredVisits.add(visit);
             }
         }
-
         return filteredVisits;
     }
 
-    private class EventStructure {
-        public List<InMigration> inMigrations;
-        public List<OutMigration> outMigrations;
-        public List<Death> deaths;
-        public List<PregnancyObservation> pregnancyObservations;
-        public List<PregnancyOutcome> pregnancyOutcomes;
-
-        // male
-        private EventStructure(List<InMigration> inMigrations, List<OutMigration> outMigrations,
-                               List<Death> deaths){
-            this.inMigrations = inMigrations;
-            this.outMigrations = outMigrations;
-            this.deaths = deaths;
-        }
-
-        // female
-        private EventStructure(List<InMigration> inMigrations, List<OutMigration> outMigrations,
-                               List<Death> deaths, List<PregnancyObservation> pregnancyObservations,
-                               List<PregnancyOutcome> pregnancyOutcomes ){
-            this.inMigrations = inMigrations;
-            this.outMigrations = outMigrations;
-            this.deaths = deaths;
-            this.pregnancyObservations = pregnancyObservations;
-            this.pregnancyOutcomes = pregnancyOutcomes;
-
-        }
-
-    }
-
-
     @RequestMapping(value = "/getEvents", method = RequestMethod.GET)
-    public EventStructure getEvents(@RequestParam String visitUuid) {
-
+    public VisitEvents getEvents(@RequestParam String visitUuid) {
 
         // InMigrations
         EntityIterator<InMigration> inMigrations = inMigrationService.findAll(new Sort("uuid"));
@@ -162,7 +130,6 @@ public class VisitRestController extends AuditableExtIdRestController<
                 filteredInMigrations.add(inMigration);
             }
         }
-
         // OutMigrations
         EntityIterator<OutMigration> outMigrations = outMigrationService.findAll(new Sort("uuid"));
         List<OutMigration> filteredOutMigrations = new ArrayList<>();
@@ -171,7 +138,6 @@ public class VisitRestController extends AuditableExtIdRestController<
                 filteredOutMigrations.add(outMigration);
             }
         }
-
         // Deaths
         EntityIterator<Death> deaths = deathService.findAll(new Sort("uuid"));
         List<Death> filteredDeaths = new ArrayList<>();
@@ -180,8 +146,6 @@ public class VisitRestController extends AuditableExtIdRestController<
                 filteredDeaths.add(death);
             }
         }
-
-
         // Pregnancy Observations
         EntityIterator<PregnancyObservation> pregnancyObservations = pregnancyObservationService.findAll(new Sort("uuid"));
         List<PregnancyObservation> filteredPregnancyObservations = new ArrayList<>();
@@ -190,7 +154,6 @@ public class VisitRestController extends AuditableExtIdRestController<
                 filteredPregnancyObservations.add(pregnancyObservation);
             }
         }
-
         // Pregnancy Outcomes
         EntityIterator<PregnancyOutcome> pregnancyOutcomes = pregnancyOutcomeService.findAll(new Sort("uuid"));
         List<PregnancyOutcome> filteredPregnancyOutcomes = new ArrayList<>();
@@ -199,13 +162,7 @@ public class VisitRestController extends AuditableExtIdRestController<
                 filteredPregnancyOutcomes.add(pregnancyOutcome);
             }
         }
-
-        return new EventStructure(filteredInMigrations, filteredOutMigrations, filteredDeaths,
+        return new VisitEvents(filteredInMigrations, filteredOutMigrations, filteredDeaths,
                 filteredPregnancyObservations, filteredPregnancyOutcomes);
-
-
-
     }
-
-
 }

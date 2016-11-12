@@ -5,6 +5,7 @@ import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.*;
 import org.openhds.domain.model.update.*;
 import org.openhds.domain.util.ShallowCopier;
+import org.openhds.domain.util.VisitEvents;
 import org.openhds.repository.queries.QueryValue;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.resource.contract.AuditableExtIdRestController;
@@ -254,27 +255,8 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
         return filteredRelationships;
     }
 
-
-    public class EventStructure {
-        public List<InMigration> inMigrations;
-        public List<OutMigration> outMigrations;
-        public List<Death> deaths;
-        public List<PregnancyObservation> pregnancyObservations;
-        public List<PregnancyOutcome> pregnancyOutcomes;
-
-        private EventStructure(List<InMigration> inMigrations, List<OutMigration> outMigrations,
-                               List<Death> deaths, List<PregnancyObservation> pregnancyObservations,
-                               List<PregnancyOutcome> pregnancyOutcomes ){
-            this.inMigrations = inMigrations;
-            this.outMigrations = outMigrations;
-            this.deaths = deaths;
-            this.pregnancyObservations = pregnancyObservations;
-            this.pregnancyOutcomes = pregnancyOutcomes;
-        }
-    }
-
     @RequestMapping(value = "/getEvents", method = RequestMethod.GET)
-    public EventStructure getEvents(@RequestParam String individualUuid) {
+    public VisitEvents getEvents(@RequestParam String individualUuid) {
 
         Individual indiv = individualService.findOne(individualUuid);
 
@@ -323,7 +305,7 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
             }
         }
 
-        EventStructure events = new EventStructure(filteredInMigrations, filteredOutMigrations, filteredDeaths,
+        VisitEvents events = new VisitEvents(filteredInMigrations, filteredOutMigrations, filteredDeaths,
                 filteredPregnancyObservations, filteredPregnancyOutcomes);
         return events;
 
