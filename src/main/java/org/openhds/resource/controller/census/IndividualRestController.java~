@@ -50,7 +50,6 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
 
     private final ResidencyService residencyService;
 
-<<<<<<< HEAD
     private final MembershipService membershipService;
 
     private final RelationshipService relationshipService;
@@ -73,16 +72,15 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
                                     InMigrationService inMigrationService, OutMigrationService outMigrationService,
                                     DeathService deathService, PregnancyObservationService pregnancyObservationService,
                                     PregnancyOutcomeService pregnancyOutcomeService) {
-=======
+
     @Autowired
     public IndividualRestController(IndividualService individualService, FieldWorkerService fieldWorkerService, ProjectCodeService projectCodeService, ResidencyService residencyService) {
->>>>>>> 2733e356e473423e63df53167d3ec87b816244d6
+
         super(individualService);
         this.individualService = individualService;
         this.fieldWorkerService = fieldWorkerService;
         this.projectCodeService = projectCodeService;
         this.residencyService = residencyService;
-<<<<<<< HEAD
         this.membershipService = membershipService;
         this.relationshipService = relationshipService;
         this.inMigrationService = inMigrationService;
@@ -91,8 +89,6 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
         this.pregnancyObservationService = pregnancyObservationService;
         this.pregnancyOutcomeService = pregnancyOutcomeService;
 
-=======
->>>>>>> 2733e356e473423e63df53167d3ec87b816244d6
     }
 
     @Override
@@ -220,7 +216,7 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
                 .collect(Collectors.toList());
     }
 
-<<<<<<< HEAD
+
     @RequestMapping(value = "/getResidencies", method = RequestMethod.GET)
     public List<Residency> getResidencies(@RequestParam String individualUuid) {
         EntityIterator<Residency> residencies = residencyService.findAll(new Sort("uuid"));
@@ -364,8 +360,6 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
 
 
 
-=======
->>>>>>> 2733e356e473423e63df53167d3ec87b816244d6
     @RequestMapping(value = "/findByFieldWorker", method = RequestMethod.GET)
     public List<Individual> findByFieldWorker(@RequestParam String fieldWorkerId) {
         EntityIterator<FieldWorker> fieldWorkers = fieldWorkerService.findByFieldWorkerId(new Sort("fieldWorkerId"), fieldWorkerId);
@@ -381,8 +375,8 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
         }
         return results;
     }
-<<<<<<< HEAD
+
 }
-=======
+
 }
->>>>>>> 2733e356e473423e63df53167d3ec87b816244d6
+

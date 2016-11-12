@@ -351,13 +351,6 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
         }
     }
 
-    @RequestMapping(value = "/quickTest", method = RequestMethod.GET)
-    public Individual quickTest(@RequestParam String individualUuid) {
-
-
-        return individualService.findOne(individualUuid);
-    }
-
 
 
     @RequestMapping(value = "/findByFieldWorker", method = RequestMethod.GET)
