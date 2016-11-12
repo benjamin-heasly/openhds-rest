@@ -2,20 +2,24 @@ package org.openhds.resource.controller.census;
 
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.ProjectCode;
-import org.openhds.domain.model.census.Individual;
-import org.openhds.domain.model.census.Location;
-import org.openhds.domain.model.census.Residency;
+import org.openhds.domain.model.census.*;
+import org.openhds.domain.model.update.*;
 import org.openhds.domain.util.ShallowCopier;
+import org.openhds.domain.util.VisitEvents;
 import org.openhds.repository.queries.QueryValue;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.resource.contract.AuditableExtIdRestController;
 import org.openhds.resource.registration.census.IndividualHouseholdRegistration;
 import org.openhds.resource.registration.census.IndividualRegistration;
+import org.openhds.service.contract.AbstractAuditableCollectedService;
 import org.openhds.service.contract.AbstractUuidService;
 import org.openhds.service.impl.FieldWorkerService;
 import org.openhds.service.impl.ProjectCodeService;
 import org.openhds.service.impl.census.IndividualService;
+import org.openhds.service.impl.census.MembershipService;
+import org.openhds.service.impl.census.RelationshipService;
 import org.openhds.service.impl.census.ResidencyService;
+import org.openhds.service.impl.update.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.ExposesResourceFor;
@@ -54,13 +58,40 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
 
     private final ResidencyService residencyService;
 
+    private final MembershipService membershipService;
+
+    private final RelationshipService relationshipService;
+
+    private final InMigrationService inMigrationService;
+
+    private final OutMigrationService outMigrationService;
+
+    private final DeathService deathService;
+
+    private final PregnancyObservationService pregnancyObservationService;
+
+    private final PregnancyOutcomeService pregnancyOutcomeService;
+
     @Autowired
-    public IndividualRestController(IndividualService individualService, FieldWorkerService fieldWorkerService, ProjectCodeService projectCodeService, ResidencyService residencyService) {
+    public IndividualRestController(IndividualService individualService, FieldWorkerService fieldWorkerService,
+                                    ProjectCodeService projectCodeService, ResidencyService residencyService,
+                                    MembershipService membershipService, RelationshipService relationshipService,
+                                    InMigrationService inMigrationService, OutMigrationService outMigrationService,
+                                    DeathService deathService, PregnancyObservationService pregnancyObservationService,
+                                    PregnancyOutcomeService pregnancyOutcomeService) {
+
         super(individualService);
         this.individualService = individualService;
         this.fieldWorkerService = fieldWorkerService;
         this.projectCodeService = projectCodeService;
         this.residencyService = residencyService;
+        this.membershipService = membershipService;
+        this.relationshipService = relationshipService;
+        this.inMigrationService = inMigrationService;
+        this.outMigrationService = outMigrationService;
+        this.deathService = deathService;
+        this.pregnancyObservationService = pregnancyObservationService;
+        this.pregnancyOutcomeService = pregnancyOutcomeService;
     }
 
     @Override
@@ -86,7 +117,6 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
     public IndividualHouseholdRegistration getHouseholdSampleRegistration(Individual entity) {
         IndividualHouseholdRegistration registration = new IndividualHouseholdRegistration();
         registration.setIndividual(entity);
-
         registration.setRelationToHead(projectCodeService.findByCodeGroup(ProjectCode.RELATIONSHIP_TYPE).get(0).getCodeValue());
         registration.setHeadOfHouseholdUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
         registration.setRelationshipUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
@@ -96,7 +126,6 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
         registration.setFatherUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
         registration.setMembershipUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
         registration.setResidencyUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
-
         registration.setCollectedByUuid(AbstractUuidService.UNKNOWN_ENTITY_UUID);
         registration.setRegistrationDateTime(ZonedDateTime.now());
         registration.setRegistrationSystemName("systemName");
@@ -161,7 +190,6 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
         return register(registration);
     }
 
-
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public List<Individual> search(@RequestParam Map<String, String> fields) {
         List<QueryValue> collect = fields.entrySet().stream().map(f -> new QueryValue(f.getKey(), f.getValue())).collect(Collectors.toList());
@@ -173,19 +201,114 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
     @RequestMapping(value = "/findByLocation", method = RequestMethod.GET)
     public List<Individual> findByLocation(@RequestParam String locationUuid) {
         EntityIterator<Residency> residencies = residencyService.findAll(new Sort("uuid"));
-
         List<Residency> filteredResidencies = new ArrayList<>();
         for (Residency residency: residencies) {
             if(residency.getLocation().getUuid().equals(locationUuid)) {
                 filteredResidencies.add(residency);
             }
         }
-
         // TODO: This executes a query for each uuid. It should be batched.
         return filteredResidencies.stream()
                 .map(residency -> residency.getIndividual().getUuid())
                 .map(uuid -> individualService.findOne(uuid))
                 .collect(Collectors.toList());
+    }
+
+
+    @RequestMapping(value = "/getResidencies", method = RequestMethod.GET)
+    public List<Residency> getResidencies(@RequestParam String individualUuid) {
+        EntityIterator<Residency> residencies = residencyService.findAll(new Sort("uuid"));
+
+        List<Residency> filteredResidencies = new ArrayList<>();
+        for (Residency residency: residencies) {
+            if(residency.getIndividual().getUuid().equals(individualUuid)) {
+                filteredResidencies.add(residency);
+            }
+        }
+        return filteredResidencies;
+    }
+
+    @RequestMapping(value = "/getMemberships", method = RequestMethod.GET)
+    public List<Membership> getMembershipsForIndividual(@RequestParam String individualUuid) {
+        EntityIterator<Membership> memberships = membershipService.findAll(new Sort("uuid"));
+
+        List<Membership> filteredMemberships = new ArrayList<>();
+        for (Membership membership: memberships) {
+            if(membership.getIndividual().getUuid().equals(individualUuid)) {
+                filteredMemberships.add(membership);
+            }
+        }
+        return filteredMemberships;
+    }
+
+    @RequestMapping(value = "/getRelationships", method = RequestMethod.GET)
+    public List<Relationship> getRelationshipsForIndividual(@RequestParam String individualUuid) {
+        EntityIterator<Relationship> relationships = relationshipService.findAll(new Sort("uuid"));
+
+        List<Relationship> filteredRelationships = new ArrayList<>();
+        for (Relationship relationship: relationships) {
+            if(     relationship.getIndividualA().getUuid().equals(individualUuid) ||
+                    relationship.getIndividualB().getUuid().equals(individualUuid) ) {
+                filteredRelationships.add(relationship);
+            }
+        }
+        return filteredRelationships;
+    }
+
+    @RequestMapping(value = "/getEvents", method = RequestMethod.GET)
+    public VisitEvents getEvents(@RequestParam String individualUuid) {
+
+        Individual indiv = individualService.findOne(individualUuid);
+
+        // InMigrations
+        EntityIterator<InMigration> inMigrations = inMigrationService.findAll(new Sort("uuid"));
+        List<InMigration> filteredInMigrations = new ArrayList<>();
+        for (InMigration inMigration: inMigrations) {
+            if(     inMigration.getIndividual().getUuid().equals(individualUuid) ) {
+                filteredInMigrations.add(inMigration);
+            }
+        }
+        // OutMigrations
+        EntityIterator<OutMigration> outMigrations = outMigrationService.findAll(new Sort("uuid"));
+        List<OutMigration> filteredOutMigrations = new ArrayList<>();
+        for (OutMigration outMigration: outMigrations) {
+            if(     outMigration.getIndividual().getUuid().equals(individualUuid) ) {
+                filteredOutMigrations.add(outMigration);
+            }
+        }
+        // Deaths
+        EntityIterator<Death> deaths = deathService.findAll(new Sort("uuid"));
+        List<Death> filteredDeaths = new ArrayList<>();
+        for (Death death: deaths) {
+            if(     death.getIndividual().getUuid().equals(individualUuid) ) {
+                filteredDeaths.add(death);
+            }
+        }
+
+        List<PregnancyOutcome> filteredPregnancyOutcomes = new ArrayList<>();
+        List<PregnancyObservation> filteredPregnancyObservations = new ArrayList<>();
+
+        if(!indiv.getGender().equals(("MALE"))){
+            // Pregnancy Observations
+            EntityIterator<PregnancyObservation> pregnancyObservations = pregnancyObservationService.findAll(new Sort("uuid"));
+            for (PregnancyObservation pregnancyObservation: pregnancyObservations) {
+                if(     pregnancyObservation.getMother().getUuid().equals(individualUuid) ) {
+                    filteredPregnancyObservations.add(pregnancyObservation);
+                }
+            }
+            // Pregnancy Outcomes
+            EntityIterator<PregnancyOutcome> pregnancyOutcomes = pregnancyOutcomeService.findAll(new Sort("uuid"));
+            for (PregnancyOutcome pregnancyOutcome: pregnancyOutcomes) {
+                if(     pregnancyOutcome.getMother().getUuid().equals(individualUuid) ) {
+                    filteredPregnancyOutcomes.add(pregnancyOutcome);
+                }
+            }
+        }
+
+        VisitEvents events = new VisitEvents(filteredInMigrations, filteredOutMigrations, filteredDeaths,
+                filteredPregnancyObservations, filteredPregnancyOutcomes);
+        return events;
+
     }
 
     @RequestMapping(value = "/findByFieldWorker", method = RequestMethod.GET)
@@ -203,4 +326,8 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
         }
         return results;
     }
+
 }
+
+
+
