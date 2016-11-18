@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,6 +114,20 @@ public class VisitRestController extends AuditableExtIdRestController<
         List<Visit> filteredVisits = new ArrayList<>();
         for (Visit visit: visits) {
             if(     visit.getLocation().getUuid().equals(locationUuid) ) {
+                filteredVisits.add(visit);
+            }
+        }
+        return filteredVisits;
+    }
+
+    @RequestMapping(value = "/findByVisitDate", method = RequestMethod.GET)
+    public List<Visit> findByVisitDate(@RequestParam String visitDate) {
+        ZonedDateTime currentDate = ZonedDateTime.parse(visitDate);
+
+        EntityIterator<Visit> visits = visitService.findAll(new Sort("uuid"));
+        List<Visit> filteredVisits = new ArrayList<>();
+        for (Visit visit: visits) {
+            if(     visit.getVisitDate().toLocalDate().equals(currentDate.toLocalDate()) ) {
                 filteredVisits.add(visit);
             }
         }
