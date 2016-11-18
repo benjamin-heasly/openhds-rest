@@ -214,6 +214,22 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
                 .collect(Collectors.toList());
     }
 
+    @RequestMapping(value = "/findBySocialGroup", method = RequestMethod.GET)
+    public List<Individual> findBySocialGroup(@RequestParam String socialGroupUuid) {
+        EntityIterator<Membership> memberships = membershipService.findAll(new Sort("uuid"));
+        List<Membership> filteredMemberships = new ArrayList<>();
+        for (Membership membership: memberships) {
+            if(membership.getSocialGroup().getUuid().equals(socialGroupUuid)) {
+                filteredMemberships.add(membership);
+            }
+        }
+        // TODO: This executes a query for each uuid. It should be batched.
+        return filteredMemberships.stream()
+                .map(membership -> membership.getIndividual().getUuid())
+                .map(uuid -> individualService.findOne(uuid))
+                .collect(Collectors.toList());
+    }
+
 
     @RequestMapping(value = "/getResidencies", method = RequestMethod.GET)
     public List<Residency> getResidencies(@RequestParam String individualUuid) {

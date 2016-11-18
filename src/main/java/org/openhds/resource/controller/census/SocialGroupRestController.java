@@ -2,12 +2,14 @@ package org.openhds.resource.controller.census;
 
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.census.Location;
+import org.openhds.domain.model.census.Membership;
 import org.openhds.domain.model.census.SocialGroup;
 import org.openhds.repository.queries.QueryValue;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.resource.contract.AuditableExtIdRestController;
 import org.openhds.resource.registration.census.SocialGroupRegistration;
 import org.openhds.service.impl.FieldWorkerService;
+import org.openhds.service.impl.census.MembershipService;
 import org.openhds.service.impl.census.SocialGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -37,12 +39,16 @@ public class SocialGroupRestController extends AuditableExtIdRestController<
 
     private final FieldWorkerService fieldWorkerService;
 
+    private final MembershipService membershipService;
+
     @Autowired
     public SocialGroupRestController(SocialGroupService socialGroupService,
-                                     FieldWorkerService fieldWorkerService) {
+                                     FieldWorkerService fieldWorkerService,
+                                     MembershipService membershipService) {
         super(socialGroupService);
         this.socialGroupService = socialGroupService;
         this.fieldWorkerService = fieldWorkerService;
+        this.membershipService = membershipService;
     }
 
     @Override
@@ -63,6 +69,19 @@ public class SocialGroupRestController extends AuditableExtIdRestController<
     protected SocialGroup register(SocialGroupRegistration registration, String id) {
         registration.getSocialGroup().setUuid(id);
         return register(registration);
+    }
+
+    @RequestMapping(value = "/getMemberships", method = RequestMethod.GET)
+    public List<Membership> getMembershipsForIndividual(@RequestParam String socialGroupUuid) {
+        EntityIterator<Membership> memberships = membershipService.findAll(new Sort("uuid"));
+
+        List<Membership> filteredMemberships = new ArrayList<>();
+        for (Membership membership: memberships) {
+            if(membership.getSocialGroup().getUuid().equals(socialGroupUuid)) {
+                filteredMemberships.add(membership);
+            }
+        }
+        return filteredMemberships;
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
