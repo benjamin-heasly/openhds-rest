@@ -13,7 +13,7 @@ public class UserFactory {
     public User defaultUser() {
         User user =  generateUser("user", "root-role", "default user", "default user",
                 "default user with root role (all privileges)");
-        user.setUuid("DEFAULT_DATA_WORKER");
+        user.setUuid("DEFAULT_USER");
         return user;
     }
 
