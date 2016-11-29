@@ -1,10 +1,8 @@
 package org.openhds.domain.util;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import org.openhds.domain.model.update.Visit;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -13,6 +11,9 @@ public class DeleteQuery {
     private final Map<String, Visit> entities = Maps.newHashMap();
 
     public void addEntity(final Visit entity) {
+        if (entity.getUuid() == null) {
+            throw new IllegalArgumentException("Visit UUID must be set");
+        }
         entities.put(entity.getUuid(), entity);
     }
 
