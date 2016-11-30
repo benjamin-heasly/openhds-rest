@@ -1,30 +1,35 @@
 package org.openhds.domain.util;
 
-import com.google.common.collect.Maps;
-import org.openhds.domain.model.update.Visit;
+import org.openhds.domain.contract.AuditableExtIdEntity;
+import org.openhds.repository.contract.AuditableExtIdRepository;
+import org.openhds.repository.results.EntityIterator;
+import org.openhds.service.contract.AbstractAuditableExtIdService;
+import org.springframework.data.domain.Sort;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.time.ZonedDateTime;
 
-public class DeleteQuery {
-    private final Map<String, Visit> entities = Maps.newHashMap();
 
-    public void addEntity(final Visit entity) {
-        if (entity.getUuid() == null) {
-            throw new IllegalArgumentException("Visit UUID must be set");
-        }
-        entities.put(entity.getUuid(), entity);
+public class DeleteQuery<T extends AuditableExtIdEntity, V extends AuditableExtIdRepository<T>> {
+    private AbstractAuditableExtIdService<T, V> service;
+    private QueryStrategy<T> strategy;
+
+    public DeleteQuery(AbstractAuditableExtIdService<T, V> service, QueryStrategy<T> strategy) {
+        this.service = service;
+        this.strategy = strategy;
     }
 
-    public Set<Visit> getDependentEntities(String deletableEntityUuid) {
-        Visit entity = entities.get(deletableEntityUuid);
+    public boolean isDeletable(String id) {
+        T target = service.findOne(id);
+        ZonedDateTime after = target.getCollectionDateTime();
+        ZonedDateTime before = ZonedDateTime.now();
 
-        return entities.entrySet()
-                .stream()
-                .filter(e -> e.getValue().getLocation().equals(entity.getLocation()))
-                .map(Map.Entry::getValue)
-                .filter(v -> entity.compareTo(v) < 0)
-                .collect(Collectors.toSet());
+        EntityIterator<T> entities = service.findByCollectionDateTime(new Sort("collectionDateTime"), after, before);
+
+        for (T entity: entities) {
+            if(strategy.dependsOn(target, entity)) {
+                return false;
+            }
+        }
+        return true;
     }
 }
