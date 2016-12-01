@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -331,16 +332,9 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
     public List<Individual> findByFieldWorker(@RequestParam String fieldWorkerId) {
         EntityIterator<FieldWorker> fieldWorkers = fieldWorkerService.findByFieldWorkerId(new Sort("fieldWorkerId"), fieldWorkerId);
 
-        // This is hacky because we get back an entity iterator and it's not readily streamable
-        List <Individual> results = new ArrayList<>();
-
-        for(FieldWorker fw: fieldWorkers) {
-            EntityIterator<Individual> individuals = individualService.findByCollectedBy(new Sort("uuid"), fw);
-            for(Individual individual: individuals) {
-                results.add(individual);
-            }
-        }
-        return results;
+        return StreamSupport.stream(fieldWorkers.spliterator(), false)
+                .flatMap(fw -> StreamSupport.stream(individualService.findByCollectedBy(new Sort("uuid"), fw).spliterator(), false))
+                .collect(Collectors.toList());
     }
 
 }

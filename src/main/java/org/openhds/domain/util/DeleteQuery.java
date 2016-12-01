@@ -7,6 +7,9 @@ import org.openhds.service.contract.AbstractAuditableExtIdService;
 import org.springframework.data.domain.Sort;
 
 import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 
 public class DeleteQuery<T extends AuditableExtIdEntity, V extends AuditableExtIdRepository<T>> {
@@ -18,18 +21,15 @@ public class DeleteQuery<T extends AuditableExtIdEntity, V extends AuditableExtI
         this.strategy = strategy;
     }
 
-    public boolean isDeletable(String id) {
+    public List<T> dependsOn(String id) {
         T target = service.findOne(id);
         ZonedDateTime after = target.getCollectionDateTime();
         ZonedDateTime before = ZonedDateTime.now();
 
         EntityIterator<T> entities = service.findByCollectionDateTime(new Sort("collectionDateTime"), after, before);
 
-        for (T entity: entities) {
-            if(strategy.dependsOn(target, entity)) {
-                return false;
-            }
-        }
-        return true;
+        return StreamSupport.stream(entities.spliterator(), false)
+                .filter(e -> strategy.dependsOn(target, e))
+                .collect(Collectors.toList());
     }
 }

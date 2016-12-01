@@ -2,6 +2,7 @@ package org.openhds.resource.controller.update;
 
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.update.*;
+import org.openhds.domain.util.DeleteQueryOrchestrator;
 import org.openhds.domain.util.VisitEvents;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.resource.contract.AuditableExtIdRestController;
@@ -13,14 +14,15 @@ import org.openhds.service.impl.update.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.ExposesResourceFor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import java.util.stream.StreamSupport;
 
 /**
  * Created by Ben on 5/18/15.
@@ -49,13 +51,16 @@ public class VisitRestController extends AuditableExtIdRestController<
 
     private final PregnancyOutcomeService pregnancyOutcomeService;
 
+    private final DeleteQueryOrchestrator deleteQueryOrchestrator;
+
     @Autowired
     public VisitRestController(VisitService visitService,
                                LocationService locationService,
                                FieldWorkerService fieldWorkerService,
                                InMigrationService inMigrationService, OutMigrationService outMigrationService,
                                DeathService deathService, PregnancyObservationService pregnancyObservationService,
-                               PregnancyOutcomeService pregnancyOutcomeService) {
+                               PregnancyOutcomeService pregnancyOutcomeService,
+                               DeleteQueryOrchestrator deleteQueryOrchestrator) {
         super(visitService);
         this.visitService = visitService;
         this.locationService = locationService;
@@ -65,8 +70,7 @@ public class VisitRestController extends AuditableExtIdRestController<
         this.deathService = deathService;
         this.pregnancyObservationService = pregnancyObservationService;
         this.pregnancyOutcomeService = pregnancyOutcomeService;
-
-
+        this.deleteQueryOrchestrator = deleteQueryOrchestrator;
     }
 
     @Override
@@ -91,20 +95,18 @@ public class VisitRestController extends AuditableExtIdRestController<
         return register(registration);
     }
 
+    @RequestMapping(value="/safeDelete/{id}", method=RequestMethod.DELETE)
+    public List<Visit> deleteVisit(@RequestParam String id, @RequestBody String reason) {
+        return deleteQueryOrchestrator.deleteVisit(id, reason);
+    }
+
     @RequestMapping(value = "/findByFieldWorker", method = RequestMethod.GET)
     public List<Visit> findByFieldWorker(@RequestParam String fieldWorkerId) {
         EntityIterator<FieldWorker> fieldWorkers = fieldWorkerService.findByFieldWorkerId(new Sort("fieldWorkerId"), fieldWorkerId);
 
-        // This is hacky because we get back an entity iterator and it's not readily streamable
-        List <Visit> results = new ArrayList<>();
-
-        for(FieldWorker fw: fieldWorkers) {
-            EntityIterator<Visit> visits = visitService.findByCollectedBy(new Sort("uuid"), fw);
-            for(Visit visit: visits) {
-                results.add(visit);
-            }
-        }
-        return results;
+        return StreamSupport.stream(fieldWorkers.spliterator(), false)
+                .flatMap(fw -> StreamSupport.stream(visitService.findByCollectedBy(new Sort("uuid"), fw).spliterator(), false))
+                .collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/findByLocation", method = RequestMethod.GET)
