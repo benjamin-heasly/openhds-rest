@@ -17,6 +17,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
 /**
  * Created by Wolfe on 7/1/2015.
  */
@@ -53,7 +56,13 @@ public class UserService extends AbstractUuidService<User, UserRepository> {
 
 
     public User findByUsername(String username) {
-        return repository.findByUsername(username).get();
+        Optional<User> user = repository.findByUsername(username);
+
+        if(user.isPresent()) {
+            return user.get();
+        } else {
+            throw new NoSuchElementException("No user found with username: " + username);
+        }
     }
 
     public Role findRoleByName(String name) {

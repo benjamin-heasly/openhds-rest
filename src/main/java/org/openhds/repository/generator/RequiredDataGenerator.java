@@ -1,6 +1,5 @@
 package org.openhds.repository.generator;
 
-import com.google.common.collect.Lists;
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.repository.concrete.*;
 import org.openhds.repository.util.ProjectCodeLoader;
@@ -17,7 +16,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
-import java.util.List;
 
 import static java.util.stream.Collectors.toSet;
 
