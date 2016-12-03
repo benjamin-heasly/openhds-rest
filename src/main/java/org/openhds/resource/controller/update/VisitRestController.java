@@ -96,7 +96,7 @@ public class VisitRestController extends AuditableExtIdRestController<
     }
 
     @RequestMapping(value="/safeDelete/{id}", method=RequestMethod.DELETE)
-    public List<Visit> deleteVisit(@RequestParam String id, @RequestBody String reason) {
+    public List<Visit> deleteVisit(@PathVariable String id, @RequestBody String reason) {
         return deleteQueryOrchestrator.deleteVisit(id, reason);
     }
 
