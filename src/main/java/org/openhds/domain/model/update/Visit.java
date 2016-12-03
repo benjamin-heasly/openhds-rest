@@ -20,7 +20,7 @@ import java.time.ZonedDateTime;
 @Table(name = "visit", indexes={
         @Index(columnList = "lastModifiedDate"),
         @Index(columnList = "extId")})
-public class Visit  extends AuditableExtIdEntity implements Serializable {
+public class Visit  extends AuditableExtIdEntity implements Serializable, Comparable<Visit> {
 
     public final static long serialVersionUID = -211408757055967973L;
 
@@ -55,5 +55,10 @@ public class Visit  extends AuditableExtIdEntity implements Serializable {
                 "location=" + location +
                 ", visitDate=" + visitDate +
                 "} " + super.toString();
+    }
+
+    @Override
+    public int compareTo(Visit o) {
+        return getVisitDate().compareTo(o.getVisitDate());
     }
 }
