@@ -14,10 +14,7 @@ import org.openhds.service.impl.census.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.ExposesResourceFor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,5 +94,31 @@ public class LocationRestController extends AuditableExtIdRestController<
             }
         }
         return results;
+    }
+
+
+
+    @RequestMapping(value = "/submitEdited/{id}", method = RequestMethod.PUT)
+    public String editLocation(@PathVariable String id, @RequestBody Map<String,String> locationStub) {
+
+        Location loc = locationService.findOne(id);
+
+        if(locationStub.containsKey("name")){
+            loc.setName(locationStub.get("name"));
+        }
+
+        if(locationStub.containsKey("type")){
+            loc.setType(locationStub.get("type"));
+        }
+
+        if(locationStub.containsKey("status")){
+            loc.setEntityStatus(locationStub.get("status"));
+        }
+
+
+        String retString = loc.toString();
+
+
+        return retString;
     }
 }
