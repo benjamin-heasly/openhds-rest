@@ -11,4 +11,5 @@ public class QueryStrategyFactory {
                    !me.getUuid().equals(you.getUuid());
         };
     }
+
 }

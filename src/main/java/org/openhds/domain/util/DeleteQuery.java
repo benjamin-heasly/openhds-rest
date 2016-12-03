@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -23,6 +24,11 @@ public class DeleteQuery<T extends AuditableExtIdEntity, V extends AuditableExtI
 
     public List<T> dependsOn(String id) {
         T target = service.findOne(id);
+
+        if(target == null) {
+            return new ArrayList<T>();
+        }
+
         ZonedDateTime after = target.getCollectionDateTime();
         ZonedDateTime before = ZonedDateTime.now();
 
