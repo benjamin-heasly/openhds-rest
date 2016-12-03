@@ -101,11 +101,11 @@ public class LocationRestController extends AuditableExtIdRestController<
 
 
     @RequestMapping(value = "/submitEdited/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<String> editLocation(@PathVariable String id, @RequestBody Map<String,String> locationStub) {
+    public ResponseEntity editLocation(@PathVariable String id, @RequestBody Map<String,String> locationStub) {
 
         Location loc = locationService.findOne(id);
         if(loc == null){
-            return new ResponseEntity<String>("Could not find location", HttpStatus.NOT_FOUND);
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
 
         if(locationStub.containsKey("name")){
@@ -123,6 +123,6 @@ public class LocationRestController extends AuditableExtIdRestController<
         locationService.recordLocation(loc, loc.getLocationHierarchy().getUuid(), loc.getCollectedBy().getFieldWorkerId());
 
 
-        return new ResponseEntity<String>("Location edit successful", HttpStatus.CREATED);
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 }
