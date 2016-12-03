@@ -14,6 +14,8 @@ import org.openhds.service.impl.census.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.ExposesResourceFor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -99,9 +101,12 @@ public class LocationRestController extends AuditableExtIdRestController<
 
 
     @RequestMapping(value = "/submitEdited/{id}", method = RequestMethod.PUT)
-    public String editLocation(@PathVariable String id, @RequestBody Map<String,String> locationStub) {
+    public ResponseEntity<String> editLocation(@PathVariable String id, @RequestBody Map<String,String> locationStub) {
 
         Location loc = locationService.findOne(id);
+        if(loc == null){
+            return new ResponseEntity<String>("Could not find location", HttpStatus.NOT_FOUND);
+        }
 
         if(locationStub.containsKey("name")){
             loc.setName(locationStub.get("name"));
@@ -115,10 +120,9 @@ public class LocationRestController extends AuditableExtIdRestController<
             loc.setEntityStatus(locationStub.get("status"));
         }
 
+        locationService.recordLocation(loc, loc.getLocationHierarchy().getUuid(), loc.getCollectedBy().getFieldWorkerId());
 
-        String retString = loc.toString();
 
-
-        return retString;
+        return new ResponseEntity<String>("Location edit successful", HttpStatus.CREATED);
     }
 }
