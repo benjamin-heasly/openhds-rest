@@ -50,15 +50,15 @@ public class ExtIdGeneratorImpl implements ExtIdGenerator {
 
         switch(type) {
         case "Individual":
-            return !individualService.findByExtId(new Sort(Sort.DEFAULT_DIRECTION), id).iterator().hasNext();
+            return !individualService.findByExtId(new Sort("extId"), id).iterator().hasNext();
         case "Location":
-            return !locationService.findByExtId(new Sort(Sort.DEFAULT_DIRECTION), id).iterator().hasNext();
+            return !locationService.findByExtId(new Sort("extId"), id).iterator().hasNext();
         case "LocationHierarchy":
-            return !locationHierarchyService.findByExtId(new Sort(Sort.DEFAULT_DIRECTION), id).iterator().hasNext();
+            return !locationHierarchyService.findByExtId(new Sort("extId"), id).iterator().hasNext();
         case "SocialGroup":
-            return !socialGroupService.findByExtId(new Sort(Sort.DEFAULT_DIRECTION), id).iterator().hasNext();
+            return !socialGroupService.findByExtId(new Sort("extId"), id).iterator().hasNext();
         case "Visit":
-            return !visitService.findByExtId(new Sort(Sort.DEFAULT_DIRECTION), id).iterator().hasNext();
+            return !visitService.findByExtId(new Sort("extId"), id).iterator().hasNext();
         default:
             throw new IllegalArgumentException(type + " is not a valid entity type");
         }
