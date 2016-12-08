@@ -4,6 +4,7 @@ import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.census.Location;
 import org.openhds.domain.model.census.Membership;
 import org.openhds.domain.model.census.SocialGroup;
+import org.openhds.domain.util.ExtIdGenerator;
 import org.openhds.repository.queries.QueryValue;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.resource.contract.AuditableExtIdRestController;
@@ -45,8 +46,9 @@ public class SocialGroupRestController extends AuditableExtIdRestController<
     @Autowired
     public SocialGroupRestController(SocialGroupService socialGroupService,
                                      FieldWorkerService fieldWorkerService,
-                                     MembershipService membershipService) {
-        super(socialGroupService);
+                                     MembershipService membershipService,
+                                     ExtIdGenerator extIdGenerator) {
+        super(socialGroupService, extIdGenerator);
         this.socialGroupService = socialGroupService;
         this.fieldWorkerService = fieldWorkerService;
         this.membershipService = membershipService;
