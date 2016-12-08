@@ -69,12 +69,12 @@ public abstract class AuditableExtIdRestController<
         resource.add(byExtIdLink(entity.getExtId(), REL_SECTION));
     }
 
-    @RequestMapping(value = "/generateExtId", method = RequestMethod.GET)
+    @RequestMapping(value = "/generateExtId", method = RequestMethod.POST)
     public String generateExtId(@RequestBody Map<String, Object> data) {
-        return extIdGenerator.suggestNextId(data);
+        return "\"" + extIdGenerator.suggestNextId(data) + "\"";
     }
 
-    @RequestMapping(value = "/validateExtId/{extId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/validateExtId/{extId}", method = RequestMethod.POST)
     public boolean validateExtId(@PathVariable String extId, @RequestBody Map<String, Object> data) {
         return extIdGenerator.validateExtId(extId, data);
     }
