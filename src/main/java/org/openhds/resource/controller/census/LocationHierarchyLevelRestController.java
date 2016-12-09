@@ -1,6 +1,7 @@
 package org.openhds.resource.controller.census;
 
 import org.openhds.domain.model.census.LocationHierarchyLevel;
+import org.openhds.domain.util.ExtIdGenerator;
 import org.openhds.resource.contract.AuditableRestController;
 import org.openhds.resource.registration.census.LocationHierarchyLevelRegistration;
 import org.openhds.service.impl.census.LocationHierarchyLevelService;

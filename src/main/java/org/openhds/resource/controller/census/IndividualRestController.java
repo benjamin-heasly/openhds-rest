@@ -4,6 +4,7 @@ import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.*;
 import org.openhds.domain.model.update.*;
+import org.openhds.domain.util.ExtIdGenerator;
 import org.openhds.domain.util.ShallowCopier;
 import org.openhds.domain.util.VisitEvents;
 import org.openhds.repository.queries.QueryValue;
@@ -79,9 +80,9 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
                                     MembershipService membershipService, RelationshipService relationshipService,
                                     InMigrationService inMigrationService, OutMigrationService outMigrationService,
                                     DeathService deathService, PregnancyObservationService pregnancyObservationService,
-                                    PregnancyOutcomeService pregnancyOutcomeService) {
+                                    PregnancyOutcomeService pregnancyOutcomeService, ExtIdGenerator extIdGenerator) {
 
-        super(individualService);
+        super(individualService, extIdGenerator);
         this.individualService = individualService;
         this.fieldWorkerService = fieldWorkerService;
         this.projectCodeService = projectCodeService;

@@ -3,6 +3,7 @@ package org.openhds.resource.controller.update;
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.update.*;
 import org.openhds.domain.util.DeleteQueryOrchestrator;
+import org.openhds.domain.util.ExtIdGenerator;
 import org.openhds.domain.util.VisitEvents;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.resource.contract.AuditableExtIdRestController;
@@ -57,11 +58,14 @@ public class VisitRestController extends AuditableExtIdRestController<
     public VisitRestController(VisitService visitService,
                                LocationService locationService,
                                FieldWorkerService fieldWorkerService,
-                               InMigrationService inMigrationService, OutMigrationService outMigrationService,
-                               DeathService deathService, PregnancyObservationService pregnancyObservationService,
+                               InMigrationService inMigrationService,
+                               OutMigrationService outMigrationService,
+                               DeathService deathService,
+                               PregnancyObservationService pregnancyObservationService,
                                PregnancyOutcomeService pregnancyOutcomeService,
-                               DeleteQueryOrchestrator deleteQueryOrchestrator) {
-        super(visitService);
+                               DeleteQueryOrchestrator deleteQueryOrchestrator,
+                               ExtIdGenerator extIdGenerator) {
+        super(visitService, extIdGenerator);
         this.visitService = visitService;
         this.locationService = locationService;
         this.fieldWorkerService = fieldWorkerService;
