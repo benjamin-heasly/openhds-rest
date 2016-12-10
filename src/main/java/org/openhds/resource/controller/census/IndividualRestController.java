@@ -27,6 +27,7 @@ import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceSupport;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -336,6 +337,35 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
         return StreamSupport.stream(fieldWorkers.spliterator(), false)
                 .flatMap(fw -> StreamSupport.stream(individualService.findByCollectedBy(new Sort("uuid"), fw).spliterator(), false))
                 .collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/submitEdited/{id}", method = RequestMethod.PUT)
+    public ResponseEntity editIndividual(@PathVariable String id, @RequestBody Map<String,String> individualStub) {
+
+        Individual indiv = individualService.findOne(id);
+        if(indiv == null){
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+
+        if(individualStub.containsKey("firstName")){
+            indiv.setFirstName(individualStub.get("firstName"));
+        }
+
+        if(individualStub.containsKey("lastName")){
+            indiv.setLastName(individualStub.get("lastName"));
+        }
+
+        if(individualStub.containsKey("status")){
+            indiv.setEntityStatus(individualStub.get("status"));
+        }
+
+        if(individualStub.containsKey("gender")){
+            indiv.setGender(individualStub.get("gender"));
+        }
+
+        individualService.recordIndividual(indiv,  indiv.getCollectedBy().getFieldWorkerId());
+
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
 }

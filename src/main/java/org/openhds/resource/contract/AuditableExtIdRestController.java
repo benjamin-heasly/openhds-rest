@@ -4,10 +4,15 @@ import org.openhds.domain.contract.AuditableExtIdEntity;
 import org.openhds.domain.contract.ExtIdIdentifiable;
 import org.openhds.domain.util.ExtIdGenerator;
 import org.openhds.repository.contract.AuditableExtIdRepository;
+import org.openhds.repository.results.EntityIterator;
+import org.openhds.repository.results.PageIterator;
+import org.openhds.repository.results.PagingEntityIterator;
+import org.openhds.repository.results.ShallowCopyIterator;
 import org.openhds.resource.registration.Registration;
 import org.openhds.service.contract.AbstractAuditableExtIdService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
@@ -46,21 +51,17 @@ public abstract class AuditableExtIdRestController<
     }
 
     @RequestMapping(value = "/external/{id}", method = RequestMethod.GET)
-    public Resources<?> readByExtId(Pageable pageable,
-                                    PagedResourcesAssembler assembler,
-                                    @PathVariable String id) {
+    public EntityIterator<T>  readByExtId(@PathVariable String id) {
 
-        Page<T> entities = service.findByExtId(pageable, id);
 
-        if (null == entities || 0 == entities.getTotalElements()) {
-            throw new NoSuchElementException("No entities found with external id: " + id);
-        }
+        EntityIterator<T> entityIterator =  service.findByExtId(new Sort("extId"), id);
+        entityIterator.setCollectionName(getResourceName());
+        return new ShallowCopyIterator<>(entityIterator);
 
-        return toResource(entities, assembler, byExtIdLink(id, Link.REL_SELF));
     }
 
     private Link byExtIdLink(String extId, String relName) {
-        return linkTo(methodOn(this.getClass()).readByExtId(null, null, extId)).withRel(relName);
+        return linkTo(methodOn(this.getClass()).readByExtId(extId)).withRel(relName);
     }
 
     @Override

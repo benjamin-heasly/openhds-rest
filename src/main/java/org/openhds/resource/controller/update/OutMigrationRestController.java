@@ -11,8 +11,11 @@ import org.openhds.service.impl.update.OutMigrationService;
 import org.openhds.service.impl.update.VisitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ExposesResourceFor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * Created by Ben on 5/18/15.
@@ -73,4 +76,30 @@ public class OutMigrationRestController extends AuditableCollectedRestController
         registration.getOutMigration().setUuid(id);
         return register(registration);
     }
+
+    @RequestMapping(value = "/submitEdited/{id}", method = RequestMethod.PUT)
+    public ResponseEntity editInMigration(@PathVariable String id, @RequestBody Map<String,String> outMigrationStub) {
+
+        OutMigration outMig = outMigrationService.findOne(id);
+        if(outMig == null){
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+
+        if(outMigrationStub.containsKey("destination")){
+            outMig.setDestination(outMigrationStub.get("destination"));
+        }
+
+        if(outMigrationStub.containsKey("reason")){
+            outMig.setReason(outMigrationStub.get("reason"));
+        }
+
+
+
+        outMigrationService.recordOutMigration(outMig, outMig.getIndividual().getUuid(), outMig.getResidency().getUuid(),
+                outMig.getVisit().getUuid(), outMig.getCollectedBy().getFieldWorkerId());
+        return new ResponseEntity(HttpStatus.CREATED);
+    }
+
 }
+
+

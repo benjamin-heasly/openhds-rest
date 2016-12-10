@@ -15,10 +15,9 @@ import org.openhds.service.impl.census.SocialGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.hateoas.ExposesResourceFor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -103,4 +102,28 @@ public class SocialGroupRestController extends AuditableExtIdRestController<
                 .flatMap(fw -> StreamSupport.stream(socialGroupService.findByCollectedBy(new Sort("uuid"), fw).spliterator(), false))
                 .collect(Collectors.toList());
     }
+
+
+    @RequestMapping(value = "/submitEdited/{id}", method = RequestMethod.PUT)
+    public ResponseEntity editIndividual(@PathVariable String id, @RequestBody Map<String,String> socialGroupStub) {
+
+        SocialGroup soc = socialGroupService.findOne(id);
+        if(soc == null){
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+
+        if(socialGroupStub.containsKey("groupName")){
+            soc.setGroupName(socialGroupStub.get("groupName"));
+        }
+
+        if(socialGroupStub.containsKey("groupType")){
+            soc.setGroupType(socialGroupStub.get("groupType"));
+        }
+
+
+        socialGroupService.recordSocialGroup(soc,  soc.getCollectedBy().getFieldWorkerId());
+
+        return new ResponseEntity(HttpStatus.CREATED);
+    }
+
 }
