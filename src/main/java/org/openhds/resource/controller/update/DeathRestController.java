@@ -10,8 +10,11 @@ import org.openhds.service.impl.update.DeathService;
 import org.openhds.service.impl.update.VisitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ExposesResourceFor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * Created by Wolfe on 7/14/2015.
@@ -67,5 +70,30 @@ public class DeathRestController extends AuditableCollectedRestController<
     protected Death register(DeathRegistration registration, String id) {
         registration.getDeath().setUuid(id);
         return register(registration);
+    }
+
+
+    @RequestMapping(value = "/submitEdited/{id}", method = RequestMethod.PUT)
+    public ResponseEntity editInMigration(@PathVariable String id, @RequestBody Map<String,String> deathStub) {
+
+        Death death = deathService.findOne(id);
+        if(death == null){
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+
+        if(deathStub.containsKey("placeOfDeath")){
+            death.setDeathPlace(deathStub.get("placeOfDeath"));
+        }
+
+        if(deathStub.containsKey("cause")){
+            death.setDeathCause(deathStub.get("cause"));
+        }
+
+
+
+        deathService.recordDeath(death, death.getIndividual().getUuid(), death.getVisit().getUuid(),
+                                                           death.getCollectedBy().getFieldWorkerId());
+
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 }
