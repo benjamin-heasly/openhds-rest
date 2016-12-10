@@ -1,6 +1,7 @@
 package org.openhds.resource.controller.census;
 
 import org.openhds.domain.model.census.LocationHierarchy;
+import org.openhds.domain.util.ExtIdGenerator;
 import org.openhds.resource.contract.AuditableExtIdRestController;
 import org.openhds.resource.registration.census.LocationHierarchyRegistration;
 import org.openhds.service.contract.AbstractUuidService;
@@ -28,8 +29,9 @@ public class LocationHierarchyRestController extends AuditableExtIdRestControlle
 
     @Autowired
     public LocationHierarchyRestController(LocationHierarchyService locationHierarchyService,
-                                           FieldWorkerService fieldWorkerService) {
-        super(locationHierarchyService);
+                                           FieldWorkerService fieldWorkerService,
+                                           ExtIdGenerator extIdGenerator) {
+        super(locationHierarchyService, extIdGenerator);
         this.locationHierarchyService = locationHierarchyService;
         this.fieldWorkerService = fieldWorkerService;
     }

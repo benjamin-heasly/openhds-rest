@@ -4,6 +4,7 @@ import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.ProjectCode;
 import org.openhds.domain.model.census.*;
 import org.openhds.domain.model.update.*;
+import org.openhds.domain.util.ExtIdGenerator;
 import org.openhds.domain.util.ShallowCopier;
 import org.openhds.domain.util.VisitEvents;
 import org.openhds.repository.queries.QueryValue;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
@@ -79,9 +81,9 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
                                     MembershipService membershipService, RelationshipService relationshipService,
                                     InMigrationService inMigrationService, OutMigrationService outMigrationService,
                                     DeathService deathService, PregnancyObservationService pregnancyObservationService,
-                                    PregnancyOutcomeService pregnancyOutcomeService) {
+                                    PregnancyOutcomeService pregnancyOutcomeService, ExtIdGenerator extIdGenerator) {
 
-        super(individualService);
+        super(individualService, extIdGenerator);
         this.individualService = individualService;
         this.fieldWorkerService = fieldWorkerService;
         this.projectCodeService = projectCodeService;
@@ -332,16 +334,9 @@ public class IndividualRestController extends AuditableExtIdRestController<Indiv
     public List<Individual> findByFieldWorker(@RequestParam String fieldWorkerId) {
         EntityIterator<FieldWorker> fieldWorkers = fieldWorkerService.findByFieldWorkerId(new Sort("fieldWorkerId"), fieldWorkerId);
 
-        // This is hacky because we get back an entity iterator and it's not readily streamable
-        List <Individual> results = new ArrayList<>();
-
-        for(FieldWorker fw: fieldWorkers) {
-            EntityIterator<Individual> individuals = individualService.findByCollectedBy(new Sort("uuid"), fw);
-            for(Individual individual: individuals) {
-                results.add(individual);
-            }
-        }
-        return results;
+        return StreamSupport.stream(fieldWorkers.spliterator(), false)
+                .flatMap(fw -> StreamSupport.stream(individualService.findByCollectedBy(new Sort("uuid"), fw).spliterator(), false))
+                .collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/submitEdited/{id}", method = RequestMethod.PUT)

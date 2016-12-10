@@ -4,6 +4,7 @@ import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.census.Location;
 import org.openhds.domain.model.census.Membership;
 import org.openhds.domain.model.census.SocialGroup;
+import org.openhds.domain.util.ExtIdGenerator;
 import org.openhds.repository.queries.QueryValue;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.resource.contract.AuditableExtIdRestController;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Created by Ben on 5/18/15.
@@ -43,8 +45,9 @@ public class SocialGroupRestController extends AuditableExtIdRestController<
     @Autowired
     public SocialGroupRestController(SocialGroupService socialGroupService,
                                      FieldWorkerService fieldWorkerService,
-                                     MembershipService membershipService) {
-        super(socialGroupService);
+                                     MembershipService membershipService,
+                                     ExtIdGenerator extIdGenerator) {
+        super(socialGroupService, extIdGenerator);
         this.socialGroupService = socialGroupService;
         this.fieldWorkerService = fieldWorkerService;
         this.membershipService = membershipService;
@@ -95,16 +98,9 @@ public class SocialGroupRestController extends AuditableExtIdRestController<
     public List<SocialGroup> findByFieldWorker(@RequestParam String fieldWorkerId) {
         EntityIterator<FieldWorker> fieldWorkers = fieldWorkerService.findByFieldWorkerId(new Sort("fieldWorkerId"), fieldWorkerId);
 
-        // This is hacky because we get back an entity iterator and it's not readily streamable
-        List <SocialGroup> results = new ArrayList<>();
-
-        for(FieldWorker fw: fieldWorkers) {
-            EntityIterator<SocialGroup> socialGroups = socialGroupService.findByCollectedBy(new Sort("uuid"), fw);
-            for(SocialGroup sg: socialGroups) {
-                results.add(sg);
-            }
-        }
-        return results;
+        return StreamSupport.stream(fieldWorkers.spliterator(), false)
+                .flatMap(fw -> StreamSupport.stream(socialGroupService.findByCollectedBy(new Sort("uuid"), fw).spliterator(), false))
+                .collect(Collectors.toList());
     }
 
 

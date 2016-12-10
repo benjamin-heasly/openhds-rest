@@ -3,6 +3,7 @@ package org.openhds.resource.controller.census;
 import org.openhds.domain.model.FieldWorker;
 import org.openhds.domain.model.census.Individual;
 import org.openhds.domain.model.census.Location;
+import org.openhds.domain.util.ExtIdGenerator;
 import org.openhds.repository.queries.QueryValue;
 import org.openhds.repository.results.EntityIterator;
 import org.openhds.resource.contract.AuditableExtIdRestController;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Created by Ben on 5/18/15.
@@ -43,8 +45,9 @@ public class LocationRestController extends AuditableExtIdRestController<
     @Autowired
     public LocationRestController(LocationService locationService,
                                   LocationHierarchyService locationHierarchyService,
-                                  FieldWorkerService fieldWorkerService) {
-        super(locationService);
+                                  FieldWorkerService fieldWorkerService,
+                                  ExtIdGenerator extIdGenerator) {
+        super(locationService, extIdGenerator);
         this.locationService = locationService;
         this.locationHierarchyService = locationHierarchyService;
         this.fieldWorkerService = fieldWorkerService;
@@ -86,16 +89,9 @@ public class LocationRestController extends AuditableExtIdRestController<
     public List<Location> findByFieldWorker(@RequestParam String fieldWorkerId) {
         EntityIterator<FieldWorker> fieldWorkers = fieldWorkerService.findByFieldWorkerId(new Sort("fieldWorkerId"), fieldWorkerId);
 
-        // This is hacky because we get back an entity iterator and it's not readily streamable
-        List <Location> results = new ArrayList<>();
-
-        for(FieldWorker fw: fieldWorkers) {
-            EntityIterator<Location> locations = locationService.findByCollectedBy(new Sort("uuid"), fw);
-            for(Location location: locations) {
-                results.add(location);
-            }
-        }
-        return results;
+        return StreamSupport.stream(fieldWorkers.spliterator(), false)
+                .flatMap(fw -> StreamSupport.stream(locationService.findByCollectedBy(new Sort("uuid"), fw).spliterator(), false))
+                .collect(Collectors.toList());
     }
 
 

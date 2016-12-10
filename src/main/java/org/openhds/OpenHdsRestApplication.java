@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import org.openhds.domain.util.DeleteQueryOrchestrator;
+import org.openhds.domain.util.ExtIdGenerator;
+import org.openhds.domain.util.ExtIdGeneratorImpl;
 import org.openhds.repository.generator.MasterDataGenerator;
 import org.openhds.resource.converter.EntityCollectionMessageWriter;
 import org.openhds.resource.converter.JsonArrayDelimiter;
@@ -79,6 +82,11 @@ public class OpenHdsRestApplication {
     @Bean
     public Validator beanValidator() {
         return new LocalValidatorFactoryBean();
+    }
+
+    @Bean
+    public ExtIdGenerator extIdGenerator() {
+        return new ExtIdGeneratorImpl();
     }
 
     @EnableWebMvc
