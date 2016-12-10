@@ -1,5 +1,6 @@
 package org.openhds.resource.controller.update;
 
+import org.openhds.domain.model.census.SocialGroup;
 import org.openhds.domain.model.update.InMigration;
 import org.openhds.resource.contract.AuditableCollectedRestController;
 import org.openhds.resource.registration.update.InMigrationRegistration;
@@ -11,8 +12,11 @@ import org.openhds.service.impl.update.InMigrationService;
 import org.openhds.service.impl.update.VisitService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.ExposesResourceFor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * Created by Ben on 5/18/15.
@@ -74,4 +78,27 @@ public class InMigrationRestController extends AuditableCollectedRestController<
         registration.getInMigration().setUuid(id);
         return register(registration);
     }
+
+    @RequestMapping(value = "/submitEdited/{id}", method = RequestMethod.PUT)
+    public ResponseEntity editInMigration(@PathVariable String id, @RequestBody Map<String,String> inMigrationStub) {
+
+        InMigration inMig = inMigrationService.findOne(id);
+        if(inMig == null){
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+
+        if(inMigrationStub.containsKey("origin")){
+            inMig.setOrigin(inMigrationStub.get("origin"));
+        }
+
+        if(inMigrationStub.containsKey("reason")){
+            inMig.setReason(inMigrationStub.get("reason"));
+        }
+
+
+        inMigrationService.recordInMigration(inMig, inMig.getIndividual().getUuid(), inMig.getResidency().getUuid(),
+                                             inMig.getVisit().getUuid(), inMig.getCollectedBy().getFieldWorkerId());
+        return new ResponseEntity(HttpStatus.CREATED);
+    }
+
 }
